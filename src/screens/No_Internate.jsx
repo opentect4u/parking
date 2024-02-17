@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native';
 const No_Internate = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>No_Internate</Text>
+      <Text>No Internet</Text>
       <LottieView
         source={require('../resources/lottiefiles/no_internate.json')}
         autoPlay

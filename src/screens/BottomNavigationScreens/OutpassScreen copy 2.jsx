@@ -25,15 +25,12 @@ import useCalculateDuration from "../../hooks/useCalculateDuration";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
 import { delay } from "../../utils/dateTime";
-import { useIsFocused } from "@react-navigation/native";
 
 export default function OutpassScreen({ navigation }) {
-  const isFocused = useIsFocused();
   const [carNumber, setCarNumber] = useState();
   const [serchData, setSerchData] = useState();
   const [carData, setarData] = useState();
   const [carOutPrice, setCarOutPrice] = useState();
-  const [disabled, setDisabled] = useState(false);
 
   const [carRateData, setarRateData] = useState();
   const [totalRate, setTotalRate] = useState();
@@ -109,125 +106,274 @@ export default function OutpassScreen({ navigation }) {
   }
 
 
-  const handleUploadOutPassData = async (receiptNo, index, carData) => {
+
+  // get vehicle information from vehicle number
+  const handleUploadOutPassData = async (receipt_no, index,car_data) => {
     setLoading(true);
-    setDisabled(!disabled);
-    const vData = [];
-    const vDatainfo = {};
-    setCarOutPrice();
 
-    const dateTime = new Date(carData.date_time_in);
-    const timestamp = dateTime.getTime();
-    const currentDate = new Date();
 
-    const price = await calculateTotalPrice(timestamp, carData.vehicle_id, carData.date_time_in, carData.vehicle_no, currentDate.toISOString().slice(0, -5) + "Z", currentDate.getTime());
+    
+    // const dateTimeString = serchData?.[index]?.date_time_in;
+    const dateTimeString = car_data.date_time_in;
 
-    const totalDuration = useCalculateDuration(timestamp, currentDate.getTime());
 
+    
+
+    const inDateFormat = new Date(dateTimeString);
+    const timestamp = inDateFormat.getTime();
+    const date = new Date();
+   
+
+
+
+    // calculat total duration of time 
+
+    // let price = await calculateTotalPrice(timestamp, serchData?.[index]?.vehicle_id, serchData?.[index]?.date_time_in, serchData?.[index]?.vehicle_no, date.toISOString().slice(0, -5) + "Z", date.getTime());
+    let price = await calculateTotalPrice(timestamp, car_data.vehicle_id, car_data.date_time_in, car_data.vehicle_no, date.toISOString().slice(0, -5) + "Z", date.getTime());
+    
+
+
+
+
+    const totalDuration = useCalculateDuration(timestamp, date.getTime());
+
+
+
+
+
+    // get gst information from Api
     const gstSettings = await handleGetGst();
-
-    console.log("::::::::::::::::::::::::::", carData)
     await setCarOutPrice(price);
 
-    let totalRate = 0;
+    // console.log("///////////",gstSettings)
+    // return 0;
 
+    // gst price calculate 
+
+    if ((gstSettings || (Array.isArray(gstSettings) && gstSettings.length === 0 )) && gstSettings[0]?.gst_flag == "Y") {
+     var gstPrice = await useGstPriceCalculator(gstSettings[0], price)
+      
+    }
+
+
+
+    // vehicle receipt information and gst price for outpass
+
+    const vData = [];
+    const vDatainfo = {};
+
+    // vDatainfo.receipt_no = serchData?.[index]?.receipt_no || '';
+
+    vDatainfo.receipt_no = car_data.receipt_no || '';
+    // vData.push({
+    //   label: 'RECEIPT NO',
+    //   value: (serchData?.[index]?.receipt_no).toString().slice(-5) || '',
+    // });
 
     vData.push({
       label: 'RECEIPT NO',
-      value: (carData.receipt_no).toString().slice(-5) || '',
+      value: (car_data.receipt_no).toString().slice(-5) || '',
     });
 
 
-    // console.log(gstSettings[0]?.gst_flag === "Y")
 
-    if (gstSettings && Array.isArray(gstSettings) && gstSettings.length > 0 && gstSettings[0]?.gst_flag === "Y") {
-      const gstPrice = await useGstPriceCalculator(gstSettings[0], price);
-      // console.log(gstPrice)
-      totalRate = gstPrice.totalPrice || price;
-      // totalRate = gstPrice.totalPrice || carOutPrice;
+    //not tested yet
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // gstSettings && gstSettings[0]?.gst_flag == "Y"
+    if ((gstSettings && (Array.isArray(gstSettings) && gstSettings.length > 0 )) && gstSettings[0]?.gst_flag == "Y") {
 
-      const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
-
-      vDatainfo.base_amount = baseAmount;
-      vDatainfo.cgst = CGST;
-      vDatainfo.sgst = SGST;
-      vDatainfo.parking_fees = totalPrice;
-
-      vData.push(
-        { label: 'BASE AMOUNT', value: baseAmount },
-        { label: 'CGST', value: CGST },
-        { label: 'SGST', value: SGST },
-        { label: 'PARKING FEES', value: totalPrice }
-      );
+      await setTotalRate(gstPrice.totalPrice ? gstPrice.totalPrice : carOutPrice);
+      vDatainfo.base_amount = gstPrice?.price;
+      vDatainfo.cgst = gstPrice?.CGST;
+      vDatainfo.sgst = gstPrice?.SGST;
+      vDatainfo.parking_fees = gstPrice?.totalPrice
+      vData.push({
+        label: 'BASE AMOUNT',
+        value: gstPrice.price,
+      });
+      vData.push({
+        label: 'CGST',
+        value: gstPrice.CGST,
+      });
+      vData.push({
+        label: 'SGST',
+        value: gstPrice.SGST,
+      });
+      vData.push({
+        label: 'PARKING FEES',
+        value: gstPrice.totalPrice,
+      });
     }
 
- 
-    console.log("3333333333333333333333333333-------", gstSettings)
-    // return 0;
 
-    if ((gstSettings && Array.isArray(gstSettings) && gstSettings.length > 0 && gstSettings[0]?.gst_flag === "N")||(!gstSettings || (Array.isArray(gstSettings) && gstSettings.length === 0))) {
-      totalRate = price;
+
+
+
+    // total parking fees
+    // console.log(gstSettings.length);
+
+    // if ((Array.isArray(gstSettings) && gstSettings.length === 0) || gstSettings[0]?.gst_flag == "N") {
+    if ((gstSettings && (Array.isArray(gstSettings) && gstSettings.length > 0 )) && gstSettings[0]?.gst_flag == "N" ) {
+      await setTotalRate(price);
+      console.log("===================", totalRate)
+      console.log("===================", price)
+
       vDatainfo.parking_fees = price;
-      vData.push({ label: 'PARKING FEES', value: price });
-
-      console.log(vData)
+      vData.push({
+        label: 'PARKING FEES',
+        value: price,
+      });
     }
 
 
+    
+   
+
+    // if (data?.[index].advance != '0') {
+    //   vData.push({
+    //     label: 'ADVANCE AMOUNT',
+    //     value: data?.[index].advance,
+    //   });
+
+    //   if (gstSettings && gstSettings?.gst_flag == "1") {
+    //     vData.push({
+    //       label: 'BALANCE AMOUNT',
+    //       value: gstPrice.totalPrice - data?.[index].advance,
+    //     });
+    //   }
+
+    //   if (!gstSettings || gstSettings?.gst_flag == "0") {
+    //     vData.push({
+    //       label: 'BALANCE AMOUNT',
+    //       value: price - data?.[index].advance,
+    //     });
+
+    //   }
+    // }
 
 
-    vData.push(
-      { label: 'VEHICLE TYPE', value: carData.vehicle_name },
-      { label: 'VEHICLE NO', value: carData.vehicle_no },
-      { label: 'IN TIME', value: formatDateTime(dateTime) },
-      { label: 'OUT TIME', value: formatDateTime(currentDate) },
-      { label: 'DURATION', value: totalDuration }
-    );
+    // vehicle type name
+    // vData.push({
+    //   label: 'VEHICLE TYPE',
+    //   value: serchData?.[index]?.vehicle_name,
+    // });
 
-    vDatainfo.receipt_no = carData.receipt_no || '';
-    vDatainfo.vehicle_type = carData.vehicle_id;
-    vDatainfo.vehicle_no = carData.vehicle_no;
-    vDatainfo.in_time = formatDateTime(dateTime);
-    vDatainfo.out_time = formatDateTime(currentDate);
+    vData.push({
+      label: 'VEHICLE TYPE',
+      value: car_data.vehicle_name,
+    });
+
+
+    //vehicle id
+    // vDatainfo.vehicle_type = serchData?.[index]?.vehicle_id;
+    vDatainfo.vehicle_type = car_data.vehicle_id;
+
+    
+
+    // vehicle number
+    // vData.push({
+    //   label: 'VEHICLE NO',
+    //   value: serchData?.[index]?.vehicle_no,
+    // });
+
+    vData.push({
+      label: 'VEHICLE NO',
+      value: car_data.vehicle_no,
+    });
+
+
+   
+    // vehicle in date
+    // const inDate = new Date(serchData?.[index]?.date_time_in);
+    const inDate = new Date(car_data.date_time_in);
+
+
+   
+
+    //Vehicle number
+    vDatainfo.vehicle_no = car_data.vehicle_no;
+    // vDatainfo.vehicle_no = serchData?.[index]?.vehicle_no;
+
+    // vehicle in time
+    vData.push({
+      label: 'IN TIME',
+      value:
+        inDate.toLocaleDateString("en-GB", dateoptions) +
+        ' ' +
+        inDate.toLocaleTimeString(undefined, options),
+    });
+    vDatainfo.in_time = (inDate.toLocaleDateString(undefined, dateoptions) + ' ' + inDate.toLocaleTimeString(undefined, options));
+
+    //vehicle out time
+    vData.push({
+      label: 'OUT TIME',
+      value:
+        date.toLocaleDateString("en-GB", dateoptions) +
+        ' ' +
+        date.toLocaleTimeString(undefined, options),
+    });
+    vDatainfo.out_time = (date.toLocaleDateString(undefined, dateoptions) + ' ' + date.toLocaleTimeString(undefined, options));
+
+
+    // total Duration
+
+    vData.push({
+      label: 'DURATION',
+      value: totalDuration,
+    });
+
     vDatainfo.duration = totalDuration;
 
-    // await delay(1500);
 
-    const totalRatearr = {
-      // base_amt: carOutPrice,
-      base_amt: price,
+
+    // await setTimeout(function() {
+    //   console.log("After 2 seconds");
+      
+    // }, 200000);
+
+
+    
+
+    // all processing finished waiting for 1.5 seconds
+
+    await delay(1500);
+    
+
+    //out pass data to new screen
+    let totalRatearr = {
+      base_amt: carOutPrice,
       paid_amt: totalRate,
-      date: currentDate.toISOString(),
+      date: date.toISOString(),
       vDatainfo
-    };
-
+    }
     setLoading(false);
-    setDisabled(false);
 
-
-    console.log("XXXXXXXXXXXXXX", {
+    // navigate to create outpass screen
+   /* navigation.navigate('CreateOutpassScreen', {
+      data: vData,
+      others: serchData[index],
+      gstSettings: gstSettings[0],
       totalRate: totalRatearr
-    })
+    });*/
 
-    // return 0;
     navigation.navigate('CreateOutpassScreen', {
       data: vData,
-      others: carData,
+      others: car_data,
       gstSettings: gstSettings[0],
       totalRate: totalRatearr
     });
+
+
+
+
   }
 
-  const formatDateTime = (dateTime) => {
-    return `${dateTime.toLocaleDateString("en-GB", dateoptions)} ${dateTime.toLocaleTimeString(undefined, options)}`;
-  }
 
 
 
-  const call_set_CarNumber = (text) => {
-    setCarNumber(text);
-    setDisabled(false);
-  }
 
 
 
@@ -238,34 +384,19 @@ export default function OutpassScreen({ navigation }) {
     getVehicleInfo(carNumber)
   }, [carNumber])
 
-  // useEffect(() => {
-
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     setCarNumber('');
-  //     setSerchData([]);
-  //   });
-  //   setLoading(false);
-  //   setDisabled(false);
-
-  // }, [navigation]);
-
   useEffect(() => {
 
     const unsubscribe = navigation.addListener('focus', () => {
       setCarNumber('');
       setSerchData([]);
     });
-    setCarOutPrice();
-    setLoading(false);
-    setDisabled(false);
 
-    console.log("///////////////XXXXXXXXXXXXXXXCCCCCCCCCCCCC")
 
-  }, [isFocused]);
+  }, [navigation]);
 
   return (
     <SafeAreaView>
-      {loading && (
+    {loading && (
         <View
           style={{
             position: 'absolute',
@@ -296,7 +427,7 @@ export default function OutpassScreen({ navigation }) {
         <RoundedInputField
           placeholder={"Enter Receipt / Vehicle No"}
           value={carNumber}
-          onChangeText={call_set_CarNumber}
+          onChangeText={setCarNumber}
 
         />
 
@@ -307,7 +438,7 @@ export default function OutpassScreen({ navigation }) {
             position: 'relative',
             backgroundColor: colors['light-gray'],
             borderRadius: PixelRatio.roundToNearestPixel(10),
-            maxHeight: PixelRatio.roundToNearestPixel(400),
+            maxHeight: PixelRatio.roundToNearestPixel(500),
             justifyContent: 'center',
           }}>
           <ScrollView>
@@ -317,15 +448,12 @@ export default function OutpassScreen({ navigation }) {
                 return (
                   <TouchableOpacity
                     key={index}
-                    disabled={disabled}
-                    onPress={() => handleUploadOutPassData((props.receipt_no).toString(), index, props)}
+                    onPress={() => handleUploadOutPassData((props.receipt_no).toString(), index,props)}
                     style={{
                       borderColor: colors.white,
                       borderBottomWidth: 1,
                       width: '100%',
                       padding: 10,
-                      height: 60,
-                      justifyContent: 'center', // Added to vertically center the text
                     }}>
 
                     <Text

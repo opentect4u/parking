@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     const credentials = {
       password: password,
       user_id: username,
-      device_id: "4e8a3006d4d3178f",
+      device_id: deviceId,
     };
 
     try {

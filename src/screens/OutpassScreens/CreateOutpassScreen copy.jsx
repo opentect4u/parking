@@ -77,12 +77,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   // console.log("xjdfhgiuvhdiuhgiusheirghiuerdrgiierjgki",vDatainfo)
 
   const handlePrintReceipt = async () => {
-    // setLoading(true);
-    // setisAvailableYet(true);
+    setLoading(true);
+    setisAvailableYet(true);
     console.log("totalRate __________", totalRate.paid_amt, totalRate.base_amt)
     let paid_amt = totalRate.paid_amt ? totalRate.paid_amt : totalRate.base_amt;
 
-    // return 0
+
     console.log("...............................................", paid_amt)
 
     // with gst without gst car outpass send to server
@@ -94,10 +94,6 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       console.log(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, 'N', others.vehicle_id, others.vehicle_no, others.date_time_in)
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, "N", others.vehicle_id, others.vehicle_no, others.date_time_in);
     }
-
-
-
-
 
     //if upload server successfully then print receipt
     console.log("insert_car_outpass", insert_car_outpass?.data?.update_car_in_flag_status?.suc);

@@ -5,14 +5,10 @@ import HourlyPriceCalculate from "../useHourlyPriceCalculate";
 
 function useOutpass() {
     const calculateTotalPrice = async (timestamp,vehicle_id,date_time_in,vehicle_no,end_time,inTimestamp) => {
-
-      
-
-       
         // get Vehicle Rates By Id From Local Storage
         // const result = await getVehicleRatesByVehicleId(vehicleId);
         const result = await getVehicleRatesByVehicleId(vehicle_id);
-        console.log("Calculating total",result);
+        // console.log("Calculating total",result);
         if (result[0]?.rate_type == 'H') {
             // If Rate type is H, H For Hourly
             const price = HourlyPriceCalculate(
@@ -20,6 +16,7 @@ function useOutpass() {
                 date_time_in,
                 end_time,
             );
+
             return price;
         }
 
@@ -50,7 +47,6 @@ function useOutpass() {
                         Authorization: loginData.token,
                     },
                 },).then(res => {
-                    console.log("getVehicleRatesByVehicleId",res.data.data)
                     resolve(res.data.data.msg);
                 }).catch(err => {
                     console.log(err);
