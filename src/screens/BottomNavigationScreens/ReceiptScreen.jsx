@@ -42,7 +42,7 @@ export default function ReceiptScreen({ navigation }) {
     getReceiptSettings
   } = useContext(AuthContext);
 
-  const { dev_mod } = generalSettings;
+  const { total_collection,dev_mod } = generalSettings;
 
   const { getDashboardData } = useDashboard();
 
@@ -54,12 +54,19 @@ export default function ReceiptScreen({ navigation }) {
 
 
   // operator info
+
+  
   const todayCollectionArray = [
     { title: "Operator Name", data: userDetails.operator_name },
     { title: "Total Vehicles In", data: totalVehicleIn || 0 },
     { title: "Total Vehicles Out", data: totalVehicleOut || 0 },
-    { title: "Total Collection", data: totalPaidAmt || 0 },
+   
   ];
+
+  if(total_collection=='Y'){
+    todayCollectionArray.push({ title: "Total Collection", data: totalPaidAmt || 0 });
+  }
+
 
   useEffect(() => {
     dashboardData()

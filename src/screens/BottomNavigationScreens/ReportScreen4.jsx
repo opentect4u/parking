@@ -1,5 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, PixelRatio, Button, BackHandler, TextInput, ToastAndroid } from "react-native";
-// import { View, Text, ScrollView, StyleSheet, PixelRatio, Modal, Button, BackHandler, TextInput, ToastAndroid } from "react-native";
+import { View, Text, ScrollView, StyleSheet, PixelRatio, Modal, Button, BackHandler, TextInput, ToastAndroid } from "react-native";
 import MainView from "../../components/MainView";
 import CustomHeader from "../../components/CustomHeader";
 import icons from "../../resources/icons/icons";
@@ -13,15 +12,9 @@ import useReprtsPassword from "../../hooks/api/useReprtsPassword";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "react-native-normalize";
 import colors from "../../resources/colors/colors";
 
-
-import Modal from "react-native-modal";
-import ActionBox2 from "../../components/ActionBox2";
-
 export default function ReportScreen({ navigation }) {
-  // let modalVisible = false;
-  const [modalVisible, setModalVisible] = useState();
+  const [modalVisible, setModalVisible] = useState(true);
   const [password, setPassword] = useState("");
-  const [rep_ststus, setRepStstus] = useState(true);
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod } = generalSettings;
@@ -30,18 +23,17 @@ export default function ReportScreen({ navigation }) {
 
   const isFocused = useIsFocused();
 
-  const abc = () => {
-    setModalVisible(true);
-    // if (modalVisible==false) {
-    //   abc();
-    // }
-  }
-
   useEffect(() => {
-    setPassword("");
-    setRepStstus(true);
-    // abc();
+    console.log("djkfvnkjsdkj");
+    setModalVisible(true);
   }, [isFocused]);
+  
+  // useEffect(() => {
+  //   setModalVisible(true, () => {
+  //     console.log("tttttttt");
+  //     console.log(modalVisible); // This will log the updated value
+  //   });
+  // }, []);
 
 
   const call_set_CarNumber = (text) => {
@@ -49,8 +41,10 @@ export default function ReportScreen({ navigation }) {
   }
 
   const close_function = () => {
+    // Close the modal
     setModalVisible(false);
-
+  
+    // Perform navigation only if modal is closed
     if (dev_mod !== "R" && dev_mod !== "F") {
       navigation.navigate("Receipt_Navigation");
     } else {
@@ -61,119 +55,103 @@ export default function ReportScreen({ navigation }) {
   const checked_password = async () => {
     let res_data = await check_password(password);
     if (res_data?.data?.reportpwddata > 0) {
-      setRepStstus(false);
       setModalVisible(false);
-    } else {
-      setRepStstus(true);
+    }else{
+      // alert("Invalid Password")
       ToastAndroid.show("Invalid Password", ToastAndroid.SHORT);
     }
   }
 
+
+
   return (
     <MainView>
-
-      {/* <Modal
-        // animationIn="none"
-        animationIn="slideInUp"
-        // animationInTiming={20}
-        // transparent={true}
-        isVisible={modalVisible}
-        // onBackButtonPress={() => null}
-        // onBackdropPress={() =>  setModalVisible(true)}
-        backButtonClose={false}
-        backdropOpacity={1}
-        backdropColor="rgba(0, 0, 0, 0.5)"
-        style={styles.modalContainer}
-      >
-        <View style={styles.modal_container}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              placeholder={"Enter Report Password"}
-              value={password}
-              onChangeText={call_set_CarNumber}
-              placeholderTextColor={"black"}
-            />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: "100%" }}>
-              <CustomButton.GoButton
-                title="Submit"
-                onAction={checked_password}
-              />
-              <CustomButton.CancelButton
-                title="Close"
-                onAction={close_function}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal> */}
       <CustomHeader title="Reports" />
       <ScrollView>
-
-        <View style={styles.modal_container}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              placeholder={"Enter Report Password"}
-              value={password}
-              onChangeText={call_set_CarNumber}
-              placeholderTextColor={"black"}
-              secureTextEntry={true}
-            />
-            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: "100%" }}> */}
-              <CustomButton.GoButton
-                title="Submit"
-                onAction={checked_password}
-              />
-              {/* <CustomButton.CancelButton
-                title="Close"
-                onAction={close_function}
-              /> */}
-            {/* </View> */}
-          </View>
-        </View>
-
-
         <View style={styles.report_container}>
 
 
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+            style={styles.modal_container}
+          >
+            <View style={{ flex: 0.93, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+              <View style={styles.modalView}>
+                {/*              
+                <RoundedInputField
+                  placeholder={"Enter Password"}
+                  value={password}
+                  onChangeText={call_set_CarNumber}
+                /> */}
+                <Text></Text>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder={"Enter Report Password"}
+                  value={password}
+                  onChangeText={call_set_CarNumber}
+                  placeholderTextColor={"black"}
+                />
+
+
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: "100%" }}>
+                  <CustomButton.GoButton
+                    title="Submit"
+                    onAction={checked_password}
+                  />
+                  <CustomButton.CancelButton
+                    title="Close"
+                    onAction={close_function}
+                  />
+                </View>
+              </View>
+
+
+
+            </View>
+          </Modal>
+
+
 
           <View style={styles.ActionBox_style}>
-            <ActionBox2
+            <ActionBox
               title="Unbilled Reports"
               onAction={() => navigation.navigate("Unbilled_Reports")}
-              disabled={rep_ststus}
             />
           </View>
           <View style={styles.ActionBox_style}>
-            <ActionBox2
+            <ActionBox
               title="Vehicle Wise Reports"
-              onAction={() => navigation.navigate("Vehiclewise_Fixed_Report_Screen")}
-              disabled={rep_ststus}
+              onAction={() =>
+                navigation.navigate("Vehiclewise_Fixed_Report_Screen")
+              }
             />
           </View>
           <View style={styles.ActionBox_style}>
-            <ActionBox2
+            <ActionBox
               title="Operatorwise Reports"
               onAction={() => navigation.navigate("Operatorwise_Report_Screen")}
               icon={icons.users}
-              disabled={rep_ststus}
             />
           </View>
           <View style={styles.ActionBox_style}>
-            <ActionBox2
+            <ActionBox
               title="Detailed Report"
               onAction={() => navigation.navigate("Detailed_Report_Screen")}
               icon={icons.users}
-              disabled={rep_ststus}
             />
           </View>
           <View style={styles.ActionBox_style}>
-            <ActionBox2
+            <ActionBox
               title="Shiftwise Report"
               onAction={() => navigation.navigate("Shiftwise_Report_Screen")}
               icon={icons.users}
-              disabled={rep_ststus}
             />
           </View>
         </View>
@@ -183,9 +161,6 @@ export default function ReportScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    margin: 0, // Remove margin around the modal background
-  },
   report_container: {
     flex: 1,
     display: "flex",
@@ -198,25 +173,21 @@ const styles = StyleSheet.create({
     maxWidth: "48%",
     maxHeight: "45%",
     width: "48%",
-    paddingVertical: PixelRatio.roundToNearestPixel(10),
-  },
 
-  ActionBox_style2: {
-    maxWidth: "100%",
-    maxHeight: "45%",
-    width: "48%",
     paddingVertical: PixelRatio.roundToNearestPixel(10),
   },
   modal_container: {
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    margin: 0,
-    marginTop:10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    height: SCREEN_HEIGHT / 2
+
   },
+
   modalView: {
-    margin: 0,
+    // flex: 0.3,
+    margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -231,7 +202,9 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: SCREEN_WIDTH / 1.1,
     justifyContent: "space-between",
+    // height: SCREEN_HEIGHT / 2
   },
+
   input: {
     borderWidth: 1,
     paddingStart: PixelRatio.roundToNearestPixel(10),
@@ -240,4 +213,6 @@ const styles = StyleSheet.create({
     width: "70%",
     marginBottom: 20
   },
-});  
+
+
+});
