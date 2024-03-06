@@ -22,6 +22,7 @@ function App() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShowSplash(false);
+      console.log(isOnline, 'isOnline_____utsab');
     }, 1000);
     return () => clearTimeout(timeout);
   }, []);

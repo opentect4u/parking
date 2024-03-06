@@ -116,6 +116,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
     return () => clearInterval(generalSettings);
   }, []);
 
+  // console.log(generalSettings, 'generalSettings___UTSAB');
+
   const {
     adv_pay,
     app_id,

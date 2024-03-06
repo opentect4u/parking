@@ -11,11 +11,7 @@ function useOutpass() {
         // console.log("Calculating total",result);
         if (result[0]?.rate_type == 'H') {
             // If Rate type is H, H For Hourly
-            const price = HourlyPriceCalculate(
-                result,
-                date_time_in,
-                end_time,
-            );
+            const price = HourlyPriceCalculate( result, date_time_in, end_time, );
 
             return price;
         }

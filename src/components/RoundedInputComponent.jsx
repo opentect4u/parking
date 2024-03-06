@@ -7,6 +7,7 @@ const RoundedInputComponent = ({
   value,
   onChangeText,
   disable,
+  keyboardType,
   onKeyPress,
 }) => {
   return (
@@ -18,6 +19,7 @@ const RoundedInputComponent = ({
         onChangeText={onChangeText}
         onKeyPress={onKeyPress}
         readOnly={disable || false}
+        keyboardType={keyboardType}
         placeholderTextColor={disable && "black"}
       />
     </View>

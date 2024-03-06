@@ -28,7 +28,6 @@ import { delay } from "../../utils/dateTime";
 import { useIsFocused } from "@react-navigation/native";
 // import React, { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthProvider";
-import useCheckAdvance from "../../hooks/api/useCheckAdvance";
 
 export default function OutpassScreen({ navigation }) {
   const isFocused = useIsFocused();
@@ -46,9 +45,7 @@ export default function OutpassScreen({ navigation }) {
   const { calculateTotalPrice } = useOutpass();
   const { handleGetGst } = useGstSettings()
 
-  const { check_Advance } = useCheckAdvance();
-  // const [getAdvAmount, setAdvAmount] = useState();
-  // const advAmount = 40;
+  const advAmount = 40;
   const { generalSettings, receiptSettings } = useContext(AuthContext);
   // const { dev_mod } = generalSettings;
 
@@ -131,20 +128,11 @@ export default function OutpassScreen({ navigation }) {
 
     const price = await calculateTotalPrice(timestamp, carData.vehicle_id, carData.date_time_in, carData.vehicle_no, currentDate.toISOString().slice(0, -5) + "Z", currentDate.getTime());
 
-
     const totalDuration = useCalculateDuration(timestamp, currentDate.getTime());
 
     const gstSettings = await handleGetGst();
 
-    const getAdvAmount = await check_Advance(carData.receipt_no);
-
-    const advAmount = getAdvAmount?.data?.msg[0]?.base_amt;
-    
-
-
-
-    // console.log(carData.receipt_no, "::::::::::::::::::::::::::");
-
+    console.log("::::::::::::::::::::::::::", carData)
     await setCarOutPrice(price);
 
     let totalRate = 0;
@@ -192,33 +180,29 @@ export default function OutpassScreen({ navigation }) {
       console.log(vData)
     }
 
-    // Paid Amount calculation by advance Amount START_____
+// if ((generalSettings.adv_pay == "Y")) {
+//       totalRate = price;
+//       // vDatainfo.parking_fees = price;
+//       // vData.push({ label: 'ADVANCE', value: advAmount });
+//       if(totalRate < advAmount){
 
-    if ((generalSettings.adv_pay == "Y")) {
-    totalRate = price;
-    // vDatainfo.parking_fees = price;
-    // vData.push({ label: 'ADVANCE', value: advAmount });
-    if(totalRate < advAmount){
+//         console.log('Advance More than Total Amount');
+//         vData.push(
+//           { label: 'ADVANCE', value: advAmount },
+//           { label: 'REFUND AMOUNT', value: advAmount - totalRate}
+//           );
 
-    // console.log('Advance More than Total Amount');
-    vData.push(
-    { label: 'ADVANCE', value: advAmount },
-    { label: 'REFUND AMOUNT', value: advAmount - totalRate}
-    );
+//       } else if(totalRate > advAmount){
 
-    } else if(totalRate > advAmount){
+//         console.log('Total Amount More than Advance');
+//         vData.push(
+//           { label: 'ADVANCE', value: advAmount },
+//           { label: 'DUE AMOUNT', value: totalRate - advAmount}
+//           );
 
-    // console.log('Total Amount More than Advance');
-    vData.push(
-    { label: 'ADVANCE', value: advAmount },
-    { label: 'DUE AMOUNT', value: totalRate - advAmount}
-    );
-
-    }
-    console.log(vData, 'utsabbbbbbb', totalRate, '==', vDatainfo.parking_fees)
-    }
-
-       // Paid Amount calculation by advance Amount END_____
+//       }
+//       console.log(vData, 'utsabbbbbbb', totalRate, '==', vDatainfo.parking_fees)
+//     }
 
 
     vData.push(
@@ -240,7 +224,7 @@ export default function OutpassScreen({ navigation }) {
 
     const totalRatearr = {
       // base_amt: carOutPrice,
-      base_amt: (price-advAmount),
+      base_amt: price,
       paid_amt: totalRate,
       date: currentDate.toISOString(),
       vDatainfo

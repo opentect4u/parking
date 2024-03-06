@@ -19,7 +19,7 @@ import ActionBox2 from "../../components/ActionBox2";
 
 export default function ReportScreen({ navigation }) {
   // let modalVisible = false;
-  const [modalVisible, setModalVisible] = useState();
+
   const [password, setPassword] = useState("");
   const [rep_ststus, setRepStstus] = useState(true);
 
@@ -30,17 +30,10 @@ export default function ReportScreen({ navigation }) {
 
   const isFocused = useIsFocused();
 
-  const abc = () => {
-    setModalVisible(true);
-    // if (modalVisible==false) {
-    //   abc();
-    // }
-  }
 
   useEffect(() => {
     setPassword("");
     setRepStstus(true);
-    // abc();
   }, [isFocused]);
 
 
@@ -48,21 +41,12 @@ export default function ReportScreen({ navigation }) {
     setPassword(text);
   }
 
-  const close_function = () => {
-    setModalVisible(false);
 
-    if (dev_mod !== "R" && dev_mod !== "F") {
-      navigation.navigate("Receipt_Navigation");
-    } else {
-      navigation.navigate("OutpassNavigation");
-    }
-  }
 
   const checked_password = async () => {
     let res_data = await check_password(password);
     if (res_data?.data?.reportpwddata > 0) {
       setRepStstus(false);
-      setModalVisible(false);
     } else {
       setRepStstus(true);
       ToastAndroid.show("Invalid Password", ToastAndroid.SHORT);
@@ -71,42 +55,6 @@ export default function ReportScreen({ navigation }) {
 
   return (
     <MainView>
-
-      {/* <Modal
-        // animationIn="none"
-        animationIn="slideInUp"
-        // animationInTiming={20}
-        // transparent={true}
-        isVisible={modalVisible}
-        // onBackButtonPress={() => null}
-        // onBackdropPress={() =>  setModalVisible(true)}
-        backButtonClose={false}
-        backdropOpacity={1}
-        backdropColor="rgba(0, 0, 0, 0.5)"
-        style={styles.modalContainer}
-      >
-        <View style={styles.modal_container}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              placeholder={"Enter Report Password"}
-              value={password}
-              onChangeText={call_set_CarNumber}
-              placeholderTextColor={"black"}
-            />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: "100%" }}>
-              <CustomButton.GoButton
-                title="Submit"
-                onAction={checked_password}
-              />
-              <CustomButton.CancelButton
-                title="Close"
-                onAction={close_function}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal> */}
       <CustomHeader title="Reports" />
       <ScrollView>
 
@@ -120,16 +68,12 @@ export default function ReportScreen({ navigation }) {
               placeholderTextColor={"black"}
               secureTextEntry={true}
             />
-            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: "100%" }}> */}
+           
               <CustomButton.GoButton
                 title="Submit"
                 onAction={checked_password}
               />
-              {/* <CustomButton.CancelButton
-                title="Close"
-                onAction={close_function}
-              /> */}
-            {/* </View> */}
+              
           </View>
         </View>
 

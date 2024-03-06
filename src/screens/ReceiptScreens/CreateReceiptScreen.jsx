@@ -1,6 +1,14 @@
-import { StyleSheet, Text, View, PixelRatio, ScrollView, ActivityIndicator, ToastAndroid, PermissionsAndroid } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  PixelRatio,
+  ScrollView,
+  ActivityIndicator,
+  ToastAndroid,
+  PermissionsAndroid,
+} from "react-native";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-
 
 import BleManager from "react-native-ble-manager";
 import ThermalPrinterModule from "react-native-thermal-printer";
@@ -10,6 +18,7 @@ import icons from "../../resources/icons/icons";
 import colors from "../../resources/colors/colors";
 import normalize from "react-native-normalize";
 import RoundedInputComponent from "../../components/RoundedInputComponent";
+import InputCustom from "../../components/InputCustom";
 import CustomButton from "../../components/CustomButton";
 import { InternetStatusContext } from "../../../App";
 import { AuthContext } from "../../context/AuthProvider";
@@ -19,6 +28,8 @@ import { ADDRESSES } from "../../routes/addresses";
 import useCarIn from "../../hooks/api/useCarIn";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
+
+// import React, { useState, useEffect, useContext } from "react";
 
 const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
@@ -35,12 +46,18 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const { dev_mod } = generalSettings;
   const [vehicleNumber, setVehicleNumber] = useState("");
+  const [vehicleAdv, setVehicleAdv] = useState("");
+
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const { type, id, userId, operatorName, deviceId, fixedPriceData } = route.params;
+  // console.log(route.params, 'route.params__UTSAB');
+  const { type, id, userId, operatorName, deviceId, fixedPriceData } =
+    route.params;
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
+
+  // console.log(generalSettings.adv_pay, 'generalSettings__XXROYYYYYY');
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -87,11 +104,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     getVehicleRateFixedByVehicleId(dev_mod, id);
   }, [generalSettings]);
 
-
   useEffect(() => {
     getVehicleRateFixedByVehicleId(dev_mod, id);
-  }, [])
-
+  }, []);
 
   // check Bluetooth configuration
   async function checkLocationEnabled() {
@@ -127,19 +142,14 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
   const handleCreateReceipt = async () => {
-
-
-
     if (loading == true) {
-
       return;
     }
 
     setLoading(true);
     // if vehicleNumber is blank then return from the below block
 
-
-
+    // console.log(vehicleNumber, 'vehicleNumber__UTSA');
 
     if (!vehicleNumber) {
       setLoading(false);
@@ -150,6 +160,14 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       );
     }
 
+    if (!vehicleAdv) {
+      setLoading(false);
+      return ToastAndroid.showWithGravity(
+        "Please add Advance Amount to continue.",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    }
 
 
 
@@ -160,41 +178,34 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     await checkLocationEnabled();
 
-
-
     //vehicle data to update server
 
-    let carindata = await carIn(vehicleId, vehicleNumber, 0, 0, "N", 0, 0);
+    // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
+    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, "N", 0, 0);
 
-
-
-
-
-
-
-
-
-
-    console.log("=============xxxx=======", carindata?.data?.td_vehicle_in?.receipt_number)
+    console.log(
+      "=============xxxx=======",
+      carindata?.data?.td_vehicle_in?.receipt_number,
+    );
     if (carindata.status) {
       ToastAndroid.showWithGravityAndOffset(
-        'receipt created successfully',
+        "receipt created successfully",
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,
-        50
+        50,
       );
 
       let payloadHeader = "";
       let payloadFooter = "";
-      let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString().slice(-5)
+      let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
+        .toString()
+        .slice(-5);
+      let advanceAmount = "";
 
       try {
-
-
         if (receiptSettings.header1_flag == 1) {
-          payloadHeader +=
-            `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+          payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
         }
 
         if (receiptSettings.header2_flag == 1) {
@@ -222,6 +233,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
         }
 
+        if (generalSettings.adv_pay == "Y") {
+          advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        }
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
@@ -235,7 +249,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-            `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime)}</font>\n` +
+            // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
+            `${advanceAmount}\n` +
+            `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(
+              currentTime,
+            )}</font>\n` +
             `[C]-------------------------------\n` +
             `[C]${payloadFooter}\n`,
           printerNbrCharactersPerLine: 30,
@@ -243,44 +261,35 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           printerWidthMM: 58,
           mmFeedPaper: 25,
         });
-
-
-
       } catch (err) {
-        ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
+        ToastAndroid.show(
+          "ThermalPrinterModule - ReceiptScreen",
+          ToastAndroid.SHORT,
+        );
         console.log(err.message);
       }
-
-
-
 
       navigation.navigate("ReceiptScreen");
 
       // navigation.navigate("ReceiptScreen");
     } else {
-
-
       setLoading(false);
       setVehicleNumber("");
+      setVehicleAdv("");
       ToastAndroid.showWithGravityAndOffset(
-        'Sorry, receipt creation failed',
+        "Sorry, receipt creation failed",
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,
-        50
+        50,
       );
-
-
 
       setLoading(false);
       setVehicleNumber("");
+      setVehicleAdv("");
       // navigate to previous screen
       navigation.navigate("ReceiptScreen");
     }
-
-
-
-
   };
 
   return (
@@ -369,6 +378,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
               onChangeText={setVehicleNumber}
             />
           </View>
+
+          {generalSettings.adv_pay == "Y" && (
+            <View style={{ marginTop: normalize(20) }}>
+              <Text style={styles.vehicle_text}>Vechicle Advance</Text>
+              <RoundedInputComponent
+                placeholder={"Enter Advance Amount"}
+                value={vehicleAdv}
+                onChangeText={setVehicleAdv}
+                keyboardType="numeric"
+              />
+            </View>
+          )}
+
+          {/* ......... vehicle Advance Amount .......... */}
+
           {/*............... action buttons ......... */}
           <View
             style={{

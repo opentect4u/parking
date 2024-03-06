@@ -180,6 +180,7 @@ export default function ReceiptScreen({ navigation }) {
     navigation.navigate("create_receipt", {
       type: props.vehicle_name,
       id: props.vehicle_id,
+      // adv: props.adv,
       userId: userDetails?.user_id,
       operatorName: userDetails?.operator_name,
       // receiptNo: receiptNo,

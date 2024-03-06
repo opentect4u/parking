@@ -23,5 +23,6 @@ export const ADDRESSES = {
   DASHBOARD_DATA: `${BASE_URL}/report/dashboard`,
   SHIFTWISE_REPORT_DATA: `${BASE_URL}/report/shift_wise_report`,
   APP_UPDATE: `${BASE_URL}/appupdate`,
-  CHECKED_REPORT_PASSWORD:`${BASE_URL}/auth/check_report_password`
+  CHECKED_REPORT_PASSWORD:`${BASE_URL}/auth/check_report_password`,
+  CHECK_ADV_AMOUNT:`${BASE_URL}/car/car_advance_amount`
 };

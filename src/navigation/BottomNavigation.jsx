@@ -11,8 +11,7 @@ import OutpassNavigation from "./OutpassNavigation";
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  const { receiptScreen, outpassScreen, reportScreen, settingsScreen } =
-    navigationRoutes;
+  const { receiptScreen, outpassScreen, reportScreen, settingsScreen } = navigationRoutes;
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod } = generalSettings;
