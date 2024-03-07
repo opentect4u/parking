@@ -81,6 +81,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
   // useEffect(() => {
   //   getOperatorwiseReport(mydateFrom, mydateTo);
   // }, [mydateFrom, mydateTo]);
+  console.log(operatorwiseReports, '___operatorwiseReports');
 
   const submitDetails = async () => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
@@ -138,7 +139,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.adv_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.adv_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
 
@@ -183,11 +184,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Name.   Count   Advance   Amount</font>\n` +
+          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   TOTAL: ${totalAmount}</font>\n` +
+          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -279,6 +280,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           <View>
             <ScrollView>
               <View style={styles.container}>
+              {operatorwiseReports.length!=0 &&(
                 <View style={[styles.row, styles.header]}>
                   {/* <Text style={[styles.headerText, styles.hcell]}>Sl. No.</Text> */}
                   <Text style={[styles.headerText, styles.hcell]}>
@@ -286,14 +288,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   </Text>
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
                   <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Amount
-                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Paid </Text>
 
                   {/* <Text style={[styles.headerText, styles.hcell]}>
                     Paid Amt.
                   </Text> */}
                 </View>
+              )}
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
@@ -320,33 +321,46 @@ export default function OperatorWiseReportScreen({ navigation }) {
                       </View>
                     );
                   })}
-                {
+                  {operatorwiseReports.length!=0 &&(
+                  <>
                   <View
-                    style={{
-                      ...styles.row,
-                      backgroundColor: colors["primary-color"],
+                    style={{...styles.row, backgroundColor: colors["primary-color"],
                     }}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Total
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}></Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {totalAdvanceAmount}
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {totalAmount}
-                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}> Advance Amount </Text>
+                    <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
                     {/* <Text style={[styles.cell, styles.hcell]}>
                       {detailedReportData && totalPrice}
                     </Text>
                     <Text style={[styles.cell]}>{item.age}</Text> */}
                   </View>
-                }
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Paid Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {totalAmount}
+                    </Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Net Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                    {totalAmount + totalAdvanceAmount}
+                  </Text>
+                  </View>
+
+                  
+                  
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
                     Report Generated on {date.toLocaleString()}{" "}
                   </Text>
                 </View>
+                </>
+                )}
               </View>
             </ScrollView>
           </View>

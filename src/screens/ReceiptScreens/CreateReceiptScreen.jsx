@@ -29,6 +29,7 @@ import useCarIn from "../../hooks/api/useCarIn";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
 
+
 // import React, { useState, useEffect, useContext } from "react";
 
 const CreateReceiptScreen = ({ navigation, route }) => {
@@ -160,6 +161,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       );
     }
 
+    if (generalSettings.adv_pay == "Y"){
     if (!vehicleAdv) {
       setLoading(false);
       return ToastAndroid.showWithGravity(
@@ -168,6 +170,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         ToastAndroid.CENTER,
       );
     }
+  }
 
 
 
@@ -202,6 +205,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         .toString()
         .slice(-5);
       let advanceAmount = "";
+
+      const options = {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        // second: '2-digit',
+      };
+
+      const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
+      const formatDateTime = dateTime => {
+        return `${dateTime.toLocaleDateString(
+          "en-GB",
+          dateoptions,
+        )} ${dateTime.toLocaleTimeString(undefined, options)}`;
+      };
 
       try {
         if (receiptSettings.header1_flag == 1) {
@@ -250,10 +268,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
             // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-            `${advanceAmount}\n` +
-            `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(
-              currentTime,
-            )}</font>\n` +
+            `${advanceAmount}` +
+            // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
+            `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
             `[C]-------------------------------\n` +
             `[C]${payloadFooter}\n`,
           printerNbrCharactersPerLine: 30,

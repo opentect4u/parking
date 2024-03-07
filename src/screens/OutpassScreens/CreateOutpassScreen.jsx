@@ -73,7 +73,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
 
-  console.log("=====================cccccccccccccccccccc======================", totalRate?.vDatainfo)
+  // console.log("=====================cccccccccccccccccccc======================", totalRate?.vDatainfo)
   // console.log("xjdfhgiuvhdiuhgiusheirghiuerdrgiierjgki",vDatainfo)
 
   const handlePrintReceipt = async () => {
@@ -91,7 +91,10 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, gstSettings?.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
     } else {
 
-      console.log("//////////////////////////////////////////////////////////////",deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, 'N', others.vehicle_id, others.vehicle_no, others.date_time_in)
+      // console.log("//////////////////////",deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, 'N', others.vehicle_id, others.vehicle_no, others.date_time_in)
+      
+      console.log("//////////////////////",totalRate.base_amt, '<== Base Amount', 'Paid Amount ==> ', paid_amt)
+      
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, "N", others.vehicle_id, others.vehicle_no, others.date_time_in);
     }
 
@@ -227,7 +230,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
             data.map((props, index) => (
               <View key={index}>
                 <View style={styles.inLineTextContainer}>
-                  <Text style={styles.text}>{props?.label}</Text>
+                  <Text style={styles.text}>{props?.label} </Text>
                   <Text style={styles.text}> : {props?.value}</Text>
                 </View>
                 <View

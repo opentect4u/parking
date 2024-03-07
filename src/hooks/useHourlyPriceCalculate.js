@@ -1,13 +1,22 @@
+import { Alert } from "react-native";
+
 function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
 
 
     // let price = 0;
 
+    
+    // let graceTim = 00:
+    // Alert(grace_period)
+
     const dateTimeInT = new Date(dateTimeIn)
 
     const dateTimeOutT = new Date(dateTimeOut)
 
+
+
     const totalHours = Math.ceil((dateTimeOutT - dateTimeInT) / (1000 * 60 * 60))
+
 
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
@@ -188,6 +197,7 @@ function calculateNightHours(nightTimeStart, nightTimeEnd, dateTimeIn, dateTimeO
 
 
 function calculatePrice(hours, heyData) {
+    console.log(hours, 'UUUUUUUUUUUUU__');
 
     let price = 0;
 

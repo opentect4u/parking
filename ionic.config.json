@@ -1,0 +1,7 @@
+{
+  "name": "ParkingOnline",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

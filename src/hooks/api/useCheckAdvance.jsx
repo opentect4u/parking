@@ -7,7 +7,7 @@ function useCheckAdvance() {
         
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
-            console.log(receipt_no, 'lllllllllllll')
+            // console.log(receipt_no, 'lllllllllllll')
              axios.post(
                     ADDRESSES.CHECK_ADV_AMOUNT,
                     {

@@ -111,7 +111,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
   // };
 
   useEffect(() => {
-    console.log("General Settings Called - GeneralSettingsScreen");
+    // console.log("GeneralSettingsScreen___", getGeneralSettings);
     const generalSettings = getGeneralSettings();
     return () => clearInterval(generalSettings);
   }, []);
@@ -136,7 +136,11 @@ const GeneralSettingsScreen = ({ navigation }) => {
     total_collection,
     updated_at,
     vehicle_no,
+    grace_period_flag,
+    grace_value
   } = generalSettings;
+
+  console.log(generalSettings.grace_period_flag, 'grace_period_', generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
 
   return (
     <View style={{ flex: 1 }}>
@@ -247,6 +251,31 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   value={""}
                   placeholder={"enter amount"}
                   onChangeText={value => handleChange(advancedPayment, value)}
+                />
+              </SettingComponent>
+            )}
+
+            {/* Grace period */}
+            {grace_period_flag && (
+              <SettingComponent
+                icon={icons.time}
+                text={"Grace Period"}>
+                <CustomSwitch
+                  isEnabled={grace_period_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+            )}
+
+            {/* Grace Period Time  */}
+            {grace_value && (
+              <SettingComponent
+                icon={icons.time}
+                text={"Grace Period Time"}>
+                <CustomInputComponent.InputComponentWithText
+                  // show={true}
+                  value={grace_value.toString()}
+                  // onChangeText={(value) => handleChange("maximumReceipt", value)}
                 />
               </SettingComponent>
             )}

@@ -288,7 +288,7 @@ export default function OutpassScreen({ navigation }) {
     setLoading(false);
     setDisabled(false);
 
-    console.log("///////////////XXXXXXXXXXXXXXXCCCCCCCCCCCCC")
+    // console.log("///////////////XXXXXXXXXXXXXXXCCCCCCCCCCCCC")
 
   }, [isFocused]);
 

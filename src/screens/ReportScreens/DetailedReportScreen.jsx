@@ -66,7 +66,7 @@ export default function DetailedReportScreen({ navigation }) {
 
 
   // let totalAmount = 0;
-  let totalAdvanceAmount = 0;
+
 
   const [mydateTo, setDateTo] = useState(new Date());
   const [displaymodeTo, setModeTo] = useState("date");
@@ -81,13 +81,26 @@ export default function DetailedReportScreen({ navigation }) {
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
   let totalAmount = 0;
+  let totalAdvanceAmount = 0;
+  // let totalNetAmount = 0;
 
   const submitDetails = async() => {
+
+    // {getDetailedReport &&
+    //   getDetailedReport.map((item, index) => {
+    //     totalAmount += item.paid_amt;
+    //     return (
+          
+    //         <Text style={[styles.cell]}>{item.advance_amt}</Text>
+            
+    //     );
+    //   })}
+
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data= await detailedReportScreen(formattedDateFrom, formattedDateTo);
-    // console.log("11111111111111111111111///////////",rep_data?.data?.msg)
+    console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
 
     setgetDetailedReport(rep_data?.data?.msg)
 
@@ -128,7 +141,7 @@ export default function DetailedReportScreen({ navigation }) {
     }
   }
 
-
+  console.log(getDetailedReport, '___ddddddddddd');
 
   const handlePrint = async () => {
     await checkLocationEnabled();
@@ -140,8 +153,8 @@ export default function DetailedReportScreen({ navigation }) {
     getDetailedReport.map((item, index) => {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
-      console.log("datetume",datetume)
-        payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()}    ${datetume}[R]${item.paid_amt.toString()}</font>`
+      // console.log("datetume",datetume)
+        payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${item.advance_amt} [R]${item.paid_amt.toString()}</font>`
     });
 
 
@@ -196,11 +209,11 @@ export default function DetailedReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Rec.No.   Veh.No.   InTime   Amt</font>\n` +
+          `[C]<font size='12'>Rec.No. Veh.No. InTime Adv Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   TOTAL: ${totalAmount}</font>\n` +
+          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -311,11 +324,14 @@ export default function DetailedReportScreen({ navigation }) {
                   </Text>
                   <Text style={[styles.headerText, styles.hcell]}>In Time</Text>
 
-                  <Text style={[styles.headerText, styles.hcell]}>Amount</Text>
+                  <Text style={[styles.headerText, styles.hcell, styles.marg_left]}>Adv</Text>
+
+                  <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
                 </View>
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     totalAmount += item.paid_amt;
+                    totalAdvanceAmount += item.advance_amt;
                     return (
                       <View
                         style={[
@@ -328,20 +344,24 @@ export default function DetailedReportScreen({ navigation }) {
                         <Text style={[styles.cell]}>
                           {new Date(item.date_time_in).toLocaleString("en-GB")}
                         </Text>
-
+                        <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text>
                         <Text style={[styles.cell]}>{item.paid_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                       </View>
                     );
                   })}
                 {
-                  <View
-                    style={{
-                      ...styles.row,
-                      backgroundColor: colors["primary-color"],
-                    }}>
+                  <>
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
-                      Total Amount
+                      Advance Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Paid Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                       {totalAmount}
@@ -354,6 +374,24 @@ export default function DetailedReportScreen({ navigation }) {
                   </Text> */}
                     {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                   </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Net Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                    {totalAmount + totalAdvanceAmount}
+
+                  {/* {totalAmount < totalAdvanceAmount ? (
+                  totalAdvanceAmount + totalAmount
+                  ) : (
+                  totalAdvanceAmount + totalAmount
+                  )} */}
+                  </Text>
+
+                  </View>
+
+                  </>
                 }
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
@@ -467,6 +505,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.white,
   },
+  marg_left:{marginLeft:25},
   oddbg: {},
 
   evenBg: {

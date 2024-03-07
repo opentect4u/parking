@@ -73,7 +73,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
 
-  console.log("=====================cccccccccccccccccccc======================", totalRate?.vDatainfo)
+  // console.log("=====================cccccccccccccccccccc======================", totalRate?.vDatainfo)
   // console.log("xjdfhgiuvhdiuhgiusheirghiuerdrgiierjgki",vDatainfo)
 
   const handlePrintReceipt = async () => {

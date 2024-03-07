@@ -101,11 +101,18 @@ export default function ShiftWiseReportScreen({ navigation }) {
   //   getShiftwiseReport(mydateFrom, mydateTo);
   // }, [mydateFrom, mydateTo]);
 
+  let totalAmount = 0;
+  let totalAdvanceAmount = 0;
+
+  let displayBotBlue = false;
+
   const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
     let reportData= await shift_wise(formattedDateFrom,formattedDateTo,useShift)
     console.log("reportData",reportData.data.msg)
+
+    displayBotBlue = true;
 
 
     setOperatorData(reportData.data?.msg)
@@ -151,7 +158,8 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     useOperatorData.map((item, index) => {
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 6)}[C]${fixedString(item.tot_vehi.toString(), 10)}[R]${fixedString(item.tot_amt.toString(), 6)}</font>`
+      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
     if (receiptSettings.header1_flag == 1) {
@@ -194,9 +202,11 @@ export default function ShiftWiseReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Name   Count   Amount</font>\n` +
+          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
+          `[C]--------------------------------\n` +
+          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -224,7 +234,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
           Authorization: loginData.token,
         },
       }).then(res => {
-        console.log("lllllllllllll", res.data.data.msg);
+        // console.log("lllllllllllll", res.data.data.msg);
         setdeviceMode(res.data.data.msg)
       }).catch(err => {
         console.log("res - getShift", err)
@@ -333,6 +343,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
           <View>
             <ScrollView>
               <View style={styles.container}>
+              {useOperatorData.length!=0 &&(
                 <View style={[styles.row, styles.header]}>
                   <Text style={[styles.headerText, styles.hcell]}>Name</Text>
                   {/* <Text style={[styles.headerText, styles.hcell]}>
@@ -341,12 +352,17 @@ export default function ShiftWiseReportScreen({ navigation }) {
                   <Text style={[styles.headerText, styles.hcell]}>
                     Count.
                   </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>Amount</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
 
                   {/* <Text style={[styles.headerText, styles.hcell]}>Amount</Text> */}
                 </View>
+              )}
                 {useOperatorData &&
-                  useOperatorData.map((item, index) => (
+                  useOperatorData.map((item, index) => {
+                    totalAmount += item.tot_amt;
+                    totalAdvanceAmount += item?.advance_amt;
+                    return (
                     <View
                       style={[
                         styles.row,
@@ -357,11 +373,15 @@ export default function ShiftWiseReportScreen({ navigation }) {
                       {/* <Text style={[styles.cell]}>{item.vehicleType}</Text> */}
                       <Text style={[styles.cell]}>{item.tot_vehi}</Text>
 
+                      <Text style={[styles.cell]}>{item?.advance_amt}</Text>
+
                       <Text style={[styles.cell]}>{item.tot_amt}</Text>
                       {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                     </View>
-                  ))}
-                {
+                    );
+                })}
+
+                {useOperatorData.length!=0 &&(
                   //     <View
                   //   style={{
                   //     ...styles.row,
@@ -379,12 +399,38 @@ export default function ShiftWiseReportScreen({ navigation }) {
                   //   </Text>
                   //   {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                   // </View>
-                }
-                <View style={{}}>
+                  <>             
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                  Advance Amount
+                  </Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                  Paid Amount
+                  </Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAmount} </Text>
+
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                  Net Amount
+                  </Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAmount + totalAdvanceAmount} </Text>
+                  </View>
+
+                  <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
                     Report Generated on {date.toLocaleString()}{" "}
                   </Text>
                 </View>
+                  </>
+                  
+        )}
+                
               </View>
             </ScrollView>
           </View>

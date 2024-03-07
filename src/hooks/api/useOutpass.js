@@ -4,14 +4,14 @@ import { loginStorage } from "../../storage/appStorage";
 import HourlyPriceCalculate from "../useHourlyPriceCalculate";
 
 function useOutpass() {
-    const calculateTotalPrice = async (timestamp,vehicle_id,date_time_in,vehicle_no,end_time,inTimestamp) => {
+    const calculateTotalPrice = async (timestamp,vehicle_id,date_time_in,vehicle_no, grace_period, end_time,inTimestamp) => {
         // get Vehicle Rates By Id From Local Storage
         // const result = await getVehicleRatesByVehicleId(vehicleId);
         const result = await getVehicleRatesByVehicleId(vehicle_id);
-        // console.log("Calculating total",result);
+        // console.log("UTSABBBB__", grace_period);
         if (result[0]?.rate_type == 'H') {
             // If Rate type is H, H For Hourly
-            const price = HourlyPriceCalculate( result, date_time_in, end_time, );
+            const price = HourlyPriceCalculate( result, date_time_in, end_time, grace_period);
 
             return price;
         }

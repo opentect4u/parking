@@ -400,7 +400,7 @@ export const AuthProvider = ({ children }) => {
       let updateData=await appUpdate();
 
       let version = DeviceInfo.getVersion()
-      console.log("lllllllllllllllllll",updateData.data?.msg[0])
+      // console.log("lllllllllllllllllll",updateData.data?.msg[0])
       if(updateData.data?.msg[0]?.version > version && updateData.data?.msg[0]?.download_flag == 'Y'){
         Alert.alert(
           'Found Update!',
