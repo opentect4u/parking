@@ -24,7 +24,7 @@ export default function ReportScreen({ navigation }) {
   const [rep_ststus, setRepStstus] = useState(true);
 
   const { generalSettings } = useContext(AuthContext);
-  const { dev_mod } = generalSettings;
+  const { dev_mod, report_password_flag } = generalSettings;
 
   const { check_password } = useReprtsPassword()
 
@@ -33,7 +33,14 @@ export default function ReportScreen({ navigation }) {
 
   useEffect(() => {
     setPassword("");
-    setRepStstus(true);
+    
+    if(report_password_flag == 'Y'){
+      setRepStstus(true);
+    }
+
+    if(report_password_flag == 'N'){
+      setRepStstus(false);
+    }
   }, [isFocused]);
 
 
@@ -41,6 +48,7 @@ export default function ReportScreen({ navigation }) {
     setPassword(text);
   }
 
+  console.log(report_password_flag, 'report_password_flagreport_password_flag');
 
 
   const checked_password = async () => {
@@ -55,10 +63,14 @@ export default function ReportScreen({ navigation }) {
 
   return (
     <MainView>
+    {/* {report_password_flag == "Y" ( 
+          <View><Text>fghfhfghfgh</Text></View>
+        )} */}
       <CustomHeader title="Reports" />
       <ScrollView>
 
-        <View style={styles.modal_container}>
+      {report_password_flag == "Y" ? (
+    <View style={styles.modal_container}>
           <View style={styles.modalView}>
             <TextInput
               style={styles.input}
@@ -76,6 +88,9 @@ export default function ReportScreen({ navigation }) {
               
           </View>
         </View>
+        ) : null}
+
+        
 
 
         <View style={styles.report_container}>
@@ -121,6 +136,7 @@ export default function ReportScreen({ navigation }) {
             />
           </View>
         </View>
+
       </ScrollView>
     </MainView>
   );

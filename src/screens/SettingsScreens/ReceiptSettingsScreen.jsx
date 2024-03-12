@@ -119,7 +119,7 @@ const ReceiptSettingsScreen = ({ navigation }) => {
                 marginBottom: 5,
                 color: colors.black,
               }}>
-              Receipt 
+              Receipt
             </Text>
             <View style={styles.sectionStyle__Noborder}>
             <CustomSwitch
@@ -150,6 +150,28 @@ const ReceiptSettingsScreen = ({ navigation }) => {
             </View>
           </View>
         )}
+
+        {receiptSettings?.report_flag && (
+          <View style={{ marginBottom: 10 }}>
+            <Text
+              style={{
+                marginLeft: 10,
+                marginBottom: 5,
+                color: colors.black,
+              }}>
+              Report
+            </Text>
+            <View style={styles.sectionStyle__Noborder}>
+            <CustomSwitch
+                  isEnabled={receiptSettings?.report_flag == "Y" ? true : false}
+                  // isEnabled={true}
+                  handleChange={() => {}}
+                />
+            </View>
+          </View>
+        )}
+
+
         </View>
 
         
@@ -390,7 +412,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     padding:0
   },
-  header_footer_Group:{flexDirection: "row",justifyContent: 'flex-start'},
+  header_footer_Group:{flexDirection: "row",justifyContent: 'space-between'},
   text: {
     color: colors.black,
     fontWeight: "600",

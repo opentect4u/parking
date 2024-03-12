@@ -93,6 +93,7 @@ export default function Unbilled_Reports({ navigation }) {
     setgetDetailedReport(rep_data?.data?.msg)
     // console.log("11111111111111111111111///////////",getDetailedReportg)
     // getDetailedReport(formattedDateFrom, formattedDateTo);
+    // console.log(receiptSettings, '/////////////////////////////////////////////');
   };
 
 
@@ -142,7 +143,7 @@ export default function Unbilled_Reports({ navigation }) {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       console.log("datetume",datetume)
-        payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item.advance_amt}  [R] ${datetume}</font>`
+        payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item?.advance_amt}  [R] ${datetume}</font>`
     });
 
    
@@ -156,6 +157,7 @@ export default function Unbilled_Reports({ navigation }) {
 
     // Recpt.No.   Veh.No.   In Time   Amount
     
+    if(receiptSettings?.report_flag == "Y"){
 
     if(receiptSettings.header1_flag==1){
       payloadHeader +=
@@ -186,6 +188,7 @@ export default function Unbilled_Reports({ navigation }) {
     if(receiptSettings.footer4_flag==1){
       payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
     }
+  }
 
     try {
       await ThermalPrinterModule.printBluetooth({
@@ -306,7 +309,7 @@ export default function Unbilled_Reports({ navigation }) {
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
                   <Text style={[styles.headerText, styles.hcell]}>
-                    Rcpt. No.
+                    Rcpt. No gg.
                   </Text>
                   <Text style={[styles.headerText, styles.hcell]}>
                     Veh. No.
@@ -320,7 +323,7 @@ export default function Unbilled_Reports({ navigation }) {
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     {/* totalAmount += item.paid_amt; */}
-                    totalAdvanceAmount += item.advance_amt;
+                    totalAdvanceAmount += item?.advance_amt;
                     return (
                       <View
                         style={[

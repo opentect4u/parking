@@ -86,6 +86,9 @@ export default function DetailedReportScreen({ navigation }) {
 
   const submitDetails = async() => {
 
+      // receiptSettings
+  // console.log(receiptSettings, '___ddddddddddd');
+
     // {getDetailedReport &&
     //   getDetailedReport.map((item, index) => {
     //     totalAmount += item.paid_amt;
@@ -140,8 +143,8 @@ export default function DetailedReportScreen({ navigation }) {
       console.log("Error checking Bluetooth status:", error);
     }
   }
-
-  console.log(getDetailedReport, '___ddddddddddd');
+  // receiptSettings
+  // console.log(getDetailedReport, '___ddddddddddd');
 
   const handlePrint = async () => {
     await checkLocationEnabled();
@@ -168,6 +171,7 @@ export default function DetailedReportScreen({ navigation }) {
 
     // Recpt.No.   Veh.No.   In Time   Amount
     
+    if(receiptSettings?.report_flag == "Y"){
 
     if(receiptSettings.header1_flag==1){
       payloadHeader +=
@@ -198,6 +202,8 @@ export default function DetailedReportScreen({ navigation }) {
     if(receiptSettings.footer4_flag==1){
       payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
     }
+
+  }
 
     try {
       await ThermalPrinterModule.printBluetooth({

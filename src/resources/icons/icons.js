@@ -117,6 +117,10 @@ const time = (
   <Ionicons name="time-outline" size={30} color={colors["primary-color"]} />
 );
 
+const password = (
+  <MaterialIcons name="password" size={30} color={colors["primary-color"]} />
+);
+
 const paperRoll = (size, color) => (
   <MaterialCommunityIcons
     name="paper-roll-outline"
@@ -240,6 +244,9 @@ const timeSand = (
   />
 );
 
+
+
+
 const totalCollection = (
   <MaterialIcons name={"payments"} size={25} color={colors["primary-color"]} />
 );
@@ -310,6 +317,7 @@ export default icons = {
   truck,
   calendar,
   time,
+  password,
   receipt,
   setting,
   report,

@@ -162,6 +162,8 @@ export default function ShiftWiseReportScreen({ navigation }) {
       payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
+    if(receiptSettings?.report_flag == "Y"){
+
     if (receiptSettings.header1_flag == 1) {
       payloadHeader +=
         `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
@@ -191,6 +193,8 @@ export default function ShiftWiseReportScreen({ navigation }) {
     if (receiptSettings.footer4_flag == 1) {
       payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
     }
+
+  }
 
     try {
       await ThermalPrinterModule.printBluetooth({
@@ -259,7 +263,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
       filteredShifts.forEach(shift => {
 
 
-        console.log("///////////////////////////////////////////////////",shift.shift_name);
+        // console.log("///////////////////////////////////////////////////", useOperatorData);
         setShifName(shift.shift_name)
       });
   }
@@ -474,7 +478,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: PixelRatio.roundToNearestPixel(16),
     paddingBottom: PixelRatio.roundToNearestPixel(10),
-    fontWeight: "500",
+    fontWeight: "bold",
     color: colors.black,
   },
   select_date_button: {

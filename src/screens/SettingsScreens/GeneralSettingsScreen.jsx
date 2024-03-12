@@ -137,10 +137,11 @@ const GeneralSettingsScreen = ({ navigation }) => {
     updated_at,
     vehicle_no,
     grace_period_flag,
-    grace_value
+    grace_value,
+    report_password_flag
   } = generalSettings;
 
-  // console.log(generalSettings.grace_period_flag, 'grace_period_', generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
+  console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
 
   return (
     <View style={{ flex: 1 }}>
@@ -266,6 +267,19 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+            {/* All Reports Login */}
+            {grace_period_flag && (
+            <SettingComponent
+            icon={icons.password}
+            text={"All Reports Password"}>
+            <CustomSwitch
+            isEnabled={report_password_flag == "Y" ? true : false}
+            handleChange={() => {}}
+            />
+            </SettingComponent>
+            )}
+            
 
             {/* Grace Period Time  */}
             {grace_value && (

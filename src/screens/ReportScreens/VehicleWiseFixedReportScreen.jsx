@@ -145,7 +145,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     });
 
     
-
+    if(receiptSettings?.report_flag == "Y"){
+      
     if(receiptSettings.header1_flag==1){
       payloadHeader +=
       `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
@@ -175,6 +176,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     if(receiptSettings.footer4_flag==1){
       payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
     }
+
+  }
 
     try {
       await ThermalPrinterModule.printBluetooth({
