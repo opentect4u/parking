@@ -21,7 +21,6 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
     let price = calculatePrice(totalHours, onlyHourlyData)
-    console.log("last price is ", price)
 
     return price
 
@@ -197,7 +196,6 @@ function calculateNightHours(nightTimeStart, nightTimeEnd, dateTimeIn, dateTimeO
 
 
 function calculatePrice(hours, heyData) {
-    console.log(hours, 'UUUUUUUUUUUUU__');
 
     let price = 0;
 

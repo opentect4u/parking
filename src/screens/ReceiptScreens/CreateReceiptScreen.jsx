@@ -222,6 +222,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       };
 
       try {
+        if(receiptSettings?.IN_on_off == "Y"){
         if (receiptSettings.header1_flag == 1) {
           payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
         }
@@ -249,6 +250,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         }
         if (receiptSettings.footer4_flag == 1) {
           payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        }
+
         }
 
         if (generalSettings.adv_pay == "Y") {

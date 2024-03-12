@@ -16,6 +16,10 @@ import { launchImageLibrary } from "react-native-image-picker";
 import ImgToBase64 from "react-native-image-base64";
 import { AuthContext } from "../../context/AuthProvider";
 
+import CustomSwitch from "../../components/CustomSwitch";
+import icons from "../../resources/icons/icons";
+
+
 const ReceiptSettingsScreen = ({ navigation }) => {
   const { receiptSettings, getReceiptSettings } = useContext(AuthContext);
   const [pic, setPic] = useState();
@@ -41,6 +45,8 @@ const ReceiptSettingsScreen = ({ navigation }) => {
       })
       .catch(err => console.log("ERR -  launchImageLibrary", err));
   }
+
+  console.log(receiptSettings, 'receiptSettings__________');
 
   // const print = async () => {
   //     try {
@@ -101,6 +107,52 @@ const ReceiptSettingsScreen = ({ navigation }) => {
           borderRadius: 10,
           padding: 5,
         }}>
+
+
+
+<View style={styles.header_footer_Group}>
+        {receiptSettings?.IN_on_off && (
+          <View style={{ marginBottom: 10 }}>
+            <Text
+              style={{
+                marginLeft: 10,
+                marginBottom: 5,
+                color: colors.black,
+              }}>
+              Receipt 
+            </Text>
+            <View style={styles.sectionStyle__Noborder}>
+            <CustomSwitch
+                  isEnabled={receiptSettings?.IN_on_off == "Y" ? true : false}
+                  // isEnabled={true}
+                  handleChange={() => {}}
+                />
+            </View>
+          </View>
+        )}
+
+        {receiptSettings?.OUT_on_off && (
+          <View style={{ marginBottom: 10 }}>
+            <Text
+              style={{
+                marginLeft: 10,
+                marginBottom: 5,
+                color: colors.black,
+              }}>
+              OutPass
+            </Text>
+            <View style={styles.sectionStyle__Noborder}>
+            <CustomSwitch
+                  isEnabled={receiptSettings?.OUT_on_off == "Y" ? true : false}
+                  // isEnabled={true}
+                  handleChange={() => {}}
+                />
+            </View>
+          </View>
+        )}
+        </View>
+
+        
         {/* Heading 1 */}
         {receiptSettings?.header1_flag != "0" && (
           <View style={{ marginBottom: 10 }}>
@@ -248,8 +300,14 @@ const ReceiptSettingsScreen = ({ navigation }) => {
               <Text>NO DATA AVAILABLE</Text>
             )}
         </View>
+
+
+        
+
+
+        
         {/* IMAGE CONTAINER */}
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        {/* <View style={{ flexDirection: "row", gap: 10 }}>
           <TouchableOpacity>
             {pic && (
               <Image
@@ -258,6 +316,8 @@ const ReceiptSettingsScreen = ({ navigation }) => {
               />
             )}
           </TouchableOpacity>
+
+          
 
           <TouchableOpacity
             style={{
@@ -280,14 +340,15 @@ const ReceiptSettingsScreen = ({ navigation }) => {
                 console.log("deleteReceiptImage();");
               }}
             />
-          )}
+          )} */}
 
           {/* <TouchableOpacity style={{ borderStyle: 'dashed', borderRadius: 10, borderColor: colors['primary-color'], borderWidth: 2, width: 100 }} onPress={print}>
                         <Text style={{ padding: 20 }}>
                             loop
                         </Text>
                     </TouchableOpacity> */}
-        </View>
+        {/* </View> */}
+
       </ScrollView>
     </View>
   );
@@ -316,6 +377,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     marginHorizontal: 2,
   },
+  sectionStyle__Noborder: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    width: "98%",
+    // height: PixelRatio.roundToNearestPixel(50),
+    borderColor: colors.black,
+    borderWidth: 0,
+    // borderRadius: PixelRatio.roundToNearestPixel(10),
+    paddingHorizontal: 2,
+    marginHorizontal: 2,
+    padding:0
+  },
+  header_footer_Group:{flexDirection: "row",justifyContent: 'flex-start'},
   text: {
     color: colors.black,
     fontWeight: "600",

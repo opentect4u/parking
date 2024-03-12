@@ -134,7 +134,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
         // `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-
+        if(receiptSettings?.OUT_on_off == "Y"){
         if (receiptSettings.header1_flag == 1) {
           payloadHeader +=
             `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
@@ -164,6 +164,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         if (receiptSettings.footer4_flag == 1) {
           payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
         }
+
+      }
 
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);

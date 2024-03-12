@@ -396,7 +396,6 @@ export const AuthProvider = ({ children }) => {
 
  
   const checkedAppUpdate=async()=>{
-    console.log("zdfgvzesrf")
       let updateData=await appUpdate();
 
       let version = DeviceInfo.getVersion()

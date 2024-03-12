@@ -65,7 +65,7 @@ export default function Unbilled_Reports({ navigation }) {
   };
 
 
-  // let totalAmount = 0;
+  let totalAmount = 0;
   let totalAdvanceAmount = 0;
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -80,17 +80,18 @@ export default function Unbilled_Reports({ navigation }) {
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
-  let totalAmount = 0;
 
   const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data= await unbilledReportData(formattedDateFrom, formattedDateTo);
-    console.log("11111111111111111111111///////////",rep_data?.data?.msg)
+
+    
+    
 
     setgetDetailedReport(rep_data?.data?.msg)
-
+    // console.log("11111111111111111111111///////////",getDetailedReportg)
     // getDetailedReport(formattedDateFrom, formattedDateTo);
   };
 
@@ -141,10 +142,10 @@ export default function Unbilled_Reports({ navigation }) {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       console.log("datetume",datetume)
-        payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()}[R] ${datetume}</font>`
+        payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item.advance_amt}  [R] ${datetume}</font>`
     });
 
-
+   
     /* The above code is rendering three `<Text>` components in a React component. */
     // <Text style={[styles.cell]}>{(item.receipt_no).toString().slice(-5)} </Text>
     // <Text style={[styles.cell]}>{item.vehicle_no}</Text>
@@ -196,11 +197,12 @@ export default function Unbilled_Reports({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Rec.No.   Veh.No.   InTime</font>\n` +
+          `[C]<font size='normal'>Rec.No.  Veh.No.  Adv.  InTime</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   TOTAL: ${totalAmount}</font>\n` +
+          // `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   TOTAL: ${totalAmount}</font>\n` +
+          `[L]<font size='normal'>TOTAL ADVANCE: ${totalAdvanceAmount} </font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -309,13 +311,16 @@ export default function Unbilled_Reports({ navigation }) {
                   <Text style={[styles.headerText, styles.hcell]}>
                     Veh. No.
                   </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Adv.</Text>
+
                   <Text style={[styles.headerText, styles.hcell]}>In Time</Text>
 
                   {/* <Text style={[styles.headerText, styles.hcell]}>Amount</Text> */}
                 </View>
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
-                    totalAmount += item.paid_amt;
+                    {/* totalAmount += item.paid_amt; */}
+                    totalAdvanceAmount += item.advance_amt;
                     return (
                       <View
                         style={[
@@ -325,6 +330,7 @@ export default function Unbilled_Reports({ navigation }) {
                         key={index}>
                         <Text style={[styles.cell]}>{(item.receipt_no).toString().slice(-5)} </Text>
                         <Text style={[styles.cell]}>{item.vehicle_no}</Text>
+                        <Text style={[styles.cell]}>{item.advance_amt}</Text>
                         <Text style={[styles.cell]}>
                           {new Date(item.date_time_in).toLocaleString("en-GB")}
                         </Text>
@@ -341,10 +347,10 @@ export default function Unbilled_Reports({ navigation }) {
                       backgroundColor: colors["primary-color"],
                     }}>
                     <Text style={[styles.cell, styles.hcell]}>
-                      Total Amount
+                      Total Advance Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                      {totalAmount}
+                      {totalAdvanceAmount}
                     </Text>
                     {/* <Text style={[styles.cell, styles.hcell]}>
                     {detailedReportData && totalAdvance}

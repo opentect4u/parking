@@ -100,7 +100,7 @@ export default function DetailedReportScreen({ navigation }) {
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data= await detailedReportScreen(formattedDateFrom, formattedDateTo);
-    console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
+    // console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
 
     setgetDetailedReport(rep_data?.data?.msg)
 

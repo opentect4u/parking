@@ -140,7 +140,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     grace_value
   } = generalSettings;
 
-  console.log(generalSettings.grace_period_flag, 'grace_period_', generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
+  // console.log(generalSettings.grace_period_flag, 'grace_period_', generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
 
   return (
     <View style={{ flex: 1 }}>
