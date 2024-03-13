@@ -15,9 +15,11 @@ function BottomNavigation() {
   const { receiptScreen, outpassScreen, reportScreen, settingsScreen } = navigationRoutes;
 
   const { generalSettings } = useContext(AuthContext);
-  const { dev_mod } = generalSettings;
+  const { dev_mod, report_flag } = generalSettings;
 
-  
+  // console.log(report_flag, '////////////////////////UTSABBBB');
+
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -27,7 +29,9 @@ function BottomNavigation() {
       }}
       initialRouteName={receiptScreen}>
       {/* Receipt Screen */}
-      {
+
+      {/* report_flag == "Y" && ( */}
+      { 
         <Tab.Screen
           name={"Receipt_Navigation"}
           options={{
@@ -51,6 +55,7 @@ function BottomNavigation() {
       )}
 
       {/* report genarate */}
+      {report_flag == "Y" && ( 
       <Tab.Screen
         name="Reports_Navigation"
         options={{
@@ -59,6 +64,7 @@ function BottomNavigation() {
         }}
         component={ReportsNavigation}
       />
+      )}
 
       {/*Setting Screen */}
       <Tab.Screen

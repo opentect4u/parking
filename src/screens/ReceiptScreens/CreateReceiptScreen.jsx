@@ -320,7 +320,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
       // Utsab Roy Work
       // navigate to previous screen
-      // navigation.navigate("ReceiptScreen");
+      navigation.navigate("ReceiptScreen");
 
       // if(generalSettings.redirection_flag == "Y"){
       //   navigation.navigate("ReceiptScreen");

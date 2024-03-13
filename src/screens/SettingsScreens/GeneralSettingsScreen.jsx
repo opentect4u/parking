@@ -142,7 +142,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     redirection_flag
   } = generalSettings;
 
-  console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
+  // console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
 
   return (
     <View style={{ flex: 1 }}>
@@ -151,7 +151,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
         <ScrollView style={{ flex: 1, margin: 10 }}>
           <View>
             {/* display language */}
-            {mc_lang && (
+            {/* {mc_lang && (
               <SettingComponent icon={icons.language} text={"Display Language"}>
                 <CustomDropdown
                   data={language}
@@ -159,7 +159,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   onChange={e => handleChange("language", e)}
                 />
               </SettingComponent>
-            )}
+            )} */}
 
             {/* device Mode */}
             {dev_mod && (
@@ -182,8 +182,10 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+
             {/* OTP Validation */}
-            {otp_val && (
+            {/* {otp_val && (
               <SettingComponent
                 icon={icons.onepassword}
                 text={"OTP Validation"}>
@@ -192,7 +194,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   handleChange={() => {}}
                 />
               </SettingComponent>
-            )}
+            )} */}
 
             {/* Sign in session */}
             {signIn_session && (
@@ -221,7 +223,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
             )}
 
             {/* Mandotary Vehicle No. */}
-            {vehicle_no && (
+            {/* {vehicle_no && (
               <SettingComponent
                 icon={icons.mandotaryVehicle}
                 text={"Mandotary Vehicle Number"}>
@@ -230,7 +232,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   handleChange={() => {}}
                 />
               </SettingComponent>
-            )}
+            )} */}
 
             {/* Advanced Payment*/}
             {adv_pay && (
@@ -326,8 +328,9 @@ const GeneralSettingsScreen = ({ navigation }) => {
               </SettingComponent>
             )}
 
+
             {/* Maximum Receipt */}
-            {max_receipt && (
+            {/* {max_receipt && (
               <SettingComponent
                 icon={icons.receipt(colors["primary-color"], 25)}
                 text={"Maximum Receipt"}>
@@ -337,10 +340,11 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   // onChangeText={(value) => handleChange("maximumReceipt", value)}
                 />
               </SettingComponent>
-            )}
+            )} */}
+
 
             {/*Reset Receipt No */}
-            {reset_recipeit_no && (
+            {/* {reset_recipeit_no && (
               <SettingComponent
                 icon={icons.resetReceipt}
                 text={"Reset Receipt No"}>
@@ -350,7 +354,9 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   onChange={e => handleChange("resetReceiptNo", e)}
                 />
               </SettingComponent>
-            )}
+            )} */}
+
+            
           </View>
         </ScrollView>
       )}
