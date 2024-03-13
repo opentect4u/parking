@@ -17,6 +17,7 @@ function BottomNavigation() {
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod } = generalSettings;
 
+  
   return (
     <Tab.Navigator
       screenOptions={{
