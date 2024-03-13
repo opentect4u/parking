@@ -106,6 +106,7 @@ const change_password = async (req, res) => {
     try {
         const schema = Joi.object({
             password: Joi.string().required(),
+            old_password: Joi.string(),
             confirm_password: Joi.string().valid(Joi.ref('password')).required().strict()
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -123,13 +124,13 @@ const change_password = async (req, res) => {
         let whr = `user_id='${userData.user_id}' AND allow_flag='Y' AND device_id='${userData.device_id}'`
         var user_info = await db_Select("password", 'md_user', whr, null)
         if ((user_info.msg).length == 1) {
-            if (await bcrypt.compare(value.password, user_info.msg[0].password)) {
+            if (await bcrypt.compare(value.old_password, user_info.msg[0].password)) {
                let fields=`password='${enc_pss}'`,
                whr=`user_id='${userData.user_id}' AND allow_flag='Y' AND device_id='${userData.device_id}'`
                var changepass= await db_Insert("md_user", fields, null, whr, 1)
                res.json(sendOkResponce("Password change successfully ", null));
             } else {
-                res.json(sendErrorResponce(null, 'invalid password'));
+                res.json(sendErrorResponce(null, 'invalid old password'));
             }
         } else {
             res.json(sendErrorResponce(null, 'invalid username'));
