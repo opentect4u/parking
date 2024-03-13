@@ -121,6 +121,11 @@ const password = (
   <MaterialIcons name="password" size={30} color={colors["primary-color"]} />
 );
 
+const web = (
+  <Foundation name="web" size={30} color={colors["primary-color"]} />
+);
+
+
 const paperRoll = (size, color) => (
   <MaterialCommunityIcons
     name="paper-roll-outline"
@@ -318,6 +323,7 @@ export default icons = {
   calendar,
   time,
   password,
+  web,
   receipt,
   setting,
   report,

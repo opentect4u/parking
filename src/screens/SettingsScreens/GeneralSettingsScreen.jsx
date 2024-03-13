@@ -138,7 +138,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
     vehicle_no,
     grace_period_flag,
     grace_value,
-    report_password_flag
+    report_password_flag,
+    redirection_flag
   } = generalSettings;
 
   console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
@@ -275,6 +276,18 @@ const GeneralSettingsScreen = ({ navigation }) => {
             text={"All Reports Password"}>
             <CustomSwitch
             isEnabled={report_password_flag == "Y" ? true : false}
+            handleChange={() => {}}
+            />
+            </SettingComponent>
+            )}
+
+            {/* Home Redirection */}
+            {grace_period_flag && (
+            <SettingComponent
+            icon={icons.web}
+            text={"Home Redirection"}>
+            <CustomSwitch
+            isEnabled={redirection_flag == "Y" ? true : false}
             handleChange={() => {}}
             />
             </SettingComponent>

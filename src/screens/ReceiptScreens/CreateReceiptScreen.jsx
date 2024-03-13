@@ -186,10 +186,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, "N", 0, 0);
 
-    console.log(
-      "=============xxxx=======",
-      carindata?.data?.td_vehicle_in?.receipt_number,
-    );
+    // console.log(
+    //   "=============xxxx=======",
+    //   carindata?.data?.td_vehicle_in?.receipt_number,
+    // );
     if (carindata.status) {
       ToastAndroid.showWithGravityAndOffset(
         "receipt created successfully",
@@ -289,7 +289,17 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         console.log(err.message);
       }
 
-      navigation.navigate("ReceiptScreen");
+      if(generalSettings.redirection_flag == "Y"){
+        navigation.navigate("ReceiptScreen");
+      }
+
+      if(generalSettings.redirection_flag == "N"){
+        setLoading(false);
+
+        setVehicleNumber("");
+        setVehicleAdv("");
+      }
+      // navigation.navigate("ReceiptScreen");
 
       // navigation.navigate("ReceiptScreen");
     } else {
@@ -304,11 +314,24 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         50,
       );
 
-      setLoading(false);
+      setLoading(true);
       setVehicleNumber("");
       setVehicleAdv("");
+
+      // Utsab Roy Work
       // navigate to previous screen
-      navigation.navigate("ReceiptScreen");
+      // navigation.navigate("ReceiptScreen");
+
+      // if(generalSettings.redirection_flag == "Y"){
+      //   navigation.navigate("ReceiptScreen");
+      // }
+
+      // if(generalSettings.redirection_flag == "N"){
+      //   setLoading(false);
+
+      //   setVehicleNumber("");
+      //   setVehicleAdv("");
+      // }
     }
   };
 
