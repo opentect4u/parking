@@ -1,0 +1,194 @@
+<div class="container-fluid">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <%= title %>
+                </h4>
+                <div class="row dateCalenderField">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="frm_dt">From Date</label>
+                            <input type="date" id="frm_dt" name="frm_dt" class="form-control" required="">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="to_dt">To Date</label>
+                            <input type="date" id="to_dt" name="to_dt" class="form-control" required="">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="to_dt">Select Shift</label>
+                            <!-- <input type="date" id="to_dt" name="to_dt" class="form-control" required=""> -->
+
+                            <select name="shift_id" id="shift_id" class="form-control" required="">
+
+                                <option value="">Select Shift</option>"
+                                <% shiftData.msg.forEach(function(item,index) {  %>
+                                <option value="<%= item.shift_id %>"><%= item.shift_name %> (<%= item.f_time %>-<%= item.t_time %>)</option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 searchBtnDataWis">
+                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-primary" id="btnSubmit">Search</button>
+                    </div>
+                </div>
+                <!-- <div class="card-body" id="resultDiv"> -->
+                    <div class="dateWiseDataTable" id="resultDiv">
+                    <h4 class="card-title">
+                        <center>
+                            <span id="searchCred"></span>
+                        </center>
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Operator Name</th>
+                                    <th scope="col">MC Srl.No.</th>
+                                    <th scope="col">Count</th>
+                                    <th scope="col">Advance Amount</th>
+                                    <th scope="col">Paid Amount</th>
+                                    <th scope="col">Net Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td scope="col" colspan="3">Total</td>
+                                    <td scope="col" id="tot_cnt"><b>0</b></td>
+                                    <td scope="col" id="tot_advance"><b>0</b></td>
+                                    <td scope="col" id="tot_paid"><b>0</b></td>
+                                    <td scope="col" id="tot_amt"><b>0</b></td>
+                                </tr>   
+                            </tfoot>
+                        </table>
+
+                        <a href="#" class="printBtnDate" onclick="printDiv()"><i class="fa fa-print"></i> Print</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/dateFormat.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#resultDiv').hide()
+        })
+    </script>
+    <script>
+        $('#btnSubmit').on('click', function(){
+            var frm_dt = $('#frm_dt').val()
+            var to_dt = $('#to_dt').val()
+            var shift_id = $('#shift_id').val()
+            
+            if(frm_dt != '' && to_dt != ''){
+                $.ajax({
+                    method: "POST",
+                    url: "/report/shift_wise_repo",
+                    data: { frm_dt, to_dt,shift_id },
+                    dataType: "html",
+                    beforeSend: function () {
+                        $(".preloader").fadeIn();
+                    },
+                    success: function (result) {
+                        var res = JSON.parse(result);
+                        var net_amt_tot = 0;
+                        var advance_amt_tot = 0;
+                        var paid_amt_tot = 0;
+                        var cnt_tot = 0;
+                        var tot_amt_tot = 0;
+                        $('#resultDiv').show()
+                        $('#resultDiv table tbody').empty()
+                        // console.log(res)
+                        if(res.suc > 0){
+                            if(res.msg.length > 0){
+                                $('#searchCred').text(`Shift Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
+                                let i = 1;
+                                for(let dt of res.msg){
+                                    advance_amt_tot += dt.advance_amt
+                                    paid_amt_tot += dt.paid_amt
+                                    net_amt_tot = (dt.advance_amt + dt.paid_amt)
+                                    tot_amt_tot += net_amt_tot
+                                    cnt_tot += dt.tot_vehi
+                                    $('#resultDiv table tbody').append(`
+                                    <tr>
+                                        <td>${i}</td>
+                                        <td>${dt.opratorName}</td>
+                                        <td>${dt.mc_srl_no_out}</td>
+                                        <td>${dt.tot_vehi}</td>
+                                        <td>${dt.advance_amt}</td>
+                                        <td>${dt.paid_amt}</td>
+                                        <td>${net_amt_tot}</td>
+                                    </tr>
+                                    `)
+                                    i++
+                                }
+                                $('#tot_advance').text(advance_amt_tot)
+                                $('#tot_paid').text(paid_amt_tot)
+                                $('#tot_amt').text(tot_amt_tot)
+                                $('#tot_cnt').text(cnt_tot)
+                            }else{
+                                $('#resultDiv table tbody').append('<tr><td colspan="5" class="text-center text-danger">No Data Found</td></tr>')
+                                $('#tot_advance').text(advance_amt_tot)
+                                $('#tot_paid').text(paid_amt_tot)
+                                $('#tot_amt').text(tot_amt_tot)
+                                $('#tot_cnt').text(cnt_tot)
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(".preloader").fadeOut();
+                    }
+                })
+            }
+        })
+    </script>
+
+<script>
+    function printDiv() {
+
+        var divToPrint = document.getElementById('resultDiv');
+
+        var WindowObject = window.open('', 'Print-Window');
+        WindowObject.document.open();
+        WindowObject.document.writeln('<!DOCTYPE html>');
+        WindowObject.document.writeln('<html><head><title></title><style type="text/css">');
+
+
+        WindowObject.document.writeln('@media print { .center { text-align: center;}' +
+            '                                         .inline { display: inline; }' +
+            '                                         .underline { text-decoration: underline; }' +
+            '                                         .left { margin-left: 315px;} ' +
+            '                                         .right { margin-right: 375px; display: inline; }' +
+            '                                          table { border-collapse: collapse; font-size: 10px;}' +
+            '                                          th, td { border: 1px solid black; border-collapse: collapse; padding: 6px; font-family: Arial, Helvetica, sans-serif;}' +
+            '                                           th, td {text-align: left;}' +
+            '.table .thead-dark th {color: #fff; background-color: #1c2d41;}'+
+            ' tfoot{font-weight: 700; color: #000;}'+
+            ' .printBtnDate{display: none;}'+
+            '                                         .border { border: 1px solid black; } ' +
+            '                                         .bottom { bottom: 5px; width: 100%; position: fixed ' +
+            '                                       ' +
+            '                                   } } </style>');
+        WindowObject.document.writeln('</head><body onload="window.print()">');
+        WindowObject.document.writeln(divToPrint.innerHTML);
+        WindowObject.document.writeln('</body></html>');
+        WindowObject.document.close();
+        // setTimeout(function () {
+        //     WindowObject.close();
+        // }, 10);
+
+    }
+</script>

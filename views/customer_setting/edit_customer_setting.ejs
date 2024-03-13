@@ -1,0 +1,89 @@
+
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Customer Edit Details</i></h2>
+          </div> 
+          <form action="/customer/edit_customer" id="myForm" method="post">
+            <input type="hidden" name="cust_id" value="<%= data.customer_id %>">
+          <div class="row mt-4">
+            <div class="form-group col-9">
+                <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+                <select name="cust_id"
+                class="form-control"
+                id="cust_id" disabled
+                >
+                <option value="">Select Customer Name</option>
+                <option value="<%= data.customer_id %>" <%= user.user_data.customer_id == data.customer_id ? 'selected' : '' %>><%= data.customer_name %></option>
+                </select>
+              </div>
+  
+              <div class="col-md-4 cust-toggle1">
+                <label for="adv_pay_flag" class="text-dark"><b>Advance Flag</b></label><br>
+                <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="adv_pay_flag"
+                  <%=(data.adv_pay=='Y')?'checked':''%>>
+              </div>  
+              <div class="col-md-4 cust-toggle1">
+                <label for="grace_flag" class="text-dark"><b>Grace Period Flag</b></label><br>
+                <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="grace_flag"
+                  <%=(data.grace_period_flag=='Y')?'checked':''%>>
+              </div>  
+                <div class="col-md-4" id="hide_grace">
+                  <div class="form-group">
+                      <label for="grace_value" class="text-dark"><b>Grace Value &nbsp;<span class=text-danger>(In Minute)</span></b></label>
+                      <input type="text" name="grace_value" id="grace_value" class="form-control"
+                          value="<%= data.grace_value != '' ? (data.grace_value.split(':').length > 0 ? data.grace_value.split(':')[1] : 0) : 0 %>">
+                  </div>
+              </div>
+            </div>
+          <div class="row mt-4">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+ 
+  <script>
+$('#grace_flag').on('change', function(){
+  if($(this).is(':checked')){
+    $('#hide_grace').show()
+    $('#grace_value').attr('required', 'required')
+  }else{
+    $('#grace_value').removeAttr('required')
+    $('#grace_value').val('00')
+    $('#hide_grace').hide()
+  }
+})
+  </script>
+  
+
+<script>
+  $(document).ready(function () {
+    <% if(data.grace_period_flag!='Y'){ %>
+      $('#grace_value').removeAttr('required')
+      $('#grace_value').val('00')
+      $('#hide_grace').hide()
+    <% } %>
+    $("#back").click(function () {
+      window.location.href = "/customer/customer_dt";
+    });
+  });
+</script>

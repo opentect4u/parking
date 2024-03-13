@@ -1,0 +1,98 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="row mt-4">
+            <h2 class="text-dark">Customer Setting</h2>
+          </div>
+          <div class="row mt-3">
+            <div class="form-group col-7">
+              <label for="cust_name"><b class="text-dark">Customer Name:</b></label>
+              <select name="cust_name" class="form-control" id="cust_name" required>
+                <option value="" class="text-dark">Select Customer Name</option>
+                <% data.msg.forEach(function(item2,index) { %>
+                  <option value="<%=item2.customer_id%>">
+                    <%=item2.customer_name%>
+                  </option>
+                  <% }); %>
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="example" class="table table-striped table-bordered show_data" style="width:100%">
+              <thead>
+                <tr>
+                  <th class="text-dark">Sl. No.</th>
+                  <th class="text-dark">Cust Name</th>
+                  <th class="text-dark">Advance Flag</th>
+                  <th class="text-dark">Grace Period Flag</th>
+                  <th class="text-dark">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="5" class="text-danger text-center">No Data Found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $('#cust_name').change(function () {
+      var customer_id = $(this).val()
+      var tbody = $(".show_data tbody");
+      $.ajax({
+        type: "GET",
+        url: "/customer/show_customer_dtls",
+        data: { customer_id: customer_id },
+        success: function (response) {
+          tbody.empty();
+          if (response.suc > 0 && response.msg.length > 0) {
+            $('#myBtn').hide()
+            response.msg.forEach(function (item, index) {
+              var flag = "Y";
+              var row =
+                "<tr>" +
+                "<td class='text-dark'>" +
+                (index + 1) +
+                "</td>" +
+                "<td class='text-dark'>" +
+                item.customer_name +
+                "</td>" +
+                "<td>" +
+                "<h3><span class='badge " + (item.adv_pay == flag ? 'badge-success' : 'badge-danger') + "'>" +
+                (item.adv_pay == flag ? 'Active' : 'Deactive') +
+                "</h3></span>" +
+                "</td>" +
+                "<td>" +
+                "<h3><span class='badge " + (item.grace_period_flag == flag ? 'badge-success' : 'badge-danger') + "'>" +
+                (item.grace_period_flag == flag ? 'Active' : 'Deactive') +
+                "</h3></span>" +
+                "</td>" +
+                "<td><a href='/customer/edit_customer_details?customer_id=" + item.customer_id + "' class='btn btn-info'><i class='fa fa-edit'></i></a></td>" +
+                "</tr>";
+              tbody.append(row);
+            });
+          } else {
+            $('.show_data tbody').append(`
+                <tr>
+                  <td colspan="4" class="text-danger text-center">No data found</td>
+                </tr>
+              `)
+          }
+  
+        },
+        error: function (error) {
+          console.log(error);
+          tbody.empty();
+  
+        },
+      });
+  
+    });
+  </script>
+  

@@ -1,0 +1,57 @@
+
+.dateWiseDataTable{padding-top: 10px;}
+.dateWiseDataTable h4{margin-bottom: 15px;}
+
+
+.dateWiseDataTable table tr td{font-size: 13px;}
+.dateWiseDataTable .table-bordered thead th {font-size: 13px;}
+.searchBtnDataWis button[type="button"]{margin-top: 33px;
+  padding: 7px 13px;
+  line-height: 16px;
+  font-size: 13px;}
+
+.dateWiseDataTable .table td, .dateWiseDataTable .table th {padding: 7px 7px;}
+
+.dateCalenderField .col-md-4 label{font-size: 13px;}
+.dateCalenderField .col-md-4 input[type="date"]{font-size: 13px;}
+
+a.printBtnDate{color: #5f76e8; 
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;}
+
+  tfoot{font-weight: 700; color: #000;}
+
+.siteLogo{
+  width: 100%;
+  height: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
