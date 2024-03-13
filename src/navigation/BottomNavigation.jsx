@@ -10,6 +10,7 @@ import OutpassNavigation from "./OutpassNavigation";
 
 const Tab = createBottomTabNavigator();
 
+
 function BottomNavigation() {
   const { receiptScreen, outpassScreen, reportScreen, settingsScreen } = navigationRoutes;
 
