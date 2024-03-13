@@ -1,4 +1,4 @@
-import { PixelRatio, StyleSheet, Text, View, ScrollView } from "react-native";
+import { PixelRatio, StyleSheet, Text, View, ScrollView,  ActivityIndicator, ToastAndroid} from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import colors from "../../resources/colors/colors";
@@ -13,12 +13,21 @@ import { loginStorage } from "../../storage/appStorage";
 
 const ChangePasswordScreen = ({ navigation }) => {
   const { changePassword, logout } = useContext(AuthContext);
+  const [oldpassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // const [loading, setLoading] = useState(() => false);
+
+  // useEffect(() => {
+  //   setLoading(false);
+  // }, []);
 
   // const handleChangePassword = async (password, confirmPassword) => {
   //   await changePassword(password, confirmPassword);
   // }
+
+  // console.log(password, 'Confirm__Pass', confirmPassword);
 
   // loginData = JSON.parse(loginStorage.getString("login-data"));
   const loginDataString = loginStorage.getString("login-data");
@@ -60,6 +69,23 @@ const ChangePasswordScreen = ({ navigation }) => {
           </View>
           {/* Change Password */}
           <View>
+
+          {/* {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "35%",
+            backgroundColor: '#fff',
+            padding: 20,
+            borderRadius: 10,
+          }}>
+          <ActivityIndicator size="large" />
+          <Text>Loading...</Text>
+        </View>
+      )} */}
+
+
             <View
               style={{
                 alignItems: "center",
@@ -85,6 +111,16 @@ const ChangePasswordScreen = ({ navigation }) => {
               {/* Action Button */}
 
               <View style={[estyles.login_container, estyles.login_container]}>
+
+              <InputCustom
+                  icon={icons.unlock}
+                  placeholder={"Old Password"}
+                  value={oldpassword}
+                  onChangeText={setOldPassword}
+                  keyboardType={"default"}
+                  secureTextEntry={true}
+                />
+
                 <InputCustom
                   icon={icons.unlock}
                   placeholder={"Password"}
@@ -125,8 +161,11 @@ const ChangePasswordScreen = ({ navigation }) => {
                     onAction={() =>
                       password && confirmPassword
                         ? password === confirmPassword
-                          ? changePassword(password, confirmPassword).then(
+                          ? changePassword(oldpassword, password, confirmPassword).then(
                               () => {
+
+                              
+                                setOldPassword("");
                                 setPassword("");
                                 setConfirmPassword("");
                                 logout();

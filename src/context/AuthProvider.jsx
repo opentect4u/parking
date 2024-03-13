@@ -352,12 +352,14 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const changePassword = async (password, confirmPassword) => {
+  const changePassword = async (oldpassword, password, confirmPassword) => {
+    // console.log(oldpassword, password, confirmPassword, 'ppppppppppppp');
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
         ADDRESSES.CHANGE_PASSWORD,
         {
+          old_password: oldpassword,
           password: password,
           confirm_password: confirmPassword,
         },
@@ -368,7 +370,22 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        console.log("Password changed successfully.");
+
+         
+        if(res.data.status == false){
+
+        alert(res.data.message)
+          // return res;
+
+          // ToastAndroid.showWithGravityAndOffset(
+          //   `${res.data.message}`,
+          //    ToastAndroid.SHORT,
+          //    ToastAndroid.CENTER,
+          //  );
+
+        }
+
+        console.log("Password changed successfully.",res.data.message);
       });
   };
 
