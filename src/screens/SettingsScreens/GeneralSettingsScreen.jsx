@@ -235,7 +235,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
             )} */}
 
             {/* Advanced Payment*/}
-            {adv_pay && (
+            {/* {adv_pay && (
               <SettingComponent
                 icon={icons.totalCollection}
                 text={"Advanced Payment"}>
@@ -244,7 +244,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   handleChange={() => {}}
                 />
               </SettingComponent>
-            )}
+            )} */}
 
             {/* Advanced Amount*/}
             {false && (
@@ -260,7 +260,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
             )}
 
             {/* Grace period */}
-            {grace_period_flag && (
+            {/* {grace_period_flag && (
               <SettingComponent
                 icon={icons.time}
                 text={"Grace Period"}>
@@ -269,7 +269,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   handleChange={() => {}}
                 />
               </SettingComponent>
-            )}
+            )} */}
 
             {/* All Reports Login */}
             {grace_period_flag && (
@@ -297,7 +297,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
             
 
             {/* Grace Period Time  */}
-            {grace_value && (
+            {/* {grace_value && (
               <SettingComponent
                 icon={icons.time}
                 text={"Grace Period Time"}>
@@ -307,7 +307,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                   // onChangeText={(value) => handleChange("maximumReceipt", value)}
                 />
               </SettingComponent>
-            )}
+            )} */}
 
             {/* Auto archive data*/}
             {auto_archive && (

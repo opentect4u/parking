@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext }  from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ReportScreen from "../screens/BottomNavigationScreens/ReportScreen";
 import navigationRoutes from "../routes/navigationRoutes";
@@ -7,10 +7,16 @@ import DetailedReportScreen from "../screens/ReportScreens/DetailedReportScreen"
 import ShiftWiseReportScreen from "../screens/ReportScreens/ShiftWiseReportScreen";
 import OperatorWiseReportScreen from "../screens/ReportScreens/OperatorWiseReportScreen";
 import Unbilled_Reports from "../screens/ReportScreens/Unbilled_Reports";
+import { AuthContext } from "../context/AuthProvider";
 
 const Stack = createNativeStackNavigator();
 
+
+
 const ReportsNavigation = () => {
+
+
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -22,10 +28,13 @@ const ReportsNavigation = () => {
         component={DetailedReportScreen}
       />
 
+      
       <Stack.Screen
-        name="Unbilled_Reports"
-        component={Unbilled_Reports}
+      name="Unbilled_Reports"
+      component={Unbilled_Reports}
       />
+      
+      
       <Stack.Screen
         name="Vehiclewise_Fixed_Report_Screen"
         component={VehicleWiseFixedReportScreen}

@@ -32,6 +32,9 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
   const { operator_wise } = usegetOperatorwiseReport()
 
+  const { generalSettings } = useContext(AuthContext);
+  const { dev_mod, report_password_flag, adv_pay } = generalSettings;
+
   const [detailedReportData, setDetailedReportData] = useState([]);
   const [operatorwiseReports, setOperatorwiseReports] = useState([]);
   // State for manage the  loading values
@@ -139,7 +142,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.adv_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>\n`
     });
 
 
@@ -187,11 +190,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
-          `[C]--------------------------------` +
-          `[C]${payloadBody}\n` +
+          `[L]<font size='normal'>Name.   Count       Received</font>\n` +
+          `[C]--------------------------------\n`+
+          `[L]\n${payloadBody}` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `[L]<font size='normal'>PECEIVED: ${totalAmount}  </font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -290,7 +293,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     Name
                   </Text>
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
-                  <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Advance</Text> */}
                   <Text style={[styles.headerText, styles.hcell]}>Paid </Text>
 
                   {/* <Text style={[styles.headerText, styles.hcell]}>
@@ -312,7 +315,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                         {/* <Text style={[styles.cell]}>{index}</Text> */}
                         <Text style={[styles.cell]}>{item.opratorName}</Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
-                        <Text style={[styles.cell]}>{item?.adv_amt}</Text>
+                        {/* <Text style={[styles.cell]}>{item?.adv_amt}</Text> */}
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
 
                         {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
@@ -326,16 +329,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   })}
                   {operatorwiseReports.length!=0 &&(
                   <>
-                  <View
+                  {/* <View
                     style={{...styles.row, backgroundColor: colors["primary-color"],
                     }}>
                     <Text style={[styles.cell, styles.hcell]}> Advance Amount </Text>
                     <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
-                    {/* <Text style={[styles.cell, styles.hcell]}>
-                      {detailedReportData && totalPrice}
-                    </Text>
-                    <Text style={[styles.cell]}>{item.age}</Text> */}
-                  </View>
+
+                  </View> */}
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
@@ -346,14 +346,14 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     </Text>
                   </View>
 
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Net Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                     {totalAmount + totalAdvanceAmount}
                   </Text>
-                  </View>
+                  </View> */}
 
                   
                   

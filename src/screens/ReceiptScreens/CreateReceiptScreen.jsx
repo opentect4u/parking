@@ -61,9 +61,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   // console.log(generalSettings.adv_pay, 'generalSettings__XXROYYYYYY');
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
+   
     const loginData = JSON.parse(loginStorage.getString("login-data"));
-    await axios
-      .post(
+    await axios.post(
         ADDRESSES.FIXED_RATE_DETAILS_LIST,
         { vehicle_id: id },
         // { dev_mod: devMode, vehicle_id: id },
@@ -72,20 +72,18 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             Authorization: loginData.token,
           },
         },
-      )
-      .then(res => {
+        
+      ).then(res => {
+        
         setFixedVehicleRateObject(res.data.data.msg[0]);
-        console.log(
-          "RES - getVehicleRateFixedByVehicleId",
-          res.data.data.msg[0],
-        );
-      })
-      .catch(err => {
+        console.log(generalSettings, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", res.data.data);
+      }).catch(err => {
         console.log(
           "ERR - getVehicleRateFixedByVehicleId - CreateReceiptScreen",
           err,
         );
       });
+
   };
 
   useEffect(() => {
@@ -106,6 +104,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }, [generalSettings]);
 
   useEffect(() => {
+    
     getVehicleRateFixedByVehicleId(dev_mod, id);
   }, []);
 
@@ -147,12 +146,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       return;
     }
 
+    console.log('Console____________1');
+    console.log(fixedVehicleRateObject, '///////fixedVehicleRateObject/////////');
     setLoading(true);
     // if vehicleNumber is blank then return from the below block
 
-    // console.log(vehicleNumber, 'vehicleNumber__UTSA');
+    console.log("111111111111111111111111");
 
     if (!vehicleNumber) {
+      console.log('Console____________1');
       setLoading(false);
       return ToastAndroid.showWithGravity(
         "Please add the vehicle number to continue.",
@@ -161,30 +163,45 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       );
     }
 
-    if (generalSettings.adv_pay == "Y"){
-    if (!vehicleAdv) {
-      setLoading(false);
-      return ToastAndroid.showWithGravity(
-        "Please add Advance Amount to continue.",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
-      );
-    }
-  }
+  //   if (generalSettings.adv_pay == "Y"){
+  //   if (!vehicleAdv) {
+  //     setLoading(false);
+  //     return ToastAndroid.showWithGravity(
+  //       "Please add Advance Amount to continue.",
+  //       ToastAndroid.SHORT,
+  //       ToastAndroid.CENTER,
+  //     );
+  //   }
+  // }
 
 
 
-    // let vehicleRate = parseInt(fixedVehicleRateObject.vehicle_rate);
+    // let vehicleId = parseInt(id);
+
+    let vehicleRate = parseInt(fixedVehicleRateObject?.vehicle_rate);
+    let paidamt = vehicleRate;
     let vehicleId = parseInt(id);
 
-    let gstData = await handleGetGst();
 
+    // let gstData = await handleGetGst();
+    
     await checkLocationEnabled();
 
     //vehicle data to update server
 
+    console.log('vehicleNumber__UTSA');
+
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
-    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, "N", 0, 0);
+    let carindata = await carIn(
+      vehicleId,
+      vehicleNumber,
+      vehicleRate,
+      paidamt, 
+      "N", 
+      0, 
+      0);
+
+
 
     // console.log(
     //   "=============xxxx=======",
@@ -204,7 +221,23 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
         .toString()
         .slice(-5);
-      let advanceAmount = "";
+
+      // let advanceAmount = "";
+
+      // const options = {
+      //   hour12: false,
+      //   hour: "2-digit",
+      //   minute: "2-digit",
+      //   // second: '2-digit',
+      // };
+
+      // const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
+      // const formatDateTime = dateTime => {
+      //   return `${dateTime.toLocaleDateString(
+      //     "en-GB",
+      //     dateoptions,
+      //   )} ${dateTime.toLocaleTimeString(undefined, options)}`;
+      // };
 
       const options = {
         hour12: false,
@@ -254,9 +287,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         }
 
-        if (generalSettings.adv_pay == "Y") {
-          advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
-        }
+        // if (generalSettings.adv_pay == "Y") {
+        //   advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        // }
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
@@ -267,13 +300,22 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
             // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
             `[C]-------------------------------\n` +
-            `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
-            `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-            `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-            // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-            `${advanceAmount}` +
-            // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
-            `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+            // `[L]<font size='normal'>IN TIME    : [R]${currentTime
+            //   .toLocaleString("en-GB")
+            //   .slice(0, 17)}</font>\n` +
+            // `[C]-------------------------------\n` +
+            `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
+            `[L]<font size='normal'>PARKING FEES    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
+            `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
+            `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
+            
+            // `[L]<font size='normal'>IN TIME    : [R]${dateTimefixedString(
+            //   currentTime,
+            // )}</font>\n` +
+            // `[L]<font size='normal'>IN TIME    : [R]${currentTime
+            //   .toLocaleString("en-GB")
+            //   .slice(0, 17)}</font>\n` +
             `[C]-------------------------------\n` +
             `[C]${payloadFooter}\n`,
           printerNbrCharactersPerLine: 30,
@@ -422,7 +464,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             />
           </View>
 
-          {generalSettings.adv_pay == "Y" && (
+          {/* {generalSettings.adv_pay == "Y" && (
             <View style={{ marginTop: normalize(20) }}>
               <Text style={styles.vehicle_text}>Vechicle Advance</Text>
               <RoundedInputComponent
@@ -431,6 +473,28 @@ const CreateReceiptScreen = ({ navigation, route }) => {
                 onChangeText={setVehicleAdv}
                 keyboardType="numeric"
               />
+            </View>
+          )} */}
+
+          {fixedVehicleRateObject && (
+            <View style={{ marginTop: 15 }}>
+              <Text style={{ ...styles.fixedPrice}}>
+                {" "}
+                {dev_mod == "F" ? "" : advanceData && "Advance"}{" "}
+                {fixedVehicleRateObject && "Fixed"} Price is On{" "} Collect ₹{fixedVehicleRateObject.vehicle_rate} money from
+                  customer.
+              </Text>
+              {/* <View
+                style={{
+                  margin: 0,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}>
+                <Text style={{ ...styles.vehicle_text, color: "red" }}>
+                  Collect ₹{fixedVehicleRateObject.vehicle_rate} money from
+                  customer.
+                </Text>
+              </View> */}
             </View>
           )}
 
@@ -493,6 +557,9 @@ const styles = StyleSheet.create({
     fontSize: PixelRatio.roundToNearestPixel(15),
     marginBottom: normalize(10),
   },
+  fixedPrice: {
+    color:'#4B67F8', fontWeight:'bold', textAlign:'center', fontSize:15, marginBottom:10
+  }
 });
 
 const modalStyle = StyleSheet.create({

@@ -9,7 +9,7 @@ export const ADDRESSES = {
   FIXED_RATE_DETAILS_LIST: `${BASE_URL}/master/fixed_rate_dtls_list`,
   GST_LIST: `${BASE_URL}/master/gst_list`,
   SHIFT_DATA:`${BASE_URL}/master/my_shift`,
-  CAR_IN: `${BASE_URL}/car/car_in`,
+  CAR_IN: `${BASE_URL}/car/car_in_fixed`,
   CAR_OUT: `${BASE_URL}/car/out_pass`,
   CAR_SERCH: `${BASE_URL}/car/search_car`,
   DETAILED_REPORT: `${BASE_URL}/report/detail_report`,

@@ -40,6 +40,11 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   // State for manage the  loading values
   const [loading, setLoading] = useState();
 
+  const { generalSettings } = useContext(AuthContext);
+  const { dev_mod, report_password_flag, adv_pay } = generalSettings;
+
+  console.log(generalSettings, 'mmmmmmmmmmmmmmmmmmmmmmmmmm');
+
   // create a new Date object
   const date = new Date();
 
@@ -141,7 +146,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let payloadFooter = "";
 
     vehicleWiseReports.map((item, index) => {
-        payloadBody += `[L]<font>${fixedString(item.vehicleType.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.adv_amt.toString(),4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+        payloadBody += `<font>${fixedString(item.vehicleType.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
     
@@ -189,11 +194,11 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Veh.   Count   Advance   Paid</font>\n` +
+          `[L]<font size='normal'>Veh.     Count     Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
+          `[L]<font size='normal'>PAID: ${totalAmount}  </font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -300,7 +305,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
                   {/* <Text style={[styles.headerText, styles.hcell]}>In time</Text> */}
 
-                  <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Advance</Text> */}
                   <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
                   {/* <Text style={[styles.headerText, styles.hcell]}>Net.Amt</Text> */}
                 </View>
@@ -321,7 +326,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                         {new Date(item.date_time_in).toLocaleString()}
                       </Text> */}
 
-                        <Text style={[styles.cell]}>{item?.adv_amt}</Text>
+                        {/* <Text style={[styles.cell]}>{item?.adv_amt}</Text> */}
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.tot_amt + item.adv_amt}</Text> */}
                       </View>
@@ -329,7 +334,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   })}
                 {
 <>
-                <View
+                {/* <View
                     style={{
                       ...styles.row,
                       backgroundColor: colors["primary-color"],
@@ -338,7 +343,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}>
                       {totalAdvanceAmount}
                     </Text>
-                  </View>
+                  </View> */}
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
@@ -349,14 +354,14 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     </Text>
                   </View>
 
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Net Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                     {totalAmount + totalAdvanceAmount}
                   </Text>
-                  </View>
+                  </View> */}
 
                   </>
                 }

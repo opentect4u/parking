@@ -30,8 +30,8 @@ export default function ReportScreen({ navigation }) {
 
   const isFocused = useIsFocused();
 
-
   useEffect(() => {
+    
     setPassword("");
     
     if(report_password_flag == 'Y'){
@@ -48,7 +48,7 @@ export default function ReportScreen({ navigation }) {
     setPassword(text);
   }
 
-  console.log(report_password_flag, 'report_password_flagreport_password_flag');
+  console.log(report_password_flag, 'report_password_flagreport_password_flag', dev_mod);
 
 
   const checked_password = async () => {
@@ -96,7 +96,7 @@ export default function ReportScreen({ navigation }) {
         <View style={styles.report_container}>
 
 
-
+        {dev_mod != "F" && (
           <View style={styles.ActionBox_style}>
             <ActionBox2
               title="Unbilled Reports"
@@ -104,6 +104,8 @@ export default function ReportScreen({ navigation }) {
               disabled={rep_ststus}
             />
           </View>
+        )}
+
           <View style={styles.ActionBox_style}>
             <ActionBox2
               title="Vehicle Wise Reports"

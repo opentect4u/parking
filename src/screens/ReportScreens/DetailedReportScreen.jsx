@@ -157,7 +157,7 @@ export default function DetailedReportScreen({ navigation }) {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       // console.log("datetume",datetume)
-        payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${item.advance_amt} [R]${item.paid_amt.toString()}</font>`
+        payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}    ${datetume}  [R]${item.paid_amt.toString()}</font>`
     });
 
 
@@ -215,11 +215,11 @@ export default function DetailedReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='12'>Rec.No. Veh.No. InTime Adv Paid</font>\n` +
+          `[L]<font size='12'>Rec.No.  Veh.No.  InTime  Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `[C]<font size='normal'>PAID: ${totalAmount}</font>\n` +
           `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -330,7 +330,7 @@ export default function DetailedReportScreen({ navigation }) {
                   </Text>
                   <Text style={[styles.headerText, styles.hcell]}>In Time</Text>
 
-                  <Text style={[styles.headerText, styles.hcell, styles.marg_left]}>Adv</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell, styles.marg_left]}>Adv</Text> */}
 
                   <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
                 </View>
@@ -350,7 +350,7 @@ export default function DetailedReportScreen({ navigation }) {
                         <Text style={[styles.cell]}>
                           {new Date(item.date_time_in).toLocaleString("en-GB")}
                         </Text>
-                        <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text>
+                        {/* <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text> */}
                         <Text style={[styles.cell]}>{item.paid_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                       </View>
@@ -358,12 +358,12 @@ export default function DetailedReportScreen({ navigation }) {
                   })}
                 {
                   <>
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Advance Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
-                  </View>
+                  </View> */}
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
@@ -381,21 +381,17 @@ export default function DetailedReportScreen({ navigation }) {
                     {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                   </View>
 
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Net Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                     {totalAmount + totalAdvanceAmount}
 
-                  {/* {totalAmount < totalAdvanceAmount ? (
-                  totalAdvanceAmount + totalAmount
-                  ) : (
-                  totalAdvanceAmount + totalAmount
-                  )} */}
+              
                   </Text>
 
-                  </View>
+                  </View> */}
 
                   </>
                 }

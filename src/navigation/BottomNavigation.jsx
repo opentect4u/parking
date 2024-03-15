@@ -43,7 +43,8 @@ function BottomNavigation() {
       }
 
       {/* Out pass bill */}
-      {dev_mod != "R" && dev_mod != "F" && (
+      {/* {dev_mod != "R" && dev_mod != "F" && ( */}
+      {dev_mod != "F" && (
         <Tab.Screen
           name={outpassScreen}
           options={{
