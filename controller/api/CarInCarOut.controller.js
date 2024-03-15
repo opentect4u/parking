@@ -118,7 +118,7 @@ const car_in_fixed = async (req, res) => {
                 }
             }
         } else {
-            return res.json(sendErrorResponce(null, { message: 'Please set general setting' }));
+             res.json(sendErrorResponce(null, { message: 'Please set general setting' }));
         }
     } catch (error) {
         res.json(sendErrorResponce(error));

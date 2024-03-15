@@ -165,6 +165,29 @@ reportRouter.post('/get_dev_wise_report_new', AuthCheckedMW, async (req, res) =>
     res.send(res_dt)
 })
 
+reportRouter.get('/operator_wise_repo_new', AuthCheckedMW, async (req, res) => {
+    var data = {
+        title: 'Operator Wise Report',
+        page_path: 'reports/operator_wise_repo_new',
+        dtFormat: dateFormat
+    }
+    res.render('common/layouts/main', data)
+});
+
+reportRouter.post('/get_operator_wise_repo_new', AuthCheckedMW, async (req, res) => {
+    var custId = req.session.user.user_data.customer_id,
+        userType = req.session.user.user_data.user_type;
+
+    var data = req.body;
+    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) as adv_amt, f.operator_name opratorName`,
+        table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
+        whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${value.frm_dt}' AND '${value.to_date}' AND a.customer_id = '${custId}'`
+        order = 'GROUP BY a.user_id_in';
+    var res_dt = await db_Select(select, table_name, whr, order)
+    console.log(res_dt);
+    res.send(res_dt)
+})
+
 reportRouter.get('/usr_wise_repo', AuthCheckedMW, async (req, res) => {
     var data = {
         title: 'User Wise Report',
