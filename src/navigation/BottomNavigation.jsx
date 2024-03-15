@@ -19,7 +19,6 @@ function BottomNavigation() {
 
   // console.log(report_flag, '////////////////////////UTSABBBB');
 
-
   return (
     <Tab.Navigator
       screenOptions={{
