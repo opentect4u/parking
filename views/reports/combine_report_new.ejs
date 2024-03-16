@@ -6,19 +6,33 @@
                     <%= title %>
                 </h4>
                 <div class="row dateCalenderField">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="frm_dt">From Date</label>
-                            <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control" required="">
+                            <input type="date" id="frm_dt" name="frm_dt" class="form-control" required="">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="to_dt">To Date</label>
+                            <input type="date" id="to_dt" name="to_dt" class="form-control" required="">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="to_dt">To Date</label>
-                            <input type="datetime-local" id="to_dt" name="to_dt" class="form-control" required="">
+                            <label for="vehicle_id">Select Vehicle</label>
+                            <select name="vehicle_id" id="vehicle_id" class="form-control" required="">
+
+                                <option value="">Select Vehicle</option>"
+                                <% combineData.msg.forEach(function(item,index) { %>
+                                    <option value="<%= item.vehicle_id %>">
+                                        <%= item.vehicle_name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-4 searchBtnDataWis">
+                    <div class="col-md-2 searchBtnDataWis">
                         <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-primary"
                             id="btnSubmit">Search</button>
                     </div>
@@ -36,8 +50,6 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Mechine Sl. No.</th>
-                                    <th scope="col">Vehicle Type</th>
-                                    <th scope="col">Count</th>
                                     <th scope="col">Operator Name</th>
                                     <th scope="col">Advance Amount</th>
                                     <th scope="col">Paid Amount</th>
@@ -50,7 +62,7 @@
 
                             <tfoot>
                                 <tr>
-                                    <td scope="col" colspan="5">Total</td>
+                                    <td colspan="3">Total</td>
                                     <td scope="col" id="advance_amt"><b>0</b></td>
                                     <td scope="col" id="paid_amt"><b>0</b></td>
                                     <td scope="col" id="tot_amt"><b>0</b></td>
@@ -76,12 +88,13 @@
     $('#btnSubmit').on('click', function () {
         var frm_dt = $('#frm_dt').val()
         var to_dt = $('#to_dt').val()
+        var vehicle_id = $('#vehicle_id').val()
 
-        if (frm_dt != '' && to_dt != '') {
+        if (frm_dt != '' && to_dt != '' && vehicle_id != '') {
             $.ajax({
                 method: "POST",
-                url: "/report/get_operator_wise_repo_new",
-                data: { frm_dt, to_dt },
+                url: "/report/get_combine_repo_new",
+                data: { frm_dt, to_dt, vehicle_id },
                 dataType: "html",
                 beforeSend: function () {
                     $(".preloader").fadeIn();
@@ -94,10 +107,10 @@
                     var tot_amt_tot = 0;
                     $('#resultDiv').show()
                     $('#resultDiv table tbody').empty()
-                    // console.log(res)
+                    console.log(res)
                     if (res.suc > 0) {
                         if (res.msg.length > 0) {
-                            $('#searchCred').text(`Operator Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
+                            $('#searchCred').text(`Combine Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
                             let i = 1;
                             for (let dt of res.msg) {
                                 advance_amt_tot += dt.advance_amt
@@ -108,10 +121,8 @@
                                 $('#resultDiv table tbody').append(`
                                     <tr>
                                         <td>${i}</td>
-                                        <td>${dt.mc_srl_no_out}</td>
-                                        <td>${dt.vehicleType}</td>
-                                        <td>${dt.tot_vehi}</td>
-                                        <td>${dt.opratorName}</td>
+                                        <td>${dt.device_id}</td>
+                                        <td>${dt.operator_name}</td>
                                         <td>${dt.advance_amt}</td>
                                         <td>${dt.paid_amt}</td>
                                         <td>${total_amt_tot}</td>
@@ -123,7 +134,7 @@
                             $('#paid_amt').text(paid_amt_tot)
                             $('#tot_amt').text(tot_amt_tot)
                         } else {
-                            $('#resultDiv table tbody').append('<tr><td colspan="8" class="text-center text-danger">No Data Found</td></tr>')
+                            $('#resultDiv table tbody').append('<tr><td colspan="6" class="text-center text-danger">No Data Found</td></tr>')
                             $('#advance_amt').text(advance_amt_tot)
                             $('#paid_amt').text(paid_amt_tot)
                             $('#tot_amt').text(tot_amt_tot)
