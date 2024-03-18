@@ -1,0 +1,58 @@
+<div class="container-fluid">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="titleSec">
+            <button type="button" class="btn btn-primary" id="myBtn"
+              style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
+          </div>
+          <div class="row mt-4">
+            <h4 class="text-dark"><i data-feather="settings" class="feather-icon"></i>&nbsp;<b>Attach Vehicle Rate</b></h4>
+          </div>
+          <div class="row mt-3">
+            <div class="form-group col-md-4">
+                <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
+                <select name="rate_type" class="form-control" id="rate_type" required>
+                  <option value="">Select Rate Type</option>
+                  <% data.msg.forEach(function(item2,index) { %>
+                    <option value="<%=item2.rate_type%>">
+                      <%=item2.rate_type%>
+                    </option>
+                    <% }); %>
+                </select>
+              </div>
+            <div class="form-group col-md-4">
+              <label for="veh_id"><b style="color: black;">Vehicle Id:</b></label>
+              <select name="veh_id" class="form-control" id="veh_id" required>
+                <option value="">Select Vehicle Id</option>
+                <% data.msg.forEach(function(item2,index) { %>
+                    <option value="<%=item2.vehicle_id%>">
+                      <%=item2.vehicle_id%>
+                    </option>
+                    <% }); %>
+              </select>
+            </div>
+            <div class="form-group col-md-4" style="margin-top: 30px;">
+              <button type="submit" class="btn btn-primary" style="border-radius: 5px;" id="submitBtn">Submit</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="example" class="table table-striped table-bordered show_data" style="width:100%">
+              <thead>
+                <tr>
+                  <th class="text-dark text-center">Sl. No.</th>
+                  <th class="text-dark text-center">Device ID</th>
+                  <th class="text-dark text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="9" class="text-danger text-center">No Data Found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

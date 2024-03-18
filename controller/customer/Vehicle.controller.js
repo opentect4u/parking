@@ -2,18 +2,18 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
 
-const shift = async (req, res) => {
+const vehicle = async(req,res) =>{
     try {
         var custId = req.session.user.user_data.customer_id;
         var select = "a.*,b.customer_id,b.customer_name",
-          table_name = "md_shift a, md_customer b",
+          table_name = "md_vehicle a, md_customer b",
           where = `a.customer_id = b.customer_id AND a.customer_id=${custId}`;
-        var shift = await db_Select(select, table_name, where, null);
-        // console.log(shift);
+        var vehicle = await db_Select(select, table_name, where, null);
+        // console.log(vehicle);
         const page_data = {
-          title: "Shift details",
-          page_path: "/shift/shift",
-          data: shift,
+          title: "Vehicle details",
+          page_path: "/vehicle_dtls/add_vehicle",
+          data: vehicle,
         };
         res.render("common/layouts/main", page_data);
       } catch (error) {
@@ -21,13 +21,12 @@ const shift = async (req, res) => {
       }
 };
 
-const save_add_shift = async (req, res) => {
+const save_add_vehicle = async (req, res) => {
     try {
       const schema = Joi.object({
         cust_id: Joi.optional(),
-        shift_name: Joi.required(),
-        frm_time: Joi.required(),
-        to_time: Joi.required(),
+        vehicle_name: Joi.required(),
+        vehicle_icon: Joi.required(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
     //   console.log(value);
@@ -44,33 +43,33 @@ const save_add_shift = async (req, res) => {
   
       // console.log(value);
       let fields =
-          "(customer_id,shift_name,f_time,t_time,created_at)",
-        values = `('${custId}','${value.shift_name}','${value.frm_time}','${value.to_time}','${datetime}')`;
-      let res_dt = await db_Insert("md_shift", fields, values, null, 0);
-    //   console.log("========shift==========", res_dt);
+          "(customer_id,vehicle_name,vehicle_icon,created_at)",
+        values = `('${custId}','${value.vehicle_name}','${value.vehicle_icon}','${datetime}')`;
+      let res_dt = await db_Insert("md_vehicle", fields, values, null, 0);
+    //   console.log("========vehicle==========", res_dt);
       req.flash("success", "Saved successful");
-      res.redirect("/shift/shift_details");
+      res.redirect("/vehicle/vehicle_details");
       // res.send(res_dt)
     } catch (error) {
-      // console.log(error);
+    //   console.log(error);
       req.flash("error", "Data not saved Successfully");
-      res.redirect("/shift/shift_details");
+      res.redirect("/vehicle/vehicle_details");
     }
   };
 
-  const edit_shift = async (req, res) => {
+  const edit_vehicle = async (req, res) => {
     var data = req.query;
-    // console.log(data,'123');
+    // console.log(data,'lala');
     var custId = req.session.user.user_data.customer_id;
     let select = "a.*,b.customer_id,b.customer_name",
-      table_name = "md_shift a, md_customer b",
-      whr = `a.customer_id = b.customer_id AND a.customer_id='${custId}' AND a.shift_id='${data.shift_id}'`;
+      table_name = "md_vehicle a, md_customer b",
+      whr = `a.customer_id = b.customer_id AND a.customer_id='${custId}' AND a.vehicle_id='${data.vehicle_id}'`;
     const resData = await db_Select(select, table_name, whr, null);
-    // console.log(resData);
+    console.log(resData);
     delete resData.sql;
     var viewData = {
-      title: "Shift",
-      page_path: "/shift/edit_shift",
+      title: "Vehicle",
+      page_path: "/vehicle_dtls/edit_vehicle",
       data: resData.suc > 0 && resData.msg.length > 0 ? resData.msg[0] : [],
       customer_id: custId,
     };
@@ -78,17 +77,16 @@ const save_add_shift = async (req, res) => {
     res.render("common/layouts/main", viewData);
   };
 
-  const save_edit_shift = async (req, res) => {
+  const save_edit_vehicle = async (req, res) => {
     try {
       const schema = Joi.object({
         cust_id: Joi.string(),
-        shift_id: Joi.string(),
-        shift_name: Joi.optional(),
-        frm_time: Joi.optional(),
-        to_time: Joi.optional(),
+        vehicle_id: Joi.string(),
+        vehicle_name: Joi.optional(),
+        vehicle_icon: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-      console.log(value);
+      // console.log(value);
       if (error) {
         const errors = {};
         error.details.forEach((detail) => {
@@ -100,17 +98,18 @@ const save_add_shift = async (req, res) => {
       var custId = req.session.user.user_data.customer_id;
       const datetime = dateFormat(new Date(), "yyyy-mm-dd");
   
-      let fields = `shift_name='${value.shift_name}',f_time='${value.frm_time}',t_time='${value.to_time}',updated_at='${datetime}'`,
-        where = `customer_id='${custId}' AND shift_id='${value.shift_id}'`;
-      let res_dt2 = await db_Insert("md_shift", fields, null, where, 1);
-      console.log(res_dt2);
+      let fields = `vehicle_id='${value.vehicle_id}',vehicle_name='${value.vehicle_name}',vehicle_icon='${value.vehicle_icon}',updated_at='${datetime}'`,
+        where = `customer_id='${custId}' AND vehicle_id='${value.vehicle_id}'`;
+      let res_dt2 = await db_Insert("md_vehicle", fields, null, where, 1);
+      // console.log(res_dt2);
       req.flash("success", "Updated successful");
-      res.redirect("/shift/shift_details");
+      res.redirect("/vehicle/vehicle_details");
     } catch (error) {
       console.log(error);
       req.flash("error", "Data not Updated Successfully");
-      res.redirect("/shift/shift_details");
+      res.redirect("/vehicle/vehicle_details");
     }
   };
+ 
 
-module.exports = {shift,save_add_shift,edit_shift,save_edit_shift}
+module.exports = {vehicle,save_add_vehicle,edit_vehicle,save_edit_vehicle}

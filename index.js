@@ -7,6 +7,8 @@ const { DeviceRouter } = require('./routes/device_settingRouter');
 const { Customer_settingRouter } = require('./routes/Customer_settingRouter');
 const { Manage_operatorRouter } = require('./routes/Manage_operatorRouter');
 const { ShiftRouter } = require('./routes/ShiftRouter');
+const { vehicleRouter } = require('./routes/VehicleRouter');
+const { vehicle_rateRouter } = require('./routes/Vehicle_rateRouter');
 
 const app = express(),
     session = require('express-session'),
@@ -76,6 +78,10 @@ app.use('/device',DeviceRouter)
 app.use('/operator',Manage_operatorRouter)
 
 app.use('/shift',ShiftRouter)
+
+app.use('/vehicle',vehicleRouter)
+
+app.use('/rate',vehicle_rateRouter)
 
 
 app.get('*', function(req, res){

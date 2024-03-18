@@ -4,12 +4,13 @@
             <div class="card-body">
                 <div class="titleSec">
                     <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back"
-                            style="cursor: pointer;">&nbsp;Shift Edit Details</i></h2>
+                            style="cursor: pointer;">&nbsp;Vehicle Edit Details</i></h2>
                 </div>
-                <form action="/shift/edit_save_shift" id="myForm" method="post">
-                    <input type="hidden" id="shift_id" name="shift_id" value="<%= data.shift_id %>">
+                <form action="/vehicle/edit_save_vehicle" id="myForm" method="post">
+                    <input type="hidden" id="vehicle_id" name="vehicle_id" value="<%= data.vehicle_id %>">
+
                     <div class="row mt-4">
-                        <div class="form-group col-3">
+                        <div class="form-group col-4">
                             <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Customer Name</option>
@@ -19,26 +20,24 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
-                              <label for="shift_name" class="text-dark"><b>Shift Name</b></label>
-                              <input type="text" class="form-control" id="shift_name" name="shift_name" placeholder="Enter Shift Name...."
-                                value="<%= data.shift_name %>">
+                              <label for="vehicle_name" class="text-dark"><b>Vehicle Name</b></label>
+                              <input type="text" class="form-control" id="vehicle_name" name="vehicle_name" placeholder="Enter Vehicle Name...."
+                                value="<%= data.vehicle_name %>">
                             </div>
                           </div>
-                          <div class="col-md-3">
+                         
+                          <div class="col-md-4">
                             <div class="form-group">
-                              <label for="frm_time" class="text-dark"><b>From Time</b></label>
-                              <input type="time" name="frm_time" id="frm_time" class="form-control" value="<%= data.f_time %>">
+                              <label for="vehicle_icon" class="text-dark"><b>Vehicle Icon</b></label>
+                              <select name="vehicle_icon" class="form-control" id="vehicle_icon">
+                                <option value="<%= data.vehicle_icon %>">Select Vehicle Icon</option>
+                                <option value="car-hatchback" <%= data.vehicle_icon == 'car-hatchback' ? 'selected' : '' %>>car-hatchback</option>
+                                <option value="motorbike" <%= data.vehicle_icon == 'motorbike' ? 'selected' : '' %>>motorbike</option>
+                                 </select>
                             </div>
                           </div>
-                          <div class="col-md-3">
-                            <div class="form-group">
-                              <label for="to_time" class="text-dark"><b>To Time</b></label>
-                              <input type="time" name="to_time" id="to_time" class="form-control" value="<%= data.t_time %>">
-                            </div>
-                          </div>
-
                         <div class="row mt-2">
                             <div class="form-group col-md-6">
                                 <input type="submit" value="SUBMIT" class="btn btn-primary btn-block text-center"
@@ -55,7 +54,7 @@
 <script>
     $(document).ready(function () {
                     $("#back").click(function () {
-                        window.location.href = "/shift/shift_details";
+                        window.location.href = "/vehicle/vehicle_details";
                     });
     });
 </script>
