@@ -69,9 +69,8 @@
             <div class="form-group col-4">
               <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
-                <option value="<%=user.user_data.customer_id==data.msg[0].customer_id
-                  ? 'selected' : '' %>">
-                  <%= data.msg[0].customer_name %>
+                <option value="<%= user.user_data.customer_id %>">
+                  <%= user.user_data.customer_name %>
                 </option>
               </select>
             </div>
@@ -87,8 +86,8 @@
               <div class="form-group">
                 <label for="dev_mode" class="text-dark"><b>Mode</b></label>
                 <select name="dev_mode" class="form-control" id="dev_mode">
-                  <option value="<%= data.msg[0].dev_mod == 'D' ? 'D' : 'F' %>">
-                    <%= data.msg[0].dev_mod=='D' ? 'Normal' : 'Toll Naka' %>
+                  <option value="<%= user.user_data.dev_mod %>">
+                    <%= user.user_data.dev_mod=='D' ? 'Normal' : 'Toll Naka' %>
                   </option>
                 </select>
               </div>

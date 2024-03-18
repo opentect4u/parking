@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const device = async (req, res) => {
   try {
     var custId = req.session.user.user_data.customer_id;
+    // console.log(req.session.user.user_data.dev_mod,"1234");
     let wher = `a.customer_id = b.customer_id AND a.customer_id=${custId}`;
     var device = await db_Select(
       "a.*,b.*",
