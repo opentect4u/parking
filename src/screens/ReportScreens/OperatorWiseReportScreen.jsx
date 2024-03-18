@@ -304,7 +304,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
-                    totalAdvanceAmount += item?.adv_amt;
+                    // totalAdvanceAmount += item?.adv_amt;
                     return (
                       <View
                         style={[

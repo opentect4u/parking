@@ -312,7 +312,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
-                    totalAdvanceAmount += item?.adv_amt;
+                    // totalAdvanceAmount += item?.adv_amt;
                     return (
                       <View
                         style={[

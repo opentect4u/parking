@@ -337,7 +337,7 @@ export default function DetailedReportScreen({ navigation }) {
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     totalAmount += item.paid_amt;
-                    totalAdvanceAmount += item.advance_amt;
+                    // totalAdvanceAmount += item.advance_amt;
                     return (
                       <View
                         style={[
