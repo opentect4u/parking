@@ -72,6 +72,7 @@ const save_edit_device = async (req, res) => {
       report_flag: Joi.string(),
       tot_col: Joi.string(),
       adv_pay_flag: Joi.string(),
+      adv_value: Joi.string(),
       grace_flag: Joi.string(),
       grace_value: Joi.string(),
       redirect_flag: Joi.optional(),
@@ -94,7 +95,7 @@ const save_edit_device = async (req, res) => {
         value.report_flag == "Y" ? "Y" : "N"
       }',total_collection='${value.tot_col == "Y" ? "Y" : "N"}',adv_pay='${
         value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"
-      }',grace_period_flag='${
+      }',adv_value='${value.adv_value}',grace_period_flag='${
         value.grace_flag == "Y" ? "Y" : "N"
       }',grace_value=${
         value.grace_value != "" ? `'00:${value.grace_value}:00'` : 0
@@ -120,6 +121,7 @@ const save_add_device = async (req, res) => {
       report_flag: Joi.string(),
       tot_col: Joi.string(),
       adv_pay_flag: Joi.string(),
+      adv_value: Joi.string(),
       grace_flag: Joi.string(),
       grace_value: Joi.string(),
       redirect_flag: Joi.optional(),
@@ -139,13 +141,13 @@ const save_add_device = async (req, res) => {
 
     // console.log(value);
     let fields =
-        "(customer_id,app_id,dev_mod,report_flag,total_collection,adv_pay,grace_period_flag,grace_value,redirection_flag,created_at)",
+        "(customer_id,app_id,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,created_at)",
       values = `('${custId}','${value.app_id}','${
         value.dev_mode
       }',
       '${value.report_flag == "Y" ? "Y" : "N"}','${
         value.tot_col == "Y" ? "Y" : "N"
-      }','${value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"}','${
+      }','${value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"}','${value.adv_value}','${
         value.grace_flag && value.grace_flag == "Y" ? "Y" : "N"
       }',${
         value.grace_value != "" ? `'00:${value.grace_value}:00'` : 0

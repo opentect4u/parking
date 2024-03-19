@@ -66,7 +66,7 @@
       <div class="modal-body">
         <form action="/device/add_save_device" method="post" id="myForm">
           <div class="row">
-            <div class="form-group col-4">
+            <div class="form-group col-6">
               <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
                 <option value="<%= user.user_data.customer_id %>">
@@ -75,14 +75,14 @@
               </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="app_id" class="text-dark"><b>Device ID</b></label>
                 <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
                   value="">
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group">
                 <label for="dev_mode" class="text-dark"><b>Mode</b></label>
                 <select name="dev_mode" class="form-control" id="dev_mode">
@@ -93,28 +93,30 @@
               </div>
             </div>
 
-            <div class="col-md-4 cust-toggle1 mt-3">
+            <div class="col-md-3 cust-toggle1">
               <label for="report_flag" class="text-dark"><b>Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="report_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="report_flag">
             </div>
-            <div class="col-md-4 cust-toggle1  mt-3">
+            <div class="col-md-3 cust-toggle1">
               <label for="tot_col" class="text-dark"><b>Total collection Flag</b></label><br>
               <input type="checkbox" value="Y" id="tot_col" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="tot_col">
             </div>
 
-            <div class="col-md-4 cust-toggle1 mt-3">
-              <label for="adv_pay_flag" class="text-dark"><b>Advance Flag</b></label><br>
-              <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Active" data-off="Deactive" name="adv_pay_flag">
+            <div class="col-md-3 cust-toggle1">
+              <label for="redirect_flag" class="text-dark"><b>Redirection</b></label><br>
+              <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Home" data-off="Back" name="redirect_flag">
             </div>
-            <div class="col-md-4 cust-toggle1 mt-5">
+
+            <div class="col-md-3 cust-toggle1">
               <label for="grace_flag" class="text-dark"><b>Grace Period Flag</b></label><br>
               <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="grace_flag" checked>
             </div>
-            <div class="col-md-4 mt-5" id="hide_grace">
+
+            <div class="col-md-3" id="hide_grace">
               <div class="form-group">
                 <label for="grace_value" class="text-dark"><b>Grace Value &nbsp;<span class=text-danger>(In
                       Minute)</span></b></label>
@@ -122,11 +124,19 @@
               </div>
             </div>
 
-            <div class="col-md-4 cust-toggle1 mt-5">
-              <label for="redirect_flag" class="text-dark"><b>Redirection</b></label><br>
-              <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Home" data-off="Back" name="redirect_flag">
+            <div class="col-md-3 cust-toggle1">
+              <label for="adv_pay_flag" class="text-dark"><b>Advance Flag</b></label><br>
+              <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="adv_pay_flag" checked>
             </div>
+
+            <div class="col-md-3" id="hide_adv">
+              <div class="form-group">
+                  <label for="adv_value" class="text-dark"><b>Advance Value &nbsp;</b></label>
+                  <input type="text" name="adv_value" id="adv_value" class="form-control"
+                      value="00">
+              </div>
+          </div>
 
           </div>
           <div class="row mt-3">
@@ -162,6 +172,18 @@
   })
 </script>
 
+<script>
+  $('#adv_pay_flag').on('change', function () {
+      if ($(this).is(':checked')) {
+          $('#hide_adv').show()
+          $('#adv_value').attr('required', 'required')
+      } else {
+          $('#adv_value').removeAttr('required')
+          $('#adv_value').val('00')
+          $('#hide_adv').hide()
+      }
+  })
+</script>
 
 <script>
   $('#submitBtn').click(function () {
