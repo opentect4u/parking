@@ -142,7 +142,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     redirection_flag
   } = generalSettings;
 
-  // console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
+  console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
 
   return (
     <View style={{ flex: 1 }}>

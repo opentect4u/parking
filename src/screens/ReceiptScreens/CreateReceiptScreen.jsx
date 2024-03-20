@@ -36,6 +36,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
   const isOnline = useContext(InternetStatusContext);
 
+
   const { carIn } = useCarIn();
   const { handleGetGst } = useGstSettings();
 
@@ -45,9 +46,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const { generalSettings, receiptSettings } = useContext(AuthContext);
 
-  const { dev_mod } = generalSettings;
+  const { dev_mod, adv_value } = generalSettings;
   const [vehicleNumber, setVehicleNumber] = useState("");
-  const [vehicleAdv, setVehicleAdv] = useState("");
+  const [vehicleAdv, setVehicleAdv] = useState(adv_value.toString() || "");
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -58,7 +59,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
 
-  // console.log(generalSettings.adv_pay, 'generalSettings__XXROYYYYYY');
+
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -90,6 +91,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     console.log("EFFECT - CreateReceiptScren");
+    // console.log(generalSettings.adv_value, 'generalSettings__XXROYYYYYY');
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -289,15 +291,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         console.log(err.message);
       }
 
-      if(generalSettings.redirection_flag == "Y"){
+      if(generalSettings?.redirection_flag == "Y"){
         navigation.navigate("ReceiptScreen");
       }
 
-      if(generalSettings.redirection_flag == "N"){
+      if(generalSettings?.redirection_flag == "N"){
         setLoading(false);
 
         setVehicleNumber("");
-        setVehicleAdv("");
+        setVehicleAdv(adv_value.toString() || "");
       }
       // navigation.navigate("ReceiptScreen");
 
@@ -305,7 +307,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     } else {
       setLoading(false);
       setVehicleNumber("");
-      setVehicleAdv("");
+      setVehicleAdv(adv_value.toString() || "");
+
       ToastAndroid.showWithGravityAndOffset(
         "Sorry, receipt creation failed",
         ToastAndroid.LONG,
@@ -316,7 +319,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
       setLoading(true);
       setVehicleNumber("");
-      setVehicleAdv("");
+      setVehicleAdv(adv_value.toString() || "");
 
       // Utsab Roy Work
       // navigate to previous screen
@@ -422,7 +425,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             />
           </View>
 
-          {generalSettings.adv_pay == "Y" && (
+          {generalSettings?.adv_pay == "Y" && (
             <View style={{ marginTop: normalize(20) }}>
               <Text style={styles.vehicle_text}>Vechicle Advance</Text>
               <RoundedInputComponent
@@ -432,6 +435,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
                 keyboardType="numeric"
               />
             </View>
+            
           )}
 
           {/* ......... vehicle Advance Amount .......... */}
