@@ -35,7 +35,7 @@
                                 <label for="dev_mode" class="text-dark"><b>Mode</b></label>
                                 <select name="dev_mode" class="form-control" id="dev_mode" disabled>
                                     <option value="<%= data.dev_mod == 'D' ? 'D' : 'F' %>">
-                                        <%= data.dev_mod=='D' ? 'Normal' : 'Toll Naka' %>
+                                        <%= data.dev_mod=='D' ? 'Dual' : 'Toll Naka' %>
                                     </option>
                                 </select>
                             </div>
@@ -91,13 +91,12 @@
                                     value="<%= data.adv_value%>">
                             </div>
                         </div>
-
-                        <div class="row mt-5">
-                            <div class="form-group col-md-6">
-                                <input type="submit" value="SUBMIT" class="btn btn-primary btn-block text-center"
-                                    style="margin-left: 25vw;border-radius: 5px;" />
+                      </div>
+                        <div class="row mt-3">
+                            <div class="col-md-5"></div>
+                            <div class="form-group col-md-3">
+                                <input type="submit" value="SUBMIT" class="btn btn-primary btn-block"/>
                             </div>
-                        </div>
                         </div>
                 </form>
             </div>

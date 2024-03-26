@@ -159,6 +159,14 @@
                               <label for="cust_add"><b style="color: black;">Customer Address:</b></label>
                               <input type="text" id="cust_add" name="cust_add" class="form-control" value="<%= user.user_data.cust_addr %>" />
                               </div>
+                          <div class="form-group col-md-6">
+                                <label for="mode"><b style="color: black;">Mode:</b></label>
+                                <input type="text" id="mode" name="mode" class="form-control" value="<%= user.user_data.dev_mod == 'D' ? 'Dual' : 'Fixed' %>" readonly/>
+                                </div>  
+                          <div class="form-group col-md-6">
+                                  <label for="device"><b style="color: black;">No. of Device:</b></label>
+                                  <input type="text" id="device" name="device" class="form-control" value="<%= user.user_data.no_device %>" readonly />
+                                  </div>        
                     </div>
                   <% } %>
                  <div class="row mt-3">
@@ -336,6 +344,7 @@
     });
     });
 
+    
 
     function createDate(inputDate){
         const date = new Date(inputDate);

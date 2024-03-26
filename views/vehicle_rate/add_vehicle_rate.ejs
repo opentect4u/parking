@@ -2,12 +2,10 @@
   <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="card">
       <div class="card-body">
-    <% if (user.user_data.user_type!='C') { %>
         <div class="titleSec">
           <button type="button" class="btn btn-primary" id="myBtn"
             style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
         </div>
-        <% } %>  
         <div class="row mt-4">
           <h4 class="text-dark"><i data-feather="settings" class="feather-icon"></i>&nbsp;<b>Attach Vehicle Rate</b>
           </h4>
@@ -16,16 +14,18 @@
           <div class="form-group col-md-4">
             <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
             <select name="rate_type" class="form-control" id="rate_type" required>
-              <option value="">Select Rate Type</option>
-              <option value="H" <%=data.rate_type=='H' ? 'selected' : '' %>>Hourly</option>
-              <option value="F" <%=data.rate_type=='F' ? 'selected' : '' %>>Fixed</option>
+              <option value="<%= user.user_data.dev_mod=='D' ? 'H' : 'F' %>">
+                <%= user.user_data.dev_mod=='D' ? 'Hourly' : 'Fixed' %>
+              </option>
             </select>
           </div>
           <div class="form-group col-md-4">
-            <label for="veh_id"><b style="color: black;">Vehicle Id:</b></label>
+            <label for="veh_id"><b style="color: black;">Vehicle Name:</b></label>
             <select name="veh_id" class="form-control" id="veh_id" required>
-              <option value="">Select Vehicle Id</option>
-
+              <option value="">Select Vehicle Name</option>
+              <% data.forEach(dt => { %>
+                <option value="<%= dt.vehicle_id %>"><%= dt.vehicle_name %></option>
+              <% })%>
             </select>
           </div>
           <input type="hidden" id="cust_id" name="cust_id" value="<%= data.customer_id %>">
@@ -85,9 +85,9 @@
               <div class="form-group">
                 <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
                 <select name="rate_type" class="form-control" id="rate_type" required>
-                  <option value="">Select Rate Type</option>
-                  <option value="H">Hourly</option>
-                  <option value="F">Fixed</option>
+                  <option value="<%= user.user_data.dev_mod=='D' ? 'H' : 'F' %>">
+                    <%= user.user_data.dev_mod=='D' ? 'Hourly' : 'Fixed' %>
+                  </option>
                 </select>
               </div>
             </div>
@@ -172,12 +172,13 @@
 <script>
   $('#submitBtn').click(function () {
     var veh_id = $('#veh_id').val();
+    var rate_type = $('#rate_type').val();
 
     var tbody = $(".show_data tbody");
     $.ajax({
       type: "GET",
       url: "/rate/vehicle_details",
-      data: { veh_id: veh_id },
+      data: { veh_id: veh_id, rate_type: rate_type },
       success: function (response) {
         tbody.empty();
         if (response.suc > 0 && response.msg.length > 0) {

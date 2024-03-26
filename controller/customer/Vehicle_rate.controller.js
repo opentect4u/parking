@@ -4,18 +4,19 @@ const { db_Select, db_Insert } = require("../../model/Master.model");
 
 const vehicle_rate = async (req, res) => {
   try {
-    var custId = req.session.user.user_data.customer_id;
-    var select = "a.*,b.customer_id,b.customer_name",
-      table_name = "md_rate_dtls a, md_customer b",
-      where = `a.customer_id = b.customer_id AND a.customer_id=${custId}`;
+    var custId = req.session.user.user_data.customer_id,
+    dev_mode = req.session.user.user_data.dev_mode;
+    var select = "vehicle_id, vehicle_name",
+      table_name = "md_vehicle",
+      where = `customer_id=${custId}`;
     var vehicle = await db_Select(select, table_name, where, null);
     console.log(vehicle);
     const page_data = {
       title: "Vehicle rate details",
       page_path: "/vehicle_rate/add_vehicle_rate",
-      data: vehicle,
+      data: vehicle.suc > 0 ? vehicle.msg : [],
     };
-    console.log(data);
+    console.log(data,req.session.user.user_data,'lalaal');
     res.render("common/layouts/main", page_data);
   } catch (error) {
     res.redirect("/login");
@@ -42,10 +43,11 @@ const show_veichle = async (req, res) => {
   console.log(data);
   try {
     var custId = req.session.user.user_data.customer_id;
+    dev_mode = req.session.user.user_data.dev_mode;
     // console.log(req.session.user.user_data);
-    let select = "a.*,b.*",
-      table_name = "md_rate_dtls a, md_customer b",
-      whr = `a.customer_id = b.customer_id AND a.customer_id=${custId} AND a.vehicle_id='${data.veh_id}'`;
+    let select = "a.*",
+      table_name = "md_rate_dtls a",
+      whr = `a.customer_id=${custId} AND a.vehicle_id='${data.veh_id}'`;
     const vehicle_dt = await db_Select(select, table_name, whr, null);
     res.json(vehicle_dt);
   } catch (error) {
@@ -122,7 +124,7 @@ const save_edit_vehicle_rate = async (req, res) => {
     const schema = Joi.object({
       cust_id: Joi.optional(),
       sl_no: Joi.optional(),
-      rate_type: Joi.required(),
+      rate_type: Joi.optional(),
       vehicle_id: Joi.required(),
       frm_hr: Joi.required(),
       to_hr: Joi.required(),

@@ -10,7 +10,7 @@
                     <input type="hidden" id="vehicle_id" name="vehicle_id" value="<%= data.vehicle_id %>">
 
                     <div class="row mt-4">
-                        <div class="form-group col-4">
+                        <div class="form-group col-6">
                             <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Customer Name</option>
@@ -20,7 +20,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                               <label for="vehicle_name" class="text-dark"><b>Vehicle Name</b></label>
                               <input type="text" class="form-control" id="vehicle_name" name="vehicle_name" placeholder="Enter Vehicle Name...."
@@ -28,16 +28,6 @@
                             </div>
                           </div>
                          
-                          <div class="col-md-4">
-                            <div class="form-group">
-                              <label for="vehicle_icon" class="text-dark"><b>Vehicle Icon</b></label>
-                              <select name="vehicle_icon" class="form-control" id="vehicle_icon">
-                                <option value="<%= data.vehicle_icon %>">Select Vehicle Icon</option>
-                                <option value="car-hatchback" <%= data.vehicle_icon == 'car-hatchback' ? 'selected' : '' %>>car-hatchback</option>
-                                <option value="motorbike" <%= data.vehicle_icon == 'motorbike' ? 'selected' : '' %>>motorbike</option>
-                                 </select>
-                            </div>
-                          </div>
                         <div class="row mt-2">
                             <div class="form-group col-md-6">
                                 <input type="submit" value="SUBMIT" class="btn btn-primary btn-block text-center"

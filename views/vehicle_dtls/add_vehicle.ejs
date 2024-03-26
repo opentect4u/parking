@@ -2,12 +2,12 @@
     <div class="row">
       <div class="card col-12">
         <div class="card-body">
-    <% if (user.user_data.user_type!='C') { %>
-        <div class="titleSec">
-            <button type="button" class="btn btn-primary" id="myBtn"
-              style="float: inline-end;border-radius: 6px;width: 6vw;">Add</button>
-          </div>
-        <% } %>  
+         
+            <div class="titleSec">
+                <button type="button" class="btn btn-primary" id="myBtn"
+                  style="float: inline-end;border-radius: 6px;width: 6vw;">Add</button>
+              </div>
+           
       <div class="row mt-4">
             <h4 class="text-dark"><i data-feather="menu" class="feather-icon"></i>&nbsp;<b>Attach Vehicle</b></h4>
           </div>
@@ -17,7 +17,6 @@
                 <tr>
                   <th class="text-dark">Sl. No.</th>
                   <th class="text-dark">vehicle Name</th>
-                  <th class="text-dark">vehicle icon Name</th>
                   <th class="text-dark">Action</th>
                 </tr>
               </thead>
@@ -31,9 +30,6 @@
                         <td>
                           <%=item.vehicle_name %>
                         </td>
-                        <td>
-                            <%=item.vehicle_icon %>
-                          </td>
                         <td>
                           <a href="/vehicle/edit_vehicle_details?customer_id=<%=item.customer_id%>&vehicle_id=<%=item.vehicle_id %>" class="btn btn-info"
                             style="border-radius: 5px;"><i class="fa fa-edit"></i></a>
@@ -68,7 +64,7 @@
         <div class="modal-body">
           <form action="/vehicle/add_save_vehicle" method="post" id="myForm">
             <div class="row">
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-6">
                 <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                 <select name="cust_id" class="form-control" id="cust_id">
                   <option value="<%=user.user_data.customer_id %>">
@@ -77,21 +73,11 @@
                 </select>
               </div>
   
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <div class="form-group">
                   <label for="vehicle_name" class="text-dark"><b>Vehicle Name</b></label>
                   <input type="text" class="form-control" id="vehicle_name" name="vehicle_name" placeholder="Enter Vehicle Name...."
                     value="">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="vehicle_icon" class="text-dark"><b>Vehicle Icon</b></label>
-                  <select name="vehicle_icon" class="form-control" id="vehicle_icon">
-                    <option value="">Select Vehicle Icon</option>
-                    <option value="car-hatchback">car-hatchback</option>
-                    <option value="motorbike">motorbike</option>
-                     </select>
                 </div>
               </div>
   

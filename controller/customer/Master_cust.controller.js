@@ -130,6 +130,7 @@ const location_name = async (req, res) => {
     // console.log(location);
 };
 
+
 const my_profile_save = async (req, res) =>{
   try {
     var data = req.body;

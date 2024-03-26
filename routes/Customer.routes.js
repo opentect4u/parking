@@ -2,7 +2,7 @@ const express = require('express');
 const { test, login, login_post } = require('../controller/customer/CAuth.controller');
 const { dashboard, blank } = require('../controller/customer/Dashboard.controller');
 const { AuthCheckedMW, LoginCheckedMW, logout } = require('../middleware/AuthChecked.middleware');
-const { vehicle, operator_add, operator_add_post, password_change, save_report_password, report_pwd, location_name, seller_location_name, my_profile_save, password, change_report_flag } = require('../controller/customer/Master_cust.controller');
+const { vehicle, operator_add, operator_add_post, password_change, save_report_password, report_pwd, location_name, seller_location_name, my_profile_save, password, change_report_flag, mode_name } = require('../controller/customer/Master_cust.controller');
 
 const Customer=express.Router();
 

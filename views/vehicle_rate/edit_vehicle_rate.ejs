@@ -24,9 +24,9 @@
                             <div class="form-group">
                               <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
                               <select name="rate_type" class="form-control" id="rate_type">
-                                <option value="">Select Rate Type</option>
-                                <option value="H" <%= data.rate_type == 'H' ? 'selected' : '' %>>Hourly</option>
-                                <option value="F" <%= data.rate_type == 'F' ? 'selected' : '' %>>Fixed</option>
+                                <option value="<%= user.user_data.dev_mod=='D' ? 'H' : 'F' %>">
+                                  <%= user.user_data.dev_mod=='D' ? 'Hourly' : 'Fixed' %>
+                                </option>
                               </select>
                             </div>
                           </div>
