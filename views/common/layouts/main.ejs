@@ -140,33 +140,39 @@
                   <h4 class="badge badge-success" style="font-size: 21px;margin-left: 25vw;"><%= user.user_data.customer_name %></h4>
                   <% if (user.user_data.user_type=='C') { %>
                     <div class="row mt-4 ml-5">
-                      <div class="form-group col-md-6">
+                      <div class="form-group col-md-4">
                         <label for="loc_id"><b style="color: black;">Location Name:</b></label>
                         <select name="loc_id" class="form-control" id="loc_id" required>
                         <option value="">Select Location Name</option>
                       
                         </select>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                           <label for="phone"><b style="color: black;">Phone No:</b></label>
                           <input type="text" id="phone" name="phone" class="form-control" value="<%= user.user_data.mobile_no %>" />
                           </div>
-                          <div class="form-group col-md-6">
+                          <div class="form-group col-md-4">
                             <label for="email_id"><b style="color: black;">Email:</b></label>
                             <input type="text" id="email_id" name="email_id" class="form-control" value="<%= user.user_data.email %>" />
-                            </div>
-                          <div class="form-group col-md-6">
-                              <label for="cust_add"><b style="color: black;">Customer Address:</b></label>
-                              <input type="text" id="cust_add" name="cust_add" class="form-control" value="<%= user.user_data.cust_addr %>" />
-                              </div>
-                          <div class="form-group col-md-6">
-                                <label for="mode"><b style="color: black;">Mode:</b></label>
-                                <input type="text" id="mode" name="mode" class="form-control" value="<%= user.user_data.dev_mod == 'D' ? 'Dual' : 'Fixed' %>" readonly/>
+                            </div>    
+                       </div>
+                          <div class="row ml-5">
+                             <div class="form-group col-md-12">
+                                  <label for="cust_add"><b style="color: black;">Customer Address:</b></label>
+                                  <textarea id="cust_add" name="cust_add" class="form-control" rows="4"><%= user.user_data.cust_addr %></textarea>
+                              </div>  
+                          </div> 
+                          <div class="row ml-5">
+                            <div class="form-group col-md-6">
+                              <label for="mode"><b style="color: black;">Mode:</b></label>
+                              <input type="text" id="mode" name="mode" class="form-control" value="<%= user.user_data.dev_mod == 'D' ? 'Dual' : 'Fixed' %>" readonly style="background-color: #b0cfec;"/>
+                              </div>   
+                              <div class="form-group col-md-6">
+                                <label for="device"><b style="color: black;">No. of Device:</b></label>
+                                <input type="text" id="device" name="device" class="form-control" value="<%= user.user_data.no_device %>" readonly style="background-color: #b0cfec;"/>
                                 </div>  
-                          <div class="form-group col-md-6">
-                                  <label for="device"><b style="color: black;">No. of Device:</b></label>
-                                  <input type="text" id="device" name="device" class="form-control" value="<%= user.user_data.no_device %>" readonly />
-                                  </div>        
+                          </div>
+                                            
                     </div>
                   <% } %>
                  <div class="row mt-3">
