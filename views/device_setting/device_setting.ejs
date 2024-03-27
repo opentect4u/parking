@@ -66,6 +66,13 @@
       <div class="modal-body">
         <form action="/device/add_save_device" method="post" id="myForm">
           <div class="row">
+            <div class="form-group col-12">
+              <label for="no_device"><b class="text-dark">No. of Device:</b>&nbsp;&nbsp;</label>
+              <b><span class="badge badge-primary" style="font-size: medium;"><%= user.user_data.no_device %></span></b>
+              <input type="hidden" id="no_device" value="<%= user.user_data.no_device %>">
+            </div>
+        </div>
+          <div class="row">
             <div class="form-group col-6">
               <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
@@ -141,7 +148,7 @@
           </div>
           <div class="row mt-3">
             <div class="form-group col-md-3">
-              <input type="submit" value="SUBMIT" class="btn btn-primary "
+              <input type="submit" value="SUBMIT" id="set_dev_sub" class="btn btn-primary "
                 style="margin-left: 35vw;border-radius: 6px;" />
             </div>
           </div>
@@ -154,7 +161,25 @@
 <script>
   $(document).ready(function () {
     $("#myBtn").click(function () {
-      $("#myModal").modal();
+      $.ajax({
+      type: "GET",
+      url: "/device/device_id",
+      data: { },
+      success: function (response) {
+        // console.log(response.msg[0].tot_row, $('#no_device').val(),'22222');
+        if($('#no_device').val() <= response.msg[0].tot_row){
+          alert(`You can not add more than ${$('#no_device').val()} device.`)
+          $('#set_dev_sub').attr('disabled', true)
+        }else{
+          $("#myModal").modal();
+        }
+      },
+      error: function (error) {
+        console.log(error);
+
+      },
+    });
+
     });
   });
 </script>

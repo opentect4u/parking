@@ -43,6 +43,22 @@ const show_device = async (req, res) => {
   }
 };
 
+const device_id = async (req, res) => {
+  try {
+    var custId = req.session.user.user_data.customer_id;
+    let select = "COUNT(setting_id) tot_row",
+      table_name = "md_setting",
+      whr = `customer_id=${custId}`;
+    const device_dtls = await db_Select(select, table_name, whr, null);
+    res.json(device_dtls);
+  } catch (error) {
+    res.json({
+      suc: 0,
+      msg: [],
+    });
+  }
+};
+
 const edit_device = async (req, res) => {
   var data = req.query;
   // console.log(data);
@@ -172,4 +188,5 @@ module.exports = {
   edit_device,
   save_edit_device,
   save_add_device,
+  device_id,
 };
