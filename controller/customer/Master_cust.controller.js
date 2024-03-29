@@ -102,7 +102,7 @@ const report_pwd = async (req, res) => {
 const save_report_password = async (req, res) => {
   try {
     var data = req.body;
-    console.log(data);
+    // console.log(data);
 
     const userData = req.user;
     var custId = req.session.user.user_data.customer_id;
@@ -114,7 +114,7 @@ const save_report_password = async (req, res) => {
       // where = `customer_id='${custId}' AND app_id='${data.app_id}'`;
       where = `customer_id='${custId}'`;
     let res_dt = await db_Insert("md_setting", fields, null, where, 1);
-    console.log(res_dt);
+    // console.log(res_dt);
     req.flash("success", "Updated successful");
     res.redirect("/password");
   } catch (error) {
@@ -192,6 +192,42 @@ const password = async (req, res) => {
   }else {
     res.redirect("/report/details_report");
   }
+};
+
+const super_admin_password = async (req, res) => {
+  const user_data = req.session.user.userData;
+  // console.log(user_data,"123456");
+  const datetime = dateFormat(new Date(), "yyyy-mm-dd");
+  
+  var data = req.body,result;
+  // console.log(data,"1234");
+
+  var select = "sl_no,password",
+  table_name = "md_super_admin",
+  whr = `sl_no='${user_data.sl_no}'`;
+  var res_dt = await db_Select(select,table_name,whr,null)
+  // console.log(res_dt,"1234");
+
+  if(res_dt.suc > 0) {
+    if(res_dt.msg.length > 0) {
+      if (await bcrypt.compare(data.old_pwd, res_dt.msg[0].password)) {
+        var pass = bcrypt.hashSync(data.new_pwd, 10);
+        var table_name = "md_super_admin",
+        fields = `password = '${pass}',updated_by='SSS', updated_at='${datetime}'`,
+        where2 = `sl_no='${user_data.sl_no}'`,
+        flag = 1;
+        var forget_pass = await db_Insert(table_name,fields,null,where2,flag)
+        result = forget_pass
+        res.redirect("/superadmin_logout");
+      }else {
+        res.redirect("/superadmin_dashboard");
+      }
+    }else {
+        res.redirect("/superadmin_dashboard");
+      }
+  }else {
+    res.redirect("/superadmin_dashboard");
+  }
 }
 
 module.exports = {
@@ -204,4 +240,5 @@ module.exports = {
   location_name,
   my_profile_save,
   password,
+  super_admin_password,
 };

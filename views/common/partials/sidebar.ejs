@@ -88,11 +88,13 @@
         </li> -->
         <!-- UPDATE ON 09/01/2024 SUBHAM -->
         <li class="list-divider"></li>
-        <li class="nav-small-cap">
-          <span class="hide-menu">Reports</span>
-        </li>
+       
 
-        <% if(user.user_data.customer_id=='13' || user.user_data.customer_id=='11'){  %>
+        <% if(user.user_data) {
+          if(user.user_data.customer_id=='13' || user.user_data.customer_id=='11'){  %>
+            <li class="nav-small-cap">
+              <span class="hide-menu">Reports</span>
+            </li>
         <li class="sidebar-item">
           <a
             class="sidebar-link has-arrow"
@@ -124,8 +126,13 @@
           </ul>
         </li>
 
-        <% }  %>
+        <% } } %>
 
+        <% if(user.user_data) {
+          if(user.user_data.user_type=='C'){  %>
+            <li class="nav-small-cap">
+              <span class="hide-menu">Reports</span>
+            </li>
         <li class="sidebar-item">
           <a
             class="sidebar-link has-arrow"
@@ -235,36 +242,6 @@
             </li>
           </ul>
         </li>
-
-
-        <!-- <li class="list-divider"></li>
-        <li class="nav-small-cap">
-          <span class="hide-menu">Blank</span>
-        </li>
-
-        <li class="list-divider"></li>
-        <li class="nav-small-cap">
-          <span class="hide-menu">Applications</span>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link" href="ticket-list.html" aria-expanded="false"
-            ><i data-feather="tag" class="feather-icon"></i
-            ><span class="hide-menu">Ticket List </span></a
-          >
-        </li>
-
-        <li class="list-divider"></li>
-        <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link sidebar-link"
-            href="docs/docs.html"
-            aria-expanded="false"
-            ><i data-feather="edit-3" class="feather-icon"></i
-            ><span class="hide-menu">Documentation</span></a
-          >
-        </li> -->
         <li class="sidebar-item">
           <a
             class="sidebar-link sidebar-link"
@@ -274,6 +251,126 @@
             ><span class="hide-menu">Logout</span></a
           >
         </li>
+        <% } } else { %>
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin/location"
+              aria-expanded="false"
+              ><i data-feather="map-pin" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark">Locations</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin/seller"
+              aria-expanded="false"
+              ><i data-feather="user" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark">Seller</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin/customer"
+              aria-expanded="false"
+              ><i class="fas fa-users text-dark"></i
+              ><span class="hide-menu text-dark">Customer</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i data-feather="user-check" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark">Operator</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i class='fas fa-car text-dark'></i><span class="hide-menu text-dark">Vehicle</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i class="fas fa-ellipsis-h text-dark"></i
+              ><span class="hide-menu text-dark">Rate</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i data-feather="settings" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark">Settings</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i data-feather="activity" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark">Header & Footer</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i data-feather="corner-up-right" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark">Shift</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i class="fas fa-eye text-dark"></i
+              ><span class="hide-menu text-dark">View Transactions</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i class="fa fa-file text-dark"></i
+              ><span class="hide-menu text-dark">Reports</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/superadmin_logout"
+              aria-expanded="false"
+              ><i data-feather="log-out" class="feather-icon text-dark"></i
+              ><span class="hide-menu text-dark" >Logout</span></a
+            >
+          </li>
+       <% } %>
       </ul>
     </nav>
     <!-- End Sidebar navigation -->

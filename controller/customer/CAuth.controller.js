@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const bcrypt = require('bcrypt');
 const dateFormat = require('dateformat');
-const { db_Select } = require("../../model/Master.model");
+const { db_Select, db_Insert } = require("../../model/Master.model");
 
 const test = async (req, res) => {
     try {
@@ -80,4 +80,56 @@ const login_post = async (req, res) => {
     }
 }
 
-module.exports = { test, login, login_post };
+const super_admin_login = (req, res) => {
+    res.render('auth/superadmin_login')
+}
+
+const super_admin_login_post = async (req, res) => {
+    try {
+        let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const schema = Joi.object({
+            password: Joi.string().required(),
+            user_id: Joi.string().required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json(sendErrorResponce(errors));
+        }
+
+        let whr = `user_id='${value.user_id}'`
+        var userData = await db_Select("sl_no,user_id,password,user_name,user_mobile_no,last_login,created_by,created_at", 'md_super_admin', whr, null)
+        if ((userData.msg).length == 1) {
+            if (await bcrypt.compare(value.password, userData.msg[0].password)) {
+                try{
+                    await db_Insert('md_super_admin',`last_login='${datetime}',updated_by='SSS',updated_at='${datetime}'`,null,`user_id='${value.user_id}'`,1)
+                    userData = userData.msg[0];
+                    console.log(userData);
+                    req.session['user'] = { userData, datetime }
+                    req.flash('success', "Login successful");
+                    res.redirect('/superadmin_dashboard');
+                }catch(err){
+                   console.log(err);
+                   req.flash('danger', err);
+                   res.redirect('/superadmin_login');
+                }
+               
+            } else {
+                req.flash('danger', "Please check your userid or password");
+                res.redirect('/superadmin_login');
+            }
+        } else {
+            req.flash('danger', "Please check your userid or password");
+            res.redirect('/superadmin_login');
+        }
+    } catch (error) {
+        console.log(error);
+        req.flash('danger', error);
+        res.redirect('/superadmin_login');
+    }
+};
+
+module.exports = { test, login, login_post, super_admin_login, super_admin_login_post };

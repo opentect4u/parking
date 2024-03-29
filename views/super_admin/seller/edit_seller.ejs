@@ -1,0 +1,73 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Seller Edit Details</i></h2>
+          </div> 
+          <form action="/superadmin/seller_add" id="myForm" method="post">
+          <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="sell_name" class="text-dark"><b>Seller Name</b></label>
+                  <input type="text" class="form-control" id="sell_name" name="sell_name" value="<%= data[0].seller_name%>">
+                </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="phone" class="text-dark"><b>Phone No</b></label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="<%= data[0].seller_mob%>">
+                  </div>
+                  </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="email" class="text-dark"><b>Email</b></label>
+                      <input type="text" class="form-control" id="email" name="email" value="<%= data[0].email%>">
+                    </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="loc_name" class="text-dark"><b>Location Name</b></label>
+                            <select name="loc_name" class="form-control" id="loc_name">
+                                <option value="">Select Location Name</option>
+                                <% location.forEach(dt => { %>
+                                    <option value="<%= dt.location_id %>" <% if (dt.location_id == data[0].location_id) { %> selected <% } %>><%= dt.loction %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                  <label for="sell_add" class="text-dark"><b>Seller Address</b></label>
+                  <textarea class="form-control" rows="3" id="sell_add" name="sell_add"><%= data[0].seller_addr%></textarea>
+                </div>
+              </div>
+              
+          </div>
+          <div class="row mt-4">
+            <input type="hidden" name="id" value="<%= id %>">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/superadmin/seller";
+      });
+    });
+  </script>

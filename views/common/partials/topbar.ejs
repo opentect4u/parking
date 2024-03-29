@@ -136,9 +136,11 @@
                       <img src="/template/assets/images/users/profile-pic.png" alt="user" class="rounded-circle"
                           width="40">
                       <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span
-                              class="text-dark"><%= user.user_data.customer_name;  %></span> <i data-feather="chevron-down"
+                              class="text-dark"><%= user.user_data ? (user.user_data.user_type=='C' ? user.user_data.customer_name : user.user_data.user_name) : user.userData.user_name %></span> <i data-feather="chevron-down"
                               class="svg-icon"></i></span>
                   </a>
+                  <% if(user.user_data){
+                    if (user.user_data.user_type=='C') { %>
                   <div id="myDropdown" class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
                       <a class="dropdown-item" href="javascript:void(0)"  data-toggle="modal"
                       data-target="#myAccount" id="myprofile"><i data-feather="user"
@@ -160,6 +162,21 @@
                           Logout</a>
                      
                   </div>
+                  <% }} else { %>
+                    <div id="myDropdown" class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
+                        <a class="dropdown-item" href="javascript:void(0)"  data-toggle="modal"
+                        data-target="#changepwd"><i data-feather="lock"
+                                class="svg-icon mr-2 ml-1"></i>
+                                Change
+                                Password</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/superadmin_logout"><i data-feather="power"
+                                class="svg-icon mr-2 ml-1"></i>
+                            Logout</a>
+                       
+                    </div>
+                 <% } %>
               </li>
               <!-- ============================================================== -->
               <!-- User profile and search -->

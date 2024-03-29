@@ -9,6 +9,7 @@ const { Manage_operatorRouter } = require('./routes/Manage_operatorRouter');
 const { ShiftRouter } = require('./routes/ShiftRouter');
 const { vehicleRouter } = require('./routes/VehicleRouter');
 const { vehicle_rateRouter } = require('./routes/Vehicle_rateRouter');
+const { SuperAdminRouter } = require('./routes/SuperAdminRouter');
 
 const app = express(),
     session = require('express-session'),
@@ -82,6 +83,8 @@ app.use('/shift',ShiftRouter)
 app.use('/vehicle',vehicleRouter)
 
 app.use('/rate',vehicle_rateRouter)
+
+app.use('/superadmin', SuperAdminRouter)
 
 
 app.get('*', function(req, res){

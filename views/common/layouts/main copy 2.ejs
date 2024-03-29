@@ -30,8 +30,6 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-  <link href="/template/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
-
   <style>
     /* .cust-toggle .toggle{
     width: 20% !important;
@@ -128,7 +126,7 @@
             <!-- Modal Header -->
             <div class="modal-header" style="background-color: aliceblue;">
               <h3 class="modal-title"><i data-feather="user"
-                class="svg-icon mr-2 ml-1" style="color: black;"></i><b style="color: black;">My Profile&nbsp; (<%= user.user_data ? (user.user_data.user_type=='C' ? user.user_data.customer_name : user.user_data.seller_name) : user.userData.user_name %>)</b></h3>
+                class="svg-icon mr-2 ml-1" style="color: black;"></i><b style="color: black;">My Profile&nbsp; (<%= user.user_data.user_type=='C' ? user.user_data.customer_name : user.user_data.seller_name %>)</b></h3>
               <button type="button" class="close" data-dismiss="modal">
                 &times;
               </button>
@@ -136,12 +134,11 @@
             
             <!-- Modal body -->
             <div class="modal-body" style="background-color: antiquewhite;">
-              <% if(user.user_data){
-                if (user.user_data.user_type=='C') { %>
-                  <form action="/save_my_profile" method="post">
-                  <div class="row" style="align-items: center;margin-left: 5vw;">
-                    <div class="col-md-10">
-                      <h4 class="badge badge-success" style="font-size: 21px;margin-left: 25vw;"><%= user.user_data ? user.user_data.customer_name : '' %></h4>
+              <form action="/save_my_profile" method="post">
+              <div class="row" style="align-items: center;margin-left: 5vw;">
+                <div class="col-md-10">
+                  <h4 class="badge badge-success" style="font-size: 21px;margin-left: 25vw;"><%= user.user_data.customer_name %></h4>
+                  <% if (user.user_data.user_type=='C') { %>
                     <div class="row mt-4 ml-5">
                       <div class="form-group col-md-4">
                         <label for="loc_id"><b style="color: black;">Location Name:</b></label>
@@ -174,16 +171,16 @@
                                 <label for="device"><b style="color: black;">No. of Device:</b></label>
                                 <input type="text" id="device" name="device" class="form-control" value="<%= user.user_data.no_device %>" readonly style="background-color: #b0cfec;"/>
                                 </div>  
-                          </div>         
+                          </div>
+                                            
                     </div>
-                  
+                  <% } %>
                  <div class="row mt-3">
                   <button type="submit" class="btn btn-primary" style="border-radius: 5px;margin-left: 31vw;">Submit</button>
                  </div>
                 </div>
               </div>
               </form>
-                 <% }} %>
             </div>
   
             <!-- Modal footer -->
@@ -216,9 +213,8 @@
           
           <!-- Modal body -->
           <div class="modal-body" style="background-color: antiquewhite;">
-            <% if(user.user_data){
-              if (user.user_data.user_type=='C') { %>
           <form action="/password" method="post" id="myForm">
+            <% if (user.user_data.user_type=='C') { %>
             <div class="row">
               <div class="col-md-4">
                 <label for="old_pwd"><b style="color: black;">Old Password:</b></label>
@@ -256,6 +252,7 @@
                     required
                   />
               </div>
+              <% } %>
               <div class="form-group col-3 mt-4">
                 <button
                   type="submit"
@@ -265,52 +262,6 @@
               </div>
             </div>
             </form>
-            <% }} else { %>
-              <form action="/superadmin_password" method="post" id="myForm">
-                <div class="row">
-                  <div class="col-md-4">
-                    <label for="old_pwd"><b style="color: black;">Old Password:</b></label>
-                    <input
-                        type="password"
-                        name="old_pwd"
-                        class="form-control"
-                        id="old_pwd"
-                        placeholder="Enter old password....."
-                        required
-                      />
-                  </div>
-                  <div class="col-md-4">
-                    <label for="new_pwd"><b style="color: black;">New Password:</b></label>
-                    <input
-                        type="password"
-                        name="new_pwd"
-                        class="form-control"
-                        id="new_pwd"
-                        placeholder="Enter new password....."
-                        required
-                      />
-                  </div>
-                  <div class="col-md-4">
-                    <label for="con_pwd"><b style="color: black;">Confirm Password:</b></label>
-                    <input
-                        type="password"
-                        name="con_pwd"
-                        class="form-control"
-                        id="con_pwd"
-                        placeholder="Enter confirm password....."
-                        required
-                      />
-                  </div>
-                  <div class="form-group col-3 mt-4">
-                    <button
-                      type="submit"
-                      value="SUBMIT"
-                      class="btn btn-primary" style="margin-left: 40vw;border-radius: 5px;">Submit
-                  </button>
-                  </div>
-                </div>
-                </form>
-           <% } %>
             
           </div>
 
@@ -348,11 +299,7 @@
     <script src="/template/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js"></script>
     <script src="/template/assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js"></script>
     <script src="/template/dist/js/pages/dashboards/dashboard1.min.js"></script>
-    <script src="/template/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="/template/dist/js/pages/datatable/datatable-basic.init.js"></script>
-    <script>
-     $('#dataTable').DataTable()
-  </script>
+
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
@@ -388,7 +335,7 @@
         // console.log(response);
            $('#loc_id').empty();
            $('#loc_id').append(`<option value="">Select Location Name</option>`)
-            var loca_id = '<%= user.user_data ? user.user_data.location_id : "" %>'
+            var loca_id = '<%= user.user_data.location_id %>'
            response.msg.forEach((item, i) => {
             var _selected = false
             if(loca_id == item.location_id) _selected = true

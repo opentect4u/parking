@@ -1,0 +1,40 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Location Edit Details</i></h2>
+          </div> 
+          <form action="/superadmin/location_save" id="myForm" method="post">
+          <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="form-group">
+                  <label for="loc_name" class="text-dark"><b>Location Name</b></label>
+                  <textarea class="form-control" rows="3" id="loc_name" name="loc_name"><%= data[0].loction %></textarea>
+                </div>
+              </div>
+              
+          </div>
+          <div class="row mt-4">
+            <input type="hidden" name="id" value="<%= id %>">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/superadmin/location";
+      });
+    });
+  </script>
