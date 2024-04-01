@@ -1,0 +1,67 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <!-- <div class="titleSec">
+                        <button type="button" class="btn btn-primary" id="myBtn"
+                          style="float: inline-end;border-radius: 6px;width: 6vw;">Add</button>
+                      </div> -->
+                    <h3 class="card-title"><i class="fas fa-users text-dark"></i>  Customer</h3>
+                    <div class="table-responsive mt-4">
+                        <table id="dataTable" class="table table-striped table-bordered no-wrap">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-dark">Sl No.</th>
+                                    <th class="text-center text-dark">Customer Name</th>
+                                    <th class="text-center text-dark">Seller Name</th>
+                                    <th class="text-center text-dark">Mobile No.</th>
+                                    <th class="text-center text-dark">Email</th>
+                                    <th class="text-center text-dark">Customer Address</th>
+                                    <th class="text-center text-dark">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(data && data.length> 0) { %>
+                                    <% data.forEach(function(item,index) { %>
+                                      <tr>
+                                        <td class="text-center text-dark">
+                                          <%=(index+1)%>
+                                        </td>
+                                        <td class="text-center text-dark">
+                                          <%=item.customer_name %>
+                                        </td>
+                                        <td class="text-center text-dark">
+                                            <%=item.seller_name %>
+                                          </td>
+                                        <td class="text-center text-dark">
+                                            <%=item.mobile_no %>
+                                          </td>
+                                        <td class="text-center text-dark">
+                                            <%=item.email %>
+                                          </td>
+                                        <td class="text-center text-dark">
+                                            <%=item.cust_addr %>
+                                          </td>    
+                                        <td class="text-center text-dark">
+                                          <a href="edit_customer?id=<%= item.customer_id %>"
+                                            class="btn btn-info" style="border-radius: 5px;"><i class="fa fa-edit"></i></a>
+                                        </td>
+                                      </tr>
+                                      <% }); %>
+                                        <% } else { %>
+                                          <tr>
+                                            <td colspan="7" class="text-danger text-center">No data available</td>
+                                          </tr>
+                                          <% } %> 
+                            </tbody>
+                            <tfoot>
+                               
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
