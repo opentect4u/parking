@@ -3,7 +3,7 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
 function usegetShiftwiseReport() {
-    const shift_wise = async (fDate,tDate,shift_id) => {
+    const shift_wise = async (fDate,tDate,shift_id, getUserName) => {
         
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
@@ -11,6 +11,7 @@ function usegetShiftwiseReport() {
              axios.post(
                     ADDRESSES.SHIFTWISE_REPORT_DATA,
                     {
+                        customerUserName: getUserName,
                         frm_dt: fDate,
                         to_dt: tDate,
                         shift_id:shift_id

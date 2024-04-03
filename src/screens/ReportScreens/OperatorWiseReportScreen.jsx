@@ -31,6 +31,7 @@ import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
 export default function OperatorWiseReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
   const { operator_wise } = usegetOperatorwiseReport()
+  const { getUserName } = useContext(AuthContext);
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_password_flag, adv_pay } = generalSettings;
@@ -92,7 +93,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
 
 
-    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo);
+    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, getUserName);
 
     setOperatorwiseReports(operator_wise_report?.data?.msg);
 

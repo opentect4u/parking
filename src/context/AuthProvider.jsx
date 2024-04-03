@@ -15,6 +15,8 @@ export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(() => false);
   const [isUpdate, setUpdate] = useState(() => false);
   const [loading, setLoading] = useState(() => false);
+  const [getUserName, setUserName] = useState(() => false);
+
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(() => false);
   const [generalSettings, setGeneralSettings] = useState({
     // setting_id: 9,
@@ -47,6 +49,8 @@ export const AuthProvider = ({ children }) => {
   const [shiftwiseReports, setShiftwiseReports] = useState(() => []);
   const [vehicleWiseReports, setVehicleWiseReports] = useState(() => []);
   const [operatorwiseReports, setOperatorwiseReports] = useState(() => []);
+  // const [getUserName, setUserName] = useState(() => []);
+
   const {appUpdate}=useAppUpdate();
 
   useEffect(() => {
@@ -73,12 +77,14 @@ export const AuthProvider = ({ children }) => {
           },
         })
         .then(res => {
-          console.log(res.data.message);
+          console.log(credentials.user_id, 'llllllllllllllll');
           if (res.data.status) {
             loginStorage.set("login-data-local", JSON.stringify(credentials));
             loginStorage.set("login-data", JSON.stringify(res.data.data));
-            console.log("=====================", res.data.data);
+            console.log("=====================", res.data.data.user.userdata.msg[0].id);
             setIsLogin(!isLogin);
+            // setUserName(credentials.user_id);
+            setUserName(res.data.data.user.userdata.msg[0].id)
           } else {
             // ToastAndroid.showWithGravityAndOffset(
             //   "Invalid Credentials",
@@ -257,12 +263,13 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const getDetailedReport = async (fromDate, toDate) => {
+  const getDetailedReport = async (fromDate, toDate, getUserName) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
         ADDRESSES.DETAILED_REPORT,
         {
+          customerUserName: getUserName,
           from_date: fromDate,
           to_date: toDate,
         },
@@ -278,12 +285,13 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const getShiftwiseReport = async (fromDate, toDate) => {
+  const getShiftwiseReport = async (fromDate, toDate, getUserName) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
         ADDRESSES.SHIFTWISE_REPORT,
         {
+          customerUserName: getUserName,
           from_date: fromDate,
           to_date: toDate,
         },
@@ -302,12 +310,13 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const getVehicleWiseReport = async (fromDate, toDate) => {
+  const getVehicleWiseReport = async (fromDate, toDate, getUserName) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
         ADDRESSES.VEHICLE_WISE_REPORT,
         {
+          customerUserName: getUserName,
           from_date: fromDate,
           to_date: toDate,
         },
@@ -327,12 +336,13 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const getOperatorwiseReport = async (fromDate, toDate) => {
+  const getOperatorwiseReport = async (fromDate, toDate, getUserName) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
         ADDRESSES.OPERATORWISE_REPORT,
         {
+          customerUserName: getUserName,
           from_date: fromDate,
           to_date: toDate,
         },
@@ -451,6 +461,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         generalSettings,
         getGeneralSettings,
+        getUserName,
         // rateDetailsList,
         // getRateDetailsList,
         gstList,

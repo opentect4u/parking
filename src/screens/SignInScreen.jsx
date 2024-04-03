@@ -17,6 +17,8 @@ const SignInScreen = ({ navigation }) => {
   const [deviceId, setDeviceId] = useState(() => "");
   const { login } = useContext(AuthContext);
 
+  // const {loginUser_GetData, loginUser_SetData} = useContext(AuthContext);
+
   useEffect(() => {
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);

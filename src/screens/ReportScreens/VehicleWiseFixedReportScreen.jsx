@@ -31,6 +31,10 @@ import useVehicleWiseReports from "../../hooks/api/useVehicleWiseReports";
 export default function VehicleWiseFixedReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
 
+  const { isLogin } = useContext(AuthContext);
+  const { getUserName } = useContext(AuthContext);
+  
+
 
   const { vehicleWiseReportsData } = useVehicleWiseReports();
 
@@ -41,9 +45,11 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   const [loading, setLoading] = useState();
 
   const { generalSettings } = useContext(AuthContext);
+   const { login } = useContext(AuthContext);
   const { dev_mod, report_password_flag, adv_pay } = generalSettings;
 
   console.log(generalSettings, 'mmmmmmmmmmmmmmmmmmmmmmmmmm');
+  console.log(login, '///////////////////////////////');
 
   // create a new Date object
   const date = new Date();
@@ -88,6 +94,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   //   getVehicleWiseReport(mydateFrom, mydateTo);
   // }, [mydateFrom, mydateTo]);
 
+
+
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
 
@@ -95,9 +103,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-
-    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo)
-    console.log(resdata?.data?.msg)
+    // console.log(vehicleWiseReports, 'vehicleWiseReportsvehicleWiseReportsvehicleWiseReportsvehicleWiseReportsvehicleWiseReports');
+    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, getUserName)
     setVehicleWiseReports(resdata?.data?.msg)
 
 

@@ -3,13 +3,15 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
 function useVehicleWiseReports() {
-    const vehicleWiseReportsData = async (fDate,tDate) => {
-        
+    
+    const vehicleWiseReportsData = async (fDate,tDate, getUserName) => {
+        // console.log(getUserName, 'ddddddddd');
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
              axios.post(
                     ADDRESSES.OPERATORWISE_REPORT,
                     {
+                        customerUserName: getUserName,
                         from_date: fDate,
                         to_date: tDate
                     },

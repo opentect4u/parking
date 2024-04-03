@@ -33,7 +33,7 @@ import usegetShiftwiseReport from "../../hooks/api/usegetShiftwiseReport";
 
 export default function ShiftWiseReportScreen({ navigation }) {
   const { shiftwiseReports, getShiftwiseReport, receiptSettings } = useContext(AuthContext);
-
+  const { getUserName } = useContext(AuthContext);
 
 
   // State for manage the  total price
@@ -109,7 +109,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
   const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
-    let reportData= await shift_wise(formattedDateFrom,formattedDateTo,useShift)
+    let reportData= await shift_wise(formattedDateFrom,formattedDateTo, useShift, getUserName)
     console.log("reportData",reportData.data.msg)
 
     displayBotBlue = true;

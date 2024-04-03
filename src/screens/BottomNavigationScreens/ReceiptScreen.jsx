@@ -28,6 +28,7 @@ import useDashboard from "../../hooks/api/useDashboard";
 export default function ReceiptScreen({ navigation }) {
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { getUserName } = useContext(AuthContext);
 
   const userDetails = loginData.user.userdata.msg[0];
 
@@ -106,7 +107,8 @@ export default function ReceiptScreen({ navigation }) {
 
 // get Dashboard Data
   const dashboardData = async () => {
-    let resData = await getDashboardData();
+    let resData = await getDashboardData(getUserName);
+
     setPaid_amt(resData?.data?.paid_amt?.msg[0]?.paid_amt)
     setVehicleIn(resData?.data?.vehicle_in?.msg[0]?.vehicle_in)
     setVehicleOut(resData?.data?.vehicle_out?.msg[0]?.vehicle_out)
