@@ -6,6 +6,7 @@ const dateFormat = require('dateformat');
 const vehicle_wise = async (req, res) => {
     try {
         const schema = Joi.object({
+            customerUserName: Joi.optional(),
             from_date: Joi.string().required(),
             to_date: Joi.string().required()
         });
@@ -32,7 +33,7 @@ const vehicle_wise = async (req, res) => {
 
         var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d',
-            whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}'`,
+            whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
             order = 'GROUP BY a.vehicle_id';
         var res_dt = await db_Select(select, table_name, whr, order)
 
@@ -88,20 +89,21 @@ const unbilled = async (req, res) => {
 }
 
 
-const dashboard = async (req, res) => {
+const  dashboard = async (req, res) => {
     try {
         const userData = req.user;
+        console.log(userData,'123');
 
         let datetime = dateFormat(new Date(), "yyyy-mm-dd")
 
         var select = `SUM(b.paid_amt) as paid_amt`,
             table_name = 'td_vehicle_in a, td_receipt b',
-            whr = `a.receipt_no=b.receipt_no AND DATE(a.date_time_in)='${datetime}' AND a.customer_id = '${userData.customer_id}'`
+            whr = `a.receipt_no=b.receipt_no AND DATE(a.date_time_in)='${datetime}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = 32;`
         var paid_amt = await db_Select(select, table_name, whr, null)
 
         var select2 = `count(*) as vehicle_out `,
             table_name2 = 'td_vehicle_in a, td_vehicle_out b ',
-            whr2 = `a.receipt_no=b.receipt_no AND DATE(b.date_time_out)='${datetime}' AND a.customer_id = '${userData.customer_id}'`
+            whr2 = `a.receipt_no=b.receipt_no AND DATE(b.date_time_out)='${datetime}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = 32;`
         var vehicle_out = await db_Select(select2, table_name2, whr2, null)
 
 
