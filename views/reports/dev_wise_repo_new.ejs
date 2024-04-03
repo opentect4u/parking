@@ -35,7 +35,6 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Machine No</th>
-                                    <th scope="col">Vehicle Type</th>
                                     <th scope="col">Count</th>
                                     <th scope="col">Advance Amount</th>
                                     <th scope="col">Paid Amount</th>
@@ -48,7 +47,7 @@
 
                             <tfoot>
                                 <tr>
-                                    <td scope="col" colspan="3">Total</td>
+                                    <td scope="col" colspan="2">Total</td>
                                     <td scope="col" id="tot_cnt"><b>0</b></td>
                                     <td scope="col" id="tot_advance"><b>0</b></td>
                                     <td scope="col" id="tot_paid"><b>0</b></td>
@@ -109,7 +108,6 @@
                                     <tr>
                                         <td>${i}</td>
                                         <td>${dt.mc_srl_no_out}</td>
-                                        <td>${dt.vehicleType}</td>
                                         <td>${dt.tot_vehi}</td>
                                         <td>${dt.advance_amt}</td>
                                         <td>${dt.paid_amt}</td>
@@ -123,7 +121,7 @@
                                 $('#tot_amt').text(tot_amt_tot)
                                 $('#tot_cnt').text(cnt_tot)
                             }else{
-                                $('#resultDiv table tbody').append('<tr><td colspan="7" class="text-center text-danger">No Data Found</td></tr>')
+                                $('#resultDiv table tbody').append('<tr><td colspan="6" class="text-center text-danger">No Data Found</td></tr>')
                                 $('#tot_advance').text(advance_amt_tot)
                                 $('#tot_paid').text(paid_amt_tot)
                                 $('#tot_amt').text(tot_amt_tot)

@@ -1,0 +1,50 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Vehicle Edit Details</i></h2>
+          </div> 
+          <form action="/superadmin/vehicle_save" id="myForm" method="post">
+            <div class="row mt-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                      <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
+                      <select name="cust_name" class="form-control" id="cust_name" disabled>
+                          <option value="">Select Customer Name</option>
+                         <% customer.forEach(dt =>{ %>
+                            <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+                         <% }) %>
+                      </select>
+                  </div>
+              </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="veh_name" class="text-dark"><b>Vehicle Name</b></label>
+                      <input type="text" class="form-control" id="veh_name" name="veh_name" value="<%= data[0].vehicle_name%>">
+                    </div>
+                    </div> 
+              </div>
+              <div class="row mt-3">
+                <input type="hidden" name="id" value="<%= id %>">
+                <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+                  <div class="form-group col-md-5"></div>
+                  <div class="form-group col-md-7">
+                          <input type="submit" value="SUBMIT" class="btn btn-primary"
+                            style="border-radius: 6px;" />
+                        </div>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/superadmin/vehicle";
+      });
+    });
+  </script>

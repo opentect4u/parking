@@ -1,0 +1,95 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Operator Edit Details</i></h2>
+          </div> 
+          <form action="/superadmin/operator_save" id="myForm" method="post">
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
+                        <select name="cust_name" class="form-control" id="cust_name" disabled>
+                            <option value="">Select Customer Name</option>
+                            <% customer.forEach(dt =>{ %>
+                                <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+                             <% }) %>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="seller_name" class="text-dark"><b>Seller Name</b></label>
+                        <select name="seller_name" class="form-control" id="seller_name">
+                            <option value="">Select Seller Name</option>
+                            <% seller.forEach(dt => { %>
+                              <option value="<%= dt.seller_id %>" <%= dt.seller_id == data[0].seller_id ? 'selected' : '' %>><%= dt.seller_name %></option>
+                              <% }) %>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="op_name" class="text-dark"><b>Operator Name</b></label>
+                      <input type="text" class="form-control" id="op_name" name="op_name" value="<%= data[0].operator_name %>">
+                    </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="mobile" class="text-dark"><b>Mobile No</b></label>
+                        <input type="text" class="form-control" id="mobile" name="mobile" value="<%= data[0].user_id %>">
+                      </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group">
+                          <label for="loc_name" class="text-dark"><b>Location Name</b></label>
+                            <select name="loc_name" class="form-control" id="loc_name">
+                              <option value="">Select Location Name</option>
+                              <% location.forEach(dt => { %>
+                                <option value="<%= dt.location_id %>" <%= dt.location_id == data[0].location_id ? 'selected' : '' %>><%= dt.loction %></option>
+                              <% })%>
+                            </select>
+                          </div>
+                          </div> 
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                <label for="dev_id" class="text-dark"><b>Device ID</b></label>
+                                <input type="text" class="form-control" id="dev_id" name="dev_id" value="<%= data[0].device_id %>">
+                              </div>
+                              </div>
+                              <div class="form-group col-6">
+                                  <label for="pwd" class="text-dark"><b>Password:</b></label>
+                                  <div class="input-group">
+                                    <input type="password" class="form-control" name="pwd" id="pwd" value="" placeholder="Enter Password">
+                                    <div class="input-group-append">
+                                      <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fa fa-eye-slash"></i>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div> 
+              </div>
+              <div class="row mt-3">
+                <input type="hidden" name="id" value="<%= id %>">
+                <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+                  <div class="form-group col-md-5"></div>
+                  <div class="form-group col-md-7">
+                          <input type="submit" value="SUBMIT" class="btn btn-primary"
+                            style="border-radius: 6px;" />
+                        </div>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/superadmin/operator";
+      });
+    });
+  </script>

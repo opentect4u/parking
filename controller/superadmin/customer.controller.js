@@ -98,4 +98,4 @@ const save_add_customer = async (req, res) => {
   }
 };
 
-module.exports = {customer,customer_edit,save_add_customer}
+module.exports = {customer,customer_edit,save_add_customer,getAllCustomerList}
