@@ -30,6 +30,7 @@ import useVehicleWiseReports from "../../hooks/api/useVehicleWiseReports";
 
 export default function VehicleWiseFixedReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
+  const { getUserName } = useContext(AuthContext);
 
 
   const { vehicleWiseReportsData } = useVehicleWiseReports();
@@ -91,7 +92,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
 
-    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo)
+    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, getUserName)
     console.log(resdata?.data?.msg)
     setVehicleWiseReports(resdata?.data?.msg)
 

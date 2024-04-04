@@ -3,13 +3,13 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
 function useDashboard() {
-    const getDashboardData = async () => {
+    const getDashboardData = async (getUserName) => {
         
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
             
              axios.get(
-                    ADDRESSES.DASHBOARD_DATA,
+                    ADDRESSES.DASHBOARD_DATA + '?customerUserName=' + getUserName,
                     {
                         headers: {
                             Authorization: loginData.token,

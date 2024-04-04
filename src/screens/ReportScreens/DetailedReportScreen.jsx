@@ -32,6 +32,7 @@ import { dateTimefixedString, dateTimefixedStringm, timefixedString123 } from ".
 export default function DetailedReportScreen({ navigation }) {
   // const { detailedReports } = useContext(AuthContext);
   const { receiptSettings } = useContext(AuthContext);
+  const { getUserName } = useContext(AuthContext);
 
   const { detailedReportScreen } = useDetailedReportScreen();
 
@@ -102,7 +103,7 @@ export default function DetailedReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-    let rep_data= await detailedReportScreen(formattedDateFrom, formattedDateTo);
+    let rep_data= await detailedReportScreen(formattedDateFrom, formattedDateTo, getUserName);
     // console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
 
     setgetDetailedReport(rep_data?.data?.msg)

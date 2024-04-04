@@ -36,7 +36,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
   const isOnline = useContext(InternetStatusContext);
 
-
   const { carIn } = useCarIn();
   const { handleGetGst } = useGstSettings();
 
