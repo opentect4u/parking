@@ -144,7 +144,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const handleCreateReceipt = async () => {
 
-    console.log(getUserDetails.customer_type_id, 'pppppppppppppppppp');
+    // console.log(getUserDetails.customer_type_id, 'pppppppppppppppppp');
 
     if (loading == true) {
       return;
