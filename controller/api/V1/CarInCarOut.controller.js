@@ -1,8 +1,8 @@
 const Joi = require("joi");
 const dateFormat = require('dateformat');
-const { sendOkResponce, sendErrorResponce } = require("../../utils/ResponceAssets");
-const { db_Select } = require("../../model/Master.model");
-const { vehicle_in, insert_receipt, insert_vehicle_outpass, update_car_in_flag, insert_advance_receipt_update, outpass_advance_receipt_update } = require("../../module/car_in_out_receipt");
+const { sendOkResponce, sendErrorResponce } = require("../../../utils/ResponceAssets");
+const { db_Select } = require("../../../model/Master.model");
+const { vehicle_in, insert_receipt, insert_vehicle_outpass, update_car_in_flag, insert_advance_receipt_update, outpass_advance_receipt_update } = require("../../../module/car_in_out_receipt");
 
 
 const car_in = async (req, res) => {

@@ -1,6 +1,6 @@
 const Joi = require("joi")
 const { sendErrorResponce, sendOkResponce } = require("response-json-format")
-const { db_Select } = require("../../model/Master.model")
+const { db_Select } = require("../../../model/Master.model")
 
 const app_update = async (req, res) => {
     try {

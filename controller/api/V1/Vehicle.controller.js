@@ -1,6 +1,6 @@
 const Joi = require("joi");
-const { db_Select } = require("../../model/Master.model");
-const { sendErrorResponce, sendOkResponce } = require("../../utils/ResponceAssets");
+const { db_Select } = require("../../../model/Master.model");
+const { sendErrorResponce, sendOkResponce } = require("../../../utils/ResponceAssets");
 
 const vehicle_list=async(req,res)=>{
     try {   
