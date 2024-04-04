@@ -35,6 +35,7 @@ import { dateTimefixedString } from "../../utils/dateTime";
 const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
   const isOnline = useContext(InternetStatusContext);
+  const { getUserDetails } = useContext(AuthContext);
 
   const { carIn } = useCarIn();
   const { handleGetGst } = useGstSettings();
@@ -142,19 +143,22 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
   const handleCreateReceipt = async () => {
+
+    console.log(getUserDetails.customer_type_id, 'pppppppppppppppppp');
+
     if (loading == true) {
       return;
     }
 
-    console.log('Console____________1');
-    console.log(fixedVehicleRateObject, '///////fixedVehicleRateObject/////////');
+    // console.log('Console____________1');
+    // console.log(fixedVehicleRateObject, '///////fixedVehicleRateObject/////////');
     setLoading(true);
     // if vehicleNumber is blank then return from the below block
 
-    console.log("111111111111111111111111");
+    // console.log("111111111111111111111111");
 
     if (!vehicleNumber) {
-      console.log('Console____________1');
+      // console.log('Console____________1');
       setLoading(false);
       return ToastAndroid.showWithGravity(
         "Please add the vehicle number to continue.",
@@ -292,6 +296,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // }
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
+
+
         await ThermalPrinterModule.printBluetooth({
           payload:
             `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
@@ -305,7 +311,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>PARKING FEES    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>${getUserDetails.customer_type}    : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
@@ -322,7 +328,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           printerDpi: 120,
           printerWidthMM: 58,
           mmFeedPaper: 25,
+
+
         });
+
+        
       } catch (err) {
         ToastAndroid.show(
           "ThermalPrinterModule - ReceiptScreen",

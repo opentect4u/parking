@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [isUpdate, setUpdate] = useState(() => false);
   const [loading, setLoading] = useState(() => false);
   const [getUserName, setUserName] = useState(() => false);
+  const [getUserDetails, setUserDetails] = useState(() => false);
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(() => false);
   const [generalSettings, setGeneralSettings] = useState({
@@ -51,12 +52,15 @@ export const AuthProvider = ({ children }) => {
   const [operatorwiseReports, setOperatorwiseReports] = useState(() => []);
   // const [getUserName, setUserName] = useState(() => []);
 
+  // const storedDataString = loginStorage.get("login-data");
+
   const {appUpdate}=useAppUpdate();
 
   useEffect(() => {
     isPermitted();
     checkedAppUpdate();
     isLoggedIn();
+    
     
     // checkedAppUpdate();
   }, []);
@@ -67,6 +71,8 @@ export const AuthProvider = ({ children }) => {
       user_id: username,
       device_id: deviceId,
     };
+
+    console.log(credentials, 'credentialscredentialscredentialscredentialscredentials');
 
     try {
       setLoading(true);
@@ -81,10 +87,11 @@ export const AuthProvider = ({ children }) => {
           if (res.data.status) {
             loginStorage.set("login-data-local", JSON.stringify(credentials));
             loginStorage.set("login-data", JSON.stringify(res.data.data));
-            console.log("=====================", res.data.data.user.userdata.msg[0].id);
+            // console.log("=====================", res.data.data.user.userdata.msg[0]);
             setIsLogin(!isLogin);
             // setUserName(credentials.user_id);
-            setUserName(res.data.data.user.userdata.msg[0].id)
+            setUserName(res.data.data.user.userdata.msg[0].id);
+            setUserDetails(res.data.data.user.userdata.msg[0])
           } else {
             // ToastAndroid.showWithGravityAndOffset(
             //   "Invalid Credentials",
@@ -462,6 +469,7 @@ export const AuthProvider = ({ children }) => {
         generalSettings,
         getGeneralSettings,
         getUserName,
+        getUserDetails,
         // rateDetailsList,
         // getRateDetailsList,
         gstList,

@@ -230,6 +230,12 @@ const language = (
 const deviceMode = (
   <MaterialIcons name={"devices"} size={25} color={colors["primary-color"]} />
 );
+
+const parking = (
+  <MaterialCommunityIcons name={"parking"} size={25} color={colors["primary-color"]} />
+);
+
+
 const report2 = (
   <MaterialIcons name={"report"} size={25} color={colors["primary-color"]} />
 );
@@ -349,6 +355,7 @@ export default icons = {
   backArrow,
   flashOn,
   flashOff,
+  parking,
   users,
   outpass
 };

@@ -45,6 +45,10 @@ const resetReceipt = [
   { label: "daily", value: "D" },
   { label: "continuous", value: "C" },
 ];
+
+
+
+
 const SettingComponent = ({ icon, text, children, style }) => {
   return (
     <View
@@ -88,35 +92,18 @@ const GeneralSettingsScreen = ({ navigation }) => {
   // });
 
   const { getGeneralSettings, generalSettings } = useContext(AuthContext);
-
+  const { getUserDetails } = useContext(AuthContext);
   // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
-  // const getGeneralSettings = async () => {
-  //   await axios
-  //     .post(
-  //       ADDRESSES.GENERAL_SETTINGS,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: loginData.token,
-  //         },
-  //       },
-  //     )
-  //     .then(res => {
-  //       setGeneralSettings(res.data.data.msg[0]);
-  //     })
-  //     .catch(err => {
-  //       console.log("CATCH - getGeneralSettings", err);
-  //     });
-  // };
-
+  
   useEffect(() => {
-    // console.log("GeneralSettingsScreen___", getGeneralSettings);
+    
+    // console.log(loginData.user.userdata.msg[0].id, 'pp', loginData.user.userdata.msg[0].customer_type, 'pp', loginData.user.userdata.msg[0].customer_type_id, 'utsab /////////////////////////////////////////');
     const generalSettings = getGeneralSettings();
     return () => clearInterval(generalSettings);
   }, []);
 
-  // console.log(generalSettings, 'generalSettings___UTSAB');
+  // console.log(generalSettings, 'generalSettings___UTSAB', getUserDetails.customer_type_id);
 
   const {
     adv_pay,
@@ -171,6 +158,17 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+            {/* <Text>{getUserDetails.customer_type_id}</Text> */}
+
+            {/* Customer Type */}
+            {getUserDetails.customer_type_id && (
+              
+              <SettingComponent icon={icons.parking} text={"Customer Type"}>
+              <Text style={styles.value_text}> {getUserDetails.customer_type} </Text>
+              </SettingComponent>
+              )}
+
             {/* Reports */}
             {report_flag && (
               <SettingComponent
@@ -390,5 +388,10 @@ const styles = StyleSheet.create({
     marginBottom: PixelRatio.roundToNearestPixel(5),
     width: width - 20,
     padding: PixelRatio.roundToNearestPixel(10),
+  },
+  value_text: {
+    flex: 2,
+    fontSize: 16,
+    color: "#333333",
   },
 });
