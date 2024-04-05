@@ -52,7 +52,7 @@
                             </div>
                             </div>      
                             
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                 <label for="dev_mode" class="text-dark"><b>Mode</b></label>
                                   <select name="dev_mode" class="form-control" id="dev_mode">
@@ -62,12 +62,22 @@
                                 </div>
                                 </div>   
                                 
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                   <div class="form-group">
                                     <label for="no_device" class="text-dark"><b>No. of Device</b></label>
                                     <input type="text" class="form-control" id="no_device" name="no_device" value="<%= data[0].no_device%>">
                                   </div>
                                   </div>     
+
+                                  <div class="col-md-6">
+                                    <div class="form-group">
+                                    <label for="cust_type" class="text-dark"><b>Customer TYpe</b></label>
+                                      <select name="cust_type" class="form-control" id="cust_type">
+                                        <option value="P"><%= data[0].cust_type == 'P' ? 'selected' : '' %>Parking</option>
+                                        <option value="T"><%= data[0].cust_type == 'T' ? 'selected' : '' %>Toll plaza</option>
+                                      </select>
+                                    </div>
+                                    </div>           
 
             <div class="col-md-12">
                 <div class="form-group">

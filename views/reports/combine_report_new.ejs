@@ -110,7 +110,7 @@
                     console.log(res)
                     if (res.suc > 0) {
                         if (res.msg.length > 0) {
-                            $('#searchCred').text(`Combine Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
+                            $('#searchCred').text(`Combine Report For Vehicewise from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
                             let i = 1;
                             for (let dt of res.msg) {
                                 advance_amt_tot += dt.advance_amt

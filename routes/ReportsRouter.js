@@ -211,7 +211,7 @@ reportRouter.get("/combine_repo_new", AuthCheckedMW, async (req, res) => {
     combineData = await db_Select("vehicle_id , customer_id, vehicle_name, vehicle_icon","md_vehicle",`customer_id=${custId}`,
     );
   var data = {
-    title: "Combine Report",
+    title: "Combine Report (Vehicle)",
     page_path: "reports/combine_report_new",
     dtFormat: dateFormat,
     combineData: combineData,
@@ -236,6 +236,41 @@ reportRouter.post("/get_combine_repo_new",  AuthCheckedMW,async (req, res) => {
       res.send(res_dt);
     }
   );
+
+  reportRouter.get("/combine_repo_dev_new", AuthCheckedMW, async (req, res) => {
+    var custId = req.session.user.user_data.customer_id,
+      combineData_dev = await db_Select("*","md_setting",`customer_id=${custId}`,
+      );
+    var data = {
+      title: "Combine Report (Device)",
+      page_path: "reports/combine_report_dev_new",
+      dtFormat: dateFormat,
+      combineData_dev: combineData_dev,
+    };
+    // console.log(combineData_dev);
+    res.render("common/layouts/main", data);
+  });
+
+  reportRouter.post("/get_combine_repo_dev_new",  AuthCheckedMW,async (req, res) => {
+    var custId = req.session.user.user_data.customer_id,
+      userType = req.session.user.user_data.user_type;
+
+    var data = req.body;
+    var select = `f.operator_name, a.device_id, b.vehicle_name vehicleType, sum(c.advance_amt)advance_amt, sum(c.paid_amt)paid_amt`,
+      table_name = "td_vehicle_in a,md_vehicle b,td_receipt c,td_vehicle_out d,md_user e,md_operator f",
+      whr = `a.vehicle_id = b.vehicle_id 
+      and    a.receipt_no = c.receipt_no
+      and    a.receipt_no = d.receipt_no 
+      and    c.user_id = e.id
+      and    e.user_id = f.user_id 
+      and    a.customer_id = '${custId}'
+      and    d.device_id = '${data.device_id}' and date(d.date_time_out) between '${data.frm_dt}' and '${data.to_dt}'`
+      order = "Group BY f.operator_name,d.device_id,b.vehicle_name";
+    var res_dt = await db_Select(select, table_name, whr, order);
+    // console.log(res_dt);
+    res.send(res_dt);
+  }
+);
 
 reportRouter.get("/usr_wise_repo", AuthCheckedMW, async (req, res) => {
   var data = {
