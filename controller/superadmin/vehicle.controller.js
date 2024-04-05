@@ -93,7 +93,7 @@ const save_add_vehicle = async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     let fields = value.id > 0 ? `vehicle_name='${value.veh_name}',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,vehicle_name,created_by,created_at)",
-      values = `('${value.cust_id}','${value.veh_name}','${user_name}','${datetime}')`;
+      values = `('${value.cust_name}','${value.veh_name}','${user_name}','${datetime}')`;
     let res_dt = await db_Insert("md_vehicle", fields, values, value.id > 0 ? `vehicle_id=${value.id} AND customer_id = ${value.cust_id}` : null, value.id > 0 ? 1 : 0);
     console.log("========vehicle==========", res_dt);
     req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
