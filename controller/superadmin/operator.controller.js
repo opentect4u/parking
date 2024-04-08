@@ -93,11 +93,11 @@ const show_operator_dtls = (cust_id) => {
         cust_id: Joi.optional(),
         cust_name: Joi.optional(),
         seller_name: Joi.optional(),
-        op_name: Joi.required(),
-        mobile: Joi.required(),
-        loc_name: Joi.required(),
-        dev_id: Joi.required(),
-        pwd: Joi.required(),
+        op_name: Joi.optional(),
+        mobile: Joi.optional(),
+        loc_name: Joi.optional(),
+        dev_id: Joi.optional(),
+        pwd: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
       console.log(value);
@@ -113,18 +113,18 @@ const show_operator_dtls = (cust_id) => {
       var password = bcrypt.hashSync(value.pwd.toString(), 10);
 
   
-      let fields = value.id > 0 ? `operator_name='${value.op_name}',user_id='${value.mobile}',customer_id='${value.cust_name}',location_id='${value.loc_name}',updated_by='${user_name}',updated_at='${datetime}'`: "(operator_name,user_id,customer_id,location_id,created_by,created_at)",
+      let fields = value.id > 0 ? `operator_name='${value.op_name}',location_id='${value.loc_name}',updated_by='${user_name}',updated_at='${datetime}'`: "(operator_name,user_id,customer_id,location_id,created_by,created_at)",
       values = `('${value.op_name}','${value.mobile}','${value.cust_name}','${value.loc_name}','${user_name}','${datetime}')`;
       where = value.id > 0 ? `customer_id='${value.cust_id}' AND operator_id='${value.id}'` : null;
       flag = value.id > 0 ? 1 : 0 ;
       var res_dt = await db_Insert("md_operator", fields, values, where, flag);
-
+      console.log(res_dt,'222');
       if(res_dt.suc > 0){
-        let fields_1 = value.id > 0 ? `customer_id='${value.cust_name}',seller_id='${value.seller_name}',user_type='O',password='${password}',device_id='${value.dev_id}',user_id='${value.mobile}',allow_flag='Y',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_by,created_at)",
-        values = `('${value.cust_name}','${value.seller_name}','O','${password}',${value.dev_id}','${value.mobile}','Y','${user_name}','${datetime}')`;
-     where1 = value.id > 0 ? `customer_id='${value.cust_id}' AND id='${value.id}'` : null;
-  
-    var res_dt_2 = await db_Insert("md_user", fields_1, values, where1, 1);
+        let fields_1 = value.id > 0 ? `seller_id='${value.seller_name}',password='${password}',device_id='${value.dev_id}',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_by,created_at)",
+        values_1 = `('${value.cust_name}','${value.seller_name}','O','${password}','${value.dev_id}','${value.mobile}','Y','${user_name}','${datetime}')`;
+        where1 = value.id > 0 ? `customer_id='${value.cust_id}' AND user_id='${value.mobile}'` : null;
+        flag = value.id > 0 ? 1 : 0 ;
+        var res_dt_2 = await db_Insert("md_user", fields_1, values_1, where1, flag);
      }
       req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
       res.redirect("/superadmin/operator");
