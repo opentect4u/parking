@@ -229,10 +229,10 @@ reportRouter.post("/get_combine_repo_new",  AuthCheckedMW,async (req, res) => {
         whr = `a.vehicle_id = b.vehicle_id and a.receipt_no = c.receipt_no
         and   a.receipt_no = d.receipt_no and c.user_id = e.id
         and   e.user_id = f.user_id and a.customer_id = '${custId}'
-        and   a.vehicle_id = '${data.vehicle_id}' and date(d.date_time_out) between '${data.frm_dt}' and '${data.to_dt}'`
+        and   a.vehicle_id = '${data.vehicle_id}' and d.date_time_out between '${data.frm_dt}' and '${data.to_dt}'`
         order = "Group BY f.operator_name,a.device_id";
       var res_dt = await db_Select(select, table_name, whr, order);
-    //   console.log(res_dt);
+      console.log(res_dt);
       res.send(res_dt);
     }
   );
@@ -264,7 +264,7 @@ reportRouter.post("/get_combine_repo_new",  AuthCheckedMW,async (req, res) => {
       and    c.user_id = e.id
       and    e.user_id = f.user_id 
       and    a.customer_id = '${custId}'
-      and    d.device_id = '${data.device_id}' and date(d.date_time_out) between '${data.frm_dt}' and '${data.to_dt}'`
+      and    d.device_id = '${data.device_id}' and d.date_time_out between '${data.frm_dt}' and '${data.to_dt}'`
       order = "Group BY f.operator_name,d.device_id,b.vehicle_name";
     var res_dt = await db_Select(select, table_name, whr, order);
     // console.log(res_dt);

@@ -3,6 +3,7 @@ const dateFormat = require("dateformat");
 const { db_Select } = require("../../model/Master.model");
 const { getAllCustomerList } = require("./customer.controller");
 const { getAllSellerList } = require("./seller.controller");
+const { getAllVehicleList } = require("./vehicle.controller");
 
 const getAllVehicleRateList = (id = 0) => {
     return new Promise(async (resolve, reject) => {
@@ -19,6 +20,7 @@ const vehicle_rate = async(req,res) =>{
         }
         var cust = await getAllCustomerList()
         var seller_name = await getAllSellerList()
+        var vehicle = await getAllVehicleList()
           veh_rate_list = [];
         if(method == 'POST'){
           veh_rate_list = await show_vehicle_rate_dtls(selected.cust_id)
@@ -31,6 +33,7 @@ const vehicle_rate = async(req,res) =>{
           data: veh_rate_list,
           customer: cust.suc > 0 ? cust.msg : null,
           seller: seller_name.suc > 0 ? seller_name : null,
+          vehicle: vehicle.suc > 0 ? vehicle : null,
           selected
         };
         // console.log(customer,'999');

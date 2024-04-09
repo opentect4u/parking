@@ -107,4 +107,4 @@ const save_add_vehicle = async (req, res) => {
 };
 
 
-module.exports = {vehicle,show_vehicle_dtls,save_add_vehicle,vehicle_edit}
+module.exports = {vehicle,show_vehicle_dtls,save_add_vehicle,vehicle_edit,getAllVehicleList}
