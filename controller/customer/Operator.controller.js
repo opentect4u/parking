@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const dateFormat = require("dateformat");
-const { db_Insert, db_Select } = require('../../model/Master.model');
+const { db_Insert, db_Select, db_Check } = require('../../model/Master.model');
 const bcrypt = require("bcrypt");
 
 
@@ -75,20 +75,28 @@ const operator = async (req, res) => {
       var sellerId = req.session.user.user_data.seller_id;
       var password = bcrypt.hashSync(value.pwd.toString(), 10);
 
-      let fields =
-          "(operator_name,user_id,customer_id,location_id,created_at)",
-        values = `('${value.op_name}','${value.mob_no}','${custId}','${locationId}','${datetime}')`;
-      var res_dt = await db_Insert("md_operator", fields, values, null, 0);
+       // Check if mobile number already exists
+       const user = await db_Select("user_id", "md_user", `user_id = '${value.mob_no}'`, null);
+       if (user.msg.length > 0) {
+           req.flash("error", "Mobile number already exists");
+           return res.redirect("/operator/manage_operator");
+       } else {
 
-      if(res_dt.suc > 0){
-        let fields_1 =
-        "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_at)",
-      values_1 = `('${custId}','${sellerId}','O','${password}','${value.dev_id}','${value.mob_no}','Y','${datetime}')`;
-    var res_dt_2 = await db_Insert("md_user", fields_1, values_1, null, 0);
-     }
-      // console.log("========operator==========", res_dt);
-      req.flash("success", "Saved successful");
-      res.redirect("/operator/manage_operator");
+        const fields =
+        "(operator_name,user_id,customer_id,location_id,created_at)",
+      values = `('${value.op_name}','${value.mob_no}','${custId}','${locationId}','${datetime}')`;
+    var res_dt = await db_Insert("md_operator", fields, values, null, 0);
+
+    if(res_dt.suc > 0){
+      const fields_1 =
+      "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_at)",
+    values_1 = `('${custId}','${sellerId}','O','${password}','${value.dev_id}','${value.mob_no}','Y','${datetime}')`;
+  var res_dt_2 = await db_Insert("md_user", fields_1, values_1, null, 0);
+   }
+    // console.log("========operator==========", res_dt);
+    req.flash("success", "Saved successful");
+    res.redirect("/operator/manage_operator");
+       }
     } catch (error) {
       console.log(error);
       req.flash("error", "Data not saved Successfully");
