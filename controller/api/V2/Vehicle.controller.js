@@ -17,7 +17,7 @@ const vehicle_list=async(req,res)=>{
         }
         const userData = req.user;
         console.log(userData)
-        let where=`customer_id=${userData.customer_id}`
+        let where=`customer_id=${userData.customer_id} AND vehicle_on_off='Y'`
         var data=await db_Select('*','md_vehicle',where,null)
         res.json(sendOkResponce(data,null));
     } catch (error) {

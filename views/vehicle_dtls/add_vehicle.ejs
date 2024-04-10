@@ -15,22 +15,30 @@
             <table id="example" class="table table-striped table-bordered show_data" style="width:100%">
               <thead>
                 <tr>
-                  <th class="text-dark">Sl. No.</th>
-                  <th class="text-dark">vehicle Name</th>
-                  <th class="text-dark">Action</th>
+                  <th class="text-dark text-center">Sl. No.</th>
+                  <th class="text-dark text-center">Vehicle Name</th>
+                  <th class="text-dark text-center">Vehicle ON/OFF</th>
+                  <th class="text-dark text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <% if(data.msg.length > 0){
                     data.msg.forEach(function(item,index) { %>
                       <tr>
-                        <td>
+                        <td class="text-center">
                           <%=(index+1)%>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <%=item.vehicle_name %>
                         </td>
-                        <td>
+                        <td class="text-center">
+                          <% if (item.vehicle_on_off == 'Y') { %>
+                            <span class="badge badge-success" style="font-size: medium;">Active</span>
+                          <% } else { %>
+                            <span class="badge badge-danger" style="font-size: medium;">Deactive</span>
+                          <% } %>
+                        </td>
+                        <td class="text-center">
                           <a href="/vehicle/edit_vehicle_details?customer_id=<%=item.customer_id%>&vehicle_id=<%=item.vehicle_id %>" class="btn btn-info"
                             style="border-radius: 5px;"><i class="fa fa-edit"></i></a>
                         </td>

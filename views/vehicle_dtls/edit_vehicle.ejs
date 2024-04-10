@@ -1,3 +1,7 @@
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
 <div class="container-fluid">
     <div class="row">
         <div class="card col-12">
@@ -10,7 +14,7 @@
                     <input type="hidden" id="vehicle_id" name="vehicle_id" value="<%= data.vehicle_id %>">
 
                     <div class="row mt-4">
-                        <div class="form-group col-6">
+                        <div class="form-group col-4">
                             <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Customer Name</option>
@@ -20,13 +24,30 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                               <label for="vehicle_name" class="text-dark"><b>Vehicle Name</b></label>
                               <input type="text" class="form-control" id="vehicle_name" name="vehicle_name" placeholder="Enter Vehicle Name...."
                                 value="<%= data.vehicle_name %>">
                             </div>
                           </div>
+
+                          <div class="col-md-4 cust-toggle1">
+                            <label for="veh_flag" class="text-dark"><b>Vehicle ON/OFF</b></label><br>
+                            <input 
+                            type="checkbox" 
+                            value = "Y"
+                            id="veh_flag" 
+                            data-toggle="toggle" 
+                            data-onstyle="success" 
+                            data-offstyle="danger" 
+                            data-on="Active" 
+                            data-off="Deactive" 
+                            name="veh_flag"
+                            <%=(data.vehicle_on_off=='Y')?'checked':''%>
+                            >
+                            </div>
+            
                          
                         <div class="row mt-2">
                             <div class="form-group col-md-6">

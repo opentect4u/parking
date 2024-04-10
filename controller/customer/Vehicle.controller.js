@@ -26,6 +26,7 @@ const save_add_vehicle = async (req, res) => {
       const schema = Joi.object({
         cust_id: Joi.optional(),
         vehicle_name: Joi.required(),
+        veh_flag: Joi.optional(),
         // vehicle_icon: Joi.required(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -41,17 +42,17 @@ const save_add_vehicle = async (req, res) => {
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var custId = req.session.user.user_data.customer_id;
   
-      // console.log(value);
+      console.log(value);
       let fields =
-          "(customer_id,vehicle_name,created_at)",
-        values = `('${custId}','${value.vehicle_name}','${datetime}')`;
+          "(customer_id,vehicle_name,vehicle_on_off,created_by,created_at)",
+        values = `('${custId}','${value.vehicle_name}','Y','${custId}','${datetime}')`;
       let res_dt = await db_Insert("md_vehicle", fields, values, null, 0);
-    //   console.log("========vehicle==========", res_dt);
+      console.log("========vehicle==========", res_dt);
       req.flash("success", "Saved successful");
       res.redirect("/vehicle/vehicle_details");
       // res.send(res_dt)
     } catch (error) {
-    //   console.log(error);
+      console.log(error);
       req.flash("error", "Data not saved Successfully");
       res.redirect("/vehicle/vehicle_details");
     }
@@ -83,6 +84,7 @@ const save_add_vehicle = async (req, res) => {
         cust_id: Joi.string(),
         vehicle_id: Joi.string(),
         vehicle_name: Joi.optional(),
+        veh_flag: Joi.optional(),
         // vehicle_icon: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -98,7 +100,7 @@ const save_add_vehicle = async (req, res) => {
       var custId = req.session.user.user_data.customer_id;
       const datetime = dateFormat(new Date(), "yyyy-mm-dd");
   
-      let fields = `vehicle_id='${value.vehicle_id}',vehicle_name='${value.vehicle_name}',updated_at='${datetime}'`,
+      let fields = `vehicle_id='${value.vehicle_id}',vehicle_name='${value.vehicle_name}',vehicle_on_off='${value.veh_flag== 'Y' ? 'Y' : 'N'}',updated_by='${custId}',updated_at='${datetime}'`,
         where = `customer_id='${custId}' AND vehicle_id='${value.vehicle_id}'`;
       let res_dt2 = await db_Insert("md_vehicle", fields, null, where, 1);
       // console.log(res_dt2);
