@@ -32,11 +32,11 @@ const vehicle_rate = async(req,res) =>{
           page_path: "super_admin/vehicle_rate/vehicle_rate",
           data: veh_rate_list,
           customer: cust.suc > 0 ? cust.msg : null,
-          seller: seller_name.suc > 0 ? seller_name : null,
-          vehicle: vehicle.suc > 0 ? vehicle : null,
+          seller: seller_name.suc > 0 ? seller_name.msg : null,
+          vehicle: vehicle.suc > 0 ? vehicle.msg : null,
           selected
         };
-        // console.log(customer,'999');
+        console.log(cust,'999');
         res.render("common/layouts/main",page_data);
         console.log(page_data,'...');
       } catch (error) {
@@ -55,4 +55,19 @@ const show_vehicle_rate_dtls = (cust_id) => {
     })
   };
 
-module.exports = {vehicle_rate}
+  const get_vehicle = async (req, res) => {
+    var data = req.body;
+    console.log(data, "1000");
+    var select = "*",
+      table_name = "md_vehicle",
+      where = `customer_id = '${data.cust_id}'`;
+    var veh_id = await db_Select(select, table_name, where, null);
+    console.log(veh_id, "lalala");
+    res.json({
+      SUCCESS: { veh_id },
+      status: true,
+    });
+  };
+  
+
+module.exports = {vehicle_rate,show_vehicle_rate_dtls,get_vehicle}

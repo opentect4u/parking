@@ -22,26 +22,111 @@
                 </select>
               </div>
               <div class="form-group col-md-4">
-                <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
-                <select name="rate_type" class="form-control" id="rate_type" required>
+                <label for="rate_type_name"><b style="color: black;">Rate Type:</b></label>
+                <select name="rate_type_name" class="form-control" id="rate_type_name" disabled>
                   <option value="">Select Rate Type</option>
                   
                 </select>
+                <input type="hidden" name="rate_type" value="">
               </div>
               <div class="form-group col-md-4">
                 <label for="veh_id"><b style="color: black;">Vehicle Name:</b></label>
                 <select name="veh_id" class="form-control" id="veh_id" required>
                   <option value="">Select Vehicle Name</option>
-                 
+                  
                 </select>
               </div>
-              <div class="form-group col-md-4" style="margin-top: 30px;">
-                <button type="submit" class="btn btn-primary" style="border-radius: 5px;" id="submitBtn">Submit</button>
-              </div>
+            </div>
+            <div class="row mt-2">
+              <button type="submit" class="btn btn-primary" style="border-radius: 5px;margin-left: 31vw;" id="submitBtn">Submit</button>
             </div>
           </form>
-          
+          <% if(selected.cust_id > 0){ %>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="table-responsive mt-3">
+                  <table id="dataTable" class="table table-striped table-bordered no-wrap show_data">
+                      <thead>
+                          <tr>
+                              <th class="text-center text-dark">Sl No.</th>
+                              <th class="text-center text-dark">From Hour</th>
+                              <th class="text-center text-dark">To Hour</th>
+                              <th class="text-center text-dark">Parking Fee</th>
+                              <th class="text-center text-dark">Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        <% if(data.length > 0){
+                          var i = 1
+                          data.forEach(dt => { %>
+                            <tr>
+                              <td class="text-center text-dark"><%= i %></td>
+                              <td class="text-center text-dark"><%= dt.vehicle_name %></td>
+                              <td class="text-center text-dark"><a href='/superadmin/edit_vehicle?customer_id=<%= selected.cust_id %>&id=<%= dt.vehicle_id %>' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
+                            </tr>
+                        <% i++; })
+                        }else{ %>
+                          <tr>
+                            <td class="text-center text-danger" colspan="5">No data found</td>
+                          </tr>
+                        <% } %>
+                      </tbody>
+                      <tfoot>
+                         
+                      </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          <% } %>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    var cust_list = <%- JSON.stringify(customer) %>;
+    var rate_type = [{id: 'D', name: 'Hourly'}, {id: 'F', name: 'Fixed'}]
+    $('#cust_name').on('change', function(){
+      var cust_id = $(this).val(),
+      cust_dtls = cust_list.filter(dt => dt.customer_id == cust_id);
+      $('#rate_type_name').empty()
+      if(cust_dtls.length > 0){
+        $('#rate_type_name').append($('<option>', {value: '', text: 'Select Rate Type'}))
+        $.each(rate_type, function(i, dt){
+          var selected = false
+          if(cust_dtls[0].dev_mod == dt.id) selected = true
+          $('#rate_type_name').append($('<option>', {value: dt.id, text: dt.name, selected: selected}))
+        })
+        $('#rate_type').val(cust_dtls[0].dev_mod)
+      }else{
+        alert('Please select dev mode in customer first')
+      }
+     
+      // $('#cust_name').change(function () {
+      //   var cust_id = $(this).val()
+      //   var veh_id = $(this).val()
+
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/vehicle_dt",
+      data: { cust_id: cust_id},
+      success: function (response) {
+        // console.log(response.SUCCESS.branchData.msg)
+        $('#veh_id').empty();
+        $('#veh_id').append(`<option value="">Select Vehicle Name</option>`)
+
+        response.SUCCESS.veh_id.msg.forEach(function (resData) {
+          $('#veh_id').append($('<option>', {value: resData.vehicle_id, text: resData.vehicle_name}))
+          // $('#veh_id').append('<option value="' + resData.vehicle_id + '">' + resData.vehicle_id + '</option>');
+        });
+
+      },
+      error: function (error) {
+        console.log(error);
+        //   tbody.empty();
+      },
+    });
+  // });
+    })
+  </script>

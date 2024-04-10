@@ -74,7 +74,7 @@ const login = async (req, res) => {
                let aaa= await db_Insert('md_user',`device_id='${value.device_id}'`,null,whr,1)
                
                 let table = `md_user a,md_customer b,md_seller c,md_operator d,md_setting e`,
-                    selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,c.*,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Parking Fees', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,d.*,e.*`,
+                    selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,c.*,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Parking Fees', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,b.device_type,d.*,e.*`,
                     whr2 = `a.customer_id=b.customer_id AND a.seller_id=c.seller_id AND a.user_id=d.user_id AND e.customer_id=a.customer_id AND e.app_id='${value.device_id}'  AND a.user_id='${value.user_id}' AND a.allow_flag='Y' AND a.device_id='${value.device_id}'`
                 var userData2 = await db_Select(selectData, table, whr2, null)
                     console.log(userData2)

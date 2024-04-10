@@ -160,21 +160,25 @@
                             </div>    
                        </div>
                           <div class="row ml-5">
-                             <div class="form-group col-md-12">
-                                  <label for="cust_add"><b style="color: black;">Customer Address:</b></label>
-                                  <textarea id="cust_add" name="cust_add" class="form-control" rows="4"><%= user.user_data.cust_addr %></textarea>
-                              </div>  
-                          </div> 
-                          <div class="row ml-5">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                               <label for="mode"><b style="color: black;">Mode:</b></label>
                               <input type="text" id="mode" name="mode" class="form-control" value="<%= user.user_data.dev_mod == 'D' ? 'Dual' : 'Fixed' %>" readonly style="background-color: #b0cfec;"/>
                               </div>   
-                              <div class="form-group col-md-6">
+                              <div class="form-group col-md-4">
                                 <label for="device"><b style="color: black;">No. of Device:</b></label>
                                 <input type="text" id="device" name="device" class="form-control" value="<%= user.user_data.no_device %>" readonly style="background-color: #b0cfec;"/>
-                                </div>  
-                          </div>         
+                                </div>
+                              <div class="form-group col-md-4">
+                                  <label for="dev_type"><b style="color: black;">Device Type:</b></label>
+                                  <input type="text" id="dev_type" name="dev_type" class="form-control" value="<%= user.user_data.device_type=='H' ? 'Handheld Device' : user.user_data.device_type=='M' ? 'Mobile Device' : '' %>" readonly style="background-color: #b0cfec;"/>
+                                  </div>      
+                          </div>  
+                          <div class="row ml-5">
+                            <div class="form-group col-md-12">
+                                 <label for="cust_add"><b style="color: black;">Customer Address:</b></label>
+                                 <textarea id="cust_add" name="cust_add" class="form-control" rows="4"><%= user.user_data.cust_addr %></textarea>
+                             </div>  
+                         </div>        
                     </div>
                   
                  <div class="row mt-3">

@@ -51,7 +51,7 @@ const customer_edit = async(req,res) =>{
         sell: seller.suc > 0 ? seller.msg : null,
         location: loc.suc > 0 ? loc.msg : null,
       };
-      // console.log(page_data,'lalal');
+      console.log(page_data,'lalal');
       res.render("common/layouts/main",page_data);
     } catch (error) {
       // console.log(error);
@@ -71,6 +71,7 @@ const save_add_customer = async (req, res) => {
       dev_mode: Joi.required(),
       no_device: Joi.required(),
       cust_type: Joi.required(),
+      dev_type: Joi.required(),
       cust_add: Joi.required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -85,8 +86,8 @@ const save_add_customer = async (req, res) => {
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-    let fields = value.id > 0 ? `seller_id='${value.sell_name}',customer_name='${value.cust_name}',location_id='${value.loc_name}',mobile_no='${value.phone}',email='${value.email}',cust_addr='${value.cust_add}',dev_mod='${value.dev_mode}',no_device='${value.no_device}',customer_type='${value.cust_type}',updated_by='${user_name}',updated_at='${datetime}'` : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,created_by,created_at)",
-      values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','${user_name}','${datetime}')`;
+    let fields = value.id > 0 ? `seller_id='${value.sell_name}',customer_name='${value.cust_name}',location_id='${value.loc_name}',mobile_no='${value.phone}',email='${value.email}',cust_addr='${value.cust_add}',dev_mod='${value.dev_mode}',no_device='${value.no_device}',customer_type='${value.cust_type}',device_type='${value.dev_type}',updated_by='${user_name}',updated_at='${datetime}'` : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,device_type,created_by,created_at)",
+      values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','${value.dev_type}','${user_name}','${datetime}')`;
     let res_dt = await db_Insert("md_customer", fields, values, value.id > 0 ? `customer_id=${value.id}` : null, value.id > 0 ? 1 : 0);
     console.log("========customer==========", res_dt);
     req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
