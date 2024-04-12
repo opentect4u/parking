@@ -92,7 +92,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
   // });
 
   const { getGeneralSettings, generalSettings } = useContext(AuthContext);
-  const { getUserDetails } = useContext(AuthContext);
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const { getUserDetails } = useContext(AuthContext);
   // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
   
@@ -162,10 +163,10 @@ const GeneralSettingsScreen = ({ navigation }) => {
             {/* <Text>{getUserDetails.customer_type_id}</Text> */}
 
             {/* Customer Type */}
-            {getUserDetails.customer_type_id && (
+            {loginData.user.userdata.msg[0].customer_type_id && (
               
               <SettingComponent icon={icons.parking} text={"Customer Type"}>
-              <Text style={styles.value_text}> {getUserDetails.customer_type} </Text>
+              <Text style={styles.value_text}> {loginData.user.userdata.msg[0].customer_type} </Text>
               </SettingComponent>
               )}
 

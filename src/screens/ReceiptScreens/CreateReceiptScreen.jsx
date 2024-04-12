@@ -35,7 +35,8 @@ import { dateTimefixedString } from "../../utils/dateTime";
 const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
   const isOnline = useContext(InternetStatusContext);
-  const { getUserDetails } = useContext(AuthContext);
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const { getUserDetails } = useContext(AuthContext);
 
   const { carIn } = useCarIn();
   const { handleGetGst } = useGstSettings();
@@ -144,7 +145,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const handleCreateReceipt = async () => {
 
-    // console.log(getUserDetails.customer_type_id, 'pppppppppppppppppp');
+    // console.log(loginData.user.userdata.msg[0].customer_type_id, 'pppppppppppppppppp');
 
     if (loading == true) {
       return;
@@ -311,7 +312,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>${getUserDetails.customer_type}    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type}    : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
