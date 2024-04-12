@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
             // console.log("=====================", res.data.data.user.userdata.msg[0]);
             setIsLogin(!isLogin);
             // setUserName(res.data.data.user.userdata.msg[0].id);
-            setUserDetails(res.data.data.user.userdata.msg[0])
+            // setUserDetails(res.data.data.user.userdata.msg[0])
             
           } else {
             // ToastAndroid.showWithGravityAndOffset(
@@ -273,7 +273,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // var getUserName__Id = JSON.parse(loginStorage.getString("login-data")).user.userdata.msg[0].id;
-  console.log(JSON.parse(loginStorage.getString("login-data")).user.userdata.msg[0].id, 'xxxxxxxxxxxxxxxgggggggggggggggxxxxxxxxxxxxxx');
+  // console.log(JSON.parse(loginStorage.getString("login-data")).user.userdata.msg[0].id, 'xxxxxxxxxxxxxxxgggggggggggggggxxxxxxxxxxxxxx');
 
   const getDetailedReport = async (fromDate, toDate) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
