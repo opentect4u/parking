@@ -27,11 +27,13 @@ import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 import { fixedString } from "../../utils/fixedString";
 import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
+import { loginStorage } from "../../storage/appStorage";
 
 export default function OperatorWiseReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
   const { operator_wise } = usegetOperatorwiseReport();
-  const { getUserName } = useContext(AuthContext);
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const { getUserName } = useContext(AuthContext);
 
   const [detailedReportData, setDetailedReportData] = useState([]);
   const [operatorwiseReports, setOperatorwiseReports] = useState([]);
@@ -90,7 +92,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
 
 
-    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, getUserName);
+    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
 
     setOperatorwiseReports(operator_wise_report?.data?.msg);
 

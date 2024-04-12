@@ -27,10 +27,12 @@ import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 import { fixedString } from "../../utils/fixedString";
 import useVehicleWiseReports from "../../hooks/api/useVehicleWiseReports";
+import { loginStorage } from "../../storage/appStorage";
 
 export default function VehicleWiseFixedReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
-  const { getUserName } = useContext(AuthContext);
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const { getUserName } = useContext(AuthContext);
 
 
   const { vehicleWiseReportsData } = useVehicleWiseReports();
@@ -92,7 +94,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
 
-    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, getUserName)
+    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
     console.log(resdata?.data?.msg)
     setVehicleWiseReports(resdata?.data?.msg)
 
