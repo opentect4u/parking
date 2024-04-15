@@ -1,0 +1,89 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+           <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Vehicle Rate Edit Details</i></h2>
+        </div> 
+        <form action="/superadmin/vehicle_rate_save" id="myForm" method="post">
+          <div class="row mt-3">
+            <div class="form-group col-md-4">
+              <label for="sell_id" class="text-dark"><b>Seller Name:</b></label>
+              <select name="sell_id" class="form-control" id="sell_id" disabled>
+                <option value="">Select Seller Name</option>
+                <% seller.forEach(dt =>{ %>
+                  <option value="<%= dt.seller_id %>" <%= dt.seller_id == data[0].seller_id ? 'selected' : '' %>><%= dt.seller_name %></option>
+               <% }) %>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="cust_name" class="text-dark"><b>Customer Name:</b></label>
+              <select name="cust_name" class="form-control" id="cust_name" disabled>
+                <option value="">Select Customer Name</option>
+                <% customer.forEach(dt =>{ %>
+                  <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+               <% }) %>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="rate_name"><b style="color: black;">Rate Type:</b></label>
+              <select name="rate_name" class="form-control" id="rate_name" disabled>
+                  <option value="">Select Rate Type</option>
+                  <option value="H" <% if (data[0].rate_type === 'H') { %>selected<% } %>>Hourly</option>
+                  <option value="F" <% if (data[0].rate_type === 'F') { %>selected<% } %>>Fixed</option>
+              </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="veh_id"><b style="color: black;">Vehicle Name:</b></label>
+            <select name="veh_id" class="form-control" id="veh_id" disabled>
+              <option value="">Select Vehicle Name</option>
+              <% vehicle.forEach(dt =>{ %>
+                <option value="<%= dt.vehicle_id %>" <%= dt.vehicle_id == data[0].vehicle_id ? 'selected' : '' %>><%= dt.vehicle_name %></option>
+             <% }) %>
+            </select>
+          </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="frm_hr" class="text-dark"><b>From Hour:</b></label>
+                <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="<%= data[0].from_hour %>">
+              </div>
+            </div>
+    
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="to_hr" class="text-dark"><b>To Hour:</b></label>
+                <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="<%= data[0].to_hour %>">
+              </div>
+            </div>
+    
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="park_fee" class="text-dark"><b>Parking Fee:</b></label>
+                <input type="text" class="form-control" id="park_fee" name="park_fee"
+                 value="<%= data[0].vehicle_rate %>">
+              </div>
+            </div>
+            </div>
+            <div class="row mt-3">
+              <input type="hidden" name="id" value="<%= id %>">
+              <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+                <div class="form-group col-md-5"></div>
+                <div class="form-group col-md-7">
+                        <input type="submit" value="SUBMIT" class="btn btn-primary"
+                          style="border-radius: 6px;" />
+                      </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#back").click(function () {
+      window.location.href = "/superadmin/vehicle_rate";
+    });
+  });
+</script>

@@ -1,0 +1,161 @@
+<!-- Modal body -->
+<div class="modal-body">
+    <form action="/superadmin/vehicle_rate_save" method="post" id="myForm">
+      <div class="row">
+        <div class="form-group col-md-4">
+          <label for="sell_id" class="text-dark"><b>Seller Name:</b></label>
+          <select name="sell_id" class="form-control" id="sell_id">
+            <option value="">Select Seller Name</option>
+            <% seller.forEach(dt=> { %>
+              <option value="<%= dt.seller_id %>">
+                <%= dt.seller_name %>
+              </option>
+              <% }) %>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="cust_name" class="text-dark"><b>Customer Name:</b></label>
+          <select name="cust_name" class="form-control" id="cust_name">
+            <option value="">Select Customer Name</option>
+           
+          </select>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label for="rate_name"><b style="color: black;">Rate Type:</b></label>
+          <select name="rate_name" class="form-control" id="rate_name" disabled>
+            <option value="">Select Rate Type</option>
+
+          </select>
+        </div>
+
+        <input type="hidden" name="rate_type" id="rate_type_modal" value="">
+
+        <div class="form-group col-md-4">
+          <label for="veh_id"><b style="color: black;">Vehicle Name:</b></label>
+          <select name="veh_id" class="form-control" id="veh_id">
+            <option value="">Select Vehicle Name</option>
+
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="frm_hr" class="text-dark"><b>From Hour:</b></label>
+            <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="00">
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="to_hr" class="text-dark"><b>To Hour:</b></label>
+            <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="00">
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="park_fee" class="text-dark"><b>Parking Fee:</b></label>
+            <input type="text" class="form-control" id="park_fee" name="park_fee"
+              placeholder="Enter Parking Fee....">
+          </div>
+        </div>
+
+      </div>
+      <input type="hidden" name="id" value="0">
+      <div class="row mt-3">
+        <div class="form-group col-md-3">
+          <input type="submit" value="SUBMIT" class="btn btn-primary "
+            style="margin-left: 38vw;border-radius: 6px;" />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    var cust_list = <%- JSON.stringify(customer) %>;
+   var rate_type_modal = [{ id: 'D', name: 'Hourly', key: 'H' }, { id: 'F', name: 'Fixed', key: 'F' }]
+   $('#cust_name').on('change', function () {
+     // console.log('here lalalalal');
+     var cust_id = $(this).val()
+     changeProcess_2(cust_id)
+   })
+ 
+   function changeProcess_2(cust_id) {
+     var cust_dtls = cust_list.filter(dt => dt.customer_id == cust_id);
+     var filter_rate = rate_type_modal.filter(dt=> dt.id==cust_dtls[0].dev_mod)
+     $('#rate_name').empty()
+     if (cust_dtls.length > 0) {
+       $('#rate_name').append($('<option>', { value: '', text: 'Select Rate Type' }))
+       $.each(rate_type_modal, function (i, dt) {
+         var selected = false
+         if (cust_dtls[0].dev_mod == dt.id) selected = true
+         $('#rate_name').append($('<option>', { value: dt.id, text: dt.name, selected: selected }))
+       })
+      //  console.log(filter_rate, 'Rate Type');
+       $('#rate_type_modal').val(filter_rate.length > 0 ? filter_rate[0].key : cust_dtls[0].dev_mod)
+     } else {
+       alert('Please select dev mode in customer first')
+     }
+ 
+ 
+     $.ajax({
+       type: "POST",
+       url: "/superadmin/vehicle_dt",
+       data: { cust_id: cust_id },
+       success: function (response) {
+         // console.log(response.SUCCESS.branchData.msg)
+         $('#veh_id').empty();
+         $('#veh_id').append(`<option value="">Select Vehicle Name</option>`)
+ 
+         var sel_veh_id = '<%= selected.veh_id > 0 ? selected.veh_id : 0 %>'
+         response.SUCCESS.veh_id.msg.forEach(function (resData) {
+           var _selected = false
+           if (sel_veh_id == resData.vehicle_id) _selected = true
+           $('#veh_id').append($('<option>', { value: resData.vehicle_id, text: resData.vehicle_name, selected: _selected }))
+           // $('#veh_id').append('<option value="' + resData.vehicle_id + '">' + resData.vehicle_id + '</option>');
+         });
+ 
+       },
+       error: function (error) {
+         console.log(error);
+         //   tbody.empty();
+       },
+     });
+   }
+ </script>
+
+ <script>
+     $('#sell_id').on('change', function () {
+     console.log('here lalalalal');
+     var sell_id = $(this).val()
+    
+     $.ajax({
+       type: "POST",
+       url: "/superadmin/cust_list_ajax",
+       data: { sailer_id: sell_id },
+       success: function (response) {
+         // console.log(response.SUCCESS.branchData.msg)
+         $('#cust_name').empty();
+         $('#cust_name').append(`<option value="">Select Customer Name</option>`)
+ 
+         response.msg.forEach(function (resData) {
+           var _selected = false
+        //    if (sel_cust_id == resData.customer_id) _selected = true
+           $('#cust_name').append($('<option>', { value: resData.customer_id, text: resData.customer_name, selected: _selected }))
+           // $('#veh_id').append('<option value="' + resData.vehicle_id + '">' + resData.vehicle_id + '</option>');
+         });
+ 
+       },
+       error: function (error) {
+         console.log(error);
+         //   tbody.empty();
+       },
+     });
+     
+   })
+
+
+  
+ 
+ </script>
