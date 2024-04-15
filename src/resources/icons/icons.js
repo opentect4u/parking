@@ -154,6 +154,10 @@ const setting = (color, size) => (
   <MaterialIcons name="settings" color={color} size={size} />
 );
 
+const print2 = (color, size) => (
+  <MaterialIcons name="local-print-shop" color={color} size={size} />
+);
+
 const report = (color, size) => (
   <Foundation name="graph-bar" color={color} size={size} />
 );
@@ -326,6 +330,7 @@ export default icons = {
   web,
   receipt,
   setting,
+  print2,
   report,
   paperRoll,
   cellphone,

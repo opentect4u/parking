@@ -4,9 +4,13 @@ import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from "./src/screens/SplashScreen";
 import MainNavigation from "./src/navigation/MainNavigation";
 import { AuthProvider } from "./src/context/AuthProvider";
+
+
 export const InternetStatusContext = createContext(false);
 
 function App() {
+
+  
   const [isOnline, setOnline] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 

@@ -7,25 +7,35 @@ import ReportsNavigation from "./ReportsNavigation";
 import SettingsNavigation from "./SettingsNavigation";
 import { AuthContext } from "../context/AuthProvider";
 import OutpassNavigation from "./OutpassNavigation";
+import PrintNavigation from "./PrintNavigation";
+import { loginStorage } from "../storage/appStorage";
+
+
+
 
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  const { receiptScreen, outpassScreen, reportScreen, settingsScreen } = navigationRoutes;
+  const { receiptScreen, ReceiptScreen_Bletooth, outpassScreen, reportScreen, settingsScreen, printScreen } = navigationRoutes;
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
 
-  // console.log(report_flag, '////////////////////////UTSABBBB');
+  console.log(loginData.user.userdata.msg[0].device_type, '////////////////////////UTSABBBB');
+
+  const initialRoute = loginData.user.userdata.msg[0].device_type == "M" ? ReceiptScreen_Bletooth : receiptScreen;
 
   return (
+
+    
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: { height: 60, size: 20 },
         tabBarHideOnKeyboard: true,
       }}
-      initialRouteName={receiptScreen}>
+      initialRouteName={initialRoute} >
       {/* Receipt Screen */}
 
       {/* report_flag == "Y" && ( */}
@@ -73,6 +83,20 @@ function BottomNavigation() {
         }}
         component={SettingsNavigation}
       />
+
+      {/*Setting Screen */}
+      {/* {loginData.user.userdata.msg[0].device_type == "M" && (
+      <Tab.Screen
+        name={printScreen}
+        options={{
+          title: "Connect Printer",
+          tabBarIcon: ({ color, size }) => icons.print2(color, 30),
+        }}
+        component={PrintNavigation}
+      />
+      )} */}
+
+
     </Tab.Navigator>
   );
 }

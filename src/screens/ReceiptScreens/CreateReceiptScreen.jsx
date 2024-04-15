@@ -57,7 +57,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     route.params;
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
-
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
@@ -144,7 +144,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
   const handleCreateReceipt = async () => {
+    console.log(loading, 'llllllllllllllllllllllllllllllll');
     if (loading == true) {
+      console.log(loading, 'llllllllllllllllllllllllllllllll');
       return;
     }
 
@@ -290,7 +292,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         console.log(err.message);
       }
 
-      if(generalSettings?.redirection_flag == "Y"){
+      if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
+        
+        navigation.navigate("ReceiptScreen_Bletooth");
+      }
+
+      if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "H"){
+        
         navigation.navigate("ReceiptScreen");
       }
 
