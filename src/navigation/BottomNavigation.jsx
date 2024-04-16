@@ -7,8 +7,8 @@ import ReportsNavigation from "./ReportsNavigation";
 import SettingsNavigation from "./SettingsNavigation";
 import { AuthContext } from "../context/AuthProvider";
 import OutpassNavigation from "./OutpassNavigation";
-import PrintNavigation from "./PrintNavigation";
-import { loginStorage } from "../storage/appStorage";
+// import PrintNavigation from "./PrintNavigation";
+// import { loginStorage } from "../storage/appStorage";
 
 
 
@@ -20,11 +20,9 @@ function BottomNavigation() {
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
-  console.log(loginData.user.userdata.msg[0].device_type, '////////////////////////UTSABBBB');
 
-  const initialRoute = loginData.user.userdata.msg[0].device_type == "M" ? ReceiptScreen_Bletooth : receiptScreen;
 
   return (
 
@@ -35,7 +33,7 @@ function BottomNavigation() {
         tabBarStyle: { height: 60, size: 20 },
         tabBarHideOnKeyboard: true,
       }}
-      initialRouteName={initialRoute} >
+      initialRouteName={receiptScreen} >
       {/* Receipt Screen */}
 
       {/* report_flag == "Y" && ( */}

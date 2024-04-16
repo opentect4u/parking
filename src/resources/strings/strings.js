@@ -12,6 +12,7 @@ export default strings = {
   sign_up_here: "Sign Up Here",
   sign_in_here: "Sign in Here",
   forgot_password: "FORGOT PASSWORD",
+  contact_us_Sec_Show_Hide:'false',
   contact_us_text: "If you have any question do get in touch with us at",
   contact_mobile_number: "7249612345/7249412345",
   you_have_registered: "YOU`VE REGISTERED",

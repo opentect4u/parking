@@ -46,7 +46,7 @@ import useDashboard from "../../hooks/api/useDashboard";
 //   StyleSheet,
 // } from "react-native"
 import { BluetoothManager } from "react-native-bluetooth-escpos-printer"
-import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
+// import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
 
 
 
@@ -100,7 +100,37 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     dashboardData()
   }, [])
 
-  
+ // async function checkLocationEnabled() {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //       {
+  //         title: "Bluetooth Permission",
+  //         message:
+  //           "This app needs access to your location to check Bluetooth status.",
+  //         buttonNeutral: "Ask Me Later",
+  //         buttonNegative: "Cancel",
+  //         buttonPositive: "OK",
+  //       },
+  //     );
+  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //       BleManager.enableBluetooth()
+  //         .then(() => {
+  //           console.log("The bluetooth is already enabled or the user confirm");
+  //         })
+  //         .catch(error => {
+  //           // Failure code
+  //           console.log("The user refuse to enable bluetooth");
+  //         });
+  //       // const isEnabled = await BluetoothStatus.isEnabled();
+  //       // console.log('Bluetooth Enabled:', isEnabled);
+  //     } else {
+  //       console.log("Bluetooth permission denied");
+  //     }
+  //   } catch (error) {
+  //     console.log("Error checking Bluetooth status:", error);
+  //   }
+  // }
 
 // get Dashboard Data
   const dashboardData = async () => {
@@ -110,7 +140,31 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     setVehicleOut(resData?.data?.vehicle_out?.msg[0]?.vehicle_out)
   }
 
-  
+// const handlePrint = async () => {
+  //   await checkLocationEnabled();
+
+  //   try {
+  //     await ThermalPrinterModule.printBluetooth({
+  //       payload:
+  //         `[C]<u><font size='tall'>Synergic Parking</font></u>\n` +
+  //         // `[C]<img>${headerImg}</img>\n` +
+  //         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+  //         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+  //         `[C]-------------------------------\n` +
+  //         `[L]<font size='normal'>NAME : [R]${userDetails.operator_name}</font>\n` +
+  //         `[L]<font size='normal'>PHONE No. : [R]${userDetails.mobile_no}</font>\n` +
+  //         `[L]<font size='normal'>LOCATION : [R]${userDetails.seller_addr}</font>\n` +
+  //         `[L]<font size='normal'>SERIAL No. : [R]${userDetails.user_id}</font>`,
+  //       printerNbrCharactersPerLine: 30,
+  //       printerDpi: 120,
+  //       printerWidthMM: 58,
+  //       mmFeedPaper: 25,
+  //     });
+  //   } catch (err) {
+  //     ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
+  //     console.log(err.message);
+  //   }
+  // };
 
 
   // get vehicles list function
@@ -166,32 +220,35 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
   };
 
 
-// ========================================
+// ===================== Bletooth Printer Start ===================
 
 
 
 const [pairedDevices, setPairedDevices] = useState([])
   const [foundDs, setFoundDs] = useState([])
-  const [bleOpend, setBleOpend] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [name, setName] = useState("")
-  const [boundAddress, setBoundAddress] = useState("")
+  // const [bleOpend, setBleOpend] = useState(false)
+  // const [loading, setLoading] = useState(true)
+  // const [name, setName] = useState("")
+  // const [boundAddress, setBoundAddress] = useState("")
 
-  const { logout } = useContext(AuthContext);
+  // const { logout } = useContext(AuthContext);
 
   // const onClearData = () => {
   //   clearAppData();
   // };
 
   useEffect(() => {
+
+    if(loginData.user.userdata.msg[0].device_type == "M" ){
+
     BluetoothManager.isBluetoothEnabled().then(
       enabled => {
-        setBleOpend(Boolean(enabled))
-        setLoading(false)
+        // setBleOpend(Boolean(enabled))
+        // setLoading(false)
       },
       err => {
         // err
-        console.log(err)
+        // console.log(err)
       },
     )
 
@@ -256,6 +313,9 @@ const [pairedDevices, setPairedDevices] = useState([])
       connect(firstDevice)
       // connect(firstDevice);
     }
+
+  }
+
   }, [pairedDevices])
 
   const deviceAlreadPaired = useCallback(
@@ -395,7 +455,7 @@ const [pairedDevices, setPairedDevices] = useState([])
     }
   }, [scanDevices])
 
-
+// ===================== Bletooth Printer End ===================
   
 
   return (

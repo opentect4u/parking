@@ -12,7 +12,8 @@ const phoneFill = <FontAwsome name="phone" size={40} color="white" />;
 
 const ContactBottom = () => {
   return (
-    <View style={styles.contact_container}>
+    <>
+    {strings.contact_us_Sec_Show_Hide == "true" ? <View style={styles.contact_container}>
       {phoneFill}
       <View style={styles.sub_contact_container}>
         <Text style={[styles.query_text]}>{strings.contact_us_text}</Text>
@@ -20,6 +21,8 @@ const ContactBottom = () => {
         <Text style={styles.phone_number}>{strings.contact_mobile_number}</Text>
       </View>
     </View>
+    : null}
+    </>
   );
 };
 

@@ -30,6 +30,7 @@ import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
 
 
+
 // import React, { useState, useEffect, useContext } from "react";
 
 const CreateReceiptScreen = ({ navigation, route }) => {
@@ -292,12 +293,12 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         console.log(err.message);
       }
 
-      if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
+      // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
         
-        navigation.navigate("ReceiptScreen_Bletooth");
-      }
+      //   navigation.navigate("ReceiptScreen_Bletooth");
+      // }
 
-      if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "H"){
+      if(generalSettings?.redirection_flag == "Y"){
         
         navigation.navigate("ReceiptScreen");
       }
