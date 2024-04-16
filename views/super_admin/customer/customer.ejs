@@ -16,8 +16,6 @@
                                     <th class="text-center text-dark">Customer Name</th>
                                     <th class="text-center text-dark">Seller Name</th>
                                     <th class="text-center text-dark">Mobile No.</th>
-                                    <th class="text-center text-dark">Email</th>
-                                    <th class="text-center text-dark">Customer Address</th>
                                     <th class="text-center text-dark">Action</th>
                                 </tr>
                             </thead>
@@ -37,12 +35,6 @@
                                         <td class="text-center text-dark">
                                             <%=item.mobile_no %>
                                           </td>
-                                        <td class="text-center text-dark">
-                                            <%=item.email %>
-                                          </td>
-                                        <td class="text-center text-dark">
-                                            <%=item.cust_addr %>
-                                          </td>    
                                         <td class="text-center text-dark">
                                           <a href="edit_customer?id=<%= item.customer_id %>"
                                             class="btn btn-info" style="border-radius: 5px;"><i class="fa fa-edit"></i></a>

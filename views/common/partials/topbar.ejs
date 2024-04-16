@@ -7,6 +7,8 @@
           <!-- ============================================================== -->
           <!-- Logo -->
           <!-- ============================================================== -->
+          <% if(user.user_data) {
+            if(user.user_data.seller_id=='2' && user.user_data.user_type !='C'){  %>
           <div class="navbar-brand">
               <!-- Logo icon -->
               <a href="/">
@@ -23,6 +25,25 @@
                   </span>
               </a>
           </div>
+          <% } } else {%>
+            <div class="navbar-brand">
+                <!-- Logo icon -->
+                <a href="">
+                    <b class="logo-icon">
+                        <!-- Dark Logo icon -->
+                        <img src="/image/logo_sss.png" alt="homepage" class="dark-logo siteLogo" style="width: 113%; height: 85px;"/>
+                        <!-- Light Logo icon -->
+                        <img src="/image/logo_sss.png" alt="homepage" class="light-logo siteLogo"
+                        style="width: 113%; height: 85px;" />
+                    </b>
+                    <!--End Logo icon -->
+                    <!-- Logo text -->
+                    <span class="logo-text">
+                       
+                    </span>
+                </a>
+            </div>
+            <% } %>
           <!-- ============================================================== -->
           <!-- End Logo -->
           <!-- ============================================================== -->
