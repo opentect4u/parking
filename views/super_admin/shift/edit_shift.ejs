@@ -1,0 +1,62 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="card col-12">
+            <div class="card-body">
+                <div class="titleSec">
+                    <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back"
+                            style="cursor: pointer;">&nbsp;Shift Edit Details</i></h2>
+                </div>
+                <form action="/superadmin/save_shift" id="myForm" method="post">
+                    <div class="row mt-4">
+                        <div class="form-group col-6">
+                            <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+                            <select name="cust_id" class="form-control" id="cust_id" disabled>
+                                <option value="">Select Customer Name</option>
+                                <% customer.forEach(dt => { %>
+                                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="shift_name" class="text-dark"><b>Shift Name</b></label>
+                              <input type="text" class="form-control" id="shift_name" name="shift_name" placeholder="Enter Shift Name...."
+                                value="<%= data[0].shift_name %>">
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="frm_time" class="text-dark"><b>From Time</b></label>
+                              <input type="time" name="frm_time" id="frm_time" class="form-control" value="<%= data[0].f_time %>">
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="to_time" class="text-dark"><b>To Time</b></label>
+                              <input type="time" name="to_time" id="to_time" class="form-control" value="<%= data[0].t_time %>">
+                            </div>
+                          </div>
+
+                        <div class="row mt-2">
+                            <input type="hidden" name="id" value="<%= id %>">
+                            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+                            <div class="form-group col-md-6">
+                                <input type="submit" value="SUBMIT" class="btn btn-primary btn-block text-center"
+                                    style="margin-left: 25vw;border-radius: 5px;" />
+                            </div>
+                        </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+                    $("#back").click(function () {
+                        window.location.href = "/superadmin/shift";
+                    });
+    });
+</script>
