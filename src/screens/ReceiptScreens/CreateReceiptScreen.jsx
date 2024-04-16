@@ -145,9 +145,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
   const handleCreateReceipt = async () => {
-    console.log(loading, 'llllllllllllllllllllllllllllllll');
     if (loading == true) {
-      console.log(loading, 'llllllllllllllllllllllllllllllll');
       return;
     }
 
@@ -187,8 +185,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     //vehicle data to update server
 
+    // const currentTime___ = currentTime;
+  // console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
+  
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
-    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, "N", 0, 0);
+    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, "N", 0, 0);
 
     // console.log(
     //   "=============xxxx=======",

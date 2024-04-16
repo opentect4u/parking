@@ -3,8 +3,8 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
 function useCarIn() {
-    const carIn = async (vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst) => {
-        console.log(baseAmt, 'baseAmt__UTSAB');
+    const carIn = async (vehicleId,vehicleNo, baseAmt, currentTime, paidAmt, gstFlag, cgst, sgst) => {
+        
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
              axios.post(
@@ -12,7 +12,8 @@ function useCarIn() {
                     {
                         vehicle_id: vehicleId,
                         vehicle_no: vehicleNo,
-                        base_amt: baseAmt, 
+                        base_amt: baseAmt,
+                        date_time: currentTime,
                         // adv_amt: adv_amt, Advance Amount
                         paid_amt: paidAmt,
                         gst_flag: gstFlag,
@@ -26,11 +27,11 @@ function useCarIn() {
                     },
                 )
                 .then(res => {
-                    console.log("res - carIn - useCarIn", res.data);
+                    console.log("res - carIn - useCarIn___then", res.data);
                     resolve(res.data);
                 })
                 .catch(err => {
-                    console.log("res - carIn - useCarIn", err);
+                    console.log("res - carIn - useCarIn___catch", err);
                     reject(err);
                 });
         });
