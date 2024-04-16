@@ -2,6 +2,7 @@ const express = require('express');
 
 const { Api: V1Api } = require('./routes/V1/Api.routes');
 const { Api: V2Api } = require('./routes/V2/Api.routes');
+const { Api: V3Api } = require('./routes/V3/Api.routes');
 
 const { Customer } = require('./routes/Customer.routes');
 const { reportRouter } = require('./routes/ReportsRouter');
@@ -71,6 +72,7 @@ app.get('/customer', (req, res) => {
 
 app.use('/api', V1Api);
 app.use('/v2/api', V2Api);
+app.use('/v3/api', V3Api);
 
 app.use('/', Customer);
 
