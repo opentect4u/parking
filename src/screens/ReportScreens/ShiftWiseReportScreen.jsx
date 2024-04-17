@@ -61,7 +61,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
   const [mydateFrom, setDateFrom] = useState(new Date());
   const [displaymodeFrom, setModeFrom] = useState("date");
   const [isDisplayDateFrom, setShowFrom] = useState(false);
-
+  const [getBlePermission, setBlePermission] = useState();
 
   const {shift_wise}=usegetShiftwiseReport();
 
@@ -152,9 +152,24 @@ export default function ShiftWiseReportScreen({ navigation }) {
     }
   }
 
+  useEffect(() => {
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }, [])
+
   const handlePrint = async () => {
     await checkLocationEnabled();
-
+    if (getBlePermission) {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
@@ -229,6 +244,10 @@ export default function ShiftWiseReportScreen({ navigation }) {
       );
       console.log(err.message);
     }
+
+  } else {
+    ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+  }
   };
 
   const getShift = async () => {
@@ -265,7 +284,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
       filteredShifts.forEach(shift => {
 
 
-        // console.log("///////////////////////////////////////////////////", useOperatorData);
+        // console.log("///////////////////////////////////////////////////", useOperatorData.length);
         setShifName(shift.shift_name)
       });
   }
@@ -442,6 +461,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
           </View>
         )}
         {/* back and print action button */}
+        {useOperatorData.length != 0 && (
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
@@ -470,6 +490,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
             />
           )}
         </View>
+        )}
       </View>
     </View>
   );

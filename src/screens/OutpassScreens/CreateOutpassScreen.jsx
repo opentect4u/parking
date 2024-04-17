@@ -27,6 +27,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   const [deviceId, setDeviceId] = useState(() => "");
   const [loading, setLoading] = useState(() => false);
   const [isAvailableYet, setisAvailableYet] = useState(() => false);
+  const [getBlePermission, setBlePermission] = useState();
 
   useEffect(() => {
 
@@ -70,6 +71,20 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     }
   }
 
+  useEffect(() => {
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }, [])
 
 
 
@@ -103,8 +118,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
     //if upload server successfully then print receipt
-    console.log("insert_car_outpass", insert_car_outpass?.data?.update_car_in_flag_status?.suc);
-    if (insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1) {
+    if (insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1 && getBlePermission) {
       try {
         let payloadHeader = "";
         let payloadBody = "";
@@ -199,7 +213,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       navigation.goBack();
     } else {
-      ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
+      navigation.goBack();
+      ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
     }
 
 

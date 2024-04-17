@@ -45,6 +45,7 @@ export default function Unbilled_Reports({ navigation }) {
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
   const [loading, setLoading] = useState();
+  const [getBlePermission, setBlePermission] = useState();
 
   // create a new Date object
   const date = new Date();
@@ -130,11 +131,27 @@ export default function Unbilled_Reports({ navigation }) {
     }
   }
 
+  useEffect(() => {
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }, [])
 
 
   const handlePrint = async () => {
     await checkLocationEnabled();
 
+    if (getBlePermission) {
+      
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
@@ -233,6 +250,11 @@ export default function Unbilled_Reports({ navigation }) {
       );
       console.log(err.message);
     }
+  } else {
+    ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+  }
+
+
   };
 
   return (
@@ -374,6 +396,7 @@ export default function Unbilled_Reports({ navigation }) {
           </View>
         )}
         {/* back and print action button */}
+        {getDetailedReport && (
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
@@ -402,6 +425,7 @@ export default function Unbilled_Reports({ navigation }) {
             />
           )}
         </View>
+        )}
       </View>
     </View>
   );

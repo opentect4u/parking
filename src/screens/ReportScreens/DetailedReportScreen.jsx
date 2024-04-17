@@ -84,6 +84,8 @@ export default function DetailedReportScreen({ navigation }) {
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
+  const [getBlePermission, setBlePermission] = useState();
+
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
   // let totalNetAmount = 0;
@@ -147,11 +149,29 @@ export default function DetailedReportScreen({ navigation }) {
       console.log("Error checking Bluetooth status:", error);
     }
   }
+
+  useEffect(() => {
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }, [])
+
   // receiptSettings
   // console.log(getDetailedReport, '___ddddddddddd');
 
   const handlePrint = async () => {
     await checkLocationEnabled();
+
+    if (getBlePermission) {
 
     let payloadHeader = "";
     let payloadBody = "";
@@ -251,6 +271,10 @@ export default function DetailedReportScreen({ navigation }) {
       );
       console.log(err.message);
     }
+} else {
+    ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+  }
+
   };
 
   return (
@@ -413,6 +437,7 @@ export default function DetailedReportScreen({ navigation }) {
           </View>
         )}
         {/* back and print action button */}
+        {getDetailedReport && (
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
@@ -441,6 +466,7 @@ export default function DetailedReportScreen({ navigation }) {
             />
           )}
         </View>
+        )}
       </View>
     </View>
   );

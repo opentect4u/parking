@@ -59,6 +59,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
   const loginData = JSON.parse(loginStorage.getString("login-data"));
+  const [getBlePermission, setBlePermission] = useState();
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
@@ -144,6 +145,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     }
   }
 
+  useEffect(() => {
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }, [])
+
   const handleCreateReceipt = async () => {
     if (loading == true) {
       return;
@@ -195,9 +211,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     //   "=============xxxx=======",
     //   carindata?.data?.td_vehicle_in?.receipt_number,
     // );
-    if (carindata.status) {
+    if (carindata.status && getBlePermission) {
       ToastAndroid.showWithGravityAndOffset(
-        "receipt created successfully",
+        "Receipt Created Successfully",
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,
@@ -319,7 +335,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       setVehicleAdv(adv_value.toString() || "");
 
       ToastAndroid.showWithGravityAndOffset(
-        "Sorry, receipt creation failed",
+        "Sorry, Receipt Creation Failed, Allow Nearby Devices",
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,

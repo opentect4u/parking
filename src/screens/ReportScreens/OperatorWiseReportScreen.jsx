@@ -59,6 +59,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [mydateTo, setDateTo] = useState(new Date());
   const [displaymodeTo, setModeTo] = useState("date");
   const [isDisplayDateTo, setShowTo] = useState(false);
+  const [getBlePermission, setBlePermission] = useState();
+
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
     const currentDate = selectedDate || mydateTo;
@@ -134,9 +136,25 @@ export default function OperatorWiseReportScreen({ navigation }) {
     }
   }
 
+  useEffect(() => {
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }, [])
+
   const handlePrint = async () => {
     await checkLocationEnabled();
 
+    if (getBlePermission) {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
@@ -145,6 +163,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
       payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.adv_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
+    console.log("///////////////////////////////////////////////////", operatorwiseReports);
 
     if(receiptSettings?.report_flag == "Y"){
 
@@ -211,6 +230,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
       );
       console.log(err.message);
     }
+
+  } else {
+    ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+  }
+
   };
 
   return (
@@ -372,6 +396,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           </View>
         )}
         {/* back and print action button */}
+        {operatorwiseReports.length!=0 &&(
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
@@ -400,6 +425,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
             />
           )}
         </View>
+        )}
       </View>
     </View>
   );
