@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="titleSec">
+            <button type="button" class="btn btn-primary" id="myBtn"
+              style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
+          </div>
+          <div class="row mt-4">
+            <h3 class="text-dark"><i data-feather="slack" class="feather-icon text-dark"></i>&nbsp;<b>Device Setting</b>
+            </h3>
+          </div>
+          <form action="/superadmin/operator" method="post">
+            <div class="row mt-4">
+              <div class="form-group col-md-4">
+                <label for="cust_name"><b style="color: black;">Customer Name:</b></label>
+                <select name="cust_name" class="form-control" id="cust_name" required>
+                  <option value="">Select Customer Name</option>
+                 
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="dev_id"><b style="color: black;">Device ID:</b></label>
+                <select name="dev_id" class="form-control" id="dev_id" required>
+                  <option value="">Select Device ID</option>
+                 
+                </select>
+              </div>
+              <div class="form-group col-md-4" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary" style="border-radius: 5px;" id="submitBtn">Submit</button>
+              </div>
+            </div>
+          </form>
+         
+        </div>
+      </div>
+    </div>
+  </div>
