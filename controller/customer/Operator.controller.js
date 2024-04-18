@@ -56,7 +56,7 @@ const operator = async (req, res) => {
       const schema = Joi.object({
         op_name: Joi.required(),
         mob_no: Joi.required(),
-        dev_id: Joi.string(),
+        // dev_id: Joi.string(),
         pwd: Joi.required(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -90,7 +90,7 @@ const operator = async (req, res) => {
     if(res_dt.suc > 0){
       const fields_1 =
       "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_at)",
-    values_1 = `('${custId}','${sellerId}','O','${password}','${value.dev_id}','${value.mob_no}','Y','${datetime}')`;
+    values_1 = `('${custId}','${sellerId}','O','${password}','0000000000','${value.mob_no}','Y','${datetime}')`;
   var res_dt_2 = await db_Insert("md_user", fields_1, values_1, null, 0);
    }
     // console.log("========operator==========", res_dt);
@@ -109,7 +109,7 @@ const operator = async (req, res) => {
       const schema = Joi.object({
         op_name: Joi.required(),
         mob_no: Joi.required(),
-        dev_id: Joi.string(),
+        // dev_id: Joi.string(),
         pwd: Joi.required(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -134,7 +134,7 @@ const operator = async (req, res) => {
       var res_dt = await db_Insert("md_operator", fields, null, where, 1);
 
       if(res_dt.suc > 0){
-        let fields_1 =`customer_id='${custId}',seller_id='${sellerId}',user_type='O',password='${password}',device_id='${value.dev_id}',user_id='${value.mob_no}',allow_flag='Y',updated_at='${datetime}'`,
+        let fields_1 =`customer_id='${custId}',seller_id='${sellerId}',user_type='O',password='${password}',device_id='0000000000',user_id='${value.mob_no}',allow_flag='Y',updated_at='${datetime}'`,
      where1 = `customer_id='${custId}'AND user_id='${value.mob_no}'`
     var res_dt_2 = await db_Insert("md_user", fields_1, null, where1, 1);
      }
