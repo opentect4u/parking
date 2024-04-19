@@ -73,21 +73,13 @@
             </div>
         </div>
           <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col-5">
               <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
                 <option value="<%= user.user_data.customer_id %>">
                   <%= user.user_data.customer_name %>
                 </option>
               </select>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="app_id" class="text-dark"><b>Device ID</b></label>
-                <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
-                  value="">
-              </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
@@ -96,6 +88,23 @@
                   <option value="<%= user.user_data.dev_mod %>">
                     <%= user.user_data.dev_mod=='D' ? 'Dual' : 'Toll Naka' %>
                   </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="app_id" class="text-dark"><b>Device ID</b></label>
+                <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
+                  value="">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="dev_type" class="text-dark"><b>Device Type</b></label>
+                <select name="dev_type" class="form-control" id="dev_type">
+                  <option value="">Select Device Type</option>
+                  <option value="H">Handheld Device</option>
+                  <option value="M">Mobile Device</option>
                 </select>
               </div>
             </div>

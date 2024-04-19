@@ -1,6 +1,6 @@
 const Joi = require("joi");
 const dateFormat = require("dateformat");
-const { db_Select } = require("../../model/Master.model");
+const { db_Select, db_Insert } = require("../../model/Master.model");
 const { getAllCustomerList } = require("./customer.controller");
 
 const device = async(req,res)=>{
@@ -8,7 +8,8 @@ const device = async(req,res)=>{
        var method = req.method
        var selected = {
          cust_id: method == 'POST' ? req.body.cust_name : '',
-         dev_name: method == 'POST' ? req.body.dev_id : ''
+         dev_name: method == 'POST' ? req.body.dev_id : '',
+         dev_mode: method == 'POST' ? req.body.dev_mod : ''
        }
        var cust = await getAllCustomerList()
          device_list = [];
@@ -49,13 +50,13 @@ const device = async(req,res)=>{
   const get_dev_mode = async (req, res) => {
     var data = req.body;
     console.log(data, "1000");
-    var select = "setting_id,app_id",
-      table_name = "md_setting",
-      where = `customer_id = '${data.cust_name}'`;
-    var dev_id = await db_Select(select, table_name, where, null);
-    // console.log(dev_id, "lalala");
+    var select = "dev_mod",
+      table_name = "md_customer",
+      where = `customer_id = '${data.cust_id}'`;
+    var dev_mod = await db_Select(select, table_name, where, null);
+    console.log(dev_mod, "lalala");
     res.json({
-      SUCCESS: { dev_id },
+      SUCCESS: { dev_mod },
       status: true,
     });
   };
@@ -94,4 +95,65 @@ const device = async(req,res)=>{
         }
   };
 
-   module.exports = {device,get_device_id,show_device_dtls,edit_device}
+  const save_device = async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.required(),
+        cust_id: Joi.optional(),
+        app_id: Joi.optional(),
+        dev_mode: Joi.optional(),
+        report_flag: Joi.optional(),
+        tot_col: Joi.optional(),
+        redirect_flag: Joi.string(),
+        grace_flag: Joi.optional(),
+        grace_value: Joi.optional(),
+        adv_pay_flag: Joi.optional(),
+        adv_value: Joi.optional(),
+      });
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+      console.log(value,'+++');
+      if (error) {
+        const errors = {};
+        error.details.forEach((detail) => {
+          errors[detail.context.key] = detail.message;
+        });
+        return res.json({ error: errors });
+      }
+      var user_name = req.session.user.userData.user_name;
+      const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  
+      let fields =
+          value.id > 0
+            ? `report_flag='${value.report_flag == "Y" ? "Y" : "N"}',total_collection='${value.tot_col == "Y" ? "Y" : "N"}',adv_pay='${value.adv_pay_flag  && value.adv_pay_flag == "Y" ? "Y" : "N"}',adv_value='${value.adv_value}',grace_period_flag='${value.grace_flag == "Y" ? "Y" : "N"}',grace_value='${value.grace_value != "" ? `'00:${value.grace_value}:00'` : 0}',redirection_flag='${value.redirect_flag == "Y" ? "Y" : "N"}',updated_by='${user_name}',updated_at='${datetime}'`
+            : "(app_id,customer_id,mc_lang,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag ,grace_value,redirection_flag,created_by,created_at)",
+        values = `('${value.app_id}','${value.cust_id}','E','${value.dev_mode}','${value.report_flag == "Y" ? "Y" : "N"}','${value.tot_col == "Y" ? "Y" : "N"}','${value.adv_pay_flag  && value.adv_pay_flag == "Y" ? "Y" : "N"}','${value.adv_value}','${value.grace_flag == "Y" ? "Y" : "N"}','${value.grace_value != "" ? `00:${value.grace_value}:00` : 0}','${value.redirect_flag == "Y" ? "Y" : "N"}','${user_name}','${datetime}')`;
+      let res_dt = await db_Insert(
+        "md_setting",
+        fields,
+        values,
+        value.id > 0
+          ? `setting_id=${value.id} AND customer_id = ${value.cust_id}`
+          : null,
+        value.id > 0 ? 1 : 0
+      );
+      console.log("========vehicle==========", res_dt);
+      req.flash(
+        "success",
+        value.id > 0 ? "Updated successfully" : "Saved successfully"
+      );
+      res.redirect("/superadmin/device_setting");
+      //   res.send(res_dt)
+    } catch (error) {
+      // console.log(error,'ERRR');
+      req.flash(
+        "error",
+        value.id > 0
+          ? "Data not updated Successfully"
+          : "Data not saved Successfully"
+      );
+      res.redirect("/superadmin/device_setting");
+    }
+  };
+  
+
+   module.exports = {device,get_device_id,show_device_dtls,edit_device,get_dev_mode,save_device}

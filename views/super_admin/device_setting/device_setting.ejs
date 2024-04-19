@@ -95,9 +95,9 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        <form action="/device/add_save_device" method="post" id="myForm">
+        <form action="/superadmin/save_device_setting" method="post" id="myForm">
           <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col-5">
               <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
                 <option value="">Select Customer Name</option>
@@ -106,8 +106,15 @@
                   <% }) %>
               </select>
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="dev_mode" class="text-dark"><b>Mode</b></label>
+                <select name="dev_mode" class="form-control" id="dev_mode" disabled>
+                  <option value="">Select Mode</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
               <div class="form-group">
                 <label for="app_id" class="text-dark"><b>Device ID</b></label>
                 <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
@@ -116,9 +123,11 @@
             </div>
             <div class="col-md-3">
               <div class="form-group">
-                <label for="dev_mode" class="text-dark"><b>Mode</b></label>
-                <select name="dev_mode" class="form-control" id="dev_mode">
-                 
+                <label for="dev_type" class="text-dark"><b>Device Type</b></label>
+                <select name="dev_type" class="form-control" id="dev_type">
+                  <option value="">Select Device Type</option>
+                  <option value="H">Handheld Device</option>
+                  <option value="M">Mobile Device</option>
                 </select>
               </div>
             </div>
@@ -170,6 +179,8 @@
 
           </div>
           <div class="row mt-3">
+            <input type="hidden" name="id" value="0">
+
             <div class="form-group col-md-3">
               <input type="submit" value="SUBMIT" id="set_dev_sub" class="btn btn-primary "
                 style="margin-left: 35vw;border-radius: 6px;" />
@@ -262,25 +273,35 @@
   </script>  
 
 <script>
+   $(document).ready(function(){
+      var mod = <%= selected.dev_mod!= '' ? true : false %>;
+      console.log(mod, 'CHange mod');
+      if(mod) {
+        var cust_name = "<%= selected.cust_id != '' ? selected.cust_id : '' %>";
+        change_mod(cust_id)
+      }
+    })
   $('#cust_id').change(function () {
     var cust_id = $(this).val();
+    change_mod(cust_id)
+  });
 
+  function change_mod(cust_id){
     $.ajax({
       type: "POST",
       url: "/superadmin/dev_dt",
       data: { cust_id: cust_id },
       success: function (response) {
-        $('#dev_id_sel').empty();
-        $('#dev_id_sel').append(`<option value="">Select Device ID</option>`)
+        $('#dev_mode').empty();
+        $('#dev_mode').append(`<option value="">Select Mode</option>`)
 
-        var sel_dev_id = '<%= selected.dev_name > 0 ? selected.dev_name : 0 %>'
-        console.log(sel_dev_id);
-        response.SUCCESS.dev_id.msg.forEach(function (resData) {
+        var sel_dev_mod = "<%= selected.dev_mod != '' ? selected.dev_mod : 0 %>"
+        response.SUCCESS.dev_mod.msg.forEach(function (resData) {
         // console.log(response.SUCCESS.dev_id.msg,'pp')
 
-        var _selected = false
-        if (sel_dev_id == resData.app_id) _selected = true
-        $('#dev_id_sel').append($('<option>', { value: resData.app_id, text: resData.app_id, selected: _selected }))
+          var _selected = false
+          if (sel_dev_mod == resData.dev_mod) _selected = true
+        $('#dev_mode').append($('<option>', { value: resData.dev_mod, text: resData.dev_mod=='D' ? 'Dual' : 'Fixed', selected: true}))
         });
 
       },
@@ -289,6 +310,7 @@
         //   tbody.empty();
       },
     });
-  });
+  }
+
 
 </script> 

@@ -12,7 +12,7 @@
                 </div>
                 <form action="/device/edit_save_device" id="myForm" method="post">
                     <div class="row mt-4">
-                        <div class="form-group col-6">
+                        <div class="form-group col-5">
                             <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Customer Name</option>
@@ -21,15 +21,6 @@
                                 </option>
                             </select>
                         </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="app_id" class="text-dark"><b>Device ID</b></label>
-                                <input type="text" name="app_id" id="app_id" class="form-control"
-                                    value="<%= data.app_id %>" readonly>
-                            </div>
-                        </div>
-
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="dev_mode" class="text-dark"><b>Mode</b></label>
@@ -37,6 +28,23 @@
                                     <option value="<%= data.dev_mod == 'D' ? 'D' : 'F' %>">
                                         <%= data.dev_mod=='D' ? 'Dual' : 'Toll Naka' %>
                                     </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="app_id" class="text-dark"><b>Device ID</b></label>
+                                <input type="text" name="app_id" id="app_id" class="form-control"
+                                    value="<%= data.app_id %>" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="dev_type" class="text-dark"><b>Device Type</b></label>
+                                <select name="dev_type" class="form-control" id="dev_type">
+                                    <option value="H" <%= data.device_type==='H' ? 'selected' : '' %>>Handheld Device</option>
+                                    <option value="M" <%= data.device_type==='M' ? 'selected' : '' %>>Mobile Device</option>
                                 </select>
                             </div>
                         </div>

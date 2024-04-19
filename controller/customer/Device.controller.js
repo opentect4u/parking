@@ -63,7 +63,7 @@ const edit_device = async (req, res) => {
   var data = req.query;
   // console.log(data);
   var custId = req.session.user.user_data.customer_id;
-  let select = "a.*,b.*",
+  let select = "a.app_id,a.customer_id,a.device_type,a.dev_mod,a.report_flag,a.total_collection,a.adv_pay,a.adv_value,a.grace_period_flag,a.grace_value,a.redirection_flag, b.customer_id,b.customer_name,b.dev_mod",
     table_name = "md_setting a, md_customer b",
     whr = `a.customer_id = b.customer_id AND a.customer_id=${custId} AND a.app_id='${data.dev_id}'`;
   const resData = await db_Select(select, table_name, whr, null);
@@ -85,6 +85,7 @@ const save_edit_device = async (req, res) => {
       cust_id: Joi.string(),
       app_id: Joi.string(),
       dev_mode: Joi.string(),
+      dev_type: Joi.string(),
       report_flag: Joi.string(),
       tot_col: Joi.string(),
       adv_pay_flag: Joi.string(),
@@ -107,7 +108,7 @@ const save_edit_device = async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd");
     // var password = bcrypt.hashSync(value.pwd, 10);
 
-    let fields = `report_flag='${
+    let fields = `device_type='${value.dev_type}',report_flag='${
         value.report_flag == "Y" ? "Y" : "N"
       }',total_collection='${value.tot_col == "Y" ? "Y" : "N"}',adv_pay='${
         value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"
@@ -134,6 +135,7 @@ const save_add_device = async (req, res) => {
       cust_id: Joi.string(),
       app_id: Joi.string(),
       dev_mode: Joi.optional(),
+      dev_type: Joi.optional(),
       report_flag: Joi.string(),
       tot_col: Joi.string(),
       adv_pay_flag: Joi.string(),
@@ -157,8 +159,10 @@ const save_add_device = async (req, res) => {
 
     // console.log(value);
     let fields =
-        "(customer_id,app_id,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,created_at)",
+        "(customer_id,app_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,created_at)",
       values = `('${custId}','${value.app_id}','${
+        value.dev_type
+      }','${
         value.dev_mode
       }',
       '${value.report_flag == "Y" ? "Y" : "N"}','${
