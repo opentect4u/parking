@@ -60,6 +60,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [getBlePermission, setBlePermission] = useState();
+  const [getdevice_type, setdevice_type] = useState();
+  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
@@ -91,6 +93,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
     console.log("EFFECT - CreateReceiptScren");
     // console.log(generalSettings.adv_value, 'generalSettings__XXROYYYYYY');
     const timer = setInterval(() => {
@@ -146,6 +149,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
   useEffect(() => {
+    if(device_Type_Check == "M"){
     try {
     async function blueTooth() {
     const bluetoothConnectGranted = await PermissionsAndroid.request(
@@ -157,6 +161,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     blueTooth()
 
     } catch (err) {
+    }
     }
   }, [])
 
@@ -207,160 +212,298 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, "N", 0, 0);
 
-    // console.log(
-    //   "=============xxxx=======",
-    //   carindata?.data?.td_vehicle_in?.receipt_number,
-    // );
-    if (carindata.status && getBlePermission) {
-      ToastAndroid.showWithGravityAndOffset(
+    
+
+    if(carindata.status){
+      // Use for Mobile Device Start 
+        if (getBlePermission && device_Type_Check == "M") {
+        ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,
         50,
-      );
+        );
 
-      let payloadHeader = "";
-      let payloadFooter = "";
-      let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
+        let payloadHeader = "";
+        let payloadFooter = "";
+        let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
         .toString()
         .slice(-5);
-      let advanceAmount = "";
+        let advanceAmount = "";
 
-      const options = {
+        const options = {
         hour12: false,
         hour: "2-digit",
         minute: "2-digit",
         // second: '2-digit',
-      };
+        };
 
-      const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
-      const formatDateTime = dateTime => {
+        const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
+        const formatDateTime = dateTime => {
         return `${dateTime.toLocaleDateString(
-          "en-GB",
-          dateoptions,
+        "en-GB",
+        dateoptions,
         )} ${dateTime.toLocaleTimeString(undefined, options)}`;
-      };
+        };
 
-      try {
+        try {
         if(receiptSettings?.IN_on_off == "Y"){
         if (receiptSettings.header1_flag == 1) {
-          payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
         }
 
         if (receiptSettings.header2_flag == 1) {
-          payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
         }
 
         if (receiptSettings.header3_flag == 1) {
-          payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
         }
 
         if (receiptSettings.header4_flag == 1) {
-          payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
         if (receiptSettings.footer1_flag == 1) {
-          payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         }
         if (receiptSettings.footer2_flag == 1) {
-          payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
         }
         if (receiptSettings.footer3_flag == 1) {
-          payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
         }
         if (receiptSettings.footer4_flag == 1) {
-          payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
         }
 
         }
 
         if (generalSettings.adv_pay == "Y") {
-          advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
-          payload:
-            `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
-            `[C]${payloadHeader}\n` +
-            // `[C]<img>${headerImg}</img>\n` +
-            // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-            // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-            `[C]-------------------------------\n` +
-            `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
-            `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-            `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-            // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-            `${advanceAmount}` +
-            // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
-            `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
-            `[C]-------------------------------\n` +
-            `[C]${payloadFooter}\n`,
-          printerNbrCharactersPerLine: 30,
-          printerDpi: 120,
-          printerWidthMM: 58,
-          mmFeedPaper: 25,
+        payload:
+        `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        `[C]${payloadHeader}\n` +
+        // `[C]<img>${headerImg}</img>\n` +
+        // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+        // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+        `[C]-------------------------------\n` +
+        `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
+        `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
+        `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+        // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
+        `${advanceAmount}` +
+        // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
+        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        `[C]-------------------------------\n` +
+        `[C]${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
         });
-      } catch (err) {
+        } catch (err) {
         ToastAndroid.show(
-          "ThermalPrinterModule - ReceiptScreen",
-          ToastAndroid.SHORT,
+        "ThermalPrinterModule - ReceiptScreen",
+        ToastAndroid.SHORT,
         );
         console.log(err.message);
-      }
+        }
 
-      // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
-        
-      //   navigation.navigate("ReceiptScreen_Bletooth");
-      // }
+        // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
 
-      if(generalSettings?.redirection_flag == "Y"){
-        
+        //   navigation.navigate("ReceiptScreen_Bletooth");
+        // }
+
+        if(generalSettings?.redirection_flag == "Y"){
+
         navigation.navigate("ReceiptScreen");
-      }
+        }
 
-      if(generalSettings?.redirection_flag == "N"){
+        if(generalSettings?.redirection_flag == "N"){
         setLoading(false);
 
         setVehicleNumber("");
         setVehicleAdv(adv_value.toString() || "");
-      }
-      // navigation.navigate("ReceiptScreen");
+        }
+        // navigation.navigate("ReceiptScreen");
 
-      // navigation.navigate("ReceiptScreen");
-    } else {
-      setLoading(false);
-      setVehicleNumber("");
-      setVehicleAdv(adv_value.toString() || "");
-
-      ToastAndroid.showWithGravityAndOffset(
-        "Sorry, Receipt Creation Failed, Allow Nearby Devices",
+        // navigation.navigate("ReceiptScreen");
+        } else if (device_Type_Check == "H") {
+        ToastAndroid.showWithGravityAndOffset(
+        "Receipt Created Successfully",
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,
         50,
-      );
+        );
 
-      setLoading(true);
-      setVehicleNumber("");
-      setVehicleAdv(adv_value.toString() || "");
+        let payloadHeader = "";
+        let payloadFooter = "";
+        let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
+        .toString()
+        .slice(-5);
+        let advanceAmount = "";
 
-      // Utsab Roy Work
-      // navigate to previous screen
-      navigation.navigate("ReceiptScreen");
+        const options = {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        // second: '2-digit',
+        };
 
-      // if(generalSettings.redirection_flag == "Y"){
-      //   navigation.navigate("ReceiptScreen");
-      // }
+        const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
+        const formatDateTime = dateTime => {
+        return `${dateTime.toLocaleDateString(
+        "en-GB",
+        dateoptions,
+        )} ${dateTime.toLocaleTimeString(undefined, options)}`;
+        };
 
-      // if(generalSettings.redirection_flag == "N"){
-      //   setLoading(false);
+        try {
+        if(receiptSettings?.IN_on_off == "Y"){
+        if (receiptSettings.header1_flag == 1) {
+        payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        }
 
-      //   setVehicleNumber("");
-      //   setVehicleAdv("");
-      // }
+        if (receiptSettings.header2_flag == 1) {
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        }
+
+        if (receiptSettings.header3_flag == 1) {
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        }
+
+        if (receiptSettings.header4_flag == 1) {
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        }
+
+        if (receiptSettings.footer1_flag == 1) {
+        payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        }
+        if (receiptSettings.footer2_flag == 1) {
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        }
+        if (receiptSettings.footer3_flag == 1) {
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        }
+        if (receiptSettings.footer4_flag == 1) {
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        }
+
+        }
+
+        if (generalSettings.adv_pay == "Y") {
+        advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        }
+
+        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
+        await ThermalPrinterModule.printBluetooth({
+        payload:
+        `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        `[C]${payloadHeader}\n` +
+        // `[C]<img>${headerImg}</img>\n` +
+        // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+        // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+        `[C]-------------------------------\n` +
+        `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
+        `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
+        `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+        // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
+        `${advanceAmount}` +
+        // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
+        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        `[C]-------------------------------\n` +
+        `[C]${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+        });
+        } catch (err) {
+        ToastAndroid.show(
+        "ThermalPrinterModule - ReceiptScreen",
+        ToastAndroid.SHORT,
+        );
+        console.log(err.message);
+        }
+
+        // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
+
+        //   navigation.navigate("ReceiptScreen_Bletooth");
+        // }
+
+        if(generalSettings?.redirection_flag == "Y"){
+
+        navigation.navigate("ReceiptScreen");
+        }
+
+        if(generalSettings?.redirection_flag == "N"){
+        setLoading(false);
+
+        setVehicleNumber("");
+        setVehicleAdv(adv_value.toString() || "");
+        }
+        // navigation.navigate("ReceiptScreen");
+
+        // navigation.navigate("ReceiptScreen");
+        } else {
+
+          if(device_Type_Check == "M"){
+
+          setLoading(false);
+          setVehicleNumber("");
+          setVehicleAdv(adv_value.toString() || "");
+
+          ToastAndroid.showWithGravityAndOffset(
+          "Sorry, Receipt Creation Failed, Allow Nearby Devices",
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+          );
+
+          setLoading(true);
+          setVehicleNumber("");
+          setVehicleAdv(adv_value.toString() || "");
+
+          navigation.navigate("ReceiptScreen");
+
+        }
+
+        if(device_Type_Check == "H"){
+        setLoading(false);
+        setVehicleNumber("");
+        setVehicleAdv(adv_value.toString() || "");
+
+        ToastAndroid.showWithGravityAndOffset(
+        "Sorry, Receipt Creation Failed",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+        );
+
+        setLoading(true);
+        setVehicleNumber("");
+        setVehicleAdv(adv_value.toString() || "");
+
+        navigation.navigate("ReceiptScreen");
+
+        }
+
+
+        
+        }
+        // Use for Handheld Device End
+
     }
+
   };
 
   return (

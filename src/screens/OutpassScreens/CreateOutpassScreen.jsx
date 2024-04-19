@@ -28,6 +28,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(() => false);
   const [isAvailableYet, setisAvailableYet] = useState(() => false);
   const [getBlePermission, setBlePermission] = useState();
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
   useEffect(() => {
 
@@ -72,6 +74,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   }
 
   useEffect(() => {
+    if(device_Type_Check == "M"){
     try {
     async function blueTooth() {
     const bluetoothConnectGranted = await PermissionsAndroid.request(
@@ -83,6 +86,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     blueTooth()
 
     } catch (err) {
+    }
     }
   }, [])
 
@@ -108,7 +112,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       // console.log("//////////////////////",deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, 'N', others.vehicle_id, others.vehicle_no, others.date_time_in)
       
-      console.log("//////////////////////",totalRate.base_amt, '<== Base Amount', 'Paid Amount ==> ', paid_amt)
+      console.log(insert_car_outpass?.data?.update_car_in_flag_status?.suc, 'lllll', device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
       
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, "N", others.vehicle_id, others.vehicle_no, others.date_time_in);
     }
@@ -118,7 +122,107 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
     //if upload server successfully then print receipt
-    if (insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1 && getBlePermission) {
+    if(insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1){
+
+      console.log(device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
+
+    // Use for Mobile Device Start 
+    if (getBlePermission && device_Type_Check == "M") {
+      try {
+        let payloadHeader = "";
+        let payloadBody = "";
+        let payloadFooter = "";
+        await checkLocationEnabled();
+        data.map((props, index) => (
+          payloadBody += `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`
+
+          //  `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
+          //  `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+          //  `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime)}</font>\n`+
+        ));
+
+
+        console.log(payloadBody)
+
+
+        // payloadBody += `[L]<font size='normal'>RECEIPT NO : [R] ${(totalRate?.vDatainfo?.receipt_no).toString().slice(-5)}</font>\n` +
+        //   `[L]<font size='normal'>VEHICLE TYPE. : [R] ${totalRate?.vDatainfo?.vehicle_type}</font>\n` +
+        //   `[L]<font size='normal'>VEHICLE NO : [R] ${totalRate?.vDatainfo?.vehicle_no}</font>\n` +
+        //   `[L]<font size='normal'>PARKING FEES : [R]${totalRate?.vDatainfo?.parking_fees}</font>\n` +
+        //   `[L]<font size='normal'>IN TIME : [R]${totalRate?.vDatainfo?.in_time}</font>\n` +
+        //   `[L]<font size='normal'>OUT TIME : [R]${totalRate?.vDatainfo?.out_time}</font>\n` +
+        //   `[L]<font size='normal'>DURATION : [R]${totalRate?.vDatainfo?.duration}</font>\n`;
+
+
+
+
+        // `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+        if(receiptSettings?.OUT_on_off == "Y"){
+        if (receiptSettings.header1_flag == 1) {
+          payloadHeader +=
+            `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        }
+
+        if (receiptSettings.header2_flag == 1) {
+          payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        }
+
+        if (receiptSettings.header3_flag == 1) {
+          payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        }
+
+        if (receiptSettings.header4_flag == 1) {
+          payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        }
+
+        if (receiptSettings.footer1_flag == 1) {
+          payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        }
+        if (receiptSettings.footer2_flag == 1) {
+          payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        }
+        if (receiptSettings.footer3_flag == 1) {
+          payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        }
+        if (receiptSettings.footer4_flag == 1) {
+          payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        }
+
+      }
+
+
+        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
+        await ThermalPrinterModule.printBluetooth({
+          payload:
+            `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
+            `[C]${payloadHeader}\n` +
+            // `[C]<img>${headerImg}</img>\n` +
+            // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+            // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+            `[C]-------------------------------\n` +
+            `${payloadBody}` +
+            // `[L]<font size='normal'>DURATION : [R]</font>\n` +
+            `[C]-------------------------------\n` +
+            `[C]${payloadFooter}\n`,
+          printerNbrCharactersPerLine: 30,
+          printerDpi: 120,
+          printerWidthMM: 58,
+          mmFeedPaper: 25,
+        });
+
+        setLoading(false);
+
+      } catch (err) {
+        ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
+        console.log(err.message);
+        setLoading(false);
+      }
+
+      setisAvailableYet(false);
+
+      navigation.goBack();
+    } else if (device_Type_Check == "H") {
+      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
       try {
         let payloadHeader = "";
         let payloadBody = "";
@@ -213,10 +317,21 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       navigation.goBack();
     } else {
-      navigation.goBack();
-      ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
-    }
 
+      if(device_Type_Check == "M"){
+        navigation.goBack();
+        ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+      }
+      if(device_Type_Check == "H"){
+        navigation.goBack();
+        ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
+      }
+
+      
+    }
+    // Use for Handheld Device End 
+
+  }
 
   };
   return (

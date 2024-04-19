@@ -20,6 +20,11 @@ import { loginStorage } from "../../storage/appStorage";
 import { AuthContext } from "../../context/AuthProvider";
 const width = Dimensions.get("screen").width;
 
+const device_name = [
+  { label: "Mobile", value: "M" },
+  { label: "Handheld", value: "H" }
+];
+
 const language = [
   { label: "English", value: "E" },
   { label: "Hindi", value: "H" },
@@ -86,6 +91,11 @@ const GeneralSettingsScreen = ({ navigation }) => {
   //   // created_at: "2023-10-16T11:27:23.000Z",
   //   // updated_at: "2023-10-16T11:56:18.000Z",
   // });
+
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+// useEffect(() => {
+// }, [])
 
   const { getGeneralSettings, generalSettings } = useContext(AuthContext);
 
@@ -171,6 +181,31 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+            {loginData.user.userdata.msg[0].device_type == "H" && (
+              <SettingComponent
+              
+                icon={icons.deviceMode}
+                text={"Device Name"}>
+                <CustomInputComponent.InputComponentWithText
+                  value={device_name[1].label}
+                  show
+                />
+              </SettingComponent>
+            )}
+
+            {loginData.user.userdata.msg[0].device_type == "M" && (
+              <SettingComponent
+              
+                icon={icons.deviceMode}
+                text={"Device Name"}>
+                <CustomInputComponent.InputComponentWithText
+                  value={device_name[0].label}
+                  show
+                />
+              </SettingComponent>
+            )}
+            
             {/* Reports */}
             {report_flag && (
               <SettingComponent

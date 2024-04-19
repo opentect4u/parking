@@ -35,6 +35,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
   const { shiftwiseReports, getShiftwiseReport, receiptSettings } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
+  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
   
 
 
@@ -153,6 +154,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
   }
 
   useEffect(() => {
+    if(device_Type_Check == "M"){
     try {
     async function blueTooth() {
     const bluetoothConnectGranted = await PermissionsAndroid.request(
@@ -165,11 +167,90 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
     } catch (err) {
     }
+    }
   }, [])
 
   const handlePrint = async () => {
     await checkLocationEnabled();
-    if (getBlePermission) {
+
+  // Use for Mobile Device Start 
+  if (getBlePermission  && device_Type_Check == "M") {
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+
+    useOperatorData.map((item, index) => {
+      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+    });
+
+    if(receiptSettings?.report_flag == "Y"){
+
+    if (receiptSettings.header1_flag == 1) {
+      payloadHeader +=
+        `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+    }
+
+    if (receiptSettings.header2_flag == 1) {
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+    }
+
+    if (receiptSettings.header3_flag == 1) {
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    }
+
+    if (receiptSettings.header4_flag == 1) {
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    }
+
+    if (receiptSettings.footer1_flag == 1) {
+      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    }
+    if (receiptSettings.footer2_flag == 1) {
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    }
+    if (receiptSettings.footer3_flag == 1) {
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+    }
+    if (receiptSettings.footer4_flag == 1) {
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    }
+
+  }
+
+    try {
+      await ThermalPrinterModule.printBluetooth({
+        payload:
+          `[C]${payloadHeader}\n` +
+          `[C]<u><font size='small'>${useShiftName} Shift Report</font></u>\n` +
+          `[C]--------------------------------\n` +
+          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+          `[C]--------------------------------\n` +
+          `[C]--------------------------------\n` +
+          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
+          `[C]--------------------------------` +
+          `[C]${payloadBody}\n` +
+          `[C]--------------------------------\n` +
+          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `[C]--------------------------------\n` +
+          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+          `[C]${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      });
+    } catch (err) {
+      ToastAndroid.show(
+        "ThermalPrinterModule - ShiftWiseReportScreen",
+        ToastAndroid.SHORT,
+      );
+      console.log(err.message);
+    }
+
+  } else if (device_Type_Check == "H") {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
@@ -246,8 +327,19 @@ export default function ShiftWiseReportScreen({ navigation }) {
     }
 
   } else {
-    ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+
+    if(device_Type_Check == "M"){
+      ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+    }
+    if(device_Type_Check == "H"){
+    ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
+    }
+
+    // ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
   }
+  // Use for Handheld Device End 
+
+
   };
 
   const getShift = async () => {
