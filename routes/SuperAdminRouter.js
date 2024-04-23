@@ -10,6 +10,7 @@ const { SellerRouter } = require('./SuperAdminRouter/SellerRouter');
 const { ShiftRouter } = require('./SuperAdminRouter/ShiftRouter');
 const { VehicleRateRouter } = require('./SuperAdminRouter/VehicleRateRouter');
 const { VehicleRouter } = require('./SuperAdminRouter/VehicleRouter');
+const { View_transRouter } = require('./SuperAdminRouter/View_transRouter');
 
 SuperAdminRouter.use(LocationRouter);
 SuperAdminRouter.use(SellerRouter);
@@ -21,5 +22,6 @@ SuperAdminRouter.use(Header_FooterRouter);
 SuperAdminRouter.use(ShiftRouter);
 SuperAdminRouter.use(ReportPassRouter);
 SuperAdminRouter.use(DeviceSettingRouter);
+SuperAdminRouter.use(View_transRouter);
 
 module.exports = {SuperAdminRouter}
