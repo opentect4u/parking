@@ -118,7 +118,7 @@ export default function OutpassScreen({ navigation }) {
 
   const handleUploadOutPassData = async (receiptNo, index, carData) => {
 
-    // console.log(generalSettings.grace_value, 'generalSettings__XXX');
+    console.log(carData, 'generalSettings__XXX');
 
     setLoading(true);
     setDisabled(!disabled);
@@ -214,7 +214,7 @@ export default function OutpassScreen({ navigation }) {
     const timestamp = dateTime.getTime();
     const currentDate = new Date();
 
-    console.log(free_Parking, 'inBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTime', paid_Parking);
+    // console.log(free_Parking, 'inBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTime', paid_Parking);
     
     if(free_Parking){
     var price = await calculateTotalPrice(
@@ -240,6 +240,8 @@ export default function OutpassScreen({ navigation }) {
       currentDate.toISOString().slice(0, -5) + "Z",
       currentDate.getTime(),
     );
+
+    // console.log(price,'subhammmmmmmmmmmmmmmmm');
 
   }
 
@@ -276,7 +278,7 @@ export default function OutpassScreen({ navigation }) {
       gstSettings[0]?.gst_flag === "Y"
     ) {
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price);
-      // console.log(gstPrice)
+      // console.log(gstPrice,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
       totalRate = gstPrice.totalPrice || price;
       // totalRate = gstPrice.totalPrice || carOutPrice;
 

@@ -149,6 +149,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
   useEffect(() => {
+
+
     if(device_Type_Check == "M"){
     try {
     async function blueTooth() {

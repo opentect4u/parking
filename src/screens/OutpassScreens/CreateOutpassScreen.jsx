@@ -33,6 +33,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
   useEffect(() => {
 
+    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll');
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
@@ -96,6 +97,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   // console.log("xjdfhgiuvhdiuhgiusheirghiuerdrgiierjgki",vDatainfo)
 
   const handlePrintReceipt = async () => {
+    console.log(data, 'lllllllllllllllllllllllllllllllllllllll');
     // setLoading(true);
     // setisAvailableYet(true);
     console.log("totalRate __________", totalRate.paid_amt, totalRate.base_amt)
@@ -110,11 +112,11 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, gstSettings?.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
     } else {
 
-      // console.log("//////////////////////",deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, 'N', others.vehicle_id, others.vehicle_no, others.date_time_in)
-      
-      console.log(insert_car_outpass?.data?.update_car_in_flag_status?.suc, 'lllll', device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
       
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, "N", others.vehicle_id, others.vehicle_no, others.date_time_in);
+    
+      // console.log(insert_car_outpass, 'jjjjjjjjjjjjjjjj');
+    
     }
 
 
@@ -124,7 +126,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     //if upload server successfully then print receipt
     if(insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1){
 
-      console.log(device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
+      // console.log(device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
 
     // Use for Mobile Device Start 
     if (getBlePermission && device_Type_Check == "M") {
@@ -222,7 +224,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       navigation.goBack();
     } else if (device_Type_Check == "H") {
-      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+      // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
       try {
         let payloadHeader = "";
         let payloadBody = "";
