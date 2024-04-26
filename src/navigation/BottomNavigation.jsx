@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import navigationRoutes from "../routes/navigationRoutes";
 import ReceiptNavigation from "./ReceiptNavigation";
@@ -9,6 +9,8 @@ import { AuthContext } from "../context/AuthProvider";
 import OutpassNavigation from "./OutpassNavigation";
 // import PrintNavigation from "./PrintNavigation";
 // import { loginStorage } from "../storage/appStorage";
+// import { SocketProvider } from '../context/Socket';
+// import { useSocket } from '../context/Socket';
 
 
 
@@ -20,9 +22,15 @@ function BottomNavigation() {
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
-  // const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const { socketOndata } = useSocket();
+
+  useEffect(() => {
+    // console.log('>>>>>>>>>>>>>>???????', 'socketOndata noti')
+
+  }, []);
 
 
+  // <SocketProvider> </SocketProvider>
 
   return (
 
@@ -96,6 +104,7 @@ function BottomNavigation() {
 
 
     </Tab.Navigator>
+    
   );
 }
 

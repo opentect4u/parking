@@ -8,6 +8,7 @@ import { InternetStatusContext } from "../../App";
 import useAppUpdate from "../hooks/api/useAppUpdate";
 import DeviceInfo from "react-native-device-info";
 import { BackHandler } from "react-native";
+import userLogOut from "../hooks/api/userLogOut";
 
 export const AuthContext = createContext();
 
@@ -15,8 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(() => false);
   const [isUpdate, setUpdate] = useState(() => false);
   const [loading, setLoading] = useState(() => false);
-  // const [getUserName, setUserName] = useState(() => false);
-  // const [getUserDetails, setUserDetails] = useState(() => false);
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(() => false);
   const [generalSettings, setGeneralSettings] = useState({
@@ -52,7 +51,13 @@ export const AuthProvider = ({ children }) => {
   const [operatorwiseReports, setOperatorwiseReports] = useState(() => []);
   const {appUpdate}=useAppUpdate();
 
+  const { logOut_hook } = userLogOut();
+
+  // const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+
   useEffect(() => {
+    
     isPermitted();
     checkedAppUpdate();
     isLoggedIn();
@@ -78,20 +83,31 @@ export const AuthProvider = ({ children }) => {
         .then(res => {
           console.log(res.data.message);
           if (res.data.status) {
-            loginStorage.set("login-data-local", JSON.stringify(credentials));
-            loginStorage.set("login-data", JSON.stringify(res.data.data));
-            // console.log("=====================", res.data.data.user.userdata.msg[0].id);
-            setIsLogin(!isLogin);
-            // setUserName(res.data.data.user.userdata.msg[0].id);
-            // setUserDetails(res.data.data.user.userdata.msg[0])
+
+              loginStorage.set("login-data-local", JSON.stringify(credentials));
+              loginStorage.set("login-data", JSON.stringify(res.data.data));
+              setIsLogin(!isLogin);
+
+              console.log(loginData, 'llllll');
+            
           } else {
+
+            if(typeof(res.data.message) === 'string'){
+              alert("Invalid Credentials");
+            }
+
+            if(typeof(res.data.message) === 'object'){
+              // alert(res.data.message.msg + 'Total Limit '+ res.data.message.tot_limit + 'Current User '+ res.data.message.tot_act_user);
+              alert(res.data.message.msg);
+            }
+
             // ToastAndroid.showWithGravityAndOffset(
             //   "Invalid Credentials",
             //   ToastAndroid.SHORT,
             //   ToastAndroid.CENTER,
             // );
-            alert("Invalid Credentials");
-            console.log("Error login Axios", res.data.message);
+            
+            // console.log("Error login Axios", res.data.message);
           }
         })
         .catch(err => {
@@ -398,26 +414,53 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const logout = () => {
-    // loginStorage.clearAll();
-    // appStorage.clearAll();
+  // const logout = () => {
+  const logout = async () => {  
 
-    clearStates([setGeneralSettings, setReceiptSettings], {});
-    clearStates(
+    setLoading(true);
+    let logOut_data = await logOut_hook();
+    if(logOut_data.status){
+      
+      clearStates([setGeneralSettings, setReceiptSettings], {});
+      clearStates(
       [
-        setGstList,
-        setDetailedReports,
-        setShiftwiseReports,
-        setVehicleWiseReports,
-        setOperatorwiseReports,
+      setGstList,
+      setDetailedReports,
+      setShiftwiseReports,
+      setVehicleWiseReports,
+      setOperatorwiseReports,
       ],
       [],
-    );
+      );
 
-    setIsLogin(!isLogin);
-    console.log("LOGGING OUT...");
-    loginStorage.clearAll();
-    appStorage.clearAll();
+      setIsLogin(!isLogin);
+      console.log("LOGGING OUT...");
+      loginStorage.clearAll();
+      appStorage.clearAll();
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+    
+    // clearStates([setGeneralSettings, setReceiptSettings], {});
+    // clearStates(
+    // [
+    // setGstList,
+    // setDetailedReports,
+    // setShiftwiseReports,
+    // setVehicleWiseReports,
+    // setOperatorwiseReports,
+    // ],
+    // [],
+    // );
+
+    // setIsLogin(!isLogin);
+    // console.log("LOGGING OUT...");
+    // loginStorage.clearAll();
+    // appStorage.clearAll();
+    
+
+    
   };
 
  

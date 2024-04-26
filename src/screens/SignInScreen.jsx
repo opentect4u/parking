@@ -11,7 +11,6 @@ import styles from "../styles/styles";
 import { AuthContext } from "../context/AuthProvider";
 import strings from "../resources/strings/strings";
 
-
 const SignInScreen = ({ navigation }) => {
   const [username, setUsername] = useState(() => "");
   const [password, setPassword] = useState(() => "");

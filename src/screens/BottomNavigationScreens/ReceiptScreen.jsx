@@ -220,7 +220,6 @@ const [foundDs, setFoundDs] = useState([])
 // };
 
 useEffect(() => {
-  console.log(loginData.user.userdata.msg[0].device_type == "M", '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
   if(loginData.user.userdata.msg[0].device_type == "M"){
 
   BluetoothManager.isBluetoothEnabled().then(

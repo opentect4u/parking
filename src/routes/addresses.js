@@ -17,6 +17,7 @@ export const ADDRESSES = {
   VEHICLE_WISE_REPORT: `${BASE_URL_V3}/report/vehicle_wise`,
   OPERATORWISE_REPORT: `${BASE_URL_V3}/report/operator_wise`,
   CHANGE_PASSWORD: `${BASE_URL_V3}/auth/change_password`,
+  USERID_DEVICEID_SEND_LOGOUT: `${BASE_URL_V3}/auth/logout`,
 
   OPERATOR_WISE_RERORT: `${BASE_URL_V3}/report/operator_wise`,
   UNBILLED_RERORT: `${BASE_URL_V3}/report/unbilled`,

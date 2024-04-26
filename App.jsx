@@ -4,7 +4,7 @@ import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from "./src/screens/SplashScreen";
 import MainNavigation from "./src/navigation/MainNavigation";
 import { AuthProvider } from "./src/context/AuthProvider";
-import { SocketProvider } from './src/context/Socket';
+// import { SocketProvider } from './src/context/Socket';
 
 
 export const InternetStatusContext = createContext(false);
@@ -39,13 +39,13 @@ function App() {
       {showSplash ? (
         <SplashScreen />
       ) : (
-        <SocketProvider>
+        
         <InternetStatusContext.Provider value={isOnline}>
           <AuthProvider>
             <MainNavigation />
           </AuthProvider>
         </InternetStatusContext.Provider>
-        </SocketProvider>
+        
       )}
     </>
   );
