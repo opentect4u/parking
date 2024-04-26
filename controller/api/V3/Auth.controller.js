@@ -67,28 +67,48 @@ const login = async (req, res) => {
 
         let whr = `user_id='${value.user_id}' AND allow_flag='Y' AND user_type='O'`
         // let whr = `user_id='${value.user_id}' AND allow_flag='Y' AND device_id='${value.device_id}'`
-        var userData = await db_Select("password", 'md_user', whr, null)
+        var userData = await db_Select("password, customer_id", 'md_user', whr, null)
         if ((userData.msg).length == 1) {
             if (await bcrypt.compare(value.password, userData.msg[0].password)) {
+                var tot_user = await db_Select('no_device', 'md_customer', `customer_id = ${userData.msg[0].customer_id}`, null)
+                var tot_active_user = await db_Select('count(id) tot_act_user', 'md_user', `customer_id = ${userData.msg[0].customer_id} AND login_status = 'Y'`, null)
+                var tot_user_count = tot_user.suc > 0 ? (tot_user.msg.length > 0 ? tot_user.msg[0].no_device : 0) : 0;
+                  var tot_active_user_count = tot_active_user.suc > 0 ? tot_active_user.msg[0].tot_act_user : 0
+                  console.log(tot_user_count,tot_active_user_count,'pp');
+                if(tot_user_count > tot_active_user_count){
+                    let aaa= await db_Insert('md_user',`device_id='${value.device_id}'`,null,whr,1)
                 
-               let aaa= await db_Insert('md_user',`device_id='${value.device_id}'`,null,whr,1)
-               
-                let table = `md_user a,md_customer b,md_seller c,md_operator d,md_setting e`,
-                    selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,c.*,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Parking Fees', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,b.device_type,d.*,e.*`,
-                    whr2 = `a.customer_id=b.customer_id AND a.seller_id=c.seller_id AND a.user_id=d.user_id AND e.customer_id=a.customer_id AND e.app_id='${value.device_id}'  AND a.user_id='${value.user_id}' AND a.allow_flag='Y' AND a.device_id='${value.device_id}'`
-                var userData2 = await db_Select(selectData, table, whr2, null)
-                    console.log(userData2)
-                if ((userData2.msg).length == 1) {
-                    delete userData2.msg[0].password
-                    let data = {
-                        time: Date(),
-                        userdata: userData2
+                    let table = `md_user a,md_customer b,md_seller c,md_operator d,md_setting e`,
+                        selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,c.*,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Parking Fees', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,b.device_type,d.*,e.*`,
+                        whr2 = `a.customer_id=b.customer_id AND a.seller_id=c.seller_id AND a.user_id=d.user_id AND e.customer_id=a.customer_id AND e.app_id='${value.device_id}'  AND a.user_id='${value.user_id}' AND a.allow_flag='Y' AND a.device_id='${value.device_id}'`
+                    var userData2 = await db_Select(selectData, table, whr2, null)
+                        console.log(userData2)
+                    if ((userData2.msg).length == 1) {
+                        var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+                        await db_Insert('md_user', `login_status = 'Y', last_login = '${datetime}'`, null, `id= ${userData2.msg[0].id}`, 1)
+                        delete userData2.msg[0].password
+                        let data = {
+                            time: Date(),
+                            userdata: userData2
+                        }
+                        const token = createToken(data);
+                        // if(tot_user_count >= tot_active_user_count){
+                        //     var last_logged_in_user_dtls = await db_Select('id, socket_id, last_login', 'md_user', `customer_id = ${userData.msg[0].customer_id} AND login_status = 'Y'`, 'LIMIT 1')
+                        //     var update_log_user = await db_Insert('md_user', `login_status = 'N'`, null, `id = ${last_logged_in_user_dtls.msg[0].id}`, 1)
+                        //     console.log(update_log_user, 'update_log_user');
+                        //     if(update_log_user.suc > 0){
+                        //         req.io.to(last_logged_in_user_dtls.msg[0].socket_id).emit('device status', {suc: 1, msg: {login_status: 'N'}})
+                        //     }
+                        // }
+                        res.json(sendOkResponce({ token: token, user: data }, null));
+                    } else {
+                        res.json(sendErrorResponce(null, 'invalid Information'));
                     }
-                    const token = createToken(data);
-                    res.json(sendOkResponce({ token: token, user: data }, null));
-                } else {
-                    res.json(sendErrorResponce(null, 'invalid Information'));
+                }else{
+                    res.send({status: false, message: {tot_limit: tot_user_count, tot_act_user: tot_active_user_count, msg: 'Total login limit excided'}})
+                    // res.json(sendErrorResponce(null, 'Number of user loggedin excided'));
                 }
+
             } else {
                 res.json(sendErrorResponce(null, 'invalid password'));
             }
@@ -96,11 +116,42 @@ const login = async (req, res) => {
             res.json(sendErrorResponce(null, 'invalid username'));
         }
     } catch (error) {
+        // console.log(error);
         res.json(sendErrorResponce(error));
     }
 }
 
+const logout = async (req, res) =>{
+    try{
+         const schema = Joi.object({
+           user_id: Joi.string(),
+           device_id: Joi.string()
+         });
+         const { error, value } = schema.validate(req.body, { abortEarly: false });
+         console.log(value,'ss');
+         if (error) {
+             const errors = {};
+             error.details.forEach(detail => {
+                 errors[detail.context.key] = detail.message;
+             });
+             return res.json(sendErrorResponce(errors));
+         }  
+         const userData = req.user;  
+        //  console.log(userData,'userdata');
+         let fields=`login_status = 'N'`,
+               whr=`user_id='${value.user_id}' AND device_id='${value.device_id}'`
+               var changestatus= await db_Insert("md_user", fields, null, whr, 1)
+        if(changestatus.suc > 0){
+            res.json(sendOkResponce("Logout successfully ", null));
+        } else {
+            res.json(sendErrorResponce(null, 'Data Not Updated'));
+        }       
 
+    } catch (error){
+        console.log(error);
+        // res.json(sendErrorResponce(error));
+    }
+}
 
 const change_password = async (req, res) => {
     try {
@@ -187,4 +238,4 @@ const check_report_password = async (req, res) =>{
     }
 }
 
-module.exports = { register, login,change_password, test, check_report_password };
+module.exports = { register, login,change_password, test, check_report_password, logout };
