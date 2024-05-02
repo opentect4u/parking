@@ -33,6 +33,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
   const { operator_wise } = usegetOperatorwiseReport();
   const loginData = JSON.parse(loginStorage.getString("login-data"));
+  const [getBlePermission, setBlePermission] = useState();
+  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_password_flag, adv_pay } = generalSettings;
@@ -136,8 +138,103 @@ export default function OperatorWiseReportScreen({ navigation }) {
     }
   }
 
+  useEffect(() => {
+    if(device_Type_Check == "M"){
+    try {
+    async function blueTooth() {
+    const bluetoothConnectGranted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    )
+    setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
+    blueTooth()
+
+    } catch (err) {
+    }
+  }
+  }, [])
+
   const handlePrint = async () => {
     await checkLocationEnabled();
+
+    if (getBlePermission  && device_Type_Check == "M") {
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+
+    operatorwiseReports.map((item, index) => {
+      payloadBody += `[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>\n`
+    });
+
+
+    if(receiptSettings?.report_flag == "Y"){
+
+    if(receiptSettings.header1_flag==1){
+      payloadHeader +=
+      `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+    }
+
+    if(receiptSettings.header2_flag==1){
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+    }
+
+    if(receiptSettings.header3_flag==1){
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    }
+
+    if(receiptSettings.header4_flag==1){
+      payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    }
+
+    if(receiptSettings.footer1_flag==1){
+      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    }
+    if(receiptSettings.footer2_flag==1){
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    }
+    if(receiptSettings.footer3_flag==1){
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+    }
+    if(receiptSettings.footer4_flag==1){
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    }
+
+  }
+
+    try {
+      await ThermalPrinterModule.printBluetooth({
+        payload:
+          `[C]${payloadHeader}\n` +
+          `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
+          `[C]--------------------------------\n` +
+          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+          `[C]--------------------------------\n` +
+          `[C]--------------------------------\n` +
+          `[L]<font size='normal'>Name.   Count       Received</font>\n` +
+          `[C]--------------------------------\n`+
+          `[L]\n${payloadBody}` +
+          `[C]--------------------------------\n` +
+          `[L]<font size='normal'>PECEIVED: ${totalAmount}  </font>\n` +
+          `[C]--------------------------------\n` +
+          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+          `[C]${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      });
+    } catch (err) {
+      ToastAndroid.show(
+        "ThermalPrinterModule - OperatorWiseReportScreen",
+        ToastAndroid.SHORT,
+      );
+      console.log(err.message);
+    }
+
+  } else if (device_Type_Check == "H") {
 
     let payloadHeader = "";
     let payloadBody = "";
@@ -213,6 +310,18 @@ export default function OperatorWiseReportScreen({ navigation }) {
       );
       console.log(err.message);
     }
+
+  } else {
+
+    if(device_Type_Check == "M"){
+      ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+    }
+    if(device_Type_Check == "H"){
+    ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
+    }
+
+    // ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
+  }
   };
 
   return (
@@ -371,6 +480,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           </View>
         )}
         {/* back and print action button */}
+        {operatorwiseReports.length!=0 &&(
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
@@ -399,6 +509,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
             />
           )}
         </View>
+        )}
       </View>
     </View>
   );
