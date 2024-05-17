@@ -25,5 +25,6 @@ export const ADDRESSES = {
   SHIFTWISE_REPORT_DATA: `${BASE_URL_V3}/report/shift_wise_report`,
   APP_UPDATE: `${BASE_URL_V3}/appupdate`,
   CHECKED_REPORT_PASSWORD:`${BASE_URL_V3}/auth/check_report_password`,
-  CHECK_ADV_AMOUNT:`${BASE_URL_V3}/car/car_advance_amount`
+  CHECK_ADV_AMOUNT:`${BASE_URL_V3}/car/car_advance_amount`,
+  CAR_IN_OUT:`${BASE_URL_V3}/car/car_in_out`
 };

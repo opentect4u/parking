@@ -4,6 +4,7 @@ import ReportScreen from "../screens/BottomNavigationScreens/ReportScreen";
 import navigationRoutes from "../routes/navigationRoutes";
 import VehicleWiseFixedReportScreen from "../screens/ReportScreens/VehicleWiseFixedReportScreen";
 import DetailedReportScreen from "../screens/ReportScreens/DetailedReportScreen";
+import DublicatePrintScreen from "../screens/ReportScreens/DublicatePrintScreen";
 import ShiftWiseReportScreen from "../screens/ReportScreens/ShiftWiseReportScreen";
 import OperatorWiseReportScreen from "../screens/ReportScreens/OperatorWiseReportScreen";
 import Unbilled_Reports from "../screens/ReportScreens/Unbilled_Reports";
@@ -20,6 +21,11 @@ const ReportsNavigation = () => {
       <Stack.Screen
         name="Detailed_Report_Screen"
         component={DetailedReportScreen}
+      />
+
+      <Stack.Screen
+        name="Dublicate_Print_Screen"
+        component={DublicatePrintScreen}
       />
 
       <Stack.Screen

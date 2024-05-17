@@ -118,7 +118,7 @@ export default function OutpassScreen({ navigation }) {
 
   const handleUploadOutPassData = async (receiptNo, index, carData) => {
 
-    console.log(carData, 'generalSettings__XXX');
+    // const date_time_in_cus = new Date(carData.date_time_in).toLocaleString("en-GB");
 
     setLoading(true);
     setDisabled(!disabled);
@@ -127,106 +127,61 @@ export default function OutpassScreen({ navigation }) {
     setCarOutPrice();
 
 
-    if(generalSettings.grace_value !== null && generalSettings.grace_value.length){
-    /////////////////////////// After Grace Period Deduction Calculation Start ==================>
-    // Extract only the time portion
-    const date_time_in_TimeOnly = carData.date_time_in.slice(11, 19);
-    const date_time_in_DateOnly = carData.date_time_in.slice(0, 11);
-    const date_time_in_Zone = carData.date_time_in.slice(19, 24);
-
-    // Convert start time to milliseconds
-    const startTimeParts = date_time_in_TimeOnly.split(":");
-    const startTimestamp = (+startTimeParts[0]) * 60 * 60 * 1000 + (+startTimeParts[1]) * 60 * 1000 + (+startTimeParts[2]) * 1000;
     
-    // Convert end time to milliseconds
-    const endTimeParts__GracePeriod = generalSettings.grace_value.split(":");
-    const endTimestamp__GracePeriod = (+endTimeParts__GracePeriod[0]) * 60 * 60 * 1000 + (+endTimeParts__GracePeriod[1]) * 60 * 1000 + (+endTimeParts__GracePeriod[2]) * 1000;
-    
-    // Calculate difference
-    const difference = startTimestamp + endTimestamp__GracePeriod;
-    
-    // Convert difference back to time format
-    const hours = Math.floor(difference / (60 * 60 * 1000));
-    const minutes = Math.floor((difference % (60 * 60 * 1000)) / (60 * 1000));
-    const seconds = Math.floor((difference % (60 * 1000)) / 1000);
-    
-    // Format the result
-    const gracePeriod__Cal = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    
-    var inTimeAfter_Add_Grace = gracePeriod__Cal;
-    var date_time_inAfter_Cal = date_time_in_DateOnly+gracePeriod__Cal+date_time_in_Zone;
-    /////////////////////////// After Grace Period Deduction Calculation End ==================>
-    
-    // console.log(date_time_in_DateOnly+gracePeriod__Cal+date_time_in_Zone, 'resultresul++++++++++++++++++++++++++++++++++++++++++++++'); // Output: "07:36:59"
 
-    }
+  if(generalSettings.grace_value !== null && generalSettings.grace_value.length){
+  /////////////////////////// After Grace Period Deduction Calculation Start ==================>
+  const endTimeParts__GracePeriod = generalSettings.grace_value.split(":");
 
-    // const date_time_OUT_TimeOnly = carData.created_at.slice(11, 19);
+  var gTime = endTimeParts__GracePeriod[1],
+  crindate = new Date(carData.date_time_in);
+  gTime = parseInt(gTime);
+  crindate.setMinutes(crindate.getMinutes() + gTime)
 
-    // const date_time_Out_TimeOnly = carData.created_at.slice(11, 19);
+  }
 
-    // const inBetweenTime = ()=>{
-      // const date_time_in_TimeOnly = carData.date_time_in.slice(11, 19);
-      // const date_time_OUT_TimeOnly = carData.created_at.slice(11, 19);
-
-    // Convert start time to milliseconds
-    // const startTimeParts_ = date_time_in_TimeOnly.split(":");
-    // const startTimestamp_ = (+startTimeParts_[0]) * 60 * 60 * 1000 + (+startTimeParts_[1]) * 60 * 1000 + (+startTimeParts_[2]) * 1000;
-
-    // console.log(startTimestamp_, 'startTimestamp_');
-
-      const in__Time = date_time_inAfter_Cal;
+      // const in__Time = date_time_inAfter_Cal;
       const out__Time = new Date();
 
       // Convert date-time strings to Date objects
-      const date1 = new Date(in__Time);
-      const date2 = new Date(out__Time);
+      // const date1 = new Date(in__Time).getTime();
+      const date1 = crindate.getTime();
+      const date2 = new Date(out__Time).getTime();
+
+      
 
       var free_Parking = false;
       var paid_Parking = false;
 
       // Compare dates
-      if (date1 >= date2) {
+      if (date1 > date2) {
         free_Parking = true
-        // return console.log("Free Amount ______inBetweenTimeinBetweenTimeinBetweenTime", in__Time, 'jjjj', out__Time);
-        // return false
-      } else if (date1 < date2) {
+      }
+      
+      if (date1 < date2) {
         paid_Parking = true
-        // return true
-        // return console.log("Charges ______inBetweenTimeinBetweenTimeinBetweenTime", in__Time, 'jjjj', out__Time);
       }
 
-    // return inTimeAfter_Add_Grace;
-
-    // }
-
-    // inBetweenTime()
-
-    // console.log(inBetweenTime(), 'inBetweenTimeinBetweenTimeinBetweenTime', date_time_inAfter_Cal);
-    
-
-    // const date_time_in_DeductGracePeriod = (date_time_in_TimeOnly - generalSettings.grace_value)
 
 
-    // console.log(carData, '///////////////////');
+    console.log(crindate, '///////////////////', new Date(crindate).toLocaleString("en-GB"));
 
     const dateTime = new Date(carData.date_time_in);
     const timestamp = dateTime.getTime();
     const currentDate = new Date();
 
-    // console.log(free_Parking, 'inBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTimeinBetweenTime', paid_Parking);
     
     if(free_Parking){
-    var price = await calculateTotalPrice(
-      timestamp,
-      carData.vehicle_id,
-      carData.date_time_in,
-      // date_time_inAfter_Cal,
-      // generalSettings.grace_value !== null && generalSettings.grace_value.length ? date_time_inAfter_Cal : carData?.date_time_in,
-      carData.vehicle_no,
-      currentDate.toISOString().slice(0, -5) + "Z",
-      currentDate.getTime(),
-    );
+    // var price = await calculateTotalPrice(
+    //   timestamp,
+    //   carData.vehicle_id,
+    //   // carData.date_time_in,
+    //   crindate,
+    //   carData.vehicle_no,
+    //   currentDate.toISOString().slice(0, -5) + "Z",
+    //   currentDate.getTime(),
+    // );
+    var price = 0;
   }
 
   if(paid_Parking){
@@ -234,19 +189,16 @@ export default function OutpassScreen({ navigation }) {
       timestamp,
       carData.vehicle_id,
       // carData.date_time_in,
-      date_time_inAfter_Cal,
+      crindate,
+      // date_time_inAfter_Cal,
       // generalSettings.grace_value !== null && generalSettings.grace_value.length ? date_time_inAfter_Cal : carData?.date_time_in,
       carData.vehicle_no,
       currentDate.toISOString().slice(0, -5) + "Z",
       currentDate.getTime(),
     );
 
-    // console.log(price,'subhammmmmmmmmmmmmmmmm');
 
   }
-
-    
-    // console.log(carData.date_time_in, 'totalHours_______________________', generalSettings.grace_value);
 
     const totalDuration = useCalculateDuration(
       timestamp,
@@ -255,11 +207,8 @@ export default function OutpassScreen({ navigation }) {
 
     const gstSettings = await handleGetGst();
 
-  
-    // console.log(generalSettings.adv_pay, 'advAmount___');
 
-    // console.log(carData.receipt_no, "::::::::::::::::::::::::::");
-
+    
     await setCarOutPrice(price);
 
     let totalRate = 0;
@@ -269,7 +218,6 @@ export default function OutpassScreen({ navigation }) {
       value: carData.receipt_no.toString().slice(-5) || "",
     });
 
-    // console.log(gstSettings[0]?.gst_flag === "Y")
 
     if (
       gstSettings &&
@@ -278,12 +226,10 @@ export default function OutpassScreen({ navigation }) {
       gstSettings[0]?.gst_flag === "Y"
     ) {
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price);
-      // console.log(gstPrice,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
       totalRate = gstPrice.totalPrice || price;
       // totalRate = gstPrice.totalPrice || carOutPrice;
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
-      // console.log(vDatainfo.base_amount, "vDatainfo.base_amount___");
 
       vDatainfo.base_amount = baseAmount;
       vDatainfo.cgst = CGST;
@@ -298,8 +244,6 @@ export default function OutpassScreen({ navigation }) {
       );
     }
     
-    // console.log("3333333333333333333333333333-------")
-    // return 0;
 
     if (
       (gstSettings &&
@@ -328,12 +272,6 @@ export default function OutpassScreen({ navigation }) {
 
       var advAmount = getAdvAmount?.data?.msg[0]?.advance_amt;
 
-
-      // vData.push(
-      //       { label: "ADVANCE", value: advAmount },
-      //       { label: "REFUND AMOUNT", value: advAmount - totalRate },
-      //     );
-// console.log(advAmount, '__________Test');
 
       if (totalRate < advAmount) {
         vData.push(
@@ -403,9 +341,7 @@ export default function OutpassScreen({ navigation }) {
     setLoading(false);
     setDisabled(false);
 
-    console.log("XXXXXXXXXXXXXX", {
-      totalRate: totalRatearr,
-    });
+
 
     // return 0;
     navigation.navigate("CreateOutpassScreen", {
@@ -425,6 +361,7 @@ export default function OutpassScreen({ navigation }) {
 
   const call_set_CarNumber = text => {
     setCarNumber(text);
+    // console.log(text, 'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj');
     setDisabled(false);
   };
 

@@ -127,6 +127,7 @@ export default function ReportScreen({ navigation }) {
               disabled={rep_ststus}
             />
           </View>
+
           <View style={styles.ActionBox_style}>
             <ActionBox2
               title="Shiftwise Report"
@@ -135,6 +136,16 @@ export default function ReportScreen({ navigation }) {
               disabled={rep_ststus}
             />
           </View>
+
+          <View style={styles.ActionBox_style}>
+            <ActionBox2
+              title="Duplicate Bill"
+              onAction={() => navigation.navigate("Dublicate_Print_Screen")}
+              icon={icons.users}
+              disabled={rep_ststus}
+            />
+          </View>
+
         </View>
 
       </ScrollView>
