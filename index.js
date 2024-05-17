@@ -14,6 +14,7 @@ const { ShiftRouter } = require('./routes/ShiftRouter');
 const { vehicleRouter } = require('./routes/VehicleRouter');
 const { vehicle_rateRouter } = require('./routes/Vehicle_rateRouter');
 const { SuperAdminRouter } = require('./routes/SuperAdminRouter');
+const { saveUserSocketID } = require('./module/socketModule');
 
 const app = express(),
     session = require('express-session'),
@@ -29,7 +30,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("views", express.static(path.join(__dirname, "views")));
 
-
+// var server = http.createServer(app)
+// var io = new server(server)
 
 // SESSION
 app.use(
@@ -44,9 +46,16 @@ app.use(
   );
 // END
 
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "*"
+  }
+})
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user ? req.session.user : null
+  req.io = io
   next()
 })
 
@@ -99,11 +108,41 @@ app.get('*', function(req, res){
   // res.send('what???', 404);
 });
 
+var users = []
+io.on('connection', (socket) => {
+  console.log(socket.id, 'SocketID connected');
+  users.push(socket.id)
 
-app.listen(port, (err) => {
-    if (err) throw new Error(err)
-    console.table([
-        { "Server": "Running","Port": port }
-    ]);
+  socket.on('connect device', async (data) => {
+    console.log(data);
+    var save_user = await saveUserSocketID(data.user_id, data.device_id, data.socket_id)
+    var response = {suc: save_user.suc, msg: {login_status: save_user.suc > 0 ? 'Y' : 'N'}}
+    socket.emit('device status', response)
+    // var notify_dtls = await notification_dtls(data.bank_id)
+    // // console.log(notify_dtls);
+    // socket.emit('send notification', notify_dtls)
+
+    // if(users.length > 1)
+    // socket.to(users[1]).emit('send notification', {suc: 1, msg: `${socket.id} send a message -> Private Message`})
+  })
+
+  socket.on('disconnect', () => {
+    var i = users.indexOf(socket.id)
+    users.splice(i, 1)
+  })
+})
+
+// app.listen(port, (err) => {
+//     if (err) throw new Error(err)
+//     console.table([
+//         { "Server": "Running","Port": port }
+//     ]);
+// });
+
+server.listen(port, (err) => {
+  if (err) throw new Error(err)
+  console.table([
+      { "Server": "Running","Port": port }
+  ]);
 });
 

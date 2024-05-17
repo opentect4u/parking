@@ -258,5 +258,46 @@ const out_pass = async (req, res) => {
 
 }
 
+const car_in_out = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            customerUserName: Joi.optional(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required(),
+            car_flag: Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        console.log(value,9999);
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json(sendErrorResponce(null, errors));
+        }
 
-module.exports = { car_in, search_car, out_pass, car_in_fixed, car_advance_amount };
+        
+        const userData = req.user;
+        var data = {};
+
+        if(value.car_flag == 'IN'){
+            var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, f.operator_name`,
+            table_name = 'td_vehicle_in a, td_receipt c, md_vehicle d, md_user e, md_operator f',
+            whr = `a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND DATE(a.date_time_in) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+            order = null;
+             data = await db_Select(select, table_name, whr, order)
+          } else {
+            var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, f.operator_name`,
+            table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
+            whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+            order = null;
+             data = await db_Select(select, table_name, whr, order)
+          }
+        res.json(sendOkResponce({data}, null));
+    } catch (err) {
+        res.json(sendErrorResponce(err));
+    }
+}
+
+
+module.exports = { car_in, search_car, out_pass, car_in_fixed, car_advance_amount, car_in_out };
