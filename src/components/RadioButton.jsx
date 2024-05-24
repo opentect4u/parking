@@ -26,13 +26,13 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 5,
   },
   radioButtonIconSelected: {
     backgroundColor: '#000',
   },
   radioButtonLabel: {
-    fontSize: 16, marginRight:10
+    fontSize: 16, marginRight:5
   },
 });
 

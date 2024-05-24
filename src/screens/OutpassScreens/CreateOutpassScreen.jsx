@@ -97,10 +97,10 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   // console.log("xjdfhgiuvhdiuhgiusheirghiuerdrgiierjgki",vDatainfo)
 
   const handlePrintReceipt = async () => {
-    console.log(data, 'lllllllllllllllllllllllllllllllllllllll');
+    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll');
     // setLoading(true);
     // setisAvailableYet(true);
-    console.log("totalRate __________", totalRate.paid_amt, totalRate.base_amt)
+    // console.log("totalRate __________", totalRate.paid_amt, totalRate.base_amt);
     let paid_amt = totalRate.paid_amt ? totalRate.paid_amt : totalRate.base_amt;
 
     // return 0
@@ -125,7 +125,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
     //if upload server successfully then print receipt
     if(insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1){
-
+      console.log(insert_car_outpass?.data?.update_car_in_flag_status, 'ooooooooooooooooooooooooooooooooooooo');
       // console.log(device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
 
     // Use for Mobile Device Start 

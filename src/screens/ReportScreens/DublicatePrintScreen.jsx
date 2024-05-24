@@ -14,6 +14,8 @@ import {
   PermissionsAndroid,
   TouchableOpacity
 } from "react-native";
+import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
+import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import React, { useContext, useEffect, useState } from "react";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import BleManager from "react-native-ble-manager";
@@ -83,7 +85,9 @@ export default function DublicatePrintScreen({ navigation }) {
     setShowFrom(false);
   };
 
-
+  
+  const [carindata, set_carindata] = useState();
+  const [radioState, setRadioState] = useState(false);
 
   const [getin_outValue, setin_outValue] = useState('option1');
   const radioOptions = [
@@ -92,8 +96,15 @@ export default function DublicatePrintScreen({ navigation }) {
   ];
 
   const handleRadioSelect = (value) => {
+    setRadioState(!radioState);
+
     setin_outValue(value);
+    // var carindata = [];
   };
+
+  useEffect(() => {
+    setgetDetailedReport([])
+  }, [radioState])
 
   useEffect(() => {
     // setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
@@ -108,6 +119,150 @@ export default function DublicatePrintScreen({ navigation }) {
   // };
 
   // let totalAmount = 0;
+
+  async function printreciept() {
+    const columnWidths = [24, 24]
+    const receiptNo = 120
+    const receiptDate = new Date()
+    const originalAccount = "1239"
+    const branch = "Branch Name"
+    const telephone = "123-456-7890"
+    const salesman = "John Doe"
+    const productCode = "P123"
+    const amount = "500.00"
+    const discount = "50.00"
+    const amountReceived = "450.00"
+    const paymentMethod = "Credit Card"
+    const receivedFrom = "John Smith"
+    const fcuser = "Rukshan"
+    const collectionRecieptNo = 121
+  
+    try {
+      await BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.CENTER,
+      )
+      await BluetoothEscposPrinter.printText("Synergic Softek Solutions Pvt. Ltd.", { align: "center" })
+      await BluetoothEscposPrinter.printText("\r\n", {})
+  
+      await BluetoothEscposPrinter.printText(
+        collectionRecieptNo + " COLLECTION RECIEPT",
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printText("\r", {})
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Receipt No: " + receiptNo],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Receipt Date: " + receiptDate],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Original A/C:" + originalAccount],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printText("\r", {})
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Branch:" + branch],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Telephone:" + telephone],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Salesman:" + salesman],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Product Code:" + productCode],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printText("\r", {})
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Amount:" + amount + "/="],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Discount:" + discount + "/="],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Amount Received:" + amountReceived + "/="],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Payment Method:" + paymentMethod],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printText("\r", {})
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Received From:" + receivedFrom],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printText("\r", {})
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Signature:" + "..................."],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        ["Printed By:" + fcuser],
+        {},
+      )
+  
+      await BluetoothEscposPrinter.printText("\r\n\r\n", {})
+    } catch (e) {
+      // alert(e.message || "ERROR")
+      alert("Printer is not connected.")
+    }
+  }
 
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -140,7 +295,7 @@ export default function DublicatePrintScreen({ navigation }) {
 
     // setgetDetailedReport(rep_data?.data?.msg)
       setgetDetailedReport(rep_data?.data?.data?.msg)
-    console.log(rep_data?.data?.data?.msg, "11111111111111111111111///////////")
+    // console.log(rep_data?.data?.data?.msg, "11111111111111111111111///////////")
   };
 
 
@@ -200,7 +355,8 @@ export default function DublicatePrintScreen({ navigation }) {
 
   const handlePrint_Dublicat = async (item) => {
     let carindata = item;
-    
+    // set_carindata(item)
+    // console.log(carindata, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     await checkLocationEnabled();
 
     let type = item.vehicle_name;
@@ -239,6 +395,7 @@ export default function DublicatePrintScreen({ navigation }) {
         };
 
         try {
+          
         if(receiptSettings?.IN_on_off == "Y"){
         if (receiptSettings.header1_flag == 1) {
         payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
@@ -270,15 +427,18 @@ export default function DublicatePrintScreen({ navigation }) {
         }
 
         }
-
+        
         if (generalSettings.adv_pay == "Y") {
+          // Alert.alert('IN IN IN');
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
-
+        
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
-        await ThermalPrinterModule.printBluetooth({
+        await ThermalPrinterModule.printBluetooth(
+          {
+          
         payload:
-        `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        `[C]<u><font size='tall'>DUPLICATE-RECEIPT</font></u>\n` +
         `[C]${payloadHeader}\n` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
@@ -303,7 +463,7 @@ export default function DublicatePrintScreen({ navigation }) {
         "ThermalPrinterModule - ReceiptScreen",
         ToastAndroid.SHORT,
         );
-        console.log(err.message);
+        // console.log(err.message, 'lllllllllllllllllllllllll');
         }
 
         // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
@@ -392,11 +552,11 @@ export default function DublicatePrintScreen({ navigation }) {
         if (generalSettings.adv_pay == "Y") {
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
-        console.log(receipt_number, 'itemitemitemitemitexxxxxxxxxxxxxxxxxxxx',vehicleNumber,'xxxxxxxxxxxxxxxxxxxxxxxxxxmitem', item, 'kkkkkkkkkkk', type);
+        // console.log(receipt_number, 'itemitemitemitemitexxxxxxxxxxxxxxxxxxxx',vehicleNumber,'xxxxxxxxxxxxxxxxxxxxxxxxxxmitem', item, 'kkkkkkkkkkk', type);
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
         payload:
-        `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        `[C]<u><font size='tall'>DUPLICATE-RECEIPT</font></u>\n` +
         `[C]${payloadHeader}\n` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
@@ -504,7 +664,7 @@ if (getBlePermission && device_Type_Check == "M") {
     new Date(item.date_time_in).getTime(), new Date(item.date_time_out).getTime()
   );
 
-    let data = [{label: "RECEIPT NO", value: "76973"}, 
+    let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
     {label: "PARKING FEES", value: item.base_amt}, 
     {label: "ADVANCE", value: item.advance_amt}, 
     {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
@@ -565,7 +725,7 @@ if (getBlePermission && device_Type_Check == "M") {
     // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
     await ThermalPrinterModule.printBluetooth({
       payload:
-        `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
+        `[C]<u><font size='tall'>DUPLICATE-OUTPASS</font></u>\n` +
         `[C]${payloadHeader}\n` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
@@ -600,7 +760,7 @@ if (getBlePermission && device_Type_Check == "M") {
     new Date(item.date_time_in).getTime(), new Date(item.date_time_out).getTime()
   );
 
-    let data = [{label: "RECEIPT NO", value: "76973"}, 
+    let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
     {label: "PARKING FEES", value: item.base_amt}, 
     {label: "ADVANCE", value: item.advance_amt}, 
     {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
@@ -669,7 +829,7 @@ if (getBlePermission && device_Type_Check == "M") {
     // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
     await ThermalPrinterModule.printBluetooth({
       payload:
-        `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
+        `[C]<u><font size='tall'>DUPLICATE-OUTPASS</font></u>\n` +
         `[C]${payloadHeader}\n` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
@@ -1022,7 +1182,10 @@ if (getBlePermission && device_Type_Check == "M") {
                 <View style={[styles.row, styles.header]}>
                   <Text style={[styles.headerText, styles.hcell]}> Rcpt. No.</Text>
                   <Text style={[styles.headerText, styles.hcell]}> Veh. No. </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>In/Out Time</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>
+
+                    {getin_outValue === 'IN' ? 'In Time' : 'Out Time'}
+                    </Text>
 
                   {/* <Text style={[styles.headerText, styles.hcell, styles.marg_left]}>Adv</Text> */}
 
@@ -1030,8 +1193,8 @@ if (getBlePermission && device_Type_Check == "M") {
                 </View>
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
-                    totalAmount += item.paid_amt;
-                    totalAdvanceAmount += item.advance_amt;
+                    // totalAmount += item.paid_amt;
+                    // totalAdvanceAmount += item.advance_amt;
                     return (
                       <View
                         style={[
@@ -1040,9 +1203,11 @@ if (getBlePermission && device_Type_Check == "M") {
                         ]}
                         key={index}>
                         <Text style={[styles.cell]}>{(item.receipt_no).toString().slice(-5)} </Text>
-                        <Text style={[styles.cell]}>{item.vehicle_no}</Text>
+                        <Text style={[styles.cell]}>{item.vehicle_no} </Text>
                         <Text style={[styles.cell]}>
-                          {new Date(item.date_time_in).toLocaleString("en-GB")}
+                        {getin_outValue === 'IN' ? new Date(item.date_time_in).toLocaleString("en-GB") : new Date(item.date_time_out).toLocaleString("en-GB")}
+                          {/* {new Date(item.date_time_in).toLocaleString("en-GB")} */}
+                          {/* {JSON.stringify(item, null, 2)} */}
                         </Text>
                         {/* <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text> */}
                         {/* <Text style={[styles.cell]}>{item.base_amt}</Text> */}
@@ -1061,6 +1226,7 @@ if (getBlePermission && device_Type_Check == "M") {
 <FontAwsome5 name="print" style={styles.button_print_icon}/>
       {/* <Text style={styles.text}>{title}</Text> */}
     </TouchableOpacity>
+    <Button title="Test Printer" onPress={printreciept} />
                       </View>
                     );
                   })}

@@ -171,10 +171,10 @@ const PrintMain = () => {
       setLoading(false)
       setBoundAddress(row.address)
       setName(row.name || "UNKNOWN")
-      console.log("Connected to device:", row)
-      console.log('DONEEEEEEEEEEEEEEEEEEEEEE');
+      // console.log("Connected to device:", row)
+      // console.log('DONEEEEEEEEEEEEEEEEEEEEEE');
     } catch (e) {
-      console.log('NOTTTTTTTTTTTTT DONEEEEEEEEEEEEEEEEEEEEEE', row.name);
+      // console.log('NOTTTTTTTTTTTTT DONEEEEEEEEEEEEEEEEEEEEEE', row.name);
       setLoading(false)
       // alert(e)
     }

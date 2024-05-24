@@ -7,7 +7,7 @@ import ReportsNavigation from "./ReportsNavigation";
 import SettingsNavigation from "./SettingsNavigation";
 import { AuthContext } from "../context/AuthProvider";
 import OutpassNavigation from "./OutpassNavigation";
-// import PrintNavigation from "./PrintNavigation";
+import PrintNavigation from "./PrintNavigation";
 // import { loginStorage } from "../storage/appStorage";
 // import { SocketProvider } from '../context/Socket';
 // import { useSocket } from '../context/Socket';
@@ -91,7 +91,7 @@ function BottomNavigation() {
       />
 
       {/*Setting Screen */}
-      {/* {loginData.user.userdata.msg[0].device_type == "M" && (
+      {/* {loginData.user.userdata.msg[0].device_type == "M" && ( */}
       <Tab.Screen
         name={printScreen}
         options={{
@@ -100,7 +100,7 @@ function BottomNavigation() {
         }}
         component={PrintNavigation}
       />
-      )} */}
+      {/* )} */}
 
 
     </Tab.Navigator>
