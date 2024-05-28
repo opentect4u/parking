@@ -8,7 +8,7 @@ import SettingsNavigation from "./SettingsNavigation";
 import { AuthContext } from "../context/AuthProvider";
 import OutpassNavigation from "./OutpassNavigation";
 import PrintNavigation from "./PrintNavigation";
-// import { loginStorage } from "../storage/appStorage";
+import { loginStorage } from "../storage/appStorage";
 // import { SocketProvider } from '../context/Socket';
 // import { useSocket } from '../context/Socket';
 
@@ -23,7 +23,10 @@ function BottomNavigation() {
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
   // const { socketOndata } = useSocket();
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
+  // console.log(device_Type_Check, 'oooooooooooooooooooooooooooooooo');
   useEffect(() => {
     // console.log('>>>>>>>>>>>>>>???????', 'socketOndata noti')
 
@@ -91,7 +94,7 @@ function BottomNavigation() {
       />
 
       {/*Setting Screen */}
-      {/* {loginData.user.userdata.msg[0].device_type == "M" && ( */}
+      {device_Type_Check == "M" && (
       <Tab.Screen
         name={printScreen}
         options={{
@@ -100,7 +103,7 @@ function BottomNavigation() {
         }}
         component={PrintNavigation}
       />
-      {/* )} */}
+       )} 
 
 
     </Tab.Navigator>

@@ -44,10 +44,8 @@ import { loginStorage } from "../../storage/appStorage";
 
 
 export default function DublicatePrintScreen({ navigation }) {
-  // const { detailedReports } = useContext(AuthContext);
   const { receiptSettings } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
-  // const { getUserName } = useContext(AuthContext);
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
   const { dublicatePrintScreen } = useDublicatePrintScreen();
@@ -66,23 +64,37 @@ export default function DublicatePrintScreen({ navigation }) {
   // create a new Date object
   const date = new Date();
 
-  // State for manage the From date
-  const [mydateFrom, setDateFrom] = useState(new Date());
-  const [displaymodeFrom, setModeFrom] = useState("date");
-  const [isDisplayDateFrom, setShowFrom] = useState(false);
-
-  const [getDetailedReport, setgetDetailedReport] = useState();
 
   const { generalSettings} = useContext(AuthContext);
   const { dev_mod, adv_value } = generalSettings;
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // handle change From date
+
+
+  // State for manage the From date
+  const [mydateFrom, setDateFrom] = useState(new Date());
+  const [displaymodeFrom, setModeFrom] = useState("date");
+  const [isDisplayDateFrom, setShowFrom] = useState(false);
+
+  const [getDetailedReport, setgetDetailedReport] = useState();
+  
   const changeSelectedDateFrom = (event, selectedDate) => {
     const currentDate = selectedDate || mydateFrom;
-    setDateFrom(currentDate);
+    setDateFrom(selectedDate);
     setShowFrom(false);
-    setShowFrom(false);
+    console.log(selectedDate, 'fffffffffffffffffffffffffff', isDisplayDateFrom);
+  };
+
+  const [mydateTo, setDateTo] = useState(new Date());
+  const [displaymodeTo, setModeTo] = useState("date");
+  const [isDisplayDateTo, setShowTo] = useState(false);
+  // handle change to date
+  const changeSelectedDateTo = (event, selectedDate) => {
+    const currentDate = selectedDate || mydateTo;
+    setDateTo(selectedDate);
+    setShowTo(false);
+    console.log(currentDate, 'tttttttttttttttttttttttttttt', isDisplayDateFrom);
   };
 
   
@@ -106,174 +118,7 @@ export default function DublicatePrintScreen({ navigation }) {
     setgetDetailedReport([])
   }, [radioState])
 
-  useEffect(() => {
-    // setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
-  // const submitDetails = () => {
-  //   Alert.alert('Selected Value', getin_outValue);
-  // };
-
-  // let totalAmount = 0;
-
-  async function printreciept() {
-    const columnWidths = [24, 24]
-    const receiptNo = 120
-    const receiptDate = new Date()
-    const originalAccount = "1239"
-    const branch = "Branch Name"
-    const telephone = "123-456-7890"
-    const salesman = "John Doe"
-    const productCode = "P123"
-    const amount = "500.00"
-    const discount = "50.00"
-    const amountReceived = "450.00"
-    const paymentMethod = "Credit Card"
-    const receivedFrom = "John Smith"
-    const fcuser = "Rukshan"
-    const collectionRecieptNo = 121
-  
-    try {
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      )
-      await BluetoothEscposPrinter.printText("Synergic Softek Solutions Pvt. Ltd.", { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-  
-      await BluetoothEscposPrinter.printText(
-        collectionRecieptNo + " COLLECTION RECIEPT",
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printText("\r", {})
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Receipt No: " + receiptNo],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Receipt Date: " + receiptDate],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Original A/C:" + originalAccount],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printText("\r", {})
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Branch:" + branch],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Telephone:" + telephone],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Salesman:" + salesman],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Product Code:" + productCode],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printText("\r", {})
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Amount:" + amount + "/="],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Discount:" + discount + "/="],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Amount Received:" + amountReceived + "/="],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Payment Method:" + paymentMethod],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printText("\r", {})
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Received From:" + receivedFrom],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printText("\r", {})
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Signature:" + "..................."],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        ["Printed By:" + fcuser],
-        {},
-      )
-  
-      await BluetoothEscposPrinter.printText("\r\n\r\n", {})
-    } catch (e) {
-      // alert(e.message || "ERROR")
-      alert("Printer is not connected.")
-    }
-  }
-
-
-  const [mydateTo, setDateTo] = useState(new Date());
-  const [displaymodeTo, setModeTo] = useState("date");
-  const [isDisplayDateTo, setShowTo] = useState(false);
-  // handle change to date
-  const changeSelectedDateTo = (event, selectedDate) => {
-    const currentDate = selectedDate || mydateTo;
-    setDateTo(currentDate);
-    setShowTo(false);
-  };
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
@@ -287,7 +132,7 @@ export default function DublicatePrintScreen({ navigation }) {
     // Alert.alert('Selected Value', getin_outValue);
 
 
-    let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
+    let formattedDateFrom = mydateFrom?.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data= await dublicatePrintScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id, getin_outValue);
@@ -366,13 +211,14 @@ export default function DublicatePrintScreen({ navigation }) {
     if(getin_outValue == "IN"){
       // Alert.alert('IN IN IN');
       if (getBlePermission && device_Type_Check == "M") {
-        ToastAndroid.showWithGravityAndOffset(
-        "Receipt Created Successfully",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-        );
+        
+
+        // await BluetoothEscposPrinter.printColumn(
+        //   [30],
+        //   [BluetoothEscposPrinter.ALIGN.LEFT],
+        //   ["Amount:" + 20 + "/="],
+        //   {},
+        // )
 
         let payloadHeader = "";
         let payloadFooter = "";
@@ -394,77 +240,114 @@ export default function DublicatePrintScreen({ navigation }) {
         )} ${dateTime.toLocaleTimeString(undefined, options)}`;
         };
 
-        try {
-          
         if(receiptSettings?.IN_on_off == "Y"){
-        if (receiptSettings.header1_flag == 1) {
-        payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
-        }
-
-        if (receiptSettings.header2_flag == 1) {
-        payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
-        }
-
-        if (receiptSettings.header3_flag == 1) {
-        payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
-        }
-
-        if (receiptSettings.header4_flag == 1) {
-        payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
-        }
-
-        if (receiptSettings.footer1_flag == 1) {
-        payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-        }
-        if (receiptSettings.footer2_flag == 1) {
-        payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-        }
-        if (receiptSettings.footer3_flag == 1) {
-        payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
-        }
-        if (receiptSettings.footer4_flag == 1) {
-        payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-        }
-
-        }
-        
-        if (generalSettings.adv_pay == "Y") {
-          // Alert.alert('IN IN IN');
-        advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
-        }
-        
-        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
-        await ThermalPrinterModule.printBluetooth(
-          {
+          if (receiptSettings.header1_flag == 1) {
+          // payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+          payloadHeader += `${receiptSettings.header1}\n`;
+          }
+  
+          if (receiptSettings.header2_flag == 1) {
+          // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+          payloadHeader += `${receiptSettings.header2}\n`;
+          }
+  
+          if (receiptSettings.header3_flag == 1) {
+          // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+          payloadHeader += `${receiptSettings.header3}\n`;
+          }
+  
+          if (receiptSettings.header4_flag == 1) {
+          // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+          payloadHeader += `${receiptSettings.header4}\n`;
+          }
+  
+          if (receiptSettings.footer1_flag == 1) {
+          // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+          payloadFooter += `${receiptSettings.footer1}\n`;
+          }
+          if (receiptSettings.footer2_flag == 1) {
+          // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+          payloadFooter += `${receiptSettings.footer2}\n`;
+          }
+          if (receiptSettings.footer3_flag == 1) {
+          // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+          payloadFooter += `${receiptSettings.footer3}\n`;
+          }
+          if (receiptSettings.footer4_flag == 1) {
+          // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+          payloadFooter += `${receiptSettings.footer4}\n`;
+          }
+  
+          }
           
-        payload:
-        `[C]<u><font size='tall'>DUPLICATE-RECEIPT</font></u>\n` +
-        `[C]${payloadHeader}\n` +
-        // `[C]<img>${headerImg}</img>\n` +
-        // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-        // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-        `[C]-------------------------------\n` +
-        `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
-        `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-        `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-        // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-        `${advanceAmount}` +
-        // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
-        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
-        `[C]-------------------------------\n` +
-        `[C]${payloadFooter}\n`,
-        printerNbrCharactersPerLine: 30,
-        printerDpi: 120,
-        printerWidthMM: 58,
-        mmFeedPaper: 25,
-        });
-        } catch (err) {
-        ToastAndroid.show(
-        "ThermalPrinterModule - ReceiptScreen",
-        ToastAndroid.SHORT,
-        );
-        // console.log(err.message, 'lllllllllllllllllllllllll');
-        }
+          if (generalSettings.adv_pay == "Y") {
+            // Alert.alert('IN IN IN');
+          // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+          advanceAmount += `ADVANCE : ${vehicleAdv}`;
+          }
+
+          // try {
+
+          try {
+          ToastAndroid.showWithGravityAndOffset(
+          "Receipt Created Successfully",
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+          );
+
+          await BluetoothEscposPrinter.printText("DUPLICATE-RECEIPT\n", { align: "center" });
+          await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+          await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+          await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`RECEIPT NO : ${receipt_number}`],
+          {}
+          );
+          await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`VEHICLE TYPE : ${type}`],
+          {}
+          );
+          await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`VEHICLE NO : ${vehicleNumber}`],
+          {}
+          );
+          if (advanceAmount) {
+          await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`ADVANCE : ${advanceAmount}`],
+          {}
+          );
+          }
+          await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`IN TIME : ${formatDateTime(currentTime)}`],
+          {}
+          );
+          await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+          await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+          await BluetoothEscposPrinter.printText("\r\n", {})
+          } catch (e) {
+          // alert(e.message || "ERROR")
+          alert("Printer is not connected.")
+          console.log(e.message);
+          }
+
+          // } catch (err) {
+          // ToastAndroid.show(
+          // "ThermalPrinterModule - ReceiptScreen",
+          // ToastAndroid.SHORT,
+          // );
+          // }
 
         // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
 
@@ -674,84 +557,117 @@ if (getBlePermission && device_Type_Check == "M") {
     {label: "OUT TIME", value: item.date_time_out}, 
     {label: "DURATION", value: totalDuration}];
 
-  try {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
     await checkLocationEnabled();
     data.map((props, index) => (
-      payloadBody += `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`
+      payloadBody += `${props?.label} :  ${props?.value}\n`
 
     ));
 
 
-    console.log(payloadBody)
+    // console.log(payloadBody)
 
 
     if(receiptSettings?.OUT_on_off == "Y"){
     if (receiptSettings.header1_flag == 1) {
       payloadHeader +=
-        `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        // `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        payloadHeader += `${receiptSettings.header1}\n`;
     }
 
     if (receiptSettings.header2_flag == 1) {
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+      // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+      payloadHeader += `${receiptSettings.header2}\n`;
     }
 
     if (receiptSettings.header3_flag == 1) {
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+      // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+      payloadHeader += `${receiptSettings.header3}\n`;
     }
 
     if (receiptSettings.header4_flag == 1) {
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+      // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+      payloadHeader += `${receiptSettings.header4}\n`;
     }
 
     if (receiptSettings.footer1_flag == 1) {
-      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+      // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+      payloadFooter += `${receiptSettings.footer1}\n`;
     }
     if (receiptSettings.footer2_flag == 1) {
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+      // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+      payloadFooter += `${receiptSettings.footer2}\n`;
     }
     if (receiptSettings.footer3_flag == 1) {
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+      // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+      payloadFooter += `${receiptSettings.footer3}\n`;
     }
     if (receiptSettings.footer4_flag == 1) {
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+      // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+      payloadFooter += `${receiptSettings.footer4}\n`;
     }
 
   }
 
+  // try {
+    
+    // await ThermalPrinterModule.printBluetooth({
+    //   payload:
+    //     `[C]<u><font size='tall'>DUPLICATE-OUTPASS</font></u>\n` +
+    //     `[C]${payloadHeader}\n` +
+    //     // `[C]<img>${headerImg}</img>\n` +
+    //     // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+    //     // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+    //     `[C]-------------------------------\n` +
+    //     `${payloadBody}` +
+    //     // `[L]<font size='normal'>DURATION : [R]</font>\n` +
+    //     `[C]-------------------------------\n` +
+    //     `[C]${payloadFooter}\n`,
+    //   printerNbrCharactersPerLine: 30,
+    //   printerDpi: 120,
+    //   printerWidthMM: 58,
+    //   mmFeedPaper: 25,
+    // });
 
-    // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
-    await ThermalPrinterModule.printBluetooth({
-      payload:
-        `[C]<u><font size='tall'>DUPLICATE-OUTPASS</font></u>\n` +
-        `[C]${payloadHeader}\n` +
-        // `[C]<img>${headerImg}</img>\n` +
-        // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-        // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-        `[C]-------------------------------\n` +
-        `${payloadBody}` +
-        // `[L]<font size='normal'>DURATION : [R]</font>\n` +
-        `[C]-------------------------------\n` +
-        `[C]${payloadFooter}\n`,
-      printerNbrCharactersPerLine: 30,
-      printerDpi: 120,
-      printerWidthMM: 58,
-      mmFeedPaper: 25,
-    });
+    // setLoading(false);
 
-    setLoading(false);
+  // } catch (err) {
+  //   ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
+  //   console.log(err.message);
+  //   setLoading(false);
+  // }
 
-  } catch (err) {
-    ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
-    console.log(err.message);
-    setLoading(false);
-  }
+  try {
+    ToastAndroid.showWithGravityAndOffset(
+    "Receipt Created Successfully",
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+    );
 
-  setisAvailableYet(false);
+await BluetoothEscposPrinter.printText("DUPLICATE-RECEIPT\n", { align: "center" });
+await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-  navigation.goBack();
+await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+
+await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+await BluetoothEscposPrinter.printText("\r\n", {})
+setLoading(false);
+} catch (e) {
+  // alert(e.message || "ERROR")
+  console.log(e.message);
+  alert("Printer is not connected.")
+  setLoading(false);
+}
+
+  // setisAvailableYet(false);
+
+  // navigation.goBack();
 } else if (device_Type_Check == "H") {
 
   const totalDuration = useCalculateDuration_Print(
@@ -1135,6 +1051,7 @@ if (getBlePermission && device_Type_Check == "M") {
           <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
         </View>
         <View style={styles.select_date_button_container}>
+
           <Pressable
             style={styles.select_date_button}
             onPress={() => setShowFrom(true)}>
@@ -1226,7 +1143,6 @@ if (getBlePermission && device_Type_Check == "M") {
 <FontAwsome5 name="print" style={styles.button_print_icon}/>
       {/* <Text style={styles.text}>{title}</Text> */}
     </TouchableOpacity>
-    <Button title="Test Printer" onPress={printreciept} />
                       </View>
                     );
                   })}

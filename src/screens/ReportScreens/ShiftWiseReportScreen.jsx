@@ -30,6 +30,7 @@ import CustomDropdownReport from "../../components/CustomDropdownReport";
 import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 import usegetShiftwiseReport from "../../hooks/api/usegetShiftwiseReport";
+import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 
 export default function ShiftWiseReportScreen({ navigation }) {
   const { shiftwiseReports, getShiftwiseReport, receiptSettings } = useContext(AuthContext);
@@ -180,75 +181,119 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     useOperatorData.map((item, index) => {
-      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.advance_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+
+    
     });
 
     if(receiptSettings?.report_flag == "Y"){
 
-    if (receiptSettings.header1_flag == 1) {
-      payloadHeader +=
-        `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
-    }
-
-    if (receiptSettings.header2_flag == 1) {
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
-    }
-
-    if (receiptSettings.header3_flag == 1) {
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
-    }
-
-    if (receiptSettings.header4_flag == 1) {
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
-    }
-
-    if (receiptSettings.footer1_flag == 1) {
-      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-    }
-    if (receiptSettings.footer2_flag == 1) {
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-    }
-    if (receiptSettings.footer3_flag == 1) {
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
-    }
-    if (receiptSettings.footer4_flag == 1) {
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-    }
+      if(receiptSettings.header1_flag==1){
+        payloadHeader +=
+        // `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+        payloadHeader += `${receiptSettings.header1}\n`;
+        }
+    
+        if(receiptSettings.header2_flag==1){
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+        payloadHeader += `${receiptSettings.header2}\n`;
+        }
+    
+        if(receiptSettings.header3_flag==1){
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        payloadHeader += `${receiptSettings.header3}\n`;
+        }
+    
+        if(receiptSettings.header4_flag==1){
+        // payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        payloadHeader += `${receiptSettings.header4}\n`;
+        }
+    
+        if(receiptSettings.footer1_flag==1){
+        // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        payloadFooter += `${receiptSettings.footer1}\n`;
+        }
+        if(receiptSettings.footer2_flag==1){
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        payloadFooter += `${receiptSettings.footer2}\n`;
+        }
+        if(receiptSettings.footer3_flag==1){
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+        payloadFooter += `${receiptSettings.footer3}\n`;
+        }
+        if(receiptSettings.footer4_flag==1){
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        payloadFooter += `${receiptSettings.footer4}\n`;
+        }
 
   }
 
-    try {
-      await ThermalPrinterModule.printBluetooth({
-        payload:
-          `[C]${payloadHeader}\n` +
-          `[C]<u><font size='small'>${useShiftName} Shift Report</font></u>\n` +
-          `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-          `[C]--------------------------------\n` +
-          `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
-          `[C]--------------------------------` +
-          `[C]${payloadBody}\n` +
-          `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
-          `[C]--------------------------------\n` +
-          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-          `[C]${payloadFooter}\n`,
-        printerNbrCharactersPerLine: 30,
-        printerDpi: 120,
-        printerWidthMM: 58,
-        mmFeedPaper: 25,
-      });
-    } catch (err) {
-      ToastAndroid.show(
-        "ThermalPrinterModule - ShiftWiseReportScreen",
-        ToastAndroid.SHORT,
-      );
-      console.log(err.message);
+  try {
+    ToastAndroid.showWithGravityAndOffset(
+    "Receipt Created Successfully",
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+    );
+
+    await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+    await BluetoothEscposPrinter.printText(`${useShiftName} Shift Report\n`, { align: "center" });
+    
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+    await BluetoothEscposPrinter.printText(`From :${mydateFrom.toLocaleDateString("en-GB")} To :${mydateTo.toLocaleDateString("en-GB")}\n`, { align: "left" });
+    await BluetoothEscposPrinter.printText(`Report On :${new Date().toLocaleString("en-GB")}\n`, { align: "left" });
+
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+    await BluetoothEscposPrinter.printText("Name.   Count   Advance   Paid\n", { align: "center" });
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+    await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+    await BluetoothEscposPrinter.printText(`ADV: ${totalAdvanceAmount}  PAID: ${totalAmount}  NET: ${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+    await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+    await BluetoothEscposPrinter.printText("\r\n", {})
+    } catch (e) {
+    // alert(e.message || "ERROR")
+    alert("Printer is not connected.")
     }
+
+    // try {
+    //   await ThermalPrinterModule.printBluetooth({
+    //     payload:
+    //       `[C]${payloadHeader}\n` +
+    //       `[C]<u><font size='small'>${useShiftName} Shift Report</font></u>\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+    //       `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
+    //       `[C]--------------------------------` +
+    //       `[C]${payloadBody}\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+    //       `[C]--------------------------------\n` +
+    //       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+    //       // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+    //       `[C]${payloadFooter}\n`,
+    //     printerNbrCharactersPerLine: 30,
+    //     printerDpi: 120,
+    //     printerWidthMM: 58,
+    //     mmFeedPaper: 25,
+    //   });
+    // } catch (err) {
+    //   ToastAndroid.show(
+    //     "ThermalPrinterModule - ShiftWiseReportScreen",
+    //     ToastAndroid.SHORT,
+    //   );
+    //   console.log(err.message);
+    // }
 
   } else if (device_Type_Check == "H") {
     let payloadHeader = "";

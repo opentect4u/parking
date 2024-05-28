@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
   PermissionsAndroid,
+  Alert,
 } from "react-native";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
@@ -28,7 +29,7 @@ import { ADDRESSES } from "../../routes/addresses";
 import useCarIn from "../../hooks/api/useCarIn";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
-
+import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 
 
 // import React, { useState, useEffect, useContext } from "react";
@@ -62,6 +63,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [getBlePermission, setBlePermission] = useState();
   const [getdevice_type, setdevice_type] = useState();
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
+
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
@@ -114,6 +116,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   useEffect(() => {
     getVehicleRateFixedByVehicleId(dev_mod, id);
   }, []);
+
+  
 
   // check Bluetooth configuration
   async function checkLocationEnabled() {
@@ -214,18 +218,18 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, "N", 0, 0);
 
-    
+    // console.log(carindata.status, 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
 
     if(carindata.status){
       // Use for Mobile Device Start 
         if (getBlePermission && device_Type_Check == "M") {
-        ToastAndroid.showWithGravityAndOffset(
-        "Receipt Created Successfully",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-        );
+        // ToastAndroid.showWithGravityAndOffset(
+        // "Receipt Created Successfully",
+        // ToastAndroid.LONG,
+        // ToastAndroid.BOTTOM,
+        // 25,
+        // 50,
+        // );
 
         let payloadHeader = "";
         let payloadFooter = "";
@@ -249,73 +253,139 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         )} ${dateTime.toLocaleTimeString(undefined, options)}`;
         };
 
-        try {
+        // try {
         if(receiptSettings?.IN_on_off == "Y"){
         if (receiptSettings.header1_flag == 1) {
-        payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        // payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        payloadHeader += `${receiptSettings.header1}\n`;
         }
 
         if (receiptSettings.header2_flag == 1) {
-        payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        payloadHeader += `${receiptSettings.header2}\n`;
         }
 
         if (receiptSettings.header3_flag == 1) {
-        payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        payloadHeader += `${receiptSettings.header3}\n`;
         }
 
         if (receiptSettings.header4_flag == 1) {
-        payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        payloadHeader += `${receiptSettings.header4}\n`;
         }
 
         if (receiptSettings.footer1_flag == 1) {
-        payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        payloadFooter += `${receiptSettings.footer1}\n`;
         }
         if (receiptSettings.footer2_flag == 1) {
-        payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        payloadFooter += `${receiptSettings.footer2}\n`;
         }
         if (receiptSettings.footer3_flag == 1) {
-        payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        payloadFooter += `${receiptSettings.footer3}\n`;
         }
         if (receiptSettings.footer4_flag == 1) {
-        payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        payloadFooter += `${receiptSettings.footer4}\n`;
         }
 
         }
 
         if (generalSettings.adv_pay == "Y") {
-        advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        advanceAmount += `${vehicleAdv}`;
         }
 
-        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
-        await ThermalPrinterModule.printBluetooth({
-        payload:
-        `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
-        `[C]${payloadHeader}\n` +
-        // `[C]<img>${headerImg}</img>\n` +
-        // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-        // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-        `[C]-------------------------------\n` +
-        `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
-        `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-        `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-        // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-        `${advanceAmount}` +
-        // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
-        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
-        `[C]-------------------------------\n` +
-        `[C]${payloadFooter}\n`,
-        printerNbrCharactersPerLine: 30,
-        printerDpi: 120,
-        printerWidthMM: 58,
-        mmFeedPaper: 25,
-        });
-        } catch (err) {
-        ToastAndroid.show(
-        "ThermalPrinterModule - ReceiptScreen",
-        ToastAndroid.SHORT,
+
+        try {
+          ToastAndroid.showWithGravityAndOffset(
+          "Receipt Created Successfully",
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+          );
+  
+      await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
+      await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+  
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`RECEIPT NO : ${receipt_number}`],
+        {}
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`VEHICLE TYPE : ${type}`],
+        {}
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`VEHICLE NO : ${vehicleNumber}`],
+        {}
+      );
+      if (advanceAmount) {
+        await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`ADVANCE : ${advanceAmount}`],
+          {}
         );
-        console.log(err.message);
-        }
+      }
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`IN TIME : ${formatDateTime(currentTime)}`],
+        {}
+      );
+      await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+      await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+      await BluetoothEscposPrinter.printText("\r\n", {})
+      } catch (e) {
+        // alert(e.message || "ERROR")
+        alert("Printer is not connected.")
+        console.log(e.message);
+      }
+
+        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
+        // await ThermalPrinterModule.printBluetooth({
+        // payload:
+        // `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        // `[C]${payloadHeader}\n` +
+        // // `[C]<img>${headerImg}</img>\n` +
+        // // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+        // // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+        // `[C]-------------------------------\n` +
+        // `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
+        // `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
+        // `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+        // // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
+        // `${advanceAmount}` +
+        // // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
+        // `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        // `[C]-------------------------------\n` +
+        // `[C]${payloadFooter}\n`,
+        // printerNbrCharactersPerLine: 30,
+        // printerDpi: 120,
+        // printerWidthMM: 58,
+        // mmFeedPaper: 25,
+        // });
+
+
+        // } catch (err) {
+        // ToastAndroid.show(
+        // "ThermalPrinterModule - ReceiptScreen",
+        // ToastAndroid.SHORT,
+        // );
+        // console.log(err.message);
+        // }
 
         // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
 
@@ -633,6 +703,14 @@ const CreateReceiptScreen = ({ navigation, route }) => {
               onAction={() => handleCreateReceipt()}
               style={{ flex: 1, marginLeft: normalize(8) }}
             />
+
+{/* <CustomButton.GoButton
+              title={"Test Printer"}
+              onAction={printreciept} 
+              style={{ flex: 1, marginLeft: normalize(8) }}
+            /> */}
+
+            {/* <Button title="Test Printer" onPress={printreciept} /> */}
           </View>
         </View>
       </ScrollView>
