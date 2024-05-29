@@ -64,11 +64,12 @@ export default function DetailedReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
-    console.log(currentDate, 'fffffffffffffffffffffffffff', isDisplayDateFrom);
+    // setShowFrom(false);
+    // setShowFrom(false);
+    console.log(currentDate, 'fffffffffffffffffffffffffff', event, 'lllll', selectedDate);
   };
 
 
@@ -80,9 +81,10 @@ export default function DetailedReportScreen({ navigation }) {
   const [isDisplayDateTo, setShowTo] = useState(false);
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
+    // setShowTo(false);
     // console.log(currentDate, 'ttttttttttttttttttttt', isDisplayDateTo);
   };
 
@@ -436,6 +438,7 @@ export default function DetailedReportScreen({ navigation }) {
       {/* render custom Header */}
       <CustomHeader title="Detailed Report" navigation={navigation} />
       {/* render from date picker */}
+      {/* <Text>isDisplayDateFrom as JSON: {JSON.stringify({ isDisplayDateFrom })}</Text> */}
       {isDisplayDateFrom && (
         <RNDateTimePicker
           testID="dateTimePicker"

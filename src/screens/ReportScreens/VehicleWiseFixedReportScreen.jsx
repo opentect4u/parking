@@ -55,10 +55,11 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
+    // setShowFrom(false);
+    // setShowFrom(false);
   };
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -67,11 +68,10 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   const [vehicleWiseReports, setVehicleWiseReports] = useState();
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
-    // console.log(selectedDate)
-    // getUnbilledReport(selectedDate)
+    // setShowTo(false);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -98,7 +98,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
 
     let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
-    console.log(resdata?.data?.msg)
+    console.log('xxxxxxxxxxxxxxxxx', resdata?.data?.msg, 'xxxxxxxxxxxxxxxxx')
     setVehicleWiseReports(resdata?.data?.msg)
 
 
@@ -168,8 +168,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   let payloadFooter = "";
 
   vehicleWiseReports.map((item, index) => {
-    // payloadBody += `[L]<font>${fixedString(item.vehicleType.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.adv_amt.toString(),4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-    payloadBody += `${fixedString(item.vehicleType.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.adv_amt.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+    // payloadBody += `[L]<font>${fixedString(item.vehicle_name.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+    payloadBody += `${fixedString(item.vehicle_name.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
   });
 
 
@@ -276,7 +276,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
       // // vehicleWiseReports.map(async (item, index) => {
       // //   await ThermalPrinterModule.printBluetooth({
       // //     payload:
-      // //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.adv_amt}  ${item.paid_amt}\n`,
+      // //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.advance_amt}  ${item.paid_amt}\n`,
 
       // //   printerNbrCharactersPerLine: 30,
       // //   printerDpi: 120,
@@ -298,9 +298,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let payloadFooter = "";
   
     vehicleWiseReports.map((item, index) => {
-      payloadBody += `[L]<font>${fixedString(item.vehicleType.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.adv_amt.toString(),4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicle_name.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString(item.advance_amt.toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
-  
   
     if(receiptSettings?.report_flag == "Y"){
   
@@ -363,7 +362,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     // vehicleWiseReports.map(async (item, index) => {
     //   await ThermalPrinterModule.printBluetooth({
     //     payload:
-    //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.adv_amt}  ${item.paid_amt}\n`,
+    //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.advance_amt}  ${item.paid_amt}\n`,
   
     //   printerNbrCharactersPerLine: 30,
     //   printerDpi: 120,
@@ -478,7 +477,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
-                    totalAdvanceAmount += item?.adv_amt;
+                    totalAdvanceAmount += item?.advance_amt;
                     return (
                       <View
                         style={[
@@ -486,15 +485,15 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                           index % 2 != 0 ? styles.evenBg : styles.oddbg,
                         ]}
                         key={index}>
-                        <Text style={[styles.cell]}>{item.vehicleType} </Text>
+                        <Text style={[styles.cell]}>{item.vehicle_name} </Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
                         {/* <Text style={[styles.cell]}>
                         {new Date(item.date_time_in).toLocaleString()}
                       </Text> */}
 
-                        <Text style={[styles.cell]}>{item?.adv_amt}</Text>
+                        <Text style={[styles.cell]}>{item?.advance_amt}</Text>
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
-                        {/* <Text style={[styles.cell]}>{item.tot_amt + item.adv_amt}</Text> */}
+                        {/* <Text style={[styles.cell]}>{item.tot_amt + item.advance_amt}</Text> */}
                       </View>
                     );
                   })}

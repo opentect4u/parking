@@ -12,8 +12,8 @@ function usegetShiftwiseReport() {
                     ADDRESSES.SHIFTWISE_REPORT_DATA,
                     {
                         customerUserName: getUserName,
-                        frm_dt: fDate,
-                        to_dt: tDate,
+                        from_date: fDate,
+                        to_date: tDate,
                         shift_id:shift_id
                     },
                     {

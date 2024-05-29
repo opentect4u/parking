@@ -52,10 +52,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
+    // setShowFrom(false);
+    // setShowFrom(false);
   };
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -65,11 +66,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
-    // console.log(selectedDate)
-    // getUnbilledReport(selectedDate)
+    // setShowTo(false);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -100,7 +100,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
     setOperatorwiseReports(operator_wise_report?.data?.msg);
 
-    // getOperatorwiseReport(formattedDateFrom, formattedDateTo);
+    // console.log(operator_wise_report?.data?.msg, 'sssssssssssssss');
 
 
 
@@ -164,8 +164,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     operatorwiseReports.map((item, index) => {
-      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.adv_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.adv_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.advance_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.advance_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
 
     });
 
@@ -285,10 +285,9 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.adv_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.advance_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
-    // console.log("///////////////////////////////////////////////////", operatorwiseReports);
 
     if(receiptSettings?.report_flag == "Y"){
 
@@ -461,7 +460,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
-                    totalAdvanceAmount += item?.adv_amt;
+                    totalAdvanceAmount += item?.advance_amt;
                     return (
                       <View
                         style={[
@@ -472,7 +471,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                         {/* <Text style={[styles.cell]}>{index}</Text> */}
                         <Text style={[styles.cell]}>{item.opratorName}</Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
-                        <Text style={[styles.cell]}>{item?.adv_amt}</Text>
+                        <Text style={[styles.cell]}>{item?.advance_amt}</Text>
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
 
                         {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}

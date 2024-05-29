@@ -59,7 +59,7 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
 
   const userDetails = loginData.user.userdata.msg[0];
 
-  // console.log("ReceiptScreen - userDetails", userDetails)
+  // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", userDetails)
 
   const {
     generalSettings,
@@ -78,6 +78,7 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
   const [totalPaidAmt, setPaid_amt] = useState();
   const [totalVehicleIn, setVehicleIn] = useState();
   const [totalVehicleOut, setVehicleOut] = useState();
+  const [getAdvAmount, setAdvAmount] = useState();
 
 
 
@@ -88,6 +89,7 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     { title: "Operator Name", data: userDetails.operator_name },
     { title: "Total Vehicles In", data: totalVehicleIn || 0 },
     { title: "Total Vehicles Out", data: totalVehicleOut || 0 },
+    { title: "Total Advance Amount", data: getAdvAmount || 0 },
    
   ];
 
@@ -135,9 +137,11 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
 // get Dashboard Data
   const dashboardData = async () => {
     let resData = await getDashboardData(loginData.user.userdata.msg[0].id);
+    // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', resData?.data.advance_amt.msg[0].advance_amt, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     setPaid_amt(resData?.data?.paid_amt?.msg[0]?.paid_amt)
     setVehicleIn(resData?.data?.vehicle_in?.msg[0]?.vehicle_in)
     setVehicleOut(resData?.data?.vehicle_out?.msg[0]?.vehicle_out)
+    setAdvAmount(resData?.data?.advance_amt?.msg[0]?.advance_amt)
   }
 
 // const handlePrint = async () => {

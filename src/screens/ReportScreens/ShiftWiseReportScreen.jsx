@@ -73,10 +73,11 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
+    // setShowFrom(false);
+    // setShowFrom(false);
   };
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -84,11 +85,10 @@ export default function ShiftWiseReportScreen({ navigation }) {
   const [isDisplayDateTo, setShowTo] = useState(false);
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
-    // console.log(selectedDate)
-    // getUnbilledReport(selectedDate)
+    // setShowTo(false);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -114,7 +114,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
     let reportData= await shift_wise(formattedDateFrom,formattedDateTo,useShift, loginData.user.userdata.msg[0].id)
-    console.log("reportData",reportData.data.msg)
+    console.log("xxxxxxxxxxxxxxxxxx",reportData.data.msg, "xxxxxxxxxxxxxxxxxx", useShift)
 
     displayBotBlue = true;
 
@@ -181,8 +181,8 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     useOperatorData.map((item, index) => {
-      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.advance_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+      // payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `${fixedString(item.vehicleType.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.advance_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
 
     
     });
@@ -301,8 +301,8 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let payloadFooter = "";
 
     useOperatorData.map((item, index) => {
-      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      // payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
     if(receiptSettings?.report_flag == "Y"){
@@ -531,7 +531,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
                         index % 2 != 0 ? styles.evenBg : styles.oddbg,
                       ]}
                       key={index}>
-                      <Text style={[styles.cell]}>{item.opratorName} </Text>
+                      <Text style={[styles.cell]}>{item.vehicleType} </Text>
                       {/* <Text style={[styles.cell]}>{item.vehicleType}</Text> */}
                       <Text style={[styles.cell]}>{item.tot_vehi}</Text>
 

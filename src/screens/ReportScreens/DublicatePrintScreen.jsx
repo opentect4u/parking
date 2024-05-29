@@ -80,9 +80,10 @@ export default function DublicatePrintScreen({ navigation }) {
   const [getDetailedReport, setgetDetailedReport] = useState();
   
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(selectedDate);
-    setShowFrom(false);
+    
     console.log(selectedDate, 'fffffffffffffffffffffffffff', isDisplayDateFrom);
   };
 
@@ -91,9 +92,10 @@ export default function DublicatePrintScreen({ navigation }) {
   const [isDisplayDateTo, setShowTo] = useState(false);
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(selectedDate);
-    setShowTo(false);
+    
     console.log(currentDate, 'tttttttttttttttttttttttttttt', isDisplayDateFrom);
   };
 

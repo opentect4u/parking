@@ -63,10 +63,11 @@ export default function Unbilled_Reports({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
+    // setShowFrom(false);
+    // setShowFrom(false);
   };
 
 
@@ -78,9 +79,10 @@ export default function Unbilled_Reports({ navigation }) {
   const [isDisplayDateTo, setShowTo] = useState(false);
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
+    
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
