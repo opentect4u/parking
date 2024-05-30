@@ -46,7 +46,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
-  const [loading, setLoading] = useState();
+  // const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(() => false);
 
   const { generalSettings } = useContext(AuthContext);
    const { login } = useContext(AuthContext);
@@ -65,10 +66,11 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
+    // setShowFrom(false);
+    
   };
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -77,11 +79,10 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   const [vehicleWiseReports, setVehicleWiseReports] = useState();
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
-    // console.log(selectedDate)
-    // getUnbilledReport(selectedDate)
+    // setShowTo(false);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -104,17 +105,20 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   let totalAdvanceAmount = 0;
 
   const submitDetails = async() => {
+    // console.log('kkkkkkkkkkkk');
+    setLoading(true);
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-    // console.log(vehicleWiseReports, 'vehicleWiseReportsvehicleWiseReportsvehicleWiseReportsvehicleWiseReportsvehicleWiseReports');
-    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
+    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    console.log(resdata, 'kkkkkkkkkkkkkkkkkkkkkkkkkk');
+
+    if(resdata?.data?.suc > 0){
+      setLoading(false);
+    }
+
     setVehicleWiseReports(resdata?.data?.msg)
 
-
-
-    // getVehicleWiseReport(formattedDateFrom, formattedDateTo);
-    // setVehicleReport(vehicleWiseReports)
   };
 
   async function checkLocationEnabled() {
@@ -362,6 +366,22 @@ if (getBlePermission  && device_Type_Check == "M") {
 
   return (
     <View style={{ flex: 1 }}>
+
+{loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "35%",
+            backgroundColor: colors.white,
+            padding: PixelRatio.roundToNearestPixel(20),
+            borderRadius: 10,
+          }}>
+          <ActivityIndicator size="large" />
+          <Text>Loading...</Text>
+        </View>
+      )}
+
       {/* render custom Header */}
       <CustomHeader title="Vehicle Wise Report" navigation={navigation} />
       {/* render from date picker */}
@@ -425,7 +445,7 @@ if (getBlePermission  && device_Type_Check == "M") {
           onAction={() => submitDetails()}
         />
 
-        {loading && <Text> fetching data... </Text>}
+        {/* {loading && <Text> fetching data... </Text>} */}
 
         {/* report genarate table */}
         {vehicleWiseReports && (

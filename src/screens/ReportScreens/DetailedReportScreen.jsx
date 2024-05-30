@@ -48,8 +48,10 @@ export default function DetailedReportScreen({ navigation }) {
 
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
-  const [loading, setLoading] = useState();
+  // const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(() => false);
 
+  
   // create a new Date object
   const date = new Date();
 
@@ -62,10 +64,9 @@ export default function DetailedReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
   };
 
 
@@ -77,9 +78,10 @@ export default function DetailedReportScreen({ navigation }) {
   const [isDisplayDateTo, setShowTo] = useState(false);
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
+    // setShowTo(false);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -89,9 +91,8 @@ export default function DetailedReportScreen({ navigation }) {
   // let totalNetAmount = 0;
 
   const submitDetails = async() => {
-
+    setLoading(true);
       // receiptSettings
-  // console.log(receiptSettings, '___ddddddddddd');
 
     // {getDetailedReport &&
     //   getDetailedReport.map((item, index) => {
@@ -107,11 +108,16 @@ export default function DetailedReportScreen({ navigation }) {
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data = await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-    // console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
+
+    if(rep_data?.data?.suc>0){
+      setLoading(false);
+    }
 
     setgetDetailedReport(rep_data?.data?.msg)
 
-    // getDetailedReport(formattedDateFrom, formattedDateTo);
+
+    
+    
   };
 
 
@@ -366,6 +372,7 @@ export default function DetailedReportScreen({ navigation }) {
       //   mmFeedPaper: 25,
       //   })
       // })
+      
     } catch (err) {
       ToastAndroid.show(
         "ThermalPrinterModule - VehicleWiseFixedReportScreen",
@@ -390,8 +397,26 @@ export default function DetailedReportScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+      
+      
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "35%",
+            backgroundColor: colors.white,
+            padding: PixelRatio.roundToNearestPixel(20),
+            borderRadius: 10,
+          }}>
+          <ActivityIndicator size="large" />
+          <Text>Loading...</Text>
+        </View>
+      )}
+
       {/* render custom Header */}
       <CustomHeader title="Detailed Report" navigation={navigation} />
+      
       {/* render from date picker */}
       {isDisplayDateFrom && (
         <RNDateTimePicker
@@ -453,7 +478,7 @@ export default function DetailedReportScreen({ navigation }) {
           onAction={() => submitDetails()}
         />
 
-        {loading && <Text> fetchig data... </Text>}
+        {/* {loading && <Text> fetchig data... </Text>} */}
 
         {/* report genarate table */}
         {getDetailedReport && (

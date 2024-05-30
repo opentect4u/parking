@@ -41,6 +41,8 @@ export default function ReceiptScreen({ navigation }) {
 
   // console.log("ReceiptScreen - userDetails", loginData.user.userdata.msg[0].id)
 
+  const [loading, setLoading] = useState(() => false);
+
   const {
     generalSettings,
     rateDetailsList,
@@ -151,6 +153,7 @@ export default function ReceiptScreen({ navigation }) {
 
   // get vehicles list function
   const getVehicles = async () => {
+    setLoading(true);
     await axios
       .post(
         ADDRESSES.VEHICLES_LIST,
@@ -163,6 +166,9 @@ export default function ReceiptScreen({ navigation }) {
       )
       .then(res => {
         setVehicles(res.data.data.msg);
+        if(res.data.data.suc > 0){
+          setLoading(false);
+        }
       })
       .catch(err => {
         console.log("ERRR - getVehicles", err);
@@ -170,12 +176,12 @@ export default function ReceiptScreen({ navigation }) {
   };
 
 
+
   // get vehicle list
   useMemo(() => {
     console.log("Effect - getVehicles Called - ReceiptScreen");
     getVehicles();
   }, []);
-
 
   // get generalSettings and receiptSettings
   useMemo(() => {
@@ -210,6 +216,7 @@ const [pairedDevices, setPairedDevices] = useState([])
 const [foundDs, setFoundDs] = useState([])
 // const [bleOpend, setBleOpend] = useState(false)
 // const [loading, setLoading] = useState(true)
+
 // const [name, setName] = useState("")
 // const [boundAddress, setBoundAddress] = useState("")
 
@@ -440,6 +447,23 @@ const scan = useCallback(() => {
 
   return (
     <View style={{ flex: 1 }}>
+
+      
+{loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "35%",
+            backgroundColor: colors.white,
+            padding: PixelRatio.roundToNearestPixel(20),
+            borderRadius: 10,
+          }}>
+          <ActivityIndicator size="large" />
+          <Text>Loading...</Text>
+        </View>
+      )}
+
       <CustomHeader title="RECEIPT" />
       {/* today total receipt */}
       <Text style={styles.title}>Today`s Collection</Text>
@@ -476,6 +500,7 @@ const scan = useCallback(() => {
 
       {/* print action conatiner */}
       <View style={otherStyle.print_container}>
+        {/* {loading && <Text> fetchig data... </Text>} */}
         <TouchableOpacity
           style={otherStyle.print_action_button}
           onPress={() => dashboardData()}>
@@ -524,7 +549,7 @@ const scan = useCallback(() => {
 
       {/* vehicle list  */}
       <ScrollView horizontal={true} style={otherStyle.vehicle_container}>
-        {vehicles &&
+      {vehicles &&
           vehicles.map((props, index) => (
             <Pressable
               key={props.vehicle_id}

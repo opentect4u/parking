@@ -52,7 +52,8 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
-  const [loading, setLoading] = useState();
+  // const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(() => false);
 
   // create a new Date object
   const date = new Date();
@@ -71,10 +72,11 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    setShowFrom(false);
-    setShowFrom(false);
+    // setShowFrom(false);
+    
   };
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -82,11 +84,10 @@ export default function ShiftWiseReportScreen({ navigation }) {
   const [isDisplayDateTo, setShowTo] = useState(false);
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
+    setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    setShowTo(false);
-    // console.log(selectedDate)
-    // getUnbilledReport(selectedDate)
+    // setShowTo(false);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -109,10 +110,16 @@ export default function ShiftWiseReportScreen({ navigation }) {
   let displayBotBlue = false;
 
   const submitDetails = async() => {
+    setLoading(true);
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
     let reportData= await shift_wise(formattedDateFrom,formattedDateTo, useShift, loginData.user.userdata.msg[0].id)
-    console.log("reportData",reportData.data.msg)
+
+    if(reportData?.data?.suc>0){
+      setLoading(false);
+    }
+
+    // console.log("reportData",reportData.data.msg)
 
     displayBotBlue = true;
 
@@ -381,6 +388,22 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+
+{loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "35%",
+            backgroundColor: colors.white,
+            padding: PixelRatio.roundToNearestPixel(20),
+            borderRadius: 10,
+          }}>
+          <ActivityIndicator size="large" />
+          <Text>Loading...</Text>
+        </View>
+      )}
+
       {/* render custom Header */}
       <CustomHeader title="Shiftwise Report" navigation={navigation} />
       {/* render from date picker */}
@@ -451,7 +474,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
           onAction={() => submitDetails()}
         />
 
-        {loading && <Text> fetchig data... </Text>}
+        {/* {loading && <Text> fetchig data... </Text>} */}
 
         {/* report genarate table */}
         {useOperatorData && (
