@@ -84,7 +84,7 @@ export default function DublicatePrintScreen({ navigation }) {
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(selectedDate);
     
-    console.log(selectedDate, 'fffffffffffffffffffffffffff', isDisplayDateFrom);
+    // console.log(selectedDate, 'fffffffffffffffffffffffffff', isDisplayDateFrom);
   };
 
   const [mydateTo, setDateTo] = useState(new Date());
@@ -96,7 +96,7 @@ export default function DublicatePrintScreen({ navigation }) {
     const currentDate = selectedDate || mydateTo;
     setDateTo(selectedDate);
     
-    console.log(currentDate, 'tttttttttttttttttttttttttttt', isDisplayDateFrom);
+    // console.log(currentDate, 'tttttttttttttttttttttttttttt', isDisplayDateFrom);
   };
 
   
@@ -289,6 +289,7 @@ export default function DublicatePrintScreen({ navigation }) {
           }
 
           // try {
+          console.log(new Date(item.date_time_in).toLocaleString("en-GB"), 'uuuuuuuuuuuuuuuuuuuuuuuuuu');
 
           try {
           ToastAndroid.showWithGravityAndOffset(
@@ -332,7 +333,8 @@ export default function DublicatePrintScreen({ navigation }) {
           await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
-          [`IN TIME : ${formatDateTime(currentTime)}`],
+          // [`IN TIME : ${formatDateTime(currentTime)}`],
+          [`IN TIME : ${new Date(item.date_time_in).toLocaleString("en-GB") }`],
           {}
           );
           await BluetoothEscposPrinter.printText("-------------------------------\n", {});
@@ -453,7 +455,7 @@ export default function DublicatePrintScreen({ navigation }) {
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
         `${advanceAmount}` +
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
-        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        `[L]<font size='normal'>IN TIME : [R]${new Date(item.date_time_in).toLocaleString("en-GB")}</font>\n` +
         `[C]-------------------------------\n` +
         `[C]${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
@@ -549,14 +551,18 @@ if (getBlePermission && device_Type_Check == "M") {
     new Date(item.date_time_in).getTime(), new Date(item.date_time_out).getTime()
   );
 
+
+
+  // console.log(formatDateTime_Out(new Date(item.date_time_in)), 'fffffffffff');
+
     let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
     {label: "PARKING FEES", value: item.base_amt}, 
     {label: "ADVANCE", value: item.advance_amt}, 
     {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
     {label: "VEHICLE TYPE", value: item.vehicle_name}, 
     {label: "VEHICLE NO", value: item.vehicle_no}, 
-    {label: "IN TIME", value: item.date_time_in}, 
-    {label: "OUT TIME", value: item.date_time_out}, 
+    {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
+    {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
     {label: "DURATION", value: totalDuration}];
 
     let payloadHeader = "";
@@ -684,8 +690,8 @@ setLoading(false);
     {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
     {label: "VEHICLE TYPE", value: item.vehicle_name}, 
     {label: "VEHICLE NO", value: item.vehicle_no}, 
-    {label: "IN TIME", value: item.date_time_in}, 
-    {label: "OUT TIME", value: item.date_time_out}, 
+    {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
+    {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
     {label: "DURATION", value: totalDuration}];
 
     // console.log(totalDuration, 'jjjjjjjjjxxxxxxxxjjjj', item);

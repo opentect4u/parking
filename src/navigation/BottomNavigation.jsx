@@ -11,6 +11,7 @@ import PrintNavigation from "./PrintNavigation";
 import { loginStorage } from "../storage/appStorage";
 // import { SocketProvider } from '../context/Socket';
 // import { useSocket } from '../context/Socket';
+import DublicatePrintScreen from "../screens/ReportScreens/DublicatePrintScreen";
 
 
 
@@ -82,6 +83,15 @@ function BottomNavigation() {
         component={ReportsNavigation}
       />
       )}
+
+      <Tab.Screen
+        name="DublicatePrintScreen"
+        options={{
+          title: "Duplicate",
+          tabBarIcon: ({ color, size }) => icons.duplicate(color, 30),
+        }}
+        component={DublicatePrintScreen}
+      />
 
       {/*Setting Screen */}
       <Tab.Screen

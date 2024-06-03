@@ -23,10 +23,10 @@ const ReportsNavigation = () => {
         component={DetailedReportScreen}
       />
 
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Dublicate_Print_Screen"
         component={DublicatePrintScreen}
-      />
+      /> */}
 
       <Stack.Screen
         name="Unbilled_Reports"

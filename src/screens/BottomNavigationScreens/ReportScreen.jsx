@@ -137,14 +137,14 @@ export default function ReportScreen({ navigation }) {
             />
           </View>
 
-          <View style={styles.ActionBox_style}>
+          {/* <View style={styles.ActionBox_style}>
             <ActionBox2
               title="Duplicate Bill"
               onAction={() => navigation.navigate("Dublicate_Print_Screen")}
               icon={icons.users}
               disabled={rep_ststus}
             />
-          </View>
+          </View> */}
 
         </View>
 

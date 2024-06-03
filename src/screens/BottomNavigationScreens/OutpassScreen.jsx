@@ -290,13 +290,13 @@ export default function OutpassScreen({ navigation }) {
         );
       }
 
-      console.log(
-        vData,
-        "utsabbbbbbb",
-        totalRate,
-        "==",
-        vDatainfo.parking_fees,
-      );
+      // console.log(
+      //   vData,
+      //   "utsabbbbbbb",
+      //   totalRate,
+      //   "==",
+      //   vDatainfo.parking_fees,
+      // );
     }
 
     // Paid Amount calculation by advance Amount END_____

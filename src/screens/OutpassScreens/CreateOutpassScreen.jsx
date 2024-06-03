@@ -267,7 +267,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         ));
 
 
-        console.log(payloadBody,'ooooooooooooooooooooooooooooooooooooooooooo')
+        // console.log(payloadBody,'ooooooooooooooooooooooooooooooooooooooooooo')
 
 
         // payloadBody += `[L]<font size='normal'>RECEIPT NO : [R] ${(totalRate?.vDatainfo?.receipt_no).toString().slice(-5)}</font>\n` +

@@ -154,6 +154,10 @@ const setting = (color, size) => (
   <MaterialIcons name="settings" color={color} size={size} />
 );
 
+const duplicate = (color, size) => (
+  <Ionicons name="duplicate" color={color} size={size} />
+);
+
 const print2 = (color, size) => (
   <MaterialIcons name="local-print-shop" color={color} size={size} />
 );
@@ -330,6 +334,7 @@ export default icons = {
   web,
   receipt,
   setting,
+  duplicate,
   print2,
   report,
   paperRoll,
