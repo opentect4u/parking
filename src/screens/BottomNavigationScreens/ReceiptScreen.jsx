@@ -61,8 +61,6 @@ export default function ReceiptScreen({ navigation }) {
   const [totalVehicleIn, setVehicleIn] = useState();
   const [totalVehicleOut, setVehicleOut] = useState();
 
-
-
   // operator info
 
   

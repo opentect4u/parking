@@ -243,6 +243,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       // Use for Mobile Device Start 
       if (getBlePermission && device_Type_Check == "M") {
 
+        // console.log("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", loginData.user.userdata.msg[0].customer_type)
+
       ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
         ToastAndroid.LONG,
@@ -342,7 +344,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type}    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."}    : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
@@ -486,7 +488,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type}    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."}    : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
