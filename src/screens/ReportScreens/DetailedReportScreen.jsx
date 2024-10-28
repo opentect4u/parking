@@ -10,7 +10,7 @@ import {
   Alert,
   NativeModules,
   ToastAndroid,
-  PermissionsAndroid,
+  PermissionsAndroid, Button 
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -29,6 +29,8 @@ import useDetailedReportScreen from "../../hooks/api/useDetailedReportScreen";
 import ThermalPrinterModule from "react-native-thermal-printer";
 import { dateTimefixedString, dateTimefixedStringm, timefixedString123 } from "../../utils/dateTime";
 import { loginStorage } from "../../storage/appStorage";
+import DatePicker from "react-native-date-picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function DetailedReportScreen({ navigation }) {
   // const { detailedReports } = useContext(AuthContext);
@@ -64,6 +66,7 @@ export default function DetailedReportScreen({ navigation }) {
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
+    
     setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
@@ -86,6 +89,15 @@ export default function DetailedReportScreen({ navigation }) {
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
+
+  const [date_From, setDate_From] = useState(new Date());
+  const [showDatePicker_From, setShowDatePicker_From] = useState(false);
+  const [showTimePicker_From, setShowTimePicker_From] = useState(false);
+
+  const [date_To, setDate_To] = useState(new Date());
+  const [showDatePicker_To, setShowDatePicker_To] = useState(false);
+  const [showTimePicker_To, setShowTimePicker_To] = useState(false);
+
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
   // let totalNetAmount = 0;
@@ -103,17 +115,22 @@ export default function DetailedReportScreen({ navigation }) {
             
     //     );
     //   })}
+// console.log(date_From,  'dddddddddddddddddddd', date_To);
+console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
 
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-    let rep_data = await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    // let rep_data = await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    let rep_data = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
 
     if(rep_data?.data?.suc>0){
       setLoading(false);
     }
 
     setgetDetailedReport(rep_data?.data?.msg)
+
+    
 
 
     
@@ -242,7 +259,7 @@ export default function DetailedReportScreen({ navigation }) {
           `[C]${payloadHeader}\n` +
           `[C]<u><font size='small'>Detailed Report</font></u>\n` +
           `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
@@ -343,7 +360,7 @@ export default function DetailedReportScreen({ navigation }) {
           `[C]${payloadHeader}\n` +
           `[C]<u><font size='small'>Detailed Report</font></u>\n` +
           `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
@@ -395,8 +412,102 @@ export default function DetailedReportScreen({ navigation }) {
 
   };
 
+
+
+
+
+  const onDateChange_From = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker_From(false);
+    setDate_From(currentDate);
+    // Show time picker after selecting the date
+    setShowTimePicker_From(true);
+  };
+
+  const onTimeChange_From = (event, selectedTime) => {
+    const currentTime = selectedTime || date;
+    setShowTimePicker_From(false);
+    setDate_From(currentTime);
+  };
+
+  const onDateChange_To = (event, selectedDate) => {
+    const currentDate_To = selectedDate || date;
+    setShowDatePicker_To(false);
+    setDate_To(currentDate_To);
+    // Show time picker after selecting the date
+    setShowTimePicker_To(true);
+  };
+
+  const onTimeChange_To = (event, selectedTime) => {
+    const currentTime_To = selectedTime || date;
+    setShowTimePicker_To(false);
+    setDate_To(currentTime_To);
+  };
+  
+
   return (
     <View style={{ flex: 1 }}>
+
+
+
+
+    {/* <View style={styles.select_date_button_container}>
+          <Text style={{ ...styles.date_text, marginRight: 50 }}> From Date </Text>
+          <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
+        </View>
+        <View style={styles.select_date_button_container}>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_From(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text}>
+              {date_From.toLocaleDateString()} {date_From.toLocaleTimeString()}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowTo(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text}>
+              {mydateTo.toLocaleDateString("en-GB")} 
+            </Text>
+          </Pressable>
+        </View> */}
+
+{/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{ marginBottom: 20 }}>
+        Selected Date & Time: {date.toLocaleDateString()} {date.toLocaleTimeString()}
+      </Text>
+
+      <Button onPress={() => setShowDatePicker__(true)} title="Pick Date" />
+      <Button onPress={() => setShowTimePicker__(true)} title="Pick Time" />
+
+      {showDatePicker__ && (
+        <RNDateTimePicker
+          testID="datePicker"
+          value={date}
+          mode="date"
+          display="default"
+          onChange={onDateChange__}
+        />
+        
+      )}
+
+      {showTimePicker__ && (
+        <RNDateTimePicker
+          testID="timePicker"
+          value={date}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange__}
+        />
+      )}
+
+
+
+    </View> */}
       
       
       {loading && (
@@ -416,9 +527,51 @@ export default function DetailedReportScreen({ navigation }) {
 
       {/* render custom Header */}
       <CustomHeader title="Detailed Report" navigation={navigation} />
+
+      {showDatePicker_From && (
+        <DateTimePicker
+          testID="datePicker"
+          value={date_From}
+          mode="date"
+          display="default"
+          onChange={onDateChange_From}
+        />
+      )}
+
+      {showTimePicker_From && (
+        <DateTimePicker
+          testID="timePicker"
+          value={date_From}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange_From}
+        />
+      )}
+
+      {showDatePicker_To && (
+        <DateTimePicker
+          testID="datePicker"
+          value={date_To}
+          mode="date"
+          display="default"
+          onChange={onDateChange_To}
+        />
+      )}
+
+      {showTimePicker_To && (
+        <DateTimePicker
+          testID="timePicker"
+          value={date_To}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange_To}
+        />
+      )}
       
       {/* render from date picker */}
-      {isDisplayDateFrom && (
+      {/* {isDisplayDateFrom && (
         <RNDateTimePicker
           testID="dateTimePicker"
           value={mydateFrom}
@@ -427,10 +580,10 @@ export default function DetailedReportScreen({ navigation }) {
           display="default"
           onChange={changeSelectedDateFrom}
         />
-      )}
+      )} */}
 
       {/* render to date picker */}
-      {isDisplayDateTo && (
+      {/* {isDisplayDateTo && (
         <RNDateTimePicker
           testID="dateTimePicker"
           value={mydateTo}
@@ -439,7 +592,7 @@ export default function DetailedReportScreen({ navigation }) {
           display="default"
           onChange={changeSelectedDateTo}
         />
-      )}
+      )} */}
 
       <View style={{ padding: PixelRatio.roundToNearestPixel(20), flex: 1 }}>
         <Text style={styles.select_date_header}>
@@ -447,13 +600,36 @@ export default function DetailedReportScreen({ navigation }) {
           {}
         </Text>
         {/* date selector button */}
-        <View style={styles.select_date_button_container}>
-          <Text style={{ ...styles.date_text, marginRight: 50 }}>
-            From Date
-          </Text>
+        {/* <View style={styles.select_date_button_container}>
+          <Text style={{ ...styles.date_text, marginRight: 50 }}> From Date </Text>
           <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
+        </View> */}
+        <View style={styles.select_date_button_container_vertical}>
+        <Text style={{ ...styles.date_text, marginRight: 50 }}> From Date </Text>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_From(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text_Cal}>
+              {/* {mydateFrom.toLocaleDateString("en-GB")} */}
+              {date_From.toLocaleDateString()} {date_From.toLocaleTimeString()}
+            </Text>
+          </Pressable>
+
+          <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_To(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text_Cal}>
+              {/* {mydateTo.toLocaleDateString("en-GB")}  */}
+              {date_To.toLocaleDateString()} {date_To.toLocaleTimeString()}
+            </Text>
+          </Pressable>
         </View>
-        <View style={styles.select_date_button_container}>
+
+        
+        {/* <View style={styles.select_date_button_container}>
           <Pressable
             style={styles.select_date_button}
             onPress={() => setShowFrom(true)}>
@@ -471,7 +647,7 @@ export default function DetailedReportScreen({ navigation }) {
               {mydateTo.toLocaleDateString("en-GB")}
             </Text>
           </Pressable>
-        </View>
+        </View> */}
         <CustomButton.GoButton
           title="Submit"
           style={{ margin: 10 }}
@@ -613,26 +789,39 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   select_date_button: {
-    flex: 1,
+    // flex: 1,
     borderWidth: 2,
     borderColor: colors["light-gray"],
     padding: PixelRatio.roundToNearestPixel(10),
     margin: PixelRatio.roundToNearestPixel(5),
     borderRadius: PixelRatio.roundToNearestPixel(20),
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "left",
     alignItems: "center",
     backgroundColor: colors.white,
     elevation: PixelRatio.roundToNearestPixel(20),
+    fontSize:15,
   },
   date_text: {
     marginLeft: PixelRatio.roundToNearestPixel(10),
     fontWeight: "600",
     color: colors.black,
+    height:25
+  },
+  date_text_Cal: {
+    marginLeft: PixelRatio.roundToNearestPixel(10),
+    fontWeight: "600",
+    color: colors.black,
+    fontSize:15,
   },
   select_date_button_container: {
     flexDirection: "row",
     justifyContent: "space-evenly",
+  },
+  select_date_button_container_vertical: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    // alignItems: "center"
   },
   actionButton: {
     flex: 1,

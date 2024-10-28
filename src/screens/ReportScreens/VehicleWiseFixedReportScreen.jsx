@@ -28,6 +28,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import { fixedString } from "../../utils/fixedString";
 import useVehicleWiseReports from "../../hooks/api/useVehicleWiseReports";
 import { loginStorage } from "../../storage/appStorage";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function VehicleWiseFixedReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
@@ -88,6 +89,14 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
 
+  const [date_From, setDate_From] = useState(new Date());
+  const [showDatePicker_From, setShowDatePicker_From] = useState(false);
+  const [showTimePicker_From, setShowTimePicker_From] = useState(false);
+
+  const [date_To, setDate_To] = useState(new Date());
+  const [showDatePicker_To, setShowDatePicker_To] = useState(false);
+  const [showTimePicker_To, setShowTimePicker_To] = useState(false);
+
   /**
    * vehicle_id
    * vehicle_no
@@ -106,11 +115,14 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   const submitDetails = async() => {
     // console.log('kkkkkkkkkkkk');
+
+    console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
     setLoading(true);
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    // let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    let resdata = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
     console.log(resdata, 'kkkkkkkkkkkkkkkkkkkkkkkkkk');
 
     if(resdata?.data?.suc > 0){
@@ -225,7 +237,8 @@ if (getBlePermission  && device_Type_Check == "M") {
           `[C]${payloadHeader}\n` +
           `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
           `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
@@ -313,7 +326,8 @@ if (getBlePermission  && device_Type_Check == "M") {
           `[C]${payloadHeader}\n` +
           `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
           `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
@@ -364,6 +378,35 @@ if (getBlePermission  && device_Type_Check == "M") {
 // Use for Handheld Device End 
   };
 
+
+  const onDateChange_From = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker_From(false);
+    setDate_From(currentDate);
+    // Show time picker after selecting the date
+    setShowTimePicker_From(true);
+  };
+
+  const onTimeChange_From = (event, selectedTime) => {
+    const currentTime = selectedTime || date;
+    setShowTimePicker_From(false);
+    setDate_From(currentTime);
+  };
+
+  const onDateChange_To = (event, selectedDate) => {
+    const currentDate_To = selectedDate || date;
+    setShowDatePicker_To(false);
+    setDate_To(currentDate_To);
+    // Show time picker after selecting the date
+    setShowTimePicker_To(true);
+  };
+
+  const onTimeChange_To = (event, selectedTime) => {
+    const currentTime_To = selectedTime || date;
+    setShowTimePicker_To(false);
+    setDate_To(currentTime_To);
+  };
+
   return (
     <View style={{ flex: 1 }}>
 
@@ -385,7 +428,7 @@ if (getBlePermission  && device_Type_Check == "M") {
       {/* render custom Header */}
       <CustomHeader title="Vehicle Wise Report" navigation={navigation} />
       {/* render from date picker */}
-      {isDisplayDateFrom && (
+      {/* {isDisplayDateFrom && (
         <RNDateTimePicker
           testID="dateTimePicker"
           value={mydateFrom}
@@ -396,7 +439,6 @@ if (getBlePermission  && device_Type_Check == "M") {
         />
       )}
 
-      {/* render to date picker */}
       {isDisplayDateTo && (
         <RNDateTimePicker
           testID="dateTimePicker"
@@ -406,6 +448,47 @@ if (getBlePermission  && device_Type_Check == "M") {
           display="default"
           onChange={changeSelectedDateTo}
         />
+      )} */}
+      {showDatePicker_From && (
+        <DateTimePicker
+          testID="datePicker"
+          value={date_From}
+          mode="date"
+          display="default"
+          onChange={onDateChange_From}
+        />
+      )}
+
+      {showTimePicker_From && (
+        <DateTimePicker
+          testID="timePicker"
+          value={date_From}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange_From}
+        />
+      )}
+
+      {showDatePicker_To && (
+        <DateTimePicker
+          testID="datePicker"
+          value={date_To}
+          mode="date"
+          display="default"
+          onChange={onDateChange_To}
+        />
+      )}
+
+      {showTimePicker_To && (
+        <DateTimePicker
+          testID="timePicker"
+          value={date_To}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange_To}
+        />
       )}
 
       <View style={{ padding: PixelRatio.roundToNearestPixel(20), flex: 1 }}>
@@ -414,12 +497,13 @@ if (getBlePermission  && device_Type_Check == "M") {
           {}
         </Text>
         {/* date selector button */}
-        <View style={styles.select_date_button_container}>
+        {/* <View style={styles.select_date_button_container}>
           <Text style={{ ...styles.date_text, marginRight: 50 }}>
             From Date
           </Text>
           <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
         </View>
+
         <View style={styles.select_date_button_container}>
           <Pressable
             style={styles.select_date_button}
@@ -438,7 +522,34 @@ if (getBlePermission  && device_Type_Check == "M") {
               {mydateTo.toLocaleDateString("en-GB")}
             </Text>
           </Pressable>
+        </View> */}
+
+        <View style={styles.select_date_button_container_vertical}>
+        <Text style={{ ...styles.date_text, marginRight: 50 }}> From Date </Text>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_From(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text_Cal}>
+              {/* {mydateFrom.toLocaleDateString("en-GB")} */}
+              {date_From.toLocaleDateString()} {date_From.toLocaleTimeString()}
+            </Text>
+          </Pressable>
+
+          <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_To(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text_Cal}>
+              {/* {mydateTo.toLocaleDateString("en-GB")}  */}
+              {date_To.toLocaleDateString()} {date_To.toLocaleTimeString()}
+            </Text>
+          </Pressable>
         </View>
+
+
+        
         <CustomButton.GoButton
           title="Submit"
           style={{ margin: 10 }}
@@ -571,17 +682,18 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   select_date_button: {
-    flex: 1,
+    // flex: 1,
     borderWidth: 2,
     borderColor: colors["light-gray"],
     padding: PixelRatio.roundToNearestPixel(10),
     margin: PixelRatio.roundToNearestPixel(5),
     borderRadius: PixelRatio.roundToNearestPixel(20),
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "left",
     alignItems: "center",
     backgroundColor: colors.white,
     elevation: PixelRatio.roundToNearestPixel(20),
+    fontSize:15,
   },
   date_text: {
     marginLeft: PixelRatio.roundToNearestPixel(10),
@@ -591,6 +703,11 @@ const styles = StyleSheet.create({
   select_date_button_container: {
     flexDirection: "row",
     justifyContent: "space-evenly",
+  },
+  select_date_button_container_vertical: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    // alignItems: "center"
   },
   actionButton: {
     flex: 1,

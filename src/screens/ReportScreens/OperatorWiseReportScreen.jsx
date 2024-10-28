@@ -28,6 +28,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import { fixedString } from "../../utils/fixedString";
 import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
 import { loginStorage } from "../../storage/appStorage";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function OperatorWiseReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
@@ -76,6 +77,14 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
 
+  const [date_From, setDate_From] = useState(new Date());
+  const [showDatePicker_From, setShowDatePicker_From] = useState(false);
+  const [showTimePicker_From, setShowTimePicker_From] = useState(false);
+
+  const [date_To, setDate_To] = useState(new Date());
+  const [showDatePicker_To, setShowDatePicker_To] = useState(false);
+  const [showTimePicker_To, setShowTimePicker_To] = useState(false);
+
   /**
    * operator_id
    * operator_name
@@ -89,14 +98,17 @@ export default function OperatorWiseReportScreen({ navigation }) {
   // useEffect(() => {
   //   getOperatorwiseReport(mydateFrom, mydateTo);
   // }, [mydateFrom, mydateTo]);
-  console.log(operatorwiseReports, '___operatorwiseReports');
+  // console.log(operatorwiseReports, '___operatorwiseReports');
+  console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
+
 
   const submitDetails = async () => {
     setLoading(true);
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    // let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+    let operator_wise_report = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
 
     if(operator_wise_report?.data?.suc>0){
       setLoading(false);
@@ -208,7 +220,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]${payloadHeader}\n` +
           `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
           `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
@@ -285,7 +298,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]${payloadHeader}\n` +
           `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
           `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
@@ -324,6 +338,36 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }
   };
 
+  
+  const onDateChange_From = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker_From(false);
+    setDate_From(currentDate);
+    // Show time picker after selecting the date
+    setShowTimePicker_From(true);
+  };
+
+  const onTimeChange_From = (event, selectedTime) => {
+    const currentTime = selectedTime || date;
+    setShowTimePicker_From(false);
+    setDate_From(currentTime);
+  };
+
+  const onDateChange_To = (event, selectedDate) => {
+    const currentDate_To = selectedDate || date;
+    setShowDatePicker_To(false);
+    setDate_To(currentDate_To);
+    // Show time picker after selecting the date
+    setShowTimePicker_To(true);
+  };
+
+  const onTimeChange_To = (event, selectedTime) => {
+    const currentTime_To = selectedTime || date;
+    setShowTimePicker_To(false);
+    setDate_To(currentTime_To);
+  };
+
+  
   return (
     <View style={{ flex: 1 }}>
 
@@ -344,8 +388,51 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
       {/* render custom Header */}
       <CustomHeader title="Operatorwise Report" navigation={navigation} />
+
+      {showDatePicker_From && (
+        <DateTimePicker
+          testID="datePicker"
+          value={date_From}
+          mode="date"
+          display="default"
+          onChange={onDateChange_From}
+        />
+      )}
+
+      {showTimePicker_From && (
+        <DateTimePicker
+          testID="timePicker"
+          value={date_From}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange_From}
+        />
+      )}
+
+      {showDatePicker_To && (
+        <DateTimePicker
+          testID="datePicker"
+          value={date_To}
+          mode="date"
+          display="default"
+          onChange={onDateChange_To}
+        />
+      )}
+
+      {showTimePicker_To && (
+        <DateTimePicker
+          testID="timePicker"
+          value={date_To}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onTimeChange_To}
+        />
+      )}
+
       {/* render from date picker */}
-      {isDisplayDateFrom && (
+      {/* {isDisplayDateFrom && (
         <RNDateTimePicker
           testID="dateTimePicker"
           value={mydateFrom}
@@ -354,10 +441,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
           display="default"
           onChange={changeSelectedDateFrom}
         />
-      )}
+      )} */}
 
       {/* render to date picker */}
-      {isDisplayDateTo && (
+      {/* {isDisplayDateTo && (
         <RNDateTimePicker
           testID="dateTimePicker"
           value={mydateTo}
@@ -366,7 +453,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           display="default"
           onChange={changeSelectedDateTo}
         />
-      )}
+      )} */}
 
       <View style={{ padding: PixelRatio.roundToNearestPixel(20), flex: 1 }}>
         <Text style={styles.select_date_header}>
@@ -374,7 +461,32 @@ export default function OperatorWiseReportScreen({ navigation }) {
           { }
         </Text>
         {/* date selector button */}
-        <View style={styles.select_date_button_container}>
+
+        <View style={styles.select_date_button_container_vertical}>
+        <Text style={{ ...styles.date_text, marginRight: 50 }}> From Date </Text>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_From(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text_Cal}>
+              {/* {mydateFrom.toLocaleDateString("en-GB")} */}
+              {date_From.toLocaleDateString()} {date_From.toLocaleTimeString()}
+            </Text>
+          </Pressable>
+
+          <Text style={{ ...styles.date_text, marginLeft: 20 }}>To Date</Text>
+          <Pressable
+            style={styles.select_date_button}
+            onPress={() => setShowDatePicker_To(true)}>
+            {icons.calendar}
+            <Text style={styles.date_text_Cal}>
+              {/* {mydateTo.toLocaleDateString("en-GB")}  */}
+              {date_To.toLocaleDateString()} {date_To.toLocaleTimeString()}
+            </Text>
+          </Pressable>
+        </View>
+        
+        {/* <View style={styles.select_date_button_container}>
           <Text style={{ ...styles.date_text, marginRight: 50 }}>
             From Date
           </Text>
@@ -398,7 +510,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
               {mydateTo.toLocaleDateString("en-GB")}
             </Text>
           </Pressable>
-        </View>
+        </View> */}
 
         <CustomButton.GoButton
           title="Submit"
@@ -540,17 +652,18 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   select_date_button: {
-    flex: 1,
+    // flex: 1,
     borderWidth: 2,
     borderColor: colors["light-gray"],
     padding: PixelRatio.roundToNearestPixel(10),
     margin: PixelRatio.roundToNearestPixel(5),
     borderRadius: PixelRatio.roundToNearestPixel(20),
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "left",
     alignItems: "center",
     backgroundColor: colors.white,
     elevation: PixelRatio.roundToNearestPixel(20),
+    fontSize:15,
   },
   date_text: {
     marginLeft: PixelRatio.roundToNearestPixel(10),
@@ -560,6 +673,11 @@ const styles = StyleSheet.create({
   select_date_button_container: {
     flexDirection: "row",
     justifyContent: "space-evenly",
+  },
+  select_date_button_container_vertical: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    // alignItems: "center"
   },
   actionButton: {
     flex: 1,

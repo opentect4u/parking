@@ -1,6 +1,6 @@
 {
   "name": "ParkingOnline",
-  "version": "2.4.0",
+  "version": "2.6.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -24,6 +24,7 @@
     "react-native": "0.72.7",
     "react-native-ble-manager": "^10.1.5",
     "react-native-bluetooth-escpos-printer": "^0.0.5",
+    "react-native-date-picker": "^5.0.7",
     "react-native-device-info": "^10.12.0",
     "react-native-element-dropdown": "^2.10.1",
     "react-native-image-base64": "^0.1.4",

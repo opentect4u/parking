@@ -113,6 +113,10 @@ const calendar = (
   <Ionicons name="calendar-outline" size={30} color={colors["primary-color"]} />
 );
 
+const calendar_small = (
+  <Ionicons name="calendar-outline" size={20} color={colors["primary-color"]} />
+);
+
 const time = (
   <Ionicons name="time-outline" size={30} color={colors["primary-color"]} />
 );
@@ -327,6 +331,7 @@ export default icons = {
   car,
   truck,
   calendar,
+  calendar_small,
   time,
   password,
   web,
