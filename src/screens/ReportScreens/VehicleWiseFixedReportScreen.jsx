@@ -114,16 +114,13 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   let totalAdvanceAmount = 0;
 
   const submitDetails = async() => {
-    // console.log('kkkkkkkkkkkk');
 
-    console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
     setLoading(true);
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     // let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-    let resdata = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
-    console.log(resdata, 'kkkkkkkkkkkkkkkkkkkkkkkkkk');
+    let resdata = await vehicleWiseReportsData(date_From, date_To, loginData.user.userdata.msg[0].id);
 
     if(resdata?.data?.suc > 0){
       setLoading(false);

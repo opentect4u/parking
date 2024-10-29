@@ -99,22 +99,24 @@ export default function OperatorWiseReportScreen({ navigation }) {
   //   getOperatorwiseReport(mydateFrom, mydateTo);
   // }, [mydateFrom, mydateTo]);
   // console.log(operatorwiseReports, '___operatorwiseReports');
-  console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
+  
 
 
   const submitDetails = async () => {
     setLoading(true);
-    let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
-    let formattedDateTo = mydateTo.toISOString().slice(0, 10);
+    // let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
+    // let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     // let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-    let operator_wise_report = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
+    let operator_wise_report = await operator_wise(date_From, date_To, loginData.user.userdata.msg[0].id);
 
     if(operator_wise_report?.data?.suc>0){
       setLoading(false);
+      
     }
-
     setOperatorwiseReports(operator_wise_report?.data?.msg);
+    
+    
 
   };
 
