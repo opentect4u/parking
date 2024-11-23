@@ -11,6 +11,7 @@ import { BackHandler } from "react-native";
 import userLogOut from "../hooks/api/userLogOut";
 
 export const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(() => false);
   const [isUpdate, setUpdate] = useState(() => false);
