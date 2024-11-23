@@ -8,7 +8,8 @@ function useOutpass() {
         // get Vehicle Rates By Id From Local Storage
         // const result = await getVehicleRatesByVehicleId(vehicleId);
         const result = await getVehicleRatesByVehicleId(vehicle_id);
-        console.log("UTSABBBB__", date_time_in);
+        // console.log("UTSABBBB__", date_time_in);
+        console.log(result[0], 'result[0]result[0]result[0]');
         if (result[0]?.rate_type == 'H') {
             // If Rate type is H, H For Hourly
             // const price = HourlyPriceCalculate( result, date_time_in, end_time, grace_period);
@@ -45,6 +46,7 @@ function useOutpass() {
                     },
                 },).then(res => {
                     resolve(res.data.data.msg);
+                    console.log(res.data.data.msg, 'ooooooooooooooooooooooooooooooooooooooo');
                 }).catch(err => {
                     console.log(err);
                     reject(err);

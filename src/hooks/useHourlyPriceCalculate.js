@@ -21,7 +21,7 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
     let price = calculatePrice(totalHours, onlyHourlyData)
-
+    console.log(price, 'pricepricepricepricepricepriceprice', totalHours, 'kkk', onlyHourlyData);
     return price
 
 }
@@ -196,14 +196,16 @@ function calculateNightHours(nightTimeStart, nightTimeEnd, dateTimeIn, dateTimeO
 
 
 function calculatePrice(hours, heyData) {
-
+    // console.log(hours, heyData, 'jjjjjjjjjjjjjjjjjjjjj');
     let price = 0;
 
     const index = heyData.findIndex(
 
         range => hours >= range.from_hour && hours <= range.to_hour,
+        
 
     )
+
 
     if (index == -1) {
         price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData)

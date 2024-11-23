@@ -8,7 +8,8 @@ function useVehicleWiseReports() {
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
              axios.post(
-                    ADDRESSES.OPERATORWISE_REPORT,
+                    // ADDRESSES.OPERATORWISE_REPORT,
+                    ADDRESSES.VEHICLE_WISE_REPORT,
                     {
                         customerUserName: getUserName,
                         from_date: fDate,

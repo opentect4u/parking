@@ -69,7 +69,7 @@ export default function DetailedReportScreen({ navigation }) {
     setDateFrom(currentDate);
     // setShowFrom(false);
     // setShowFrom(false);
-    console.log(currentDate, 'fffffffffffffffffffffffffff', event, 'lllll', selectedDate);
+    // console.log(currentDate, 'fffffffffffffffffffffffffff', event, 'lllll', selectedDate);
   };
 
 
@@ -115,7 +115,7 @@ export default function DetailedReportScreen({ navigation }) {
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data= await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-    // console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
+    console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
 
     setgetDetailedReport(rep_data?.data?.msg)
 

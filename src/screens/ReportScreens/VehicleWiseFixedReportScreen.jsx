@@ -159,17 +159,21 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   }, [])
 
   const handlePrint = async () => {
+    
     await checkLocationEnabled();
 
   // Use for Mobile Device Start 
   if (getBlePermission  && device_Type_Check == "M") {
+    
+    
   let payloadHeader = "";
   let payloadBody = "";
   let payloadFooter = "";
 
   vehicleWiseReports.map((item, index) => {
     // payloadBody += `[L]<font>${fixedString(item.vehicle_name.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-    payloadBody += `${fixedString(item.vehicle_name.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+  payloadBody += `${fixedString(item.vehicleType.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+  
   });
 
 
@@ -485,7 +489,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                           index % 2 != 0 ? styles.evenBg : styles.oddbg,
                         ]}
                         key={index}>
-                        <Text style={[styles.cell]}>{item.vehicle_name} </Text>
+                        <Text style={[styles.cell]}>{item.vehicleType} </Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
                         {/* <Text style={[styles.cell]}>
                         {new Date(item.date_time_in).toLocaleString()}

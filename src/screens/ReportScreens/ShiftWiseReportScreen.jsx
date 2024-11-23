@@ -396,7 +396,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
           Authorization: loginData.token,
         },
       }).then(res => {
-        // console.log("lllllllllllll", res.data.data.msg);
+        // console.log("lllllllllllll", res.data.data.msg, "");
         setdeviceMode(res.data.data.msg)
       }).catch(err => {
         console.log("res - getShift", err)
@@ -413,7 +413,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
 
   const handleChangeSelect = (value) => {
-    console.log(value)
+    // console.log(value, "///////////////////////////////////////////////////")
     setShift(value)
 
 
@@ -421,7 +421,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
       filteredShifts.forEach(shift => {
 
 
-        // console.log("///////////////////////////////////////////////////", useOperatorData.length);
+        // console.log(shift.shift_name, "///////////////////////////////////////////////////", useOperatorData.length);
         setShifName(shift.shift_name)
       });
   }
