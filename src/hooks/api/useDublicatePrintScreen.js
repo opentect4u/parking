@@ -22,11 +22,11 @@ function useDetailedReportScreen() {
                     },
                 )
                 .then(res => {
-                    // console.log("res - vehicleWiseReports - useDetailedReportScreen", res.data);
+                    console.log("res - vehicleWiseReports - useDetailedReportScreen", res.data);
                     resolve(res.data);
                 })
                 .catch(err => {
-                    // console.log("res - vehicleWiseReports - useDetailedReportScreen", err);
+                    console.log("res - vehicleWiseReports - useDetailedReportScreen", err);
                     reject(err);
                 });
         });

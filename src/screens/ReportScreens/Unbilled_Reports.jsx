@@ -91,14 +91,14 @@ export default function Unbilled_Reports({ navigation }) {
   const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
-
+  // console.log(formattedDateFrom, 'l', formattedDateTo, '/////////////////////////////////////////////');
     let rep_data= await unbilledReportData(formattedDateFrom, formattedDateTo);
 
     
     
 
     setgetDetailedReport(rep_data?.data?.msg)
-    // console.log("11111111111111111111111///////////",getDetailedReportg)
+    // console.log("11111111111111111111111///////////", rep_data?.data?.msg)
     // getDetailedReport(formattedDateFrom, formattedDateTo);
     // console.log(receiptSettings, '/////////////////////////////////////////////');
   };

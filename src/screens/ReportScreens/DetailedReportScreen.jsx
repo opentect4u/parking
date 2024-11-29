@@ -30,11 +30,14 @@ import ThermalPrinterModule from "react-native-thermal-printer";
 import { dateTimefixedString, dateTimefixedStringm, timefixedString123 } from "../../utils/dateTime";
 import { loginStorage } from "../../storage/appStorage";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
+
+import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 
 export default function DetailedReportScreen({ navigation }) {
   // const { detailedReports } = useContext(AuthContext);
-  const { receiptSettings } = useContext(AuthContext);
+  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
@@ -62,14 +65,12 @@ export default function DetailedReportScreen({ navigation }) {
 
   const [getDetailedReport, setgetDetailedReport] = useState();
 
+
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
     setShowFrom(false);
     const currentDate = selectedDate || mydateFrom;
     setDateFrom(currentDate);
-    // setShowFrom(false);
-    // setShowFrom(false);
-    // console.log(currentDate, 'fffffffffffffffffffffffffff', event, 'lllll', selectedDate);
   };
 
 
@@ -84,8 +85,6 @@ export default function DetailedReportScreen({ navigation }) {
     setShowTo(false);
     const currentDate = selectedDate || mydateTo;
     setDateTo(currentDate);
-    // setShowTo(false);
-    // console.log(currentDate, 'ttttttttttttttttttttt', isDisplayDateTo);
   };
 
   const [showGenerate, setShowGenerate] = useState(false);
@@ -94,33 +93,43 @@ export default function DetailedReportScreen({ navigation }) {
 
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
-  // let totalNetAmount = 0;
+  let gstAmount = {};
 
   const submitDetails = async() => {
-
-      // receiptSettings
-  // console.log(receiptSettings, '___ddddddddddd');
-
-    // {getDetailedReport &&
-    //   getDetailedReport.map((item, index) => {
-    //     totalAmount += item.paid_amt;
-    //     return (
-          
-    //         <Text style={[styles.cell]}>{item.advance_amt}</Text>
-            
-    //     );
-    //   })}
 
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     let rep_data= await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-    console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.msg)
 
     setgetDetailedReport(rep_data?.data?.msg)
 
-    // getDetailedReport(formattedDateFrom, formattedDateTo);
+    // console.log(gstList.gst_number, 'jjjjjjjjjjjjjjjjjjjjj');
+    
+
   };
+
+
+
+  // const reportGst = (totalAmount, sgst, cgst) => {
+  //   let price = 0;
+  //   let CGST = 0;
+  //   let SGST = 0;
+  //   let totalPrice = 0;
+
+  //   console.log(gstList.cgst, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+
+  //   price = totalAmount / (1 + (sgst + cgst) / 100)
+  //   cgstAmount = sgstAmount = ((totalAmount - price)) / 2
+  //   CGST = parseFloat(cgstAmount.toFixed(2));
+  //   SGST = parseFloat(cgstAmount.toFixed(2));
+
+  //   // totalPrice = price + CGST + SGST
+  //   // totalPrice = Math.round(totalPrice)
+  
+  //   return {CGST, SGST}; // Return the GST amount
+  // };
+
 
 
 
@@ -182,6 +191,9 @@ export default function DetailedReportScreen({ navigation }) {
 
     // Use for Mobile Device Start 
     if (getBlePermission && device_Type_Check == "M") {
+
+      
+      
 
     let payloadHeader = "";
     let payloadBody = "";
@@ -262,7 +274,11 @@ export default function DetailedReportScreen({ navigation }) {
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
       await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
-      await BluetoothEscposPrinter.printText(`ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText(`ADV:${totalAdvanceAmount} PAID:${totalAmount} NET:${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+      await BluetoothEscposPrinter.printText(`CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
@@ -272,52 +288,6 @@ export default function DetailedReportScreen({ navigation }) {
       alert("Printer is not connected.")
       }
 
-    // try {
-
-      
-
-    // await ThermalPrinterModule.printBluetooth({
-    // payload:
-    // `[C]${payloadHeader}\n` +
-    // `[C]<u><font size='small'>Detailed Report</font></u>\n` +
-    // `[C]--------------------------------\n` +
-    // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-    // `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-    // `[C]--------------------------------\n` +
-    // `[C]--------------------------------\n` +
-    // `[C]<font size='12'>Rec.No. Veh.No. InTime Adv Paid</font>\n` +
-    // `[C]--------------------------------` +
-    // `[C]${payloadBody}\n` +
-    // `[C]--------------------------------\n` +
-    // `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
-    // `[C]--------------------------------\n` +
-    // // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-    // // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-    // `[C]${payloadFooter}\n`,
-    // printerNbrCharactersPerLine: 30,
-    // printerDpi: 120,
-    // printerWidthMM: 58,
-    // mmFeedPaper: 25,
-    // });
-
-    // vehicleWiseReports.map(async (item, index) => {
-    //   await ThermalPrinterModule.printBluetooth({
-    //     payload:
-    //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.adv_amt}  ${item.paid_amt}\n`,
-
-    //   printerNbrCharactersPerLine: 30,
-    //   printerDpi: 120,
-    //   printerWidthMM: 58,
-    //   mmFeedPaper: 25,
-    //   })
-    // })
-    // } catch (err) {
-    // ToastAndroid.show(
-    // "ThermalPrinterModule - VehicleWiseFixedReportScreen",
-    // ToastAndroid.SHORT,
-    // );
-    // console.log(err.message);
-    // }
 
     } else if (device_Type_Check == "H") {
 
@@ -333,12 +303,6 @@ export default function DetailedReportScreen({ navigation }) {
       });
   
   
-      /* The above code is rendering three `<Text>` components in a React component. */
-      // <Text style={[styles.cell]}>{(item.receipt_no).toString().slice(-5)} </Text>
-      // <Text style={[styles.cell]}>{item.vehicle_no}</Text>
-      // <Text style={[styles.cell]}>
-      //   {new Date(item.date_time_in).toLocaleString("en-GB")}
-      // </Text>
   
   
       // Recpt.No.   Veh.No.   In Time   Amount
@@ -377,6 +341,7 @@ export default function DetailedReportScreen({ navigation }) {
   
       }
   
+      
       try {
       await ThermalPrinterModule.printBluetooth({
       payload:
@@ -392,6 +357,9 @@ export default function DetailedReportScreen({ navigation }) {
       `[C]${payloadBody}\n` +
       `[C]--------------------------------\n` +
       `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+      `[C]--------------------------------\n` +
+      `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
+      `[C]<font size='normal'>GST No.: ${gstList.gst_number}</font>\n` +
       `[C]--------------------------------\n` +
       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
       // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -517,12 +485,23 @@ export default function DetailedReportScreen({ navigation }) {
 
                   <Text style={[styles.headerText, styles.hcell, styles.marg_left]}>Adv</Text>
 
+                  {/* <Text style={[styles.headerText, styles.hcell]}>CGST</Text> */}
+
+                  {/* <Text style={[styles.headerText, styles.hcell]}>SGST</Text> */}
+
                   <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
+
+                  
                 </View>
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     totalAmount += item.paid_amt;
                     totalAdvanceAmount += item.advance_amt;
+                    // gstAmount = reportGst(totalAmount, gstList.sgst, gstList.cgst);
+                    gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                    // const { price: CGST, SGST } = gstAmount;
+                    
+                    // item.paid_amt, item.sgst, item.cgst
                     return (
                       <View
                         style={[
@@ -536,6 +515,8 @@ export default function DetailedReportScreen({ navigation }) {
                           {new Date(item.date_time_in).toLocaleString("en-GB")}
                         </Text>
                         <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text>
+                        {/* <Text style={[styles.cell]}>{item.cgst}% </Text> */}
+                        {/* <Text style={[styles.cell]}>{item.sgst}%</Text> */}
                         <Text style={[styles.cell]}>{item.paid_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                       </View>
@@ -564,6 +545,16 @@ export default function DetailedReportScreen({ navigation }) {
                     {detailedReportData && totalPrice}
                   </Text> */}
                     {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>

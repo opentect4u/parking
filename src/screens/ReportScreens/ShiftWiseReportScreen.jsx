@@ -114,7 +114,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
     let reportData= await shift_wise(formattedDateFrom,formattedDateTo,useShift, loginData.user.userdata.msg[0].id)
-    console.log("xxxxxxxxxxxxxxxxxx",reportData.data.msg, "xxxxxxxxxxxxxxxxxx", useShift)
+    console.log(formattedDateFrom,formattedDateTo,useShift, loginData.user.userdata.msg[0].id, "xxxxxxxxxxxxxxxxxx",reportData.data.msg, "xxxxxxxxxxxxxxxxxx", useShift)
 
     displayBotBlue = true;
 

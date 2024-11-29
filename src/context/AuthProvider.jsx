@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
               loginStorage.set("login-data", JSON.stringify(res.data.data));
               setIsLogin(!isLogin);
 
-              console.log(loginData, 'llllll');
+              // console.log(loginData, 'llllll');
             
           } else {
 
@@ -142,6 +142,7 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
+        // setGeneralSettings(res.data.data.msg[0]);
         setGeneralSettings(res.data.data.msg[0]);
         getGstList();
         // appStorage.set("general-settings", JSON.stringify(res.data.data.msg[0]))
@@ -216,6 +217,8 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGstList(res.data.data.msg[0]);
+        // console.log(res.data.data.msg[0], 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj');
+        
       })
       .catch(err => {
         console.log("ERR - getGstList - AuthProvider", err);

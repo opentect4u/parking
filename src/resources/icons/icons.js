@@ -4,6 +4,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Foundation from "react-native-vector-icons/Foundation";
 import FontAwsome5 from "react-native-vector-icons/FontAwesome5";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+
 
 import colors from "../colors/colors";
 
@@ -166,6 +168,14 @@ const report = (color, size) => (
   <Foundation name="graph-bar" color={color} size={size} />
 );
 
+const gst = (color, size) => (
+  <Ionicons name="calculator" color={color} size={size} />
+);
+
+const payment_mod = (color, size) => (
+  <MaterialIcons name="payments" color={color} size={size} />
+);
+
 const alertIcon = (size, color) => (
   <MaterialCommunityIcons
     name="database-alert"
@@ -241,6 +251,8 @@ const deviceMode = (
 const report2 = (
   <MaterialIcons name={"report"} size={25} color={colors["primary-color"]} />
 );
+
+
 const onepassword = (
   <MaterialCommunityIcons
     name={"onepassword"}
@@ -337,6 +349,8 @@ export default icons = {
   duplicate,
   print2,
   report,
+  gst,
+  payment_mod,
   paperRoll,
   cellphone,
   alertIcon,
@@ -360,5 +374,5 @@ export default icons = {
   flashOn,
   flashOff,
   users,
-  outpass
+  outpass,
 };

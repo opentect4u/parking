@@ -45,7 +45,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(() => false);
   const [pic, setPic] = useState();
 
-  const { generalSettings, receiptSettings } = useContext(AuthContext);
+  const { generalSettings, receiptSettings, gstList } = useContext(AuthContext);
 
   const { dev_mod, adv_value } = generalSettings;
   const [vehicleNumber, setVehicleNumber] = useState("");
@@ -213,12 +213,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     //vehicle data to update server
 
     // const currentTime___ = currentTime;
-  // console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
+  console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
   
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
-    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, "N", 0, 0);
+    // date 261124 // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
+    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
 
-    // console.log(carindata.status, 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+    console.log(carindata.status, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk');
 
     if(carindata.status){
       // Use for Mobile Device Start 

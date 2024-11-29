@@ -131,19 +131,22 @@ export default function DublicatePrintScreen({ navigation }) {
   // let totalNetAmount = 0;
 
   const submitDetails = async() => {
+    
     // Alert.alert('Selected Value', getin_outValue);
 
 
     let formattedDateFrom = mydateFrom?.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
+    // console.log(getin_outValue, "11111111111111111111ff111///////////")
+
     let rep_data= await dublicatePrintScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id, getin_outValue);
-    // console.log(getDetailedReport, "11111111111111111111111///////////",rep_data?.data?.data?.msg)
+    // 
 
     // setgetDetailedReport(rep_data?.data?.msg)
       setgetDetailedReport(rep_data?.data?.data?.msg)
-    // console.log(rep_data?.data?.data?.msg, "11111111111111111111111///////////")
-  };
+
+    };
 
 
 

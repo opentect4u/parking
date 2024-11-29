@@ -47,9 +47,9 @@ export default function OutpassScreen({ navigation }) {
   const { handleGetGst } = useGstSettings();
 
   const { check_Advance } = useCheckAdvance();
-  // const [getAdvAmount, setAdvAmount] = useState();
+  const [getAdvAmount_para, setAdvAmount_para] = useState();
   // const advAmount = 40;
-  const { generalSettings, receiptSettings } = useContext(AuthContext);
+  const { generalSettings, receiptSettings, gstList } = useContext(AuthContext);
   // const { dev_mod } = generalSettings;
 
   const options = {
@@ -219,15 +219,22 @@ export default function OutpassScreen({ navigation }) {
     });
 
 
-    if (
-      gstSettings &&
-      Array.isArray(gstSettings) &&
-      gstSettings.length > 0 &&
-      gstSettings[0]?.gst_flag === "Y"
-    ) {
-      const gstPrice = await useGstPriceCalculator(gstSettings[0], price);
+    // if (
+    //   gstSettings &&
+    //   Array.isArray(gstSettings) &&
+    //   gstSettings.length > 0 &&
+    //   gstSettings[0]?.gst_flag === "Y"
+    // ) {
+      if(generalSettings.gst_flag === "Y"){
+
+        // console.log('kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
+        
+      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
       totalRate = gstPrice.totalPrice || price;
       // totalRate = gstPrice.totalPrice || carOutPrice;
+
+      console.log(gstPrice, 'ggggggggggggggfffffffffffffffgggggggggggggggggg', gstSettings[0]);
+      
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
 
@@ -237,22 +244,41 @@ export default function OutpassScreen({ navigation }) {
       vDatainfo.parking_fees = totalPrice;
 
       vData.push(
-        { label: "BASE AMOUNT", value: baseAmount },
-        { label: "CGST", value: CGST },
-        { label: "SGST", value: SGST },
         { label: "PARKING FEES", value: totalPrice },
+        // { label: "BASE AMOUNT", value: baseAmount },
+        { label: "CGST @"+gstSettings[0].cgst+'%', value: CGST },
+        { label: "SGST @"+gstSettings[0].sgst+'%', value: SGST },
+        { label: "GST No.", value: gstSettings[0].gst_number},
+
+        // {
+        //   label: (
+        //     <>CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.cgst}%</Text></>
+        //   ), value: CGST,
+        // },
+        // {
+        //   label: (
+        //     <>
+        //       SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text>
+        //     </>
+        //   ),
+        //   value: SGST,
+        // }
+        
       );
     }
     
 
-    if (
-      (gstSettings &&
-        Array.isArray(gstSettings) &&
-        gstSettings.length > 0 &&
-        gstSettings[0]?.gst_flag === "N") ||
-      !gstSettings ||
-      (Array.isArray(gstSettings) && gstSettings.length === 0)
-    ) {
+    // if (
+    //   (gstSettings &&
+    //     Array.isArray(gstSettings) &&
+    //     gstSettings.length > 0 &&
+    //     gstSettings[0]?.gst_flag === "N") ||
+    //   !gstSettings ||
+    //   (Array.isArray(gstSettings) && gstSettings.length === 0)
+    // ) {
+
+    if(generalSettings.gst_flag === "N"){
+
       totalRate = price;
       vDatainfo.parking_fees = price;
       vData.push({ label: "PARKING FEES", value: price });
@@ -269,6 +295,7 @@ export default function OutpassScreen({ navigation }) {
       
 
       const getAdvAmount = await check_Advance(carData.receipt_no);
+      setAdvAmount_para(getAdvAmount?.data?.msg[0]?.advance_amt)
 
       var advAmount = getAdvAmount?.data?.msg[0]?.advance_amt;
 

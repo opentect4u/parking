@@ -94,15 +94,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-
+// console.log(formattedDateFrom, 'oooooooooooo', formattedDateTo, 'sssssssssssssss');
 
     let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
 
     setOperatorwiseReports(operator_wise_report?.data?.msg);
-
-    // console.log(operator_wise_report?.data?.msg, 'sssssssssssssss');
-
-
 
   };
 

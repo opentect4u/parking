@@ -97,7 +97,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
 // useEffect(() => {
 // }, [])
 
-  const { getGeneralSettings, generalSettings } = useContext(AuthContext);
+  const { getGeneralSettings, generalSettings, gstList } = useContext(AuthContext);
 
   // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
@@ -126,6 +126,11 @@ const GeneralSettingsScreen = ({ navigation }) => {
     return () => clearInterval(generalSettings);
   }, []);
 
+  // useEffect(() => {
+  //   gstList = getGstList();
+  //   return () => clearInterval(gstList);
+  // }, []);
+
   // console.log(generalSettings, 'generalSettings___UTSAB');
 
   const {
@@ -149,10 +154,18 @@ const GeneralSettingsScreen = ({ navigation }) => {
     grace_period_flag,
     grace_value,
     report_password_flag,
-    redirection_flag
+    redirection_flag,
+    gst_flag,
+    pay_mode_flag
   } = generalSettings;
 
-  console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
+  const {
+    cgst, 
+    gst_number,
+    sgst,
+  } = gstList;
+
+  console.log('flag___XXXXXXXXXX' , generalSettings, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
 
   return (
     <View style={{ flex: 1 }}>
@@ -202,6 +215,66 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 <CustomInputComponent.InputComponentWithText
                   value={device_name[0].label}
                   show
+                />
+              </SettingComponent>
+            )}
+
+            {/* GST */}
+            {gst_flag && (
+              <SettingComponent
+                icon={icons.gst(colors["primary-color"], 25)}
+                text={"GST"}>
+                <CustomSwitch
+                  isEnabled={gst_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+            )}
+
+            {/* GST % */}
+            {gst_flag === "Y" && (
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"CGST + SGST"}>
+
+              <Text
+              style={{
+              fontSize: 16, fontWeight:700,
+              paddingVertical: 8,
+              color: "#000",
+              }}
+              >
+              {`${cgst.toString()}% ${sgst.toString()}%`}
+              </Text>
+            </SettingComponent>
+            )}
+
+            {/* GST No */}
+            {gst_flag === "Y" && (
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"GST No."}>
+
+              <Text
+              style={{
+              fontSize: 16, fontWeight:700,
+              paddingVertical: 8,
+              color: "#000",
+              }}
+              >
+              {`${gst_number.toString()}`}
+              </Text>
+            </SettingComponent>
+            )}
+
+            {/* Payment Mode */}
+            {pay_mode_flag && (
+              <SettingComponent
+                icon={icons.payment_mod(colors["primary-color"], 25)}
+                text={"Payment Mode Online"}>
+                <CustomSwitch
+                  isEnabled={gst_flag == "Y" ? true : false}
+                  handleChange={() => {}}
                 />
               </SettingComponent>
             )}

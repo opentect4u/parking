@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
           if (res.data.status) {
             loginStorage.set("login-data-local", JSON.stringify(credentials));
             loginStorage.set("login-data", JSON.stringify(res.data.data));
-            console.log("=====================", res.data.data);
+            // console.log("=====================", res.data.data);
             // loginStorage.set("token", JSON.stringify(res.data.data.token))
             // loginStorage.set("userdata", JSON.stringify(res.data.data.user))
             setIsLogin(!isLogin);

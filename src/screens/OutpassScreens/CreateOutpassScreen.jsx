@@ -33,7 +33,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
   useEffect(() => {
 
-    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll');
+    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
@@ -110,12 +110,14 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
     if (gstSettings) {
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, gstSettings?.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
+      // console.log(insert_car_outpass, 'jjjjjjjjjjjjjjjj', gstSettings);
+    
     } else {
 
       
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, "N", others.vehicle_id, others.vehicle_no, others.date_time_in);
     
-      // console.log(insert_car_outpass, 'jjjjjjjjjjjjjjjj');
+      
     
     }
 
@@ -390,7 +392,11 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           {/* data  loop run below */}
           {data &&
             data.map((props, index) => (
+              
               <View key={index}>
+              {/* <Text style={{ fontFamily: 'monospace', color: 'gray' }}>
+        {JSON.stringify(props, null, 2)}
+      </Text> */}
                 <View style={styles.inLineTextContainer}>
                   <Text style={styles.text}>{props?.label} </Text>
                   <Text style={styles.text}> : {props?.value}</Text>

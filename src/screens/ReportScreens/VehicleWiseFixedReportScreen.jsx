@@ -29,9 +29,10 @@ import { fixedString } from "../../utils/fixedString";
 import useVehicleWiseReports from "../../hooks/api/useVehicleWiseReports";
 import { loginStorage } from "../../storage/appStorage";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 export default function VehicleWiseFixedReportScreen({ navigation }) {
-  const { receiptSettings } = useContext(AuthContext);
+  const { receiptSettings, gstList } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
@@ -91,20 +92,19 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
+  let gstAmount = {};
 
   const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
 
+    
+
     let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
-    console.log('xxxxxxxxxxxxxxxxx', resdata?.data?.msg, 'xxxxxxxxxxxxxxxxx')
-    setVehicleWiseReports(resdata?.data?.msg)
+    // console.log('>>>>>>>', resdata?.data?.msg, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+    setVehicleWiseReports(resdata?.data?.msg);
 
-
-
-    // getVehicleWiseReport(formattedDateFrom, formattedDateTo);
-    // setVehicleReport(vehicleWiseReports)
   };
 
   async function checkLocationEnabled() {
@@ -164,6 +164,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   // Use for Mobile Device Start 
   if (getBlePermission  && device_Type_Check == "M") {
+    
     
     
   let payloadHeader = "";
@@ -243,8 +244,12 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
         await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
         await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
-        await BluetoothEscposPrinter.printText(`ADV :${totalAdvanceAmount}  PAID:${totalAmount}  NET :${totalAmount+totalAdvanceAmount}\n`, { align: "left" });
+        await BluetoothEscposPrinter.printText(`ADV:${totalAdvanceAmount} PAID:${totalAmount} NET:${totalAmount+totalAdvanceAmount}\n`, { align: "left" });
         await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        await BluetoothEscposPrinter.printText(`CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
   
         await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
         await BluetoothEscposPrinter.printText("\r\n", {})
@@ -253,48 +258,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         alert("Printer is not connected.")
         }
 
-      // try {
-      // await ThermalPrinterModule.printBluetooth({
-      //   payload:
-      //     `[C]${payloadHeader}\n` +
-      //     `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
-      //     `[C]--------------------------------\n` +
-      //     `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-      //     `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-      //     `[C]--------------------------------\n` +
-      //     `[C]--------------------------------\n` +
-      //     `[C]<font size='normal'>Veh.   Count   Advance   Paid</font>\n` +
-      //     `[C]--------------------------------` +
-      //     `[C]${payloadBody}\n` +
-      //     `[C]--------------------------------\n` +
-      //     `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
-      //     `[C]--------------------------------\n` +
-      //     // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-      //     // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-      //     `[C]${payloadFooter}\n`,
-      //   printerNbrCharactersPerLine: 30,
-      //   printerDpi: 120,
-      //   printerWidthMM: 58,
-      //   mmFeedPaper: 25,
-      // });
-      // // vehicleWiseReports.map(async (item, index) => {
-      // //   await ThermalPrinterModule.printBluetooth({
-      // //     payload:
-      // //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.advance_amt}  ${item.paid_amt}\n`,
-
-      // //   printerNbrCharactersPerLine: 30,
-      // //   printerDpi: 120,
-      // //   printerWidthMM: 58,
-      // //   mmFeedPaper: 25,
-      // //   })
-      // // })
-      // } catch (err) {
-      // ToastAndroid.show(
-      //   "ThermalPrinterModule - VehicleWiseFixedReportScreen",
-      //   ToastAndroid.SHORT,
-      // );
-      // console.log(err.message);
-      // }
+  
 
   } else if (device_Type_Check == "H") {
     let payloadHeader = "";
@@ -354,6 +318,9 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         `[C]${payloadBody}\n` +
         `[C]--------------------------------\n` +
         `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
+        `[C]--------------------------------\n` +
+        `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +
+        `[C]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
         `[C]--------------------------------\n` +
         // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
         // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -475,6 +442,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   {/* <Text style={[styles.headerText, styles.hcell]}>In time</Text> */}
 
                   <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  
                   <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
                   {/* <Text style={[styles.headerText, styles.hcell]}>Net.Amt</Text> */}
                 </View>
@@ -482,6 +450,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   vehicleWiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
                     totalAdvanceAmount += item?.advance_amt;
+                    gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+
                     return (
                       <View
                         style={[
@@ -496,6 +466,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                       </Text> */}
 
                         <Text style={[styles.cell]}>{item?.advance_amt}</Text>
+                        <Text style={[styles.cell]}>{gstList.sgst}% </Text>
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.tot_amt + item.advance_amt}</Text> */}
                       </View>
@@ -521,6 +492,16 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}>
                       {totalAmount}
                     </Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
