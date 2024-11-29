@@ -173,7 +173,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
   vehicleWiseReports.map((item, index) => {
     // payloadBody += `[L]<font>${fixedString(item.vehicle_name.toString(), 5)}[C]${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-  payloadBody += `${fixedString(item.vehicleType.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item.advance_amt.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+  payloadBody += `${fixedString(item.vehicleType.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
   
   });
 
@@ -266,7 +266,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let payloadFooter = "";
   
     vehicleWiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicle_name.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString(item.advance_amt.toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicle_name.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
   
     if(receiptSettings?.report_flag == "Y"){
@@ -450,6 +450,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   vehicleWiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
                     totalAdvanceAmount += item?.advance_amt;
+                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
                     gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
 
                     return (
@@ -465,7 +466,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                         {new Date(item.date_time_in).toLocaleString()}
                       </Text> */}
 
-                        <Text style={[styles.cell]}>{item?.advance_amt}</Text>
+                        <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         <Text style={[styles.cell]}>{gstList.sgst}% </Text>
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.tot_amt + item.advance_amt}</Text> */}

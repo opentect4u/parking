@@ -30,6 +30,7 @@ import useCarIn from "../../hooks/api/useCarIn";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 
 // import React, { useState, useEffect, useContext } from "react";
@@ -172,6 +173,19 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }, [])
 
   const handleCreateReceipt = async () => {
+
+    let GST_Yes_No = "";
+    let GST_Header = "";
+    let gstAmount;
+
+    if (generalSettings.gst_flag == "Y") {
+    gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
+    // const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+    // console.log(vehicleAdv, 'pppppppppppppppppppppppppppppppppppp', gstAmount.CGST, gstAmount.SGST);
+    
+
+    }
+    
     if (loading == true) {
       return;
     }
@@ -213,13 +227,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     //vehicle data to update server
 
     // const currentTime___ = currentTime;
-  console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
+  // console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
   
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     // date 261124 // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
     let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
 
-    console.log(carindata.status, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk');
+    // console.log(carindata.status, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk');
 
     if(carindata.status){
       // Use for Mobile Device Start 
@@ -276,6 +290,12 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         payloadHeader += `${receiptSettings.header4}\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+          GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        } else {
+          GST_Header += ``;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
         // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         payloadFooter += `${receiptSettings.footer1}\n`;
@@ -312,6 +332,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   
       await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
       await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+      {GST_Header}
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
   
       await BluetoothEscposPrinter.printColumn(
@@ -332,7 +353,27 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         [`VEHICLE NO : ${vehicleNumber}`],
         {}
       );
+
+
+
       if (advanceAmount) {
+
+        if (generalSettings.gst_flag == "Y") {
+        await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`CGST : ${gstAmount.CGST}`],
+          {}
+        );
+
+        await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`SGST : ${gstAmount.SGST}`],
+          {}
+        );
+      }
+
         await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
@@ -340,6 +381,25 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           {}
         );
       }
+
+      // if (generalSettings.gst_flag == "Y") {
+      //   await BluetoothEscposPrinter.printColumn(
+      //     [30],
+      //     [BluetoothEscposPrinter.ALIGN.LEFT],
+      //     [`GST No. : ${gstList.gst_number}`],
+      //     {}
+      //   );
+      // } else {
+      //   await BluetoothEscposPrinter.printColumn(
+      //     [30],
+      //     [BluetoothEscposPrinter.ALIGN.LEFT],
+      //     [`GST Not Applicable.`],
+      //     {}
+      //   );
+      // }
+
+
+
       await BluetoothEscposPrinter.printColumn(
         [30],
         [BluetoothEscposPrinter.ALIGN.LEFT],
@@ -355,43 +415,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         console.log(e.message);
       }
 
-        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
-        // await ThermalPrinterModule.printBluetooth({
-        // payload:
-        // `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
-        // `[C]${payloadHeader}\n` +
-        // // `[C]<img>${headerImg}</img>\n` +
-        // // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-        // // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-        // `[C]-------------------------------\n` +
-        // `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
-        // `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-        // `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-        // // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-        // `${advanceAmount}` +
-        // // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
-        // `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
-        // `[C]-------------------------------\n` +
-        // `[C]${payloadFooter}\n`,
-        // printerNbrCharactersPerLine: 30,
-        // printerDpi: 120,
-        // printerWidthMM: 58,
-        // mmFeedPaper: 25,
-        // });
-
-
-        // } catch (err) {
-        // ToastAndroid.show(
-        // "ThermalPrinterModule - ReceiptScreen",
-        // ToastAndroid.SHORT,
-        // );
-        // console.log(err.message);
-        // }
-
-        // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
-
-        //   navigation.navigate("ReceiptScreen_Bletooth");
-        // }
+        
 
         if(generalSettings?.redirection_flag == "Y"){
 
@@ -422,6 +446,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         .toString()
         .slice(-5);
         let advanceAmount = "";
+        let gstShow_pos = "";
+        
 
         const options = {
         hour12: false,
@@ -456,6 +482,12 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+          GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+        } else {
+          GST_Header += ``;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
         payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         }
@@ -475,11 +507,24 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+        gstShow_pos += `[L]<font size='normal'>CGST : [R] ${gstAmount.CGST} \nSGST : [R] ${gstAmount.SGST} </font>\n`;
+        } else {
+        gstShow_pos += ``;
+        }
+
+        // if (generalSettings.gst_flag == "Y") {
+        //   GST_Yes_No += `[L]<font size='normal'>GST No. : [R]${gstList.gst_number}</font>\n`;
+        // } else {
+        //   GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
+        // }
+
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
         payload:
         `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
-        `[C]${payloadHeader}\n` +
+        `[C]${payloadHeader}` +
+        `${GST_Header}` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
@@ -488,8 +533,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
         `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
+        `${gstShow_pos}` +
         `${advanceAmount}` +
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
+        // `${GST_Yes_No}` +
+
         `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
         `[C]-------------------------------\n` +
         `[C]${payloadFooter}\n`,

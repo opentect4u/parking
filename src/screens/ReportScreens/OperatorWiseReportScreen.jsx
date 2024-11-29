@@ -29,9 +29,10 @@ import { fixedString } from "../../utils/fixedString";
 import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
 import { loginStorage } from "../../storage/appStorage";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 export default function OperatorWiseReportScreen({ navigation }) {
-  const { receiptSettings } = useContext(AuthContext);
+  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
   const { operator_wise } = usegetOperatorwiseReport();
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
@@ -84,6 +85,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
+  let gstAmount = {};
 
   // useEffect(() => {
   //   getOperatorwiseReport(mydateFrom, mydateTo);
@@ -152,6 +154,9 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }, [])
 
   const handlePrint = async () => {
+
+    let GST_Yes_No = "";
+
     await checkLocationEnabled();
 
   if (getBlePermission  && device_Type_Check == "M") {
@@ -161,7 +166,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
     operatorwiseReports.map((item, index) => {
       // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.advance_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.advance_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
 
     });
 
@@ -209,6 +214,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   }
 
+  if (generalSettings.gst_flag == "Y") {
+    GST_Yes_No +=  `CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n GST No.: ${gstList.gst_number}\n -------------------------------\n`;
+  } else {
+    GST_Yes_No += "GST Not Applicable.\n-------------------------------\n";
+  }
+
   try {
     ToastAndroid.showWithGravityAndOffset(
     "Receipt Created Successfully",
@@ -236,6 +247,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
     await BluetoothEscposPrinter.printText(`ADV: ${totalAdvanceAmount}  PAID: ${totalAmount}  NET: ${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
+    await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
+
+    // await BluetoothEscposPrinter.printText(`CGST@${gstList.cgst}%:${gstAmount.CGST} SGST@${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
+    // await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
+    // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
     await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
     await BluetoothEscposPrinter.printText("\r\n", {})
     } catch (e) {
@@ -243,45 +260,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
     alert("Printer is not connected.")
     }
 
-    // try {
-    //   await ThermalPrinterModule.printBluetooth({
-    //     payload:
-    //       `[C]${payloadHeader}\n` +
-    //       `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
-    //       `[C]--------------------------------\n` +
-    //       `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-    //       `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-    //       `[C]--------------------------------\n` +
-    //       `[C]--------------------------------\n` +
-    //       `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
-    //       `[C]--------------------------------` +
-    //       `[C]${payloadBody}\n` +
-    //       `[C]--------------------------------\n` +
-    //       `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
-    //       `[C]--------------------------------\n` +
-    //       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-    //       // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-    //       `[C]${payloadFooter}\n`,
-    //     printerNbrCharactersPerLine: 30,
-    //     printerDpi: 120,
-    //     printerWidthMM: 58,
-    //     mmFeedPaper: 25,
-    //   });
-    // } catch (err) {
-    //   ToastAndroid.show(
-    //     "ThermalPrinterModule - OperatorWiseReportScreen",
-    //     ToastAndroid.SHORT,
-    //   );
-    //   console.log(err.message);
-    // }
+
 
   } else if (device_Type_Check == "H") {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
+    
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.advance_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
 
@@ -319,6 +307,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   }
 
+  if (generalSettings.gst_flag == "Y") {
+    GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}\n GST : [R]${gstList.gst_number} \n GST No.: ${gstList.gst_number}</font>\n`;
+  } else {
+    GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
+  }
+
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
@@ -333,8 +327,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `[C]<font size='normal'>ADV: ${totalAdvanceAmount} PAID: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
           `[C]--------------------------------\n` +
+          `${GST_Yes_No}` +
+          // `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
+          // `[C]<font size='normal'>GST No.: ${gstList.gst_number}</font>\n` +
+          // `[C]--------------------------------\n` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
           `[C]${payloadFooter}\n`,
@@ -456,7 +454,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
-                    totalAdvanceAmount += item?.advance_amt;
+                    // totalAdvanceAmount += item?.advance_amt;
+                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
+                    // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
+                    gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+
+                    console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
+                    
                     return (
                       <View
                         style={[
@@ -467,7 +471,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                         {/* <Text style={[styles.cell]}>{index}</Text> */}
                         <Text style={[styles.cell]}>{item.opratorName}</Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
-                        <Text style={[styles.cell]}>{item?.advance_amt}</Text>
+                        <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
 
                         {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
@@ -499,6 +503,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}>
                       {totalAmount}
                     </Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>

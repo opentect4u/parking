@@ -233,7 +233,7 @@ export default function OutpassScreen({ navigation }) {
       totalRate = gstPrice.totalPrice || price;
       // totalRate = gstPrice.totalPrice || carOutPrice;
 
-      console.log(gstPrice, 'ggggggggggggggfffffffffffffffgggggggggggggggggg', gstSettings[0]);
+      console.log(price, 'ggggggggggggggfffffffffffffffgggggggggggggggggg', getAdvAmount_para);
       
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
@@ -243,28 +243,40 @@ export default function OutpassScreen({ navigation }) {
       vDatainfo.sgst = SGST;
       vDatainfo.parking_fees = totalPrice;
 
-      vData.push(
-        { label: "PARKING FEES", value: totalPrice },
-        // { label: "BASE AMOUNT", value: baseAmount },
-        { label: "CGST @"+gstSettings[0].cgst+'%', value: CGST },
-        { label: "SGST @"+gstSettings[0].sgst+'%', value: SGST },
-        { label: "GST No.", value: gstSettings[0].gst_number},
-
-        // {
-        //   label: (
-        //     <>CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.cgst}%</Text></>
-        //   ), value: CGST,
-        // },
-        // {
-        //   label: (
-        //     <>
-        //       SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text>
-        //     </>
-        //   ),
-        //   value: SGST,
-        // }
+      // vData.push(
         
+      //   ...(generalSettings.gst_flag == "Y" 
+      //     ? [
+      //         { label: "CGST @"+gstList.cgst+'%', value: CGST },
+      //         { label: "SGST @"+gstList.sgst+'%', value: SGST },
+      //         // { label: "GST No.", value: gstList.gst_number },
+      //       ]
+      //     : []),
+      //     { label: "PARKING FEES", value: totalPrice }
+        
+      // );
+
+      if (generalSettings.gst_flag == "Y") {
+      vData.push(
+
+      { label: "CGST @"+gstList.cgst+'%', value: CGST },
+      { label: "SGST @"+gstList.sgst+'%', value: SGST },
+      { label: "PARKING FEES", value: totalPrice }
+
       );
+      }
+
+      if (generalSettings.gst_flag == "N") {
+        vData.push(
+  
+        { label: "PARKING FEES", value: totalPrice }
+  
+        );
+        }
+
+      
+
+      
     }
     
 
@@ -277,14 +289,14 @@ export default function OutpassScreen({ navigation }) {
     //   (Array.isArray(gstSettings) && gstSettings.length === 0)
     // ) {
 
-    if(generalSettings.gst_flag === "N"){
+    // if(generalSettings.gst_flag === "N"){
 
-      totalRate = price;
-      vDatainfo.parking_fees = price;
-      vData.push({ label: "PARKING FEES", value: price });
+    //   totalRate = price;
+    //   vDatainfo.parking_fees = price;
+    //   vData.push({ label: "PARKING FEES", value: price });
 
-      console.log(vData);
-    }
+    //   console.log(vData);
+    // }
 
     // Paid Amount calculation by advance Amount START_____
 

@@ -42,12 +42,17 @@ function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
     // Inclusive GST
     if (gst_flag === "Y") {
 
-        console.log(gstSettings, 'yyyyyyyyyyyyccccccccccyyyyyyyyyyyyyyy', parkingFees);   
+        // console.log(gstSettings, 'yyyyyyyyyyyyccccccccccyyyyyyyyyyyyyyy', parkingFees);   
 
     // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
     // cgstAmount = sgstAmount = ((parkingFees - price)) / 2;
     // SGST = cgstAmount;
     // SGST = cgstAmount;
+    
+    // Calculate Amount on Due Amount
+    parkingFees = parkingFees - advance
+
+    // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
 
     price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
     cgstAmount = sgstAmount = ((parkingFees - price)) / 2

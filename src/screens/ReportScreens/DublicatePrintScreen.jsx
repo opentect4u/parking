@@ -41,6 +41,7 @@ import useCalculateDuration_Print from "../../hooks/useCalculateDuration_Print";
 import ThermalPrinterModule from "react-native-thermal-printer";
 import { dateTimefixedString, dateTimefixedStringm, timefixedString123 } from "../../utils/dateTime";
 import { loginStorage } from "../../storage/appStorage";
+import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
 
 
 export default function DublicatePrintScreen({ navigation }) {
@@ -65,7 +66,7 @@ export default function DublicatePrintScreen({ navigation }) {
   const date = new Date();
 
 
-  const { generalSettings} = useContext(AuthContext);
+  const { generalSettings, gstList } = useContext(AuthContext);
   const { dev_mod, adv_value } = generalSettings;
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -333,6 +334,23 @@ export default function DublicatePrintScreen({ navigation }) {
           {}
           );
           }
+
+          if (generalSettings.gst_flag == "Y") {
+            await BluetoothEscposPrinter.printColumn(
+              [30],
+              [BluetoothEscposPrinter.ALIGN.LEFT],
+              [`GST No. : ${gstList.gst_number}`],
+              {}
+            );
+          } else {
+            await BluetoothEscposPrinter.printColumn(
+              [30],
+              [BluetoothEscposPrinter.ALIGN.LEFT],
+              [`GST Not Applicable.`],
+              {}
+            );
+          }
+
           await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
@@ -442,6 +460,13 @@ export default function DublicatePrintScreen({ navigation }) {
         if (generalSettings.adv_pay == "Y") {
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
+
+        if (generalSettings.gst_flag == "Y") {
+          GST_Yes_No += `[L]<font size='normal'>GST No. : [R]${gstList.gst_number}</font>\n`;
+        } else {
+          GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
+        }
+
         // console.log(receipt_number, 'itemitemitemitemitexxxxxxxxxxxxxxxxxxxx',vehicleNumber,'xxxxxxxxxxxxxxxxxxxxxxxxxxmitem', item, 'kkkkkkkkkkk', type);
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
@@ -457,6 +482,7 @@ export default function DublicatePrintScreen({ navigation }) {
         `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
         `${advanceAmount}` +
+        `${GST_Yes_No}` +
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
         `[L]<font size='normal'>IN TIME : [R]${new Date(item.date_time_in).toLocaleString("en-GB")}</font>\n` +
         `[C]-------------------------------\n` +
@@ -555,18 +581,42 @@ if (getBlePermission && device_Type_Check == "M") {
   );
 
 
+  const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag, item.advance_amt);
+
+  const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+
+  console.log(gstPrice, 'ggggggggggggggfffffffffffffffgggggggggggggggggg');
 
   // console.log(formatDateTime_Out(new Date(item.date_time_in)), 'fffffffffff');
 
+  // if (generalSettings.gst_flag == "Y") {
+
     let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
-    {label: "PARKING FEES", value: item.base_amt}, 
-    {label: "ADVANCE", value: item.advance_amt}, 
-    {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
-    {label: "VEHICLE TYPE", value: item.vehicle_name}, 
-    {label: "VEHICLE NO", value: item.vehicle_no}, 
-    {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
-    {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
-    {label: "DURATION", value: totalDuration}];
+      {label: "PARKING FEES", value: item.base_amt}, 
+    
+      ...(generalSettings.gst_flag == "Y" 
+        ? [
+            { label: "CGST @"+gstList.cgst+'%', value: CGST },
+            { label: "SGST @"+gstList.sgst+'%', value: SGST },
+            { label: "GST No.", value: gstList.gst_number },
+          ]
+        : []),
+        
+      // { label: "CGST @"+gstList.cgst+'%', value: CGST },
+      // { label: "SGST @"+gstList.sgst+'%', value: SGST },
+      // { label: "GST No.", value: gstList.gst_number},
+  
+      {label: "ADVANCE", value: item.advance_amt}, 
+      {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
+      {label: "VEHICLE TYPE", value: item.vehicle_name}, 
+      {label: "VEHICLE NO", value: item.vehicle_no}, 
+      {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
+      {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
+      {label: "DURATION", value: totalDuration}];
+
+  // }
+
+    
 
     let payloadHeader = "";
     let payloadBody = "";

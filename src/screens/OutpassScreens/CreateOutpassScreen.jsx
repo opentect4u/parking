@@ -20,7 +20,8 @@ import ThermalPrinterModule from "react-native-thermal-printer";
 
 const CreateOutpassScreen = ({ route, navigation }) => {
 
-  const { receiptSettings } = useContext(AuthContext);
+  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
+
   const { useCarOutpass } = useOutpass();
   // Extract data and others from the route params  
   const { data, others, gstSettings, totalRate } = route.params;
@@ -33,7 +34,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
   useEffect(() => {
 
-    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
+    console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
@@ -103,6 +104,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     // console.log("totalRate __________", totalRate.paid_amt, totalRate.base_amt);
     let paid_amt = totalRate.paid_amt ? totalRate.paid_amt : totalRate.base_amt;
 
+    let GST_Header = "";
+
     // return 0
     // console.log("...............................................", paid_amt)
 
@@ -167,6 +170,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           payloadHeader += `${receiptSettings.header4}\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+          GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        } else {
+          GST_Header += ``;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
           // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
           payloadHeader += `${receiptSettings.footer1}\n`;
@@ -197,6 +206,11 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
     await BluetoothEscposPrinter.printText("OUTPASS\n", { align: "center" });
     await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
+    {GST_Header}
+
+    if (generalSettings.gst_flag == "Y") {
+      await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
+    }
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
     // await BluetoothEscposPrinter.printText(`${payloadBody}`, {align: "left"});
@@ -222,33 +236,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         setLoading(false);
     }
 
-      // try {
-
-        // await ThermalPrinterModule.printBluetooth({
-        //   payload:
-        //     `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
-        //     `[C]${payloadHeader}\n` +
-        //     // `[C]<img>${headerImg}</img>\n` +
-        //     // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-        //     // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-        //     `[C]-------------------------------\n` +
-        //     `${payloadBody}` +
-        //     // `[L]<font size='normal'>DURATION : [R]</font>\n` +
-        //     `[C]-------------------------------\n` +
-        //     `[C]${payloadFooter}\n`,
-        //   printerNbrCharactersPerLine: 30,
-        //   printerDpi: 120,
-        //   printerWidthMM: 58,
-        //   mmFeedPaper: 25,
-        // });
-
-      //   setLoading(false);
-
-      // } catch (err) {
-      //   ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
-      //   console.log(err.message);
-      //   setLoading(false);
-      // }
+      
 
       setisAvailableYet(false);
 
@@ -302,6 +290,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+          GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+        } else {
+          GST_Header += ``;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
           payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         }
@@ -315,14 +309,19 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
         }
 
+        
+
       }
+
+      
 
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
           payload:
             `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
-            `[C]${payloadHeader}\n` +
+            `[C]${payloadHeader}` +
+            `${GST_Header}` +
             // `[C]<img>${headerImg}</img>\n` +
             // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
             // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +

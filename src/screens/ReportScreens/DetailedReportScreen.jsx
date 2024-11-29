@@ -198,11 +198,12 @@ export default function DetailedReportScreen({ navigation }) {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
+    let GST_Yes_No = "";
 
     getDetailedReport.map((item, index) => {
     let datetume= dateTimefixedStringm(item.date_time_in.toString())
     // payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${item.advance_amt} [R]${item.paid_amt.toString()}</font>`
-    payloadBody += `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${datetume}  ${item.advance_amt}  ${item.paid_amt.toString()}\n`
+    payloadBody += `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt}  ${item.paid_amt.toString()}\n`
   });
 
 
@@ -250,6 +251,13 @@ export default function DetailedReportScreen({ navigation }) {
 
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      GST_Yes_No +=  `CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n GST No.: ${gstList.gst_number}\n -------------------------------\n`;
+    } else {
+      GST_Yes_No += "GST Not Applicable.\n-------------------------------\n";
+    }
+
+
       try {
       ToastAndroid.showWithGravityAndOffset(
       "Receipt Created Successfully",
@@ -277,9 +285,10 @@ export default function DetailedReportScreen({ navigation }) {
       await BluetoothEscposPrinter.printText(`ADV:${totalAdvanceAmount} PAID:${totalAmount} NET:${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-      await BluetoothEscposPrinter.printText(`CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
-      await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
-      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
+      // await BluetoothEscposPrinter.printText(`CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
+      // await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
+      // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
       await BluetoothEscposPrinter.printText("\r\n", {})
@@ -299,7 +308,7 @@ export default function DetailedReportScreen({ navigation }) {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       // console.log("datetume",datetume)
-      payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${item.advance_amt} [R]${item.paid_amt.toString()}</font>`
+      payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt} [R]${item.paid_amt.toString()}</font>`
       });
   
   
@@ -340,6 +349,12 @@ export default function DetailedReportScreen({ navigation }) {
       }
   
       }
+
+      if (generalSettings.gst_flag == "Y") {
+        GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}\n GST : [R]${gstList.gst_number} \n GST No.: ${gstList.gst_number}</font>\n`;
+      } else {
+        GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
+      }
   
       
       try {
@@ -356,11 +371,14 @@ export default function DetailedReportScreen({ navigation }) {
       `[C]--------------------------------` +
       `[C]${payloadBody}\n` +
       `[C]--------------------------------\n` +
-      `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+      `[C]<font size='normal'>ADV: ${totalAdvanceAmount} PAID: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
       `[C]--------------------------------\n` +
-      `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
-      `[C]<font size='normal'>GST No.: ${gstList.gst_number}</font>\n` +
-      `[C]--------------------------------\n` +
+
+      `${GST_Yes_No}` +
+
+      // `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
+      // `[C]<font size='normal'>GST No.: ${gstList.gst_number}</font>\n` +
+      // `[C]--------------------------------\n` +
       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
       // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
       `[C]${payloadFooter}\n`,
@@ -496,7 +514,8 @@ export default function DetailedReportScreen({ navigation }) {
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     totalAmount += item.paid_amt;
-                    totalAdvanceAmount += item.advance_amt;
+                    // totalAdvanceAmount += item.advance_amt;
+                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
                     // gstAmount = reportGst(totalAmount, gstList.sgst, gstList.cgst);
                     gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
                     // const { price: CGST, SGST } = gstAmount;
@@ -514,7 +533,7 @@ export default function DetailedReportScreen({ navigation }) {
                         <Text style={[styles.cell]}>
                           {new Date(item.date_time_in).toLocaleString("en-GB")}
                         </Text>
-                        <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text>
+                        <Text style={[styles.cell, styles.marg_left]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         {/* <Text style={[styles.cell]}>{item.cgst}% </Text> */}
                         {/* <Text style={[styles.cell]}>{item.sgst}%</Text> */}
                         <Text style={[styles.cell]}>{item.paid_amt}</Text>

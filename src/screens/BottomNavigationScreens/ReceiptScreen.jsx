@@ -144,31 +144,7 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     setAdvAmount(resData?.data?.advance_amt?.msg[0]?.advance_amt)
   }
 
-// const handlePrint = async () => {
-  //   await checkLocationEnabled();
 
-  //   try {
-  //     await ThermalPrinterModule.printBluetooth({
-  //       payload:
-  //         `[C]<u><font size='tall'>Synergic Parking</font></u>\n` +
-  //         // `[C]<img>${headerImg}</img>\n` +
-  //         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-  //         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-  //         `[C]-------------------------------\n` +
-  //         `[L]<font size='normal'>NAME : [R]${userDetails.operator_name}</font>\n` +
-  //         `[L]<font size='normal'>PHONE No. : [R]${userDetails.mobile_no}</font>\n` +
-  //         `[L]<font size='normal'>LOCATION : [R]${userDetails.seller_addr}</font>\n` +
-  //         `[L]<font size='normal'>SERIAL No. : [R]${userDetails.user_id}</font>`,
-  //       printerNbrCharactersPerLine: 30,
-  //       printerDpi: 120,
-  //       printerWidthMM: 58,
-  //       mmFeedPaper: 25,
-  //     });
-  //   } catch (err) {
-  //     ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
-  //     console.log(err.message);
-  //   }
-  // };
 
 
   // get vehicles list function
