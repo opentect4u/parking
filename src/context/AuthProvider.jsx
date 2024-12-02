@@ -144,7 +144,14 @@ export const AuthProvider = ({ children }) => {
       .then(res => {
         // setGeneralSettings(res.data.data.msg[0]);
         setGeneralSettings(res.data.data.msg[0]);
-        getGstList();
+
+        console.log(res.data.data.msg[0].gst_flag, 'koooooooooooooooooooooooo');
+        
+        if(res.data.data.msg[0].gst_flag == "Y"){
+          getGstList();
+        }
+
+        
         // appStorage.set("general-settings", JSON.stringify(res.data.data.msg[0]))
       })
       .catch(err => {
@@ -211,13 +218,13 @@ export const AuthProvider = ({ children }) => {
         {},
         {
           headers: {
-            Authorization: loginData.token,
+            "x-access-token": loginData.token,
           },
         },
       )
       .then(res => {
         setGstList(res.data.data.msg[0]);
-        // console.log(res.data.data.msg[0], 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj');
+        console.log(loginData.token , 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj', res.data.data.msg[0], 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj');
         
       })
       .catch(err => {

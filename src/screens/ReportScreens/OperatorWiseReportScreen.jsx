@@ -156,6 +156,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const handlePrint = async () => {
 
     let GST_Yes_No = "";
+    let GST_Header = "";
 
     await checkLocationEnabled();
 
@@ -292,6 +293,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    } else {
+      GST_Header += ``;
+    }
+
     if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
@@ -308,15 +315,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }
 
   if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}\n GST : [R]${gstList.gst_number} \n GST No.: ${gstList.gst_number}</font>\n`;
+    GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
   } else {
-    GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
+    GST_Yes_No += ``;
   }
 
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]${payloadHeader}\n` +
+          `[C]${payloadHeader}` +
+          `${GST_Header}` +
           `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
           `[C]--------------------------------\n` +
           `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -505,6 +513,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     </Text>
                   </View>
 
+                  {generalSettings.gst_flag == "Y" && (
+                  <>
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
@@ -514,6 +524,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
+                  </>
+                  )}
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>

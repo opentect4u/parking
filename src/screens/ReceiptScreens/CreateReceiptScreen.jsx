@@ -223,7 +223,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let gstData = await handleGetGst();
 
     await checkLocationEnabled();
-
+    console.log(gstList, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk', generalSettings.gst_flag);
     //vehicle data to update server
 
     // const currentTime___ = currentTime;
@@ -231,9 +231,22 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     // date 261124 // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
-    let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
+    
+    let carindata = "";
 
-    // console.log(carindata.status, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk');
+    if (generalSettings.gst_flag == "Y") {
+    carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
+    }
+
+    if (generalSettings.gst_flag == "N") {
+      carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
+      }
+
+    // if (generalSettings.gst_flag == "N") {
+    //   let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
+    //   }
+
+    
 
     if(carindata.status){
       // Use for Mobile Device Start 
@@ -507,11 +520,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
 
-        if (generalSettings.gst_flag == "Y") {
-        gstShow_pos += `[L]<font size='normal'>CGST : [R] ${gstAmount.CGST} \nSGST : [R] ${gstAmount.SGST} </font>\n`;
-        } else {
-        gstShow_pos += ``;
-        }
+        // if (generalSettings.gst_flag == "Y") {
+        // gstShow_pos += `[L]<font size='normal'>CGST : [R] ${gstAmount.CGST} \nSGST : [R] ${gstAmount.SGST} </font>\n`;
+        // } else {
+        // gstShow_pos += ``;
+        // }
 
         // if (generalSettings.gst_flag == "Y") {
         //   GST_Yes_No += `[L]<font size='normal'>GST No. : [R]${gstList.gst_number}</font>\n`;
@@ -533,7 +546,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
         `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
-        `${gstShow_pos}` +
+
+        // `${gstShow_pos}` +
+
         `${advanceAmount}` +
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
         // `${GST_Yes_No}` +

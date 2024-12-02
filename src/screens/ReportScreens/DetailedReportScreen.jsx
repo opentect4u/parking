@@ -187,6 +187,9 @@ export default function DetailedReportScreen({ navigation }) {
   // console.log(getDetailedReport, '___ddddddddddd');
 
   const handlePrint = async () => {
+    let GST_Yes_No = "";
+    let GST_Header = "";
+
     await checkLocationEnabled();
 
     // Use for Mobile Device Start 
@@ -198,7 +201,7 @@ export default function DetailedReportScreen({ navigation }) {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
-    let GST_Yes_No = "";
+    
 
     getDetailedReport.map((item, index) => {
     let datetume= dateTimefixedStringm(item.date_time_in.toString())
@@ -254,7 +257,7 @@ export default function DetailedReportScreen({ navigation }) {
     if (generalSettings.gst_flag == "Y") {
       GST_Yes_No +=  `CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n GST No.: ${gstList.gst_number}\n -------------------------------\n`;
     } else {
-      GST_Yes_No += "GST Not Applicable.\n-------------------------------\n";
+      GST_Yes_No += "";
     }
 
 
@@ -308,7 +311,7 @@ export default function DetailedReportScreen({ navigation }) {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       // console.log("datetume",datetume)
-      payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt} [R]${item.paid_amt.toString()}</font>`
+      payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString().slice(-5)}  ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt} [R]${item.paid_amt.toString()}</font>`
       });
   
   
@@ -334,6 +337,12 @@ export default function DetailedReportScreen({ navigation }) {
       if(receiptSettings.header4_flag==1){
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
       }
+
+      if (generalSettings.gst_flag == "Y") {
+        GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+      } else {
+        GST_Header += ``;
+      }
   
       if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -351,16 +360,17 @@ export default function DetailedReportScreen({ navigation }) {
       }
 
       if (generalSettings.gst_flag == "Y") {
-        GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}\n GST : [R]${gstList.gst_number} \n GST No.: ${gstList.gst_number}</font>\n`;
+        GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
       } else {
-        GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
+        GST_Yes_No += ``;
       }
   
       
       try {
       await ThermalPrinterModule.printBluetooth({
       payload:
-      `[C]${payloadHeader}\n` +
+      `[C]${payloadHeader}` +
+      `${GST_Header}` +
       `[C]<u><font size='small'>Detailed Report</font></u>\n` +
       `[C]--------------------------------\n` +
       `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -565,8 +575,9 @@ export default function DetailedReportScreen({ navigation }) {
                   </Text> */}
                     {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                   </View>
-
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {generalSettings.gst_flag == "Y" && (
+                    <>
+                    <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
                   </View>
@@ -575,6 +586,9 @@ export default function DetailedReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
+                    </>
+                  )}
+                  
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>

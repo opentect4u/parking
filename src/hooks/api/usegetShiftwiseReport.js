@@ -4,16 +4,22 @@ import { loginStorage } from "../../storage/appStorage";
 
 function usegetShiftwiseReport() {
     const shift_wise = async (fDate,tDate,shift_id, getUserName) => {
-        
+        console.log(fDate,tDate,shift_id, getUserName, 'fDatetDateshift_idgetUserName')
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
-            console.log(shift_id)
+            
              axios.post(
                     ADDRESSES.SHIFTWISE_REPORT_DATA,
+                //     {
+                //         "customer_id": "14",
+                //         "frm_dt": "2024-12-02",
+                //         "to_dt": "2024-12-02",
+                //         "shift_id":"13"
+                //    }
                     {
-                        customerUserName: getUserName,
-                        from_date: fDate,
-                        to_date: tDate,
+                        customer_id: getUserName,
+                        frm_dt: fDate,
+                        to_dt: tDate,
                         shift_id:shift_id
                     },
                     {

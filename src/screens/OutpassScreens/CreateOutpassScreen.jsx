@@ -34,7 +34,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
   useEffect(() => {
 
-    console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
+    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
@@ -107,18 +107,20 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     let GST_Header = "";
 
     // return 0
-    // console.log("...............................................", paid_amt)
+    
 
     // with gst without gst car outpass send to server
 
-    if (gstSettings) {
-      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, gstSettings?.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
+    if (generalSettings.gst_flag == "Y") {
+      console.log(generalSettings.gst_flag,"...............................................", device_Type_Check)
+      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
       // console.log(insert_car_outpass, 'jjjjjjjjjjjjjjjj', gstSettings);
     
-    } else {
+    } 
 
-      
-      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, "N", others.vehicle_id, others.vehicle_no, others.date_time_in);
+    if (generalSettings.gst_flag == "N") {
+      // console.log(gstSettings,"............................GST No...................", generalSettings.gst_flag)
+      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
     
       
     
@@ -242,7 +244,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       navigation.goBack();
     } else if (device_Type_Check == "H") {
-      // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh', device_Type_Check);
       try {
         let payloadHeader = "";
         let payloadBody = "";

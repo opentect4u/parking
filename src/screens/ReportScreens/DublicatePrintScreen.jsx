@@ -206,6 +206,8 @@ export default function DublicatePrintScreen({ navigation }) {
 
   const handlePrint_Dublicat = async (item) => {
     let carindata = item;
+    let GST_Yes_No = '';
+    let GST_Header = "";
     // set_carindata(item)
     // console.log(carindata, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     await checkLocationEnabled();
@@ -442,6 +444,12 @@ export default function DublicatePrintScreen({ navigation }) {
         payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+          GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+        } else {
+          GST_Header += ``;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
         payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         }
@@ -461,18 +469,21 @@ export default function DublicatePrintScreen({ navigation }) {
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
 
-        if (generalSettings.gst_flag == "Y") {
-          GST_Yes_No += `[L]<font size='normal'>GST No. : [R]${gstList.gst_number}</font>\n`;
-        } else {
-          GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
-        }
+        // if (generalSettings.gst_flag == "Y") {
+        //   GST_Yes_No += `[L]<font size='normal'>GST No. : [R]${gstList.gst_number}</font>\n`;
+        // } else {
+        //   GST_Yes_No += ``;
+        // }
+
+        
 
         // console.log(receipt_number, 'itemitemitemitemitexxxxxxxxxxxxxxxxxxxx',vehicleNumber,'xxxxxxxxxxxxxxxxxxxxxxxxxxmitem', item, 'kkkkkkkkkkk', type);
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
         payload:
         `[C]<u><font size='tall'>DUPLICATE-RECEIPT</font></u>\n` +
-        `[C]${payloadHeader}\n` +
+        `[C]${payloadHeader}` +
+        `${GST_Header}` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
@@ -482,7 +493,7 @@ export default function DublicatePrintScreen({ navigation }) {
         `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
         `${advanceAmount}` +
-        `${GST_Yes_No}` +
+        // `${GST_Yes_No}` +
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
         `[L]<font size='normal'>IN TIME : [R]${new Date(item.date_time_in).toLocaleString("en-GB")}</font>\n` +
         `[C]-------------------------------\n` +
@@ -585,7 +596,6 @@ if (getBlePermission && device_Type_Check == "M") {
 
   const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
 
-  console.log(gstPrice, 'ggggggggggggggfffffffffffffffgggggggggggggggggg');
 
   // console.log(formatDateTime_Out(new Date(item.date_time_in)), 'fffffffffff');
 
@@ -606,7 +616,7 @@ if (getBlePermission && device_Type_Check == "M") {
       // { label: "SGST @"+gstList.sgst+'%', value: SGST },
       // { label: "GST No.", value: gstList.gst_number},
   
-      {label: "ADVANCE", value: item.advance_amt}, 
+      {label: "ADVANCE ", value: item.advance_amt}, 
       {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
       {label: "VEHICLE TYPE", value: item.vehicle_name}, 
       {label: "VEHICLE NO", value: item.vehicle_no}, 
@@ -737,15 +747,44 @@ setLoading(false);
     new Date(item.date_time_in).getTime(), new Date(item.date_time_out).getTime()
   );
 
-    let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
-    {label: "PARKING FEES", value: item.base_amt}, 
-    {label: "ADVANCE", value: item.advance_amt}, 
-    {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
-    {label: "VEHICLE TYPE", value: item.vehicle_name}, 
-    {label: "VEHICLE NO", value: item.vehicle_no}, 
-    {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
-    {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
-    {label: "DURATION", value: totalDuration}];
+  let data = "";
+  let totalRate = 0;
+  
+    if(generalSettings.gst_flag == "Y"){
+
+      const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
+      const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+
+      // console.log(item, 'itemitemitemitemitemitemitemitemitemitemitemitemitemitemitem', baseAmount, CGST, SGST, totalPrice, 'oooooo', gstPrice);
+
+      // debugger
+      
+      data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
+        {label: "FARE", value: totalPrice - (CGST + SGST) }, 
+        { label: "CGST @"+gstList.cgst+'%', value: CGST },
+        { label: "SGST @"+gstList.sgst+'%', value: SGST },
+        {label: "PARKING FEES", value: item.base_amt}, 
+        // {label: "ADVANCE", value: item.advance_amt}, 
+        // {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
+        {label: "VEHICLE TYPE", value: item.vehicle_name}, 
+        {label: "VEHICLE NO", value: item.vehicle_no}, 
+        {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
+        {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
+        {label: "DURATION", value: totalDuration}];
+    }
+
+    if(generalSettings.gst_flag == "N"){
+      data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
+        {label: "PARKING FEES", value: item.base_amt}, 
+        {label: "ADVANCE", value: item.advance_amt}, 
+        {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
+        {label: "VEHICLE TYPE", value: item.vehicle_name}, 
+        {label: "VEHICLE NO", value: item.vehicle_no}, 
+        {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
+        {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
+        {label: "DURATION", value: totalDuration}];
+    }
+    
 
     // console.log(totalDuration, 'jjjjjjjjjxxxxxxxxjjjj', item);
 
@@ -787,6 +826,12 @@ setLoading(false);
       payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    } else {
+      GST_Header += ``;
+    }
+
     if (receiptSettings.footer1_flag == 1) {
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
@@ -807,7 +852,8 @@ setLoading(false);
     await ThermalPrinterModule.printBluetooth({
       payload:
         `[C]<u><font size='tall'>DUPLICATE-OUTPASS</font></u>\n` +
-        `[C]${payloadHeader}\n` +
+        `[C]${payloadHeader}` +
+        `${GST_Header}` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +

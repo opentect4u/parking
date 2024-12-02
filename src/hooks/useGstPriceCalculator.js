@@ -1,4 +1,5 @@
-function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
+// function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
+function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
     let price = 0;
     let CGST = 0;
     let SGST = 0;
@@ -50,7 +51,7 @@ function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
     // SGST = cgstAmount;
     
     // Calculate Amount on Due Amount
-    parkingFees = parkingFees - advance
+    // parkingFees = parkingFees - advance
 
     // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
 

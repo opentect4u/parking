@@ -32,7 +32,8 @@ import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 export default function VehicleWiseFixedReportScreen({ navigation }) {
-  const { receiptSettings, gstList } = useContext(AuthContext);
+  const {generalSettings, receiptSettings, gstList } = useContext(AuthContext);
+  
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
@@ -159,7 +160,9 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   }, [])
 
   const handlePrint = async () => {
-    
+    let GST_Yes_No = "";
+    let GST_Header = "";
+
     await checkLocationEnabled();
 
   // Use for Mobile Device Start 
@@ -266,7 +269,9 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let payloadFooter = "";
   
     vehicleWiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicle_name.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      console.log(item, 'oooooooooooooooooooooooooooooo');
+      
+      payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
   
     if(receiptSettings?.report_flag == "Y"){
@@ -287,6 +292,12 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     if(receiptSettings.header4_flag==1){
     payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
+
+    if (generalSettings.gst_flag == "Y") {
+      GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    } else {
+      GST_Header += ``;
+    }
   
     if(receiptSettings.footer1_flag==1){
     payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -302,11 +313,19 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     }
   
     }
+
+    if (generalSettings.gst_flag == "Y") {
+      GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
+    } else {
+      GST_Yes_No += ``;
+    }
+
   
     try {
     await ThermalPrinterModule.printBluetooth({
       payload:
-        `[C]${payloadHeader}\n` +
+        `[C]${payloadHeader}` +
+        `${GST_Header}` +
         `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
         `[C]--------------------------------\n` +
         `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -319,8 +338,9 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         `[C]--------------------------------\n` +
         `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
         `[C]--------------------------------\n` +
-        `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +
-        `[C]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
+        `${GST_Yes_No}` +
+        // `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +
+        // `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
         `[C]--------------------------------\n` +
         // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
         // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -495,6 +515,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     </Text>
                   </View>
 
+                  {generalSettings.gst_flag == "Y" && (
+                    <>
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
@@ -504,7 +526,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
-
+                  </>
+                  )}
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Net Amount

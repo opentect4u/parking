@@ -165,7 +165,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     sgst,
   } = gstList;
 
-  console.log('flag___XXXXXXXXXX' , generalSettings, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
+  console.log(gstList, 'flag___XXXXXXXXXX' , generalSettings, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
 
   return (
     <View style={{ flex: 1 }}>
@@ -244,7 +244,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
               color: "#000",
               }}
               >
-              {`${cgst.toString()}% ${sgst.toString()}%`}
+              {`${cgst}% ${sgst}%`}
               </Text>
             </SettingComponent>
             )}
@@ -262,7 +262,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
               color: "#000",
               }}
               >
-              {`${gst_number.toString()}`}
+              {`${gst_number}`}
               </Text>
             </SettingComponent>
             )}

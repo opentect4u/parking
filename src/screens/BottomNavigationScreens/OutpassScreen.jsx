@@ -227,13 +227,14 @@ export default function OutpassScreen({ navigation }) {
     // ) {
       if(generalSettings.gst_flag === "Y"){
 
-        // console.log('kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
+        console.log('kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
         
-      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
+      // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
+      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
       totalRate = gstPrice.totalPrice || price;
       // totalRate = gstPrice.totalPrice || carOutPrice;
 
-      console.log(price, 'ggggggggggggggfffffffffffffffgggggggggggggggggg', getAdvAmount_para);
+      // console.log(gstPrice, 'ggggggggggggggfffffff',gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para,'ffffffffgggggggggggggggggg', getAdvAmount_para);
       
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
@@ -256,27 +257,37 @@ export default function OutpassScreen({ navigation }) {
         
       // );
 
-      if (generalSettings.gst_flag == "Y") {
+      // if (generalSettings.gst_flag == "Y") {
       vData.push(
-
+      { label: "FARE", value: totalPrice - (CGST + SGST) },
       { label: "CGST @"+gstList.cgst+'%', value: CGST },
       { label: "SGST @"+gstList.sgst+'%', value: SGST },
       { label: "PARKING FEES", value: totalPrice }
-
       );
-      }
+      // }
 
-      if (generalSettings.gst_flag == "N") {
-        vData.push(
+      // if (generalSettings.gst_flag == "N") {
+      //   vData.push(
   
-        { label: "PARKING FEES", value: totalPrice }
+      //   { label: "PARKING FEES", value: totalPrice }
   
-        );
-        }
+      //   );
+      //   }
 
       
 
       
+    }
+
+    if(generalSettings.gst_flag === "N"){
+
+      totalRate = price;
+      vDatainfo.parking_fees = price;
+      vData.push({ label: "PARKING FEES", value: price });
+
+      console.log(totalRate, 'uuuuuuuuu', price);
+      
+
     }
     
 
