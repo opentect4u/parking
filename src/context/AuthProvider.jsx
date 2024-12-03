@@ -145,7 +145,7 @@ export const AuthProvider = ({ children }) => {
         // setGeneralSettings(res.data.data.msg[0]);
         setGeneralSettings(res.data.data.msg[0]);
 
-        console.log(res.data.data.msg[0].gst_flag, 'koooooooooooooooooooooooo');
+        console.log(res.data.data.msg[0], 'koooooooooooooooooooooooo');
         
         if(res.data.data.msg[0].gst_flag == "Y"){
           getGstList();

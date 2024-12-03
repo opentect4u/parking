@@ -85,6 +85,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
+  let totalUPIAmount = 0;
+  let totalCashAmount = 0;
   let gstAmount = {};
 
   // useEffect(() => {
@@ -99,6 +101,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 // console.log(formattedDateFrom, 'oooooooooooo', formattedDateTo, 'sssssssssssssss');
 
     let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
+// console.log('ooooooooooooooooooooooooooooooooooo', operator_wise_report?.data?.msg, 'ooooooooooooooooooooooooooooooooooo');
 
     setOperatorwiseReports(operator_wise_report?.data?.msg);
 
@@ -167,8 +170,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
     operatorwiseReports.map((item, index) => {
       // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.advance_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-      payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
-
+      // payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `${fixedString(item.opratorName.toString(), 4)}       ${fixedString(item.tot_vehi.toString(), 4)}        ${fixedString(item.tot_amt.toString(), 4)}\n` : `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`}`
     });
 
     // console.log("///////////////////////////////////////////////////", operatorwiseReports);
@@ -195,6 +198,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
         // payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         payloadHeader += `${receiptSettings.header4}\n`;
         }
+
+        // if (generalSettings.gst_flag == "Y") {
+        //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+        // } else {
+        //   GST_Header += ``;
+        // }
     
         if(receiptSettings.footer1_flag==1){
         // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -215,11 +225,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   }
 
-  if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No +=  `CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n GST No.: ${gstList.gst_number}\n -------------------------------\n`;
-  } else {
-    GST_Yes_No += "GST Not Applicable.\n-------------------------------\n";
-  }
+  // if (generalSettings.gst_flag == "Y") {
+  //   GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+  // } else {
+  //   GST_Yes_No += "";
+  // }
 
   try {
     ToastAndroid.showWithGravityAndOffset(
@@ -231,6 +241,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
     );
 
     await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+    // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
+    if (generalSettings.gst_flag == "Y") {
+      await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+      }
     await BluetoothEscposPrinter.printText(`Operatorwise Report\n`, { align: "center" });
     
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
@@ -241,14 +255,37 @@ export default function OperatorWiseReportScreen({ navigation }) {
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-    await BluetoothEscposPrinter.printText("Name.   Count   Advance   Paid\n", { align: "center" });
+    
+
+    if (generalSettings.gst_flag === "Y") {
+      await BluetoothEscposPrinter.printText("Name.      Count      Paid\n", { align: "center" });
+      }
+
+    if (generalSettings.gst_flag === "N") {
+      await BluetoothEscposPrinter.printText("Name.   Count   Advance   Paid\n", { align: "center" });
+    }
+
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
     await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
-    await BluetoothEscposPrinter.printText(`ADV: ${totalAdvanceAmount}  PAID: ${totalAmount}  NET: ${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
+
+    if (generalSettings.gst_flag === "Y") {
+      await BluetoothEscposPrinter.printText(`UPI:${totalUPIAmount}  CASH:${totalCashAmount}  NET:${totalAmount}\n`, { align: "center" });  
+    }
+
+    if (generalSettings.gst_flag === "N") {
+      await BluetoothEscposPrinter.printText(`ADV: ${totalAdvanceAmount}  PAID: ${totalAmount}  NET: ${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
+    }
+
+    
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-    await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
+    // await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
+
+    if (generalSettings.gst_flag == "Y") {
+      await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+      // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+    }
 
     // await BluetoothEscposPrinter.printText(`CGST@${gstList.cgst}%:${gstAmount.CGST} SGST@${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
     // await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
@@ -270,7 +307,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
     
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
+      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
 
@@ -315,7 +353,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }
 
   if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No += `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
   } else {
     GST_Yes_No += ``;
   }
@@ -331,11 +369,14 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
+          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Name.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Name.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
+          // `[C]<font size='normal'>Name.   Count   Advance   Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount} PAID: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          // `[C]<font size='normal'>ADV: ${totalAdvanceAmount} PAID: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} [L]CASH: ${totalCashAmount} [R]NET: ${totalAmount}</font>\n` : ""}` +
+          `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount} [L]PAID: ${totalAmount} [R]NET: ${totalAmount + totalAdvanceAmount}</font>\n` : ""}` +
           `[C]--------------------------------\n` +
           `${GST_Yes_No}` +
           // `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
@@ -451,7 +492,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     Name
                   </Text>
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
-                  <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  {generalSettings.gst_flag === "N" && (
+                  <Text style={[styles.headerText, styles.hcell]}>Adv</Text>
+                  )}
+                  
                   <Text style={[styles.headerText, styles.hcell]}>Paid </Text>
 
                   {/* <Text style={[styles.headerText, styles.hcell]}>
@@ -459,13 +503,32 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   </Text> */}
                 </View>
               )}
+
+                {generalSettings.gst_flag == "Y" && (
+                <>
+                {operatorwiseReports.forEach(item => {
+                if (item?.pay_mode === "U") {
+                totalUPIAmount += item.tot_amt;
+                
+                }
+
+                if (item?.pay_mode === "C") {
+                  totalCashAmount += item.tot_amt;
+                  }
+
+                })}
+                </>
+                )}
+
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
                     // totalAdvanceAmount += item?.advance_amt;
                     totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
                     // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
-                    gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                    {generalSettings.gst_flag == "Y" && (
+                      gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                    )}
 
                     console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
                     
@@ -479,7 +542,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
                         {/* <Text style={[styles.cell]}>{index}</Text> */}
                         <Text style={[styles.cell]}>{item.opratorName}</Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
+                        {generalSettings.gst_flag === "N" && (
                         <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
+                        )}
+                        
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
 
                         {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
@@ -493,17 +559,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   })}
                   {operatorwiseReports.length!=0 &&(
                   <>
-                  <View
-                    style={{...styles.row, backgroundColor: colors["primary-color"],
-                    }}>
-                    <Text style={[styles.cell, styles.hcell]}> Advance Amount </Text>
-                    <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
-                    {/* <Text style={[styles.cell, styles.hcell]}>
-                      {detailedReportData && totalPrice}
-                    </Text>
-                    <Text style={[styles.cell]}>{item.age}</Text> */}
-                  </View>
 
+                  {generalSettings.gst_flag === "N" && (
+                    <>
+                  <View
+                  style={{...styles.row, backgroundColor: colors["primary-color"],
+                  }}>
+                  <Text style={[styles.cell, styles.hcell]}> Advance Amount </Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
+                  </View>
+                  
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Paid Amount
@@ -512,6 +577,31 @@ export default function OperatorWiseReportScreen({ navigation }) {
                       {totalAmount}
                     </Text>
                   </View>
+                  
+                  </>
+                  )}
+
+
+                  {generalSettings.gst_flag === "Y" && (
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Base Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {/* {totalAmount} // */}
+                      {generalSettings.gst_flag == "Y" && (
+                        <>
+                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        </>
+                      )}
+                    </Text>
+                   
+                  </View>
+                  )}
+
+                  
+
+                  
 
                   {generalSettings.gst_flag == "Y" && (
                   <>
@@ -535,6 +625,30 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     {totalAmount + totalAdvanceAmount}
                   </Text>
                   </View>
+
+                  {generalSettings.gst_flag == "Y" && (
+                    <>
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                Cash
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {totalUPIAmount}
+                </Text>
+
+                </View>
+
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                UPI
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {totalCashAmount}
+                </Text>
+
+                </View>
+                </>
+                )}
 
                   
                   

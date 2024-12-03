@@ -16,6 +16,7 @@ import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 
 import BleManager from "react-native-ble-manager";
 import ThermalPrinterModule from "react-native-thermal-printer";
+import RadioButton from '../../components/RadioButton';
 
 
 const CreateOutpassScreen = ({ route, navigation }) => {
@@ -32,12 +33,29 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
+  const [radioState, setRadioState] = useState(false);
+  const [getPayMode, setPayMode] = useState('C');
+  const radioOptions = [
+    { label: 'Cash: ', value: 'C' },
+    { label: 'UPI: ', value: 'U' },
+  ];
+
+  const handleRadioSelect = (value) => {
+    setRadioState(!radioState);
+
+    setPayMode(value);
+    // var carindata = [];
+    // console.log(value, 'upiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', getPayMode);
+    
+  };
+
   useEffect(() => {
 
     // console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
+    
   }, []);
 
 
@@ -98,13 +116,14 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   // console.log("xjdfhgiuvhdiuhgiusheirghiuerdrgiierjgki",vDatainfo)
 
   const handlePrintReceipt = async () => {
-    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll');
+    // console.log('upiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiXXX', generalSettings.pay_mode_flag );
     // setLoading(true);
     // setisAvailableYet(true);
     // console.log("totalRate __________", totalRate.paid_amt, totalRate.base_amt);
     let paid_amt = totalRate.paid_amt ? totalRate.paid_amt : totalRate.base_amt;
 
     let GST_Header = "";
+    let pay_Mode = "";
 
     // return 0
     
@@ -112,15 +131,15 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     // with gst without gst car outpass send to server
 
     if (generalSettings.gst_flag == "Y") {
-      console.log(generalSettings.gst_flag,"...............................................", device_Type_Check)
-      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
+      // console.log(generalSettings.gst_flag,"...............................................", device_Type_Check)
+      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
       // console.log(insert_car_outpass, 'jjjjjjjjjjjjjjjj', gstSettings);
     
     } 
 
     if (generalSettings.gst_flag == "N") {
       // console.log(gstSettings,"............................GST No...................", generalSettings.gst_flag)
-      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in);
+      var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
     
       
     
@@ -172,11 +191,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           payloadHeader += `${receiptSettings.header4}\n`;
         }
 
-        if (generalSettings.gst_flag == "Y") {
-          GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-        } else {
-          GST_Header += ``;
-        }
+        // if (generalSettings.gst_flag == "Y") {
+        //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+        // } else {
+        //   GST_Header += ``;
+        // }
 
         if (receiptSettings.footer1_flag == 1) {
           // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -197,6 +217,10 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       }
 
+      // if (generalSettings.pay_mode_flag == "Y") {
+      //   pay_Mode += `${getPayMode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
+      // }
+
       try {
         ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
@@ -208,15 +232,24 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
     await BluetoothEscposPrinter.printText("OUTPASS\n", { align: "center" });
     await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
-    {GST_Header}
 
     if (generalSettings.gst_flag == "Y") {
-      await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
+    await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
     }
+
+    // if (generalSettings.gst_flag == "Y") {
+    //   await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
+    // }
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
     // await BluetoothEscposPrinter.printText(`${payloadBody}`, {align: "left"});
     await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+
+    if (generalSettings.pay_mode_flag == "Y") {
+        // pay_Mode += `${getPayMode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
+        await BluetoothEscposPrinter.printText(`${getPayMode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`, { align: "left" });
+    }
+    // await BluetoothEscposPrinter.printText(`${pay_Mode}`, { align: "left" });
     // await BluetoothEscposPrinter.printColumn(
     //   [30],
     //   [BluetoothEscposPrinter.ALIGN.LEFT],
@@ -244,7 +277,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       navigation.goBack();
     } else if (device_Type_Check == "H") {
-      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh', device_Type_Check);
+      // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh', device_Type_Check);
       try {
         let payloadHeader = "";
         let payloadBody = "";
@@ -315,6 +348,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
       }
 
+      if (generalSettings.pay_mode_flag == "Y") {
+        // pay_Mode += `[L]<font size='normal'>Payment Mode : [R] `${generalSettings.pay_mode_flag == "Y" ? "UPI" : "Cash"}`</font>\n`
+        pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>Payment Mode : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
+        // pay_Mode += `[L]<font size='normal'>Payment Mode : UPI</font>\n`
+      }
+      
       
 
 
@@ -329,6 +368,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
             // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
             `[C]-------------------------------\n` +
             `${payloadBody}` +
+            `${pay_Mode}` +
             // `[L]<font size='normal'>DURATION : [R]</font>\n` +
             `[C]-------------------------------\n` +
             `[C]${payloadFooter}\n`,
@@ -399,9 +439,11 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         {JSON.stringify(props, null, 2)}
       </Text> */}
                 <View style={styles.inLineTextContainer}>
-                  <Text style={styles.text}>{props?.label} </Text>
+                  <Text style={styles.text}>{props?.label}</Text>
                   <Text style={styles.text}> : {props?.value}</Text>
                 </View>
+                <View style={styles.radioButton}>
+        </View>
                 <View
                   style={{
                     borderBottomColor: 'black',
@@ -410,6 +452,22 @@ const CreateOutpassScreen = ({ route, navigation }) => {
                 />
               </View>
             ))}
+
+{/* {if (generalSettings.pay_mode_flag == "Y") {} */}
+{generalSettings.pay_mode_flag == "Y" && (
+<View style={styles.radioButton_new}>
+{radioOptions.map(option => (
+        <RadioButton
+          key={option.value}
+          label={option.label}
+          // labelStyle={styles.radioButtonText} // Apply text style
+          selected={option.value === getPayMode}
+          onPress={() => handleRadioSelect(option.value)}
+          customFont={20}
+        />
+      ))}
+      </View>
+)}
 
           {/* render action buttons */}
           <View
@@ -450,6 +508,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: PixelRatio.roundToNearestPixel(10),
     alignSelf: 'center',
+  },
+  radioButton_new:{
+    flexDirection:'row',lineHeight: 24, justifyContent: 'space-between',
+    marginTop:15,
+    paddingLeft:15, paddingRight:15, display:'inline',
+  },
+  radioButtonText: {
+    fontSize: 20, // Increases the text size
+    color: 'red', // Sets the text color to black
   },
   text: {
     color: colors.black,

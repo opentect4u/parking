@@ -121,7 +121,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
   // };
 
   useEffect(() => {
-    // console.log("GeneralSettingsScreen___", getGeneralSettings);
+    console.log(generalSettings, "GeneralSettingsScreen___", getGeneralSettings );
     const generalSettings = getGeneralSettings();
     return () => clearInterval(generalSettings);
   }, []);
@@ -165,7 +165,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     sgst,
   } = gstList;
 
-  console.log(gstList, 'flag___XXXXXXXXXX' , generalSettings, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
+  console.log(gstList, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
 
   return (
     <View style={{ flex: 1 }}>
@@ -268,16 +268,27 @@ const GeneralSettingsScreen = ({ navigation }) => {
             )}
 
             {/* Payment Mode */}
-            {pay_mode_flag && (
-              <SettingComponent
+            {/* {pay_mode_flag && ( */}
+              {/* <SettingComponent
                 icon={icons.payment_mod(colors["primary-color"], 25)}
                 text={"Payment Mode Online"}>
                 <CustomSwitch
                   isEnabled={gst_flag == "Y" ? true : false}
                   handleChange={() => {}}
                 />
+              </SettingComponent> */}
+            {/* )} */}
+
+            {pay_mode_flag && (
+              <SettingComponent
+                icon={icons.report(colors["primary-color"], 25)}
+                text={"Payment Mode Online"}>
+                <CustomSwitch
+                  isEnabled={pay_mode_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
               </SettingComponent>
-            )}
+             )}
             
             {/* Reports */}
             {report_flag && (
@@ -285,7 +296,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 icon={icons.report(colors["primary-color"], 25)}
                 text={"Reports"}>
                 <CustomSwitch
-                  isEnabled={report_flag == "Y" ? true : false}
+                  isEnabled={pay_mode_flag == "Y" ? true : false}
                   handleChange={() => {}}
                 />
               </SettingComponent>

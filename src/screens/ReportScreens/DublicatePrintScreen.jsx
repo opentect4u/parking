@@ -146,6 +146,8 @@ export default function DublicatePrintScreen({ navigation }) {
 
     // setgetDetailedReport(rep_data?.data?.msg)
       setgetDetailedReport(rep_data?.data?.data?.msg)
+      console.log(rep_data?.data?.data?.msg, 'rep_data?.data?.data?.msg');
+      
 
     };
 
@@ -205,9 +207,12 @@ export default function DublicatePrintScreen({ navigation }) {
   // console.log(getDetailedReport, '___ddddddddddd');
 
   const handlePrint_Dublicat = async (item) => {
+    // console.log(item, 'itemitemitemitemitemitemitemitemitem');
+    
     let carindata = item;
     let GST_Yes_No = '';
     let GST_Header = "";
+    let pay_Mode = "";
     // set_carindata(item)
     // console.log(carindata, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     await checkLocationEnabled();
@@ -268,6 +273,13 @@ export default function DublicatePrintScreen({ navigation }) {
           // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
           payloadHeader += `${receiptSettings.header4}\n`;
           }
+
+          // if (generalSettings.gst_flag == "Y") {
+          //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+          //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+          // } else {
+          //   GST_Header += ``;
+          // }
   
           if (receiptSettings.footer1_flag == 1) {
           // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -308,6 +320,10 @@ export default function DublicatePrintScreen({ navigation }) {
 
           await BluetoothEscposPrinter.printText("DUPLICATE-RECEIPT\n", { align: "center" });
           await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+          // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
+          if (generalSettings.gst_flag == "Y") {
+            await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+          }
           await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
           await BluetoothEscposPrinter.printColumn(
@@ -590,34 +606,44 @@ if (getBlePermission && device_Type_Check == "M") {
     // currentDate.getTime(),
     new Date(item.date_time_in).getTime(), new Date(item.date_time_out).getTime()
   );
-
-
-  const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag, item.advance_amt);
+  console.log(item, 'itemitemitemitemitemitemitem');
+  
+  //   const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag, item.advance_amt);
+  const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
+  // const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
 
   const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
 
 
-  // console.log(formatDateTime_Out(new Date(item.date_time_in)), 'fffffffffff');
+  // console.log(gstPrice, 'fffffffffff');
 
   // if (generalSettings.gst_flag == "Y") {
 
     let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
-      {label: "PARKING FEES", value: item.base_amt}, 
+      
     
       ...(generalSettings.gst_flag == "Y" 
         ? [
+            {label: "FARE", value: item.base_amt}, 
             { label: "CGST @"+gstList.cgst+'%', value: CGST },
             { label: "SGST @"+gstList.sgst+'%', value: SGST },
-            { label: "GST No.", value: gstList.gst_number },
+            {label: "PARKING FEES", value: item.paid_amt}, 
           ]
         : []),
+
+        ...(generalSettings.gst_flag == "N" 
+          ? [
+            {label: "ADVANCE ", value: item.advance_amt}, 
+            {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt},
+            ]
+          : []),
         
       // { label: "CGST @"+gstList.cgst+'%', value: CGST },
       // { label: "SGST @"+gstList.sgst+'%', value: SGST },
       // { label: "GST No.", value: gstList.gst_number},
   
-      {label: "ADVANCE ", value: item.advance_amt}, 
-      {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
+      
+       
       {label: "VEHICLE TYPE", value: item.vehicle_name}, 
       {label: "VEHICLE NO", value: item.vehicle_no}, 
       {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
@@ -663,6 +689,13 @@ if (getBlePermission && device_Type_Check == "M") {
       payloadHeader += `${receiptSettings.header4}\n`;
     }
 
+    // if (generalSettings.gst_flag == "Y") {
+    //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+    //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+    // } else {
+    //   GST_Header += ``;
+    // }
+
     if (receiptSettings.footer1_flag == 1) {
       // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
       payloadFooter += `${receiptSettings.footer1}\n`;
@@ -682,33 +715,11 @@ if (getBlePermission && device_Type_Check == "M") {
 
   }
 
-  // try {
-    
-    // await ThermalPrinterModule.printBluetooth({
-    //   payload:
-    //     `[C]<u><font size='tall'>DUPLICATE-OUTPASS</font></u>\n` +
-    //     `[C]${payloadHeader}\n` +
-    //     // `[C]<img>${headerImg}</img>\n` +
-    //     // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-    //     // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-    //     `[C]-------------------------------\n` +
-    //     `${payloadBody}` +
-    //     // `[L]<font size='normal'>DURATION : [R]</font>\n` +
-    //     `[C]-------------------------------\n` +
-    //     `[C]${payloadFooter}\n`,
-    //   printerNbrCharactersPerLine: 30,
-    //   printerDpi: 120,
-    //   printerWidthMM: 58,
-    //   mmFeedPaper: 25,
-    // });
-
-    // setLoading(false);
-
-  // } catch (err) {
-  //   ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
-  //   console.log(err.message);
-  //   setLoading(false);
+  // if (generalSettings.pay_mode_flag == "Y") {
+  //   pay_Mode += `${item.pay_mode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
   // }
+
+  
 
   try {
     ToastAndroid.showWithGravityAndOffset(
@@ -721,9 +732,20 @@ if (getBlePermission && device_Type_Check == "M") {
 
 await BluetoothEscposPrinter.printText("DUPLICATE-RECEIPT\n", { align: "center" });
 await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+// await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
+if (generalSettings.gst_flag == "Y") {
+  await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+  }
 await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
 await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+
+if (generalSettings.pay_mode_flag == "Y") {
+  pay_Mode += `${item.pay_mode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
+  await BluetoothEscposPrinter.printText(`${item.pay_mode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`, { align: "left" });
+}
+
+// await BluetoothEscposPrinter.printText(`${pay_Mode}`, { align: "left" });
 
 await BluetoothEscposPrinter.printText("-------------------------------\n", {});
 await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
@@ -1230,21 +1252,8 @@ setLoading(false);
                         <Text style={[styles.cell]}>{item.vehicle_no} </Text>
                         <Text style={[styles.cell]}>
                         {getin_outValue === 'IN' ? new Date(item.date_time_in).toLocaleString("en-GB") : new Date(item.date_time_out).toLocaleString("en-GB")}
-                          {/* {new Date(item.date_time_in).toLocaleString("en-GB")} */}
-                          {/* {JSON.stringify(item, null, 2)} */}
                         </Text>
-                        {/* <Text style={[styles.cell, styles.marg_left]}>{item.advance_amt}</Text> */}
-                        {/* <Text style={[styles.cell]}>{item.base_amt}</Text> */}
-                        {/* <Text style={[styles.cell]}>
-                          Print dd {JSON.stringify(item, null, 2)}
                         
-                        </Text> */}
-                        {/* <Button
-                        title="Pri"
-                        // style={{ flex: 1, marginLeft: 10 }}
-                        onPress={() => handlePrint_Dublicat(item)}
-                        icon={icons.calendar}
-                        /> */}
 
 <TouchableOpacity style={styles.button_print} onPress={() => handlePrint_Dublicat(item)}>
 <FontAwsome5 name="print" style={styles.button_print_icon}/>

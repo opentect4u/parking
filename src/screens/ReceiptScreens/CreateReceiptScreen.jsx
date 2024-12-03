@@ -176,6 +176,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     let GST_Yes_No = "";
     let GST_Header = "";
+    let advanceAmount = "";
     let gstAmount;
 
     if (generalSettings.gst_flag == "Y") {
@@ -223,7 +224,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let gstData = await handleGetGst();
 
     await checkLocationEnabled();
-    console.log(gstList, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk', generalSettings.gst_flag);
+    // console.log(gstList, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk', generalSettings.gst_flag);
     //vehicle data to update server
 
     // const currentTime___ = currentTime;
@@ -261,10 +262,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         let payloadHeader = "";
         let payloadFooter = "";
-        let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
-        .toString()
-        .slice(-5);
-        let advanceAmount = "";
+        let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString().slice(-5);
+        
 
         const options = {
         hour12: false,
@@ -303,11 +302,12 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         payloadHeader += `${receiptSettings.header4}\n`;
         }
 
-        if (generalSettings.gst_flag == "Y") {
-          GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-        } else {
-          GST_Header += ``;
-        }
+        // if (generalSettings.gst_flag == "Y") {
+        //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+        // } else {
+        //   GST_Header += ``;
+        // }
 
         if (receiptSettings.footer1_flag == 1) {
         // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -345,7 +345,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   
       await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
       await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
-      {GST_Header}
+      // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
+      if (generalSettings.gst_flag == "Y") {
+        await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+      }
+      // {GST_Header}
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
   
       await BluetoothEscposPrinter.printColumn(
@@ -369,23 +373,25 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
 
 
-      if (advanceAmount) {
+     
 
-        if (generalSettings.gst_flag == "Y") {
-        await BluetoothEscposPrinter.printColumn(
-          [30],
-          [BluetoothEscposPrinter.ALIGN.LEFT],
-          [`CGST : ${gstAmount.CGST}`],
-          {}
-        );
+      //   if (generalSettings.gst_flag == "Y") {
+      //   await BluetoothEscposPrinter.printColumn(
+      //     [30],
+      //     [BluetoothEscposPrinter.ALIGN.LEFT],
+      //     [`CGST : ${gstAmount.CGST}`],
+      //     {}
+      //   );
 
-        await BluetoothEscposPrinter.printColumn(
-          [30],
-          [BluetoothEscposPrinter.ALIGN.LEFT],
-          [`SGST : ${gstAmount.SGST}`],
-          {}
-        );
-      }
+      //   await BluetoothEscposPrinter.printColumn(
+      //     [30],
+      //     [BluetoothEscposPrinter.ALIGN.LEFT],
+      //     [`SGST : ${gstAmount.SGST}`],
+      //     {}
+      //   );
+      // }
+
+      if (generalSettings.adv_pay == "Y") {
 
         await BluetoothEscposPrinter.printColumn(
           [30],
@@ -458,7 +464,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
         .toString()
         .slice(-5);
-        let advanceAmount = "";
+        // let advanceAmount = "";
         let gstShow_pos = "";
         
 

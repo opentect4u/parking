@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const RadioButton = ({ selected, onPress, label }) => {
+const RadioButton = ({ selected, onPress, label, customFont = 16, colorCustom = 'black' }) => {
   return (
     <TouchableOpacity style={styles.radioButton} onPress={onPress}>
       
-      <Text style={styles.radioButtonLabel}>{label}</Text>
+      <Text style={{
+        fontSize: customFont, marginRight:5, colorCustom
+      }}>{label}</Text>
       <View style={[styles.radioButtonIcon, selected && styles.radioButtonIconSelected]} />
     </TouchableOpacity>
   );
@@ -31,9 +33,9 @@ const styles = StyleSheet.create({
   radioButtonIconSelected: {
     backgroundColor: '#000',
   },
-  radioButtonLabel: {
-    fontSize: 16, marginRight:5
-  },
+  // radioButtonLabel: {
+  //   fontSize: 16, marginRight:50
+  // },
 });
 
 export default RadioButton;

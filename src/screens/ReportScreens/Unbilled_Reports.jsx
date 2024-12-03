@@ -33,7 +33,7 @@ import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 
 export default function Unbilled_Reports({ navigation }) {
   // const { detailedReports } = useContext(AuthContext);
-  const { receiptSettings } = useContext(AuthContext);
+  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
 
   const { unbilledReportData } = useUnbilledReport();
 
@@ -159,6 +159,8 @@ export default function Unbilled_Reports({ navigation }) {
 
 
   const handlePrint = async () => {
+    let GST_Yes_No = "";
+    let GST_Header = "";
     await checkLocationEnabled();
 
     // Use for Mobile Device Start 
@@ -172,8 +174,9 @@ export default function Unbilled_Reports({ navigation }) {
     let datetume= dateTimefixedStringm(item.date_time_in.toString())
     // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
     console.log("datetume",datetume)
-    // payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item?.advance_amt}  [R] ${datetume}</font>`
-    payloadBody += `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${item.advance_amt}    ${datetume}\n`
+    // payloadBody += `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${item.advance_amt}    ${datetume}\n`
+    payloadBody += `${generalSettings.gst_flag === "Y" ? `${(item.receipt_no).toString().slice(-5)}     ${item.vehicle_no.toString().slice(0,4)}     ${datetume}\n` : `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}   ${item.advance_amt}   ${datetume}\n`}`
+    
   });
 
 
@@ -204,6 +207,13 @@ export default function Unbilled_Reports({ navigation }) {
         // payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         payloadHeader += `${receiptSettings.header4}\n`;
         }
+
+        // if (generalSettings.gst_flag == "Y") {
+        //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+        // } else {
+        //   GST_Header += ``;
+        // }
     
         if(receiptSettings.footer1_flag==1){
         // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -223,6 +233,12 @@ export default function Unbilled_Reports({ navigation }) {
         }
     }
 
+    // if (generalSettings.gst_flag == "Y") {
+    //   GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+    // } else {
+    //   GST_Yes_No += "";
+    // }
+
     try {
       ToastAndroid.showWithGravityAndOffset(
       "Receipt Created Successfully",
@@ -233,6 +249,10 @@ export default function Unbilled_Reports({ navigation }) {
       );
 
       await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+      // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
+      if (generalSettings.gst_flag == "Y") {
+        await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+        }
       await BluetoothEscposPrinter.printText("Unbilled Report\n", { align: "center" });
       
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
@@ -243,12 +263,25 @@ export default function Unbilled_Reports({ navigation }) {
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-      await BluetoothEscposPrinter.printText("Rec.No. Veh.No. Adv. InTime\n", { align: "center" });
+      
+
+      if (generalSettings.gst_flag === "Y") {
+        await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   InTime\n", { align: "center" });
+      }
+
+      if (generalSettings.gst_flag === "N") {
+        await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   Adv.   InTime\n", { align: "center" });
+      }
+
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
       await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      if (generalSettings.gst_flag === "N") {
       await BluetoothEscposPrinter.printText(`TOTAL ADVANCE: ${totalAdvanceAmount}\n`, { align: "left" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      }
+      
+      // await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
 
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
       await BluetoothEscposPrinter.printText("\r\n", {})
@@ -311,8 +344,9 @@ export default function Unbilled_Reports({ navigation }) {
       getDetailedReport.map((item, index) => {
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
-      console.log("datetume",datetume)
-      payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item?.advance_amt}  [R] ${datetume}</font>`
+      // console.log("datetume",datetume)
+      // payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item?.advance_amt}  [R] ${datetume}</font>`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  [R] ${datetume}</font>` : `\n[L]<font>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()} [L] ${item?.advance_amt}  [R] ${datetume}</font>`}`
       });
   
   
@@ -344,6 +378,12 @@ export default function Unbilled_Reports({ navigation }) {
       if(receiptSettings.header4_flag==1){
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
       }
+
+      if (generalSettings.gst_flag == "Y") {
+        GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+      } else {
+        GST_Header += ``;
+      }
   
       if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -362,19 +402,22 @@ export default function Unbilled_Reports({ navigation }) {
       try {
       await ThermalPrinterModule.printBluetooth({
       payload:
-      `[C]${payloadHeader}\n` +
+      `[C]${payloadHeader}` +
+      `${GST_Header}` +
       `[C]<u><font size='small'>Unbilled Report</font></u>\n` +
       `[C]--------------------------------\n` +
       `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
       `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
       `[C]--------------------------------\n` +
       `[C]--------------------------------\n` +
-      `[C]<font size='normal'>Rec.No.  Veh.No.  Adv.  InTime</font>\n` +
+      // `[C]<font size='normal'>Rec.No.  Veh.No.  Adv.  InTime</font>\n` +
+      `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Rec.No.  [L]Veh.No.  [R]InTime</font>\n` : "[L]<font size='normal'>Rec.No.  [L]Veh.No.  [L]Adv.  [R]InTime</font>\n"}` +
       `[C]--------------------------------` +
       `[C]${payloadBody}\n` +
       `[C]--------------------------------\n` +
       // `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   TOTAL: ${totalAmount}</font>\n` +
-      `[L]<font size='normal'>TOTAL ADVANCE: ${totalAdvanceAmount} </font>\n` +
+      `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>TOTAL ADVANCE: ${totalAdvanceAmount} </font>\n` : ""}` +
+      `` +
       `[C]--------------------------------\n` +
       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
       // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
@@ -496,7 +539,11 @@ export default function Unbilled_Reports({ navigation }) {
                   <Text style={[styles.headerText, styles.hcell]}>
                     Veh. No.
                   </Text>
+
+                  {generalSettings.gst_flag === "N" && (
                   <Text style={[styles.headerText, styles.hcell]}>Adv.</Text>
+                  )}
+                  
 
                   <Text style={[styles.headerText, styles.hcell]}>In Time</Text>
 
@@ -515,7 +562,12 @@ export default function Unbilled_Reports({ navigation }) {
                         key={index}>
                         <Text style={[styles.cell]}>{(item.receipt_no).toString().slice(-5)} </Text>
                         <Text style={[styles.cell]}>{item.vehicle_no}</Text>
+                        
+                        
+                        {generalSettings.gst_flag === "N" && (
                         <Text style={[styles.cell]}>{item.advance_amt}</Text>
+                        )}
+
                         <Text style={[styles.cell]}>
                           {new Date(item.date_time_in).toLocaleString("en-GB")}
                         </Text>
@@ -526,25 +578,35 @@ export default function Unbilled_Reports({ navigation }) {
                     );
                   })}
                 {
+
+                  <>
+                  {generalSettings.gst_flag === "N" && (
+                    <>
                   <View
-                    style={{
-                      ...styles.row,
-                      backgroundColor: colors["primary-color"],
-                    }}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Total Advance Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {totalAdvanceAmount}
-                    </Text>
-                    {/* <Text style={[styles.cell, styles.hcell]}>
-                    {detailedReportData && totalAdvance}
+                  style={{
+                    ...styles.row,
+                    backgroundColor: colors["primary-color"],
+                  }}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                    Total Advance Amount
                   </Text>
                   <Text style={[styles.cell, styles.hcell]}>
-                    {detailedReportData && totalPrice}
-                  </Text> */}
-                    {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                  </View>
+                    {totalAdvanceAmount}
+                  </Text>
+                </View>
+                {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                    Paid Amount
+                  </Text>
+                  <Text style={[styles.cell, styles.hcell]}>
+                    {totalAmount}
+                  </Text>
+                </View> */}
+                </>
+                  )}
+
+                  </>
+                  
                 }
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
