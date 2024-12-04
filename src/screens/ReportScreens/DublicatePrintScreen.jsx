@@ -139,7 +139,9 @@ export default function DublicatePrintScreen({ navigation }) {
     let formattedDateFrom = mydateFrom?.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-    // console.log(getin_outValue, "11111111111111111111ff111///////////")
+    console.log(loginData.user.userdata.msg[0].id, "11111111111111111111ff111///////////")
+
+ 
 
     let rep_data= await dublicatePrintScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id, getin_outValue);
     // 
@@ -208,7 +210,6 @@ export default function DublicatePrintScreen({ navigation }) {
 
   const handlePrint_Dublicat = async (item) => {
     // console.log(item, 'itemitemitemitemitemitemitemitemitem');
-    
     let carindata = item;
     let GST_Yes_No = '';
     let GST_Header = "";
@@ -782,10 +783,12 @@ setLoading(false);
       // debugger
       
       data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
-        {label: "FARE", value: totalPrice - (CGST + SGST) }, 
+        // {label: "FARE", value: totalPrice - (CGST + SGST) }, 
+        {label: "FARE", value: item.base_amt}, 
         { label: "CGST @"+gstList.cgst+'%', value: CGST },
         { label: "SGST @"+gstList.sgst+'%', value: SGST },
-        {label: "PARKING FEES", value: item.base_amt}, 
+        // {label: "PARKING FEES", value: item.base_amt}, 
+        {label: "PARKING FEES", value: item.paid_amt}, 
         // {label: "ADVANCE", value: item.advance_amt}, 
         // {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
         {label: "VEHICLE TYPE", value: item.vehicle_name}, 
@@ -797,7 +800,7 @@ setLoading(false);
 
     if(generalSettings.gst_flag == "N"){
       data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
-        {label: "PARKING FEES", value: item.base_amt}, 
+        {label: "PARKING FEES", value: item.paid_amt}, 
         {label: "ADVANCE", value: item.advance_amt}, 
         {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
         {label: "VEHICLE TYPE", value: item.vehicle_name}, 
@@ -869,6 +872,12 @@ setLoading(false);
 
   }
 
+  if (generalSettings.pay_mode_flag == "Y") {
+    // pay_Mode += `[L]<font size='normal'>Payment Mode : [R] `${generalSettings.pay_mode_flag == "Y" ? "UPI" : "Cash"}`</font>\n`
+    pay_Mode += `${item.pay_mode == "U" ? `[L]<font size='normal'>Payment Mode : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
+    // pay_Mode += `[L]<font size='normal'>Payment Mode : UPI</font>\n`
+  }
+
 
     // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
     await ThermalPrinterModule.printBluetooth({
@@ -881,6 +890,7 @@ setLoading(false);
         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
         `[C]-------------------------------\n` +
         `${payloadBody}` +
+        `${pay_Mode}` +
         // `[L]<font size='normal'>DURATION : [R]</font>\n` +
         `[C]-------------------------------\n` +
         `[C]${payloadFooter}\n`,

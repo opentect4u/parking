@@ -66,22 +66,24 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (username, password, deviceId) => {
+    
     const credentials = {
       password: password,
       user_id: username,
       device_id: deviceId,
     };
+    // console.log(credentials, 'pppppppppppppppppppppppppppppppppppppppppppppp');
 
     try {
       setLoading(true);
       await axios
-        .post(ADDRESSES.LOGIN, credentials, {
+        .post(ADDRESSES.LOGIN,credentials, {
           headers: {
             Accept: "application/json",
           },
         })
         .then(res => {
-          console.log(res.data.message);
+          // console.log(res.data.message);
           if (res.data.status) {
 
               loginStorage.set("login-data-local", JSON.stringify(credentials));

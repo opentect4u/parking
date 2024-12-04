@@ -228,14 +228,14 @@ export default function OutpassScreen({ navigation }) {
     // ) {
       if(generalSettings.gst_flag === "Y"){
 
-        console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
+        // console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
         
       // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
       totalRate = gstPrice.totalPrice || price;
       // totalRate = gstPrice.totalPrice || carOutPrice;
 
-      console.log(gstPrice, 'ggggggggggggggfffffff');
+      // console.log(gstPrice, 'ggggggggggggggfffffff');
       
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
@@ -286,7 +286,7 @@ export default function OutpassScreen({ navigation }) {
       vDatainfo.parking_fees = price;
       vData.push({ label: "PARKING FEES", value: price });
 
-      console.log(totalRate, 'uuuuuuuuu', price);
+      // console.log(totalRate, 'uuuuuuuuu', price);
       
 
     }
