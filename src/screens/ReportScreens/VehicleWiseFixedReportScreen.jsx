@@ -277,7 +277,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
         if (generalSettings.gst_flag === "Y") {
-          await BluetoothEscposPrinter.printText(`UPI:${totalUPIAmount}  CASH:${totalCashAmount}  NET:${totalAmount}\n`, { align: "left" });  
+          // await BluetoothEscposPrinter.printText(`UPI:${totalUPIAmount}  CASH:${totalCashAmount}  NET:${totalAmount}\n`, { align: "left" });  
+          await BluetoothEscposPrinter.printText(`NET:${totalAmount}\n`, { align: "left" }); 
         }
   
         if (generalSettings.gst_flag === "N") {
@@ -382,7 +383,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         `[C]${payloadBody}\n` +
         `[C]--------------------------------\n` +
         // `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
-        `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount}   NET: ${totalAmount}</font>\n` : ""}` +
+        // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount}   NET: ${totalAmount}</font>\n` : ""}` +
+        `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount}</font>\n` : ""}` +
         `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` : ""}` +
         `[C]--------------------------------\n` +
         `${GST_Yes_No}` +
@@ -517,7 +519,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   {/* <Text style={[styles.headerText, styles.hcell]}>Net.Amt</Text> */}
                 </View>
 
-                {generalSettings.gst_flag == "Y" && (
+                {/* {generalSettings.gst_flag == "Y" && (
                 <>
                 {vehicleWiseReports.forEach(item => {
                 if (item?.pay_mode === "U") {
@@ -530,7 +532,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
                 })}
                 </>
-                )}
+                )} */}
 
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
@@ -635,7 +637,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   </Text>
                   </View>
 
-                  {generalSettings.gst_flag == "Y" && (
+                  {/* {generalSettings.gst_flag == "Y" && (
                     <>
                 <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                 <Text style={[styles.cell, styles.hcell]}>
@@ -657,7 +659,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
                 </View>
                 </>
-                )}
+                )} */}
 
                   </>
                 }

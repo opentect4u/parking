@@ -65,6 +65,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [getdevice_type, setdevice_type] = useState();
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
+  // const [radioState, setRadioState] = useState(false);
+  // const [getPayMode, setPayMode] = useState('C');
+  // const radioOptions = [
+  //   { label: 'Cash: ', value: 'C' },
+  //   { label: 'UPI: ', value: 'U' },
+  // ];
+
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
