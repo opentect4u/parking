@@ -28,6 +28,8 @@ import { ADDRESSES } from "../../routes/addresses";
 import useCarIn from "../../hooks/api/useCarIn";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
+import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
+import RadioButton from "../../components/RadioButton";
 
 
 // import React, { useState, useEffect, useContext } from "react";
@@ -53,6 +55,20 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+
+  const [radioState, setRadioState] = useState(false);
+  const [getPayMode, setPayMode] = useState('C');
+  const radioOptions = [
+    { label: 'Cash: ', value: 'C' },
+    { label: 'UPI: ', value: 'U' },
+  ];
+
+  const handleRadioSelect = (value) => {
+    setRadioState(!radioState);
+
+    setPayMode(value);
+  };
 
   // console.log(route.params, 'route.params__UTSAB');
   const { type, id, userId, operatorName, deviceId, fixedPriceData } =
@@ -152,6 +168,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   useEffect(() => {
     // setdevice_type(loginData.user.userdata.msg[0].device_type == "M");
 
+    // console.log('>>>>>>>>>>>', loginData.user.userdata.msg[0], 'loginDataloginDataloginDataloginDataloginData');
+    
+
     if(device_Type_Check == "M"){
     try {
     async function blueTooth() {
@@ -171,21 +190,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const handleCreateReceipt = async () => {
 
-    // console.log(loginData.user.userdata.msg[0].customer_type_id, 'pppppppppppppppppp');
-
     if (loading == true) {
       return;
     }
 
-    // console.log('Console____________1');
-    // console.log(fixedVehicleRateObject, '///////fixedVehicleRateObject/////////');
     setLoading(true);
-    // if vehicleNumber is blank then return from the below block
-
-    // console.log("111111111111111111111111");
 
     if (!vehicleNumber) {
-      // console.log('Console____________1');
       setLoading(false);
       return ToastAndroid.showWithGravity(
         "Please add the vehicle number to continue.",
@@ -206,12 +217,27 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   // }
 
 
-
-    // let vehicleId = parseInt(id);
+  // let vehicleId = parseInt(id);
 
     let vehicleRate = parseInt(fixedVehicleRateObject?.vehicle_rate);
     let paidamt = vehicleRate;
     let vehicleId = parseInt(id);
+
+  // Start work date: 06122024 
+
+  // const gstSettings = await handleGetGst();
+  const gstSettings = [{
+    "gst_number": "877777747",
+    "cgst": 2.5,
+    "sgst": 2.5
+    }]
+  
+    // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
+    const gstPrice = await useGstPriceCalculator(gstSettings[0], fixedVehicleRateObject?.vehicle_rate ? fixedVehicleRateObject?.vehicle_rate : 0, "Y");
+  
+    // console.log(gstSettings, 'gstSettingsgstSettingsgstSettingsgstSettingsgstSettingsgstSettings', gstPrice, fixedVehicleRateObject);
+  
+    // End work date: 06122024  
 
 
     // let gstData = await handleGetGst();
@@ -222,6 +248,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     console.log('vehicleNumber__UTSA');
 
+    // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate START
+
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     let carindata = await carIn(
       vehicleId,
@@ -231,13 +259,12 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       "N", 
       0, 
       0);
+    // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate END
+
+      console.log('carindatacarindatacarindatacarindata', carindata, 'carindatacarindatacarindatacarindata');
+      
 
 
-
-    // console.log(
-    //   "=============xxxx=======",
-    //   carindata?.data?.td_vehicle_in?.receipt_number,
-    // );
     if (carindata.status) {
 
       // Use for Mobile Device Start 
@@ -488,10 +515,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."}    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>FARE : [R]${gstPrice.price}</font>\n` +
+            `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` +
+            `[L]<font size='normal'>${"SGST @"+gstSettings[0].sgst+"Rs."} : [R]${gstPrice.SGST}</font>\n` +
+            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."} : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
-            `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
-            `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
+            `[L]<font size='normal'>VEHICLE NO : [R]${vehicleNumber}</font>\n` +
+            `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
             
             // `[L]<font size='normal'>IN TIME    : [R]${dateTimefixedString(
             //   currentTime,
@@ -690,6 +720,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             />
           </View>
 
+        {/* {generalSettings.pay_mode_flag == "Y" && ( */}
+        <View style={styles.radioButton_new}>
+        {radioOptions.map(option => (
+        <RadioButton
+        key={option.value}
+        label={option.label}
+        // labelStyle={styles.radioButtonText} // Apply text style
+        selected={option.value === getPayMode}
+        onPress={() => handleRadioSelect(option.value)}
+        customFont={20}
+        />
+        ))}
+        </View>
+        {/* )} */}
+
           {/* {generalSettings.adv_pay == "Y" && (
             <View style={{ marginTop: normalize(20) }}>
               <Text style={styles.vehicle_text}>Vechicle Advance</Text>
@@ -764,6 +809,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "baseline",
   },
+  radioButton_new:{
+    flexDirection:'row',lineHeight: 24, justifyContent: 'space-between',
+    marginTop:15,
+    paddingLeft:15, paddingRight:0, display:'inline',
+  },
   date_time: {
     color: colors.black,
     fontWeight: "600",
@@ -794,6 +844,10 @@ const modalStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
+  },
+  radioButtonText: {
+    fontSize: 20, // Increases the text size
+    color: 'red', // Sets the text color to black
   },
   modalView: {
     margin: 20,
