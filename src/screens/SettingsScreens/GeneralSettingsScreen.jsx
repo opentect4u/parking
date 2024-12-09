@@ -244,7 +244,10 @@ const GeneralSettingsScreen = ({ navigation }) => {
               color: "#000",
               }}
               >
-              {`${cgst}% ${sgst}%`}
+              <>
+              {/* {`${cgst}% ${sgst}%`} */}
+              ({`${cgst}% + ${sgst}%`})
+              </>
               </Text>
             </SettingComponent>
             )}

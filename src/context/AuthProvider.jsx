@@ -226,7 +226,7 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGstList(res.data.data.msg[0]);
-        console.log(loginData.token , 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj', res.data.data.msg[0], 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj');
+        // console.log(loginData.token , 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj', res.data.data.msg[0], 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj');
         
       })
       .catch(err => {

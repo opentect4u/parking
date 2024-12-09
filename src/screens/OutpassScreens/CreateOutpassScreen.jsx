@@ -51,7 +51,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
   useEffect(() => {
 
-    // console.log(data, 'lllllllllllllllllllllllllllllllllllllll', gstSettings);
+    // console.log(route.params,'/////////data',data, '/////////others', others, '/////////gstSettings',gstSettings, '/////////totalRate',totalRate, 'utsabutsabutsabutsabutsabutsab', gstSettings);
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
@@ -130,20 +130,15 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
     // with gst without gst car outpass send to server
 
+    // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate START
     if (generalSettings.gst_flag == "Y") {
-      // console.log(generalSettings.gst_flag,"...............................................", device_Type_Check)
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
-      // console.log(insert_car_outpass, 'jjjjjjjjjjjjjjjj', gstSettings);
-    
     } 
 
     if (generalSettings.gst_flag == "N") {
-      // console.log(gstSettings,"............................GST No...................", generalSettings.gst_flag)
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
-    
-      
-    
     }
+    // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate END
 
 
 

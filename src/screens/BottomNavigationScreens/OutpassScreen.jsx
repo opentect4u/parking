@@ -164,7 +164,7 @@ export default function OutpassScreen({ navigation }) {
 
 
 
-    console.log(crindate, '///////////////////', new Date(crindate).toLocaleString("en-GB"));
+    // console.log(crindate, '///////////////////', new Date(crindate).toLocaleString("en-GB"));
 
     const dateTime = new Date(carData.date_time_in);
     const timestamp = dateTime.getTime();
@@ -233,9 +233,6 @@ export default function OutpassScreen({ navigation }) {
       // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
       totalRate = gstPrice.totalPrice || price;
-      // totalRate = gstPrice.totalPrice || carOutPrice;
-
-      // console.log(gstPrice, 'ggggggggggggggfffffff');
       
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;

@@ -691,7 +691,7 @@ export default function DetailedReportScreen({ navigation }) {
                 Cash
                 </Text>
                 <Text style={[styles.cell, styles.hcell]}>
-                {totalUPIAmount}
+                {totalCashAmount}
                 </Text>
 
                 </View>
@@ -701,7 +701,7 @@ export default function DetailedReportScreen({ navigation }) {
                 UPI
                 </Text>
                 <Text style={[styles.cell, styles.hcell]}>
-                {totalCashAmount}
+                {totalUPIAmount}
                 </Text>
 
                 </View>
