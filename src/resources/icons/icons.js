@@ -162,6 +162,14 @@ const report = (color, size) => (
   <Foundation name="graph-bar" color={color} size={size} />
 );
 
+const gst = (color, size) => (
+  <Ionicons name="calculator" color={color} size={size} />
+);
+
+const payment_mod = (color, size) => (
+  <MaterialIcons name="payments" color={color} size={size} />
+);
+
 const alertIcon = (size, color) => (
   <MaterialCommunityIcons
     name="database-alert"
@@ -338,6 +346,8 @@ export default icons = {
   receipt,
   setting,
   report,
+  gst,
+  payment_mod,
   paperRoll,
   cellphone,
   alertIcon,

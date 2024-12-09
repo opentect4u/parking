@@ -97,7 +97,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
   //   // updated_at: "2023-10-16T11:56:18.000Z",
   // });
 
-  const { getGeneralSettings, generalSettings } = useContext(AuthContext);
+  const { getGeneralSettings, generalSettings, gstList } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserDetails } = useContext(AuthContext);
   // const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -105,12 +105,10 @@ const GeneralSettingsScreen = ({ navigation }) => {
   
   useEffect(() => {
     
-    // console.log(loginData.user.userdata.msg[0].id, 'pp', loginData.user.userdata.msg[0].customer_type, 'pp', loginData.user.userdata.msg[0].customer_type_id, 'utsab /////////////////////////////////////////');
     const generalSettings = getGeneralSettings();
     return () => clearInterval(generalSettings);
   }, []);
 
-  // console.log(generalSettings, 'generalSettings___UTSAB', getUserDetails.customer_type_id);
 
   const {
     adv_pay,
@@ -133,10 +131,14 @@ const GeneralSettingsScreen = ({ navigation }) => {
     grace_period_flag,
     grace_value,
     report_password_flag,
-    redirection_flag
+    redirection_flag,
+    gst_flag,
+    pay_mode_flag
   } = generalSettings;
 
-  // console.log(generalSettings, 'flag___XXXXXXXXXX', generalSettings.grace_value);
+  const {cgst, gst_number, sgst} = gstList;
+
+  console.log(gstList, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
 
   return (
     <View style={{ flex: 1 }}>
@@ -190,6 +192,68 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
            )} 
+
+           {/* GST */}
+           {gst_flag && (
+              <SettingComponent
+                icon={icons.gst(colors["primary-color"], 25)}
+                text={"GST"}>
+                <CustomSwitch
+                  isEnabled={gst_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+            )}
+
+            {/* GST % */}
+            {gst_flag === "Y" && (
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"CGST + SGST"}>
+
+              <Text
+              style={{
+              fontSize: 16, fontWeight:700,
+              paddingVertical: 8,
+              color: "#000",
+              }}
+              >
+              <>
+              ({`${cgst}% + ${sgst}%`})
+              </>
+              
+              </Text>
+            </SettingComponent>
+            )}
+
+            {/* GST No */}
+            {gst_flag === "Y" && (
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"GST No."}>
+
+              <Text
+              style={{
+              fontSize: 16, fontWeight:700,
+              paddingVertical: 8,
+              color: "#000",
+              }}
+              >
+              {`${gst_number}`}
+              </Text>
+            </SettingComponent>
+            )}
+
+            {pay_mode_flag && (
+              <SettingComponent
+                icon={icons.report(colors["primary-color"], 25)}
+                text={"Payment Mode Online"}>
+                <CustomSwitch
+                  isEnabled={pay_mode_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+             )}
 
             {/* <Text>{getUserDetails.customer_type_id}</Text> */}
 

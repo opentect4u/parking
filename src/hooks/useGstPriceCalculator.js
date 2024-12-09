@@ -8,35 +8,35 @@
             return price
         }
     
-        if (gstSettings.gst_flag == "N") {
-            return price
-        }
+        // if (gstSettings.gst_flag == "N") {
+        //     return price
+        // }
     
-        if (gstSettings.gst_type == "I") {
-            // console.log(gst_flag, 'iiiiiiiiiiiiiiiiiiiiiiiiiiiii');
-            price = (parkingFees * 100) / ((parseInt(gstSettings.cgst) + parseInt(gstSettings.sgst)) + 100)
-            price = Math.round(price * 100) / 100
+        // if (gstSettings.gst_type == "I") {
+        //     // console.log(gst_flag, 'iiiiiiiiiiiiiiiiiiiiiiiiiiiii');
+        //     price = (parkingFees * 100) / ((parseInt(gstSettings.cgst) + parseInt(gstSettings.sgst)) + 100)
+        //     price = Math.round(price * 100) / 100
     
-            CGST = price * ((parseInt(gstSettings.cgst)) / 100)
-            CGST = Math.round(CGST * 100) / 100
-            SGST = price * ((parseInt(gstSettings.sgst)) / 100)
-            SGST = Math.round(CGST * 100) / 100
-            console.log(CGST)
-            console.log(SGST)
+        //     CGST = price * ((parseInt(gstSettings.cgst)) / 100)
+        //     CGST = Math.round(CGST * 100) / 100
+        //     SGST = price * ((parseInt(gstSettings.sgst)) / 100)
+        //     SGST = Math.round(CGST * 100) / 100
+        //     console.log(CGST)
+        //     console.log(SGST)
     
-        }
+        // }
     
-        if (gstSettings.gst_type != "I") {
-            // console.log(gst_flag, '!!!!!!!!!!!!!!!!!iiiiiiiiiiiiiiiiiiiiiiiiiiiii', gstSettings.gst_type);
-            price = parkingFees
-            CGST = parkingFees * ((parseInt(gstSettings.cgst)) / 100)
-            CGST = Math.round(CGST * 100) / 100
-            SGST = parkingFees * ((parseInt(gstSettings.sgst)) / 100)
-            SGST = Math.round(CGST * 100) / 100
-            console.log(CGST)
-            console.log(SGST)
+        // if (gstSettings.gst_type != "I") {
+        //     // console.log(gst_flag, '!!!!!!!!!!!!!!!!!iiiiiiiiiiiiiiiiiiiiiiiiiiiii', gstSettings.gst_type);
+        //     price = parkingFees
+        //     CGST = parkingFees * ((parseInt(gstSettings.cgst)) / 100)
+        //     CGST = Math.round(CGST * 100) / 100
+        //     SGST = parkingFees * ((parseInt(gstSettings.sgst)) / 100)
+        //     SGST = Math.round(CGST * 100) / 100
+        //     console.log(CGST)
+        //     console.log(SGST)
     
-        }
+        // }
     
         
         

@@ -47,7 +47,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(() => false);
   const [pic, setPic] = useState();
 
-  const { generalSettings, receiptSettings } = useContext(AuthContext);
+  const { generalSettings, receiptSettings, gstList } = useContext(AuthContext);
 
   const { dev_mod } = generalSettings;
   const [vehicleNumber, setVehicleNumber] = useState("");
@@ -98,7 +98,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       ).then(res => {
         
         setFixedVehicleRateObject(res.data.data.msg[0]);
-        console.log(generalSettings, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", res.data.data);
+        // console.log(generalSettings, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", res.data.data);
       }).catch(err => {
         console.log(
           "ERR - getVehicleRateFixedByVehicleId - CreateReceiptScreen",
@@ -190,6 +190,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const handleCreateReceipt = async () => {
 
+    let pay_Mode = "";
+
     if (loading == true) {
       return;
     }
@@ -225,15 +227,19 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   // Start work date: 06122024 
 
-  // const gstSettings = await handleGetGst();
-  const gstSettings = [{
-    "gst_number": "877777747",
-    "cgst": 2.5,
-    "sgst": 2.5
-    }]
+  const gstSettings = await handleGetGst();
+  // const gstSettings = [{
+  //   "gst_number": "877777747",
+  //   "gst_flag": "Y",
+  //   "cgst": 2.5,
+  //   "sgst": 2.5
+  //   }]
+
+  console.log(gstSettings[0].gst_flag, 'gstSettingsgstSettingsgstSettingsgstSettingsgstSettings', gstList);
+  
   
     // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
-    const gstPrice = await useGstPriceCalculator(gstSettings[0], fixedVehicleRateObject?.vehicle_rate ? fixedVehicleRateObject?.vehicle_rate : 0, "Y");
+    const gstPrice = await useGstPriceCalculator(gstSettings[0], fixedVehicleRateObject?.vehicle_rate ? fixedVehicleRateObject?.vehicle_rate : 0, generalSettings.gst_flag);
   
     // console.log(gstSettings, 'gstSettingsgstSettingsgstSettingsgstSettingsgstSettingsgstSettings', gstPrice, fixedVehicleRateObject);
   
@@ -246,22 +252,20 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     //vehicle data to update server
 
-    console.log('vehicleNumber__UTSA');
 
     // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate START
 
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
-    let carindata = await carIn(
-      vehicleId,
-      vehicleNumber,
-      vehicleRate,
-      paidamt, 
-      "N", 
-      0, 
-      0);
+    if (generalSettings.gst_flag == "Y") {
+      var carindata = await carIn(vehicleId, vehicleNumber, vehicleRate, paidamt, generalSettings.gst_flag, gstList.cgst, gstList.sgst, getPayMode);
+    }
+
+    if (generalSettings.gst_flag == "N") {
+      var carindata = await carIn(vehicleId, vehicleNumber, vehicleRate, paidamt, "N", 0, 0, getPayMode);
+    }
     // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate END
 
-      console.log('carindatacarindatacarindatacarindata', carindata, 'carindatacarindatacarindatacarindata');
+      // console.log('carindatacarindatacarindatacarindata', vehicleRate, '<<>>', paidamt, 'carindatacarindatacarindatacarindata');
       
 
 
@@ -336,6 +340,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
+        if (receiptSettings.header4_flag == 1) {
+          payloadHeader += `[C]GST No.: ${gstList.gst_number}\n`;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
           payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         }
@@ -355,13 +363,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         //   advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         // }
 
-        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
+        if (generalSettings.pay_mode_flag == "Y") {
+          pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>PAYMENT MODE : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
+        }
 
 
         await ThermalPrinterModule.printBluetooth({
           payload:
             `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
-            `[C]${payloadHeader}\n` +
+            `[C]${payloadHeader}` +
             // `[C]<img>${headerImg}</img>\n` +
             // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
             // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
@@ -371,10 +381,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."}    : [R]${vehicleRate}</font>\n` +
+            `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>FARE : [R]${gstPrice.price}</font>\n` : ""}` +
+            `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` : ""}` +
+            `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` : ""}` +
+            // `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."}    : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>PARKING FEES : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO   : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME   : [R]${formatDateTime(currentTime)}</font>\n` +
+            `${pay_Mode}` +
             
             // `[L]<font size='normal'>IN TIME    : [R]${dateTimefixedString(
             //   currentTime,
@@ -480,6 +495,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
+        if (generalSettings.gst_flag == "Y") {
+          payloadHeader += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+        }
+
         if (receiptSettings.footer1_flag == 1) {
           payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         }
@@ -499,6 +518,12 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         //   advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         // }
 
+        if (generalSettings.pay_mode_flag == "Y") {
+          pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>PAYMENT MODE : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
+        }
+
+        
+
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
 
 
@@ -515,13 +540,19 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             //   .slice(0, 17)}</font>\n` +
             // `[C]-------------------------------\n` +
             `[L]<font size='normal'>RECEIPT NO : [R]${receipt_number}</font>\n` +
-            `[L]<font size='normal'>FARE : [R]${gstPrice.price}</font>\n` +
-            `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` +
-            `[L]<font size='normal'>${"SGST @"+gstSettings[0].sgst+"Rs."} : [R]${gstPrice.SGST}</font>\n` +
-            `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."} : [R]${vehicleRate}</font>\n` +
+            `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>FARE : [R]${gstPrice.price}</font>\n` : ""}` +
+            `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` : ""}` +
+            `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` : ""}` +
+            // `[L]<font size='normal'>BASE AMOUNT : [R]${gstPrice.price}</font>\n` +
+            // `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` +
+            // `[L]<font size='normal'>${"SGST @"+gstSettings[0].sgst+"Rs."} : [R]${gstPrice.SGST}</font>\n` +
+            // `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."} : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>PARKING FEES : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+            `${pay_Mode}` +
+
             
             // `[L]<font size='normal'>IN TIME    : [R]${dateTimefixedString(
             //   currentTime,
@@ -720,7 +751,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             />
           </View>
 
-        {/* {generalSettings.pay_mode_flag == "Y" && ( */}
+        {generalSettings.pay_mode_flag == "Y" && (
         <View style={styles.radioButton_new}>
         {radioOptions.map(option => (
         <RadioButton
@@ -733,7 +764,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         />
         ))}
         </View>
-        {/* )} */}
+         )} 
 
           {/* {generalSettings.adv_pay == "Y" && (
             <View style={{ marginTop: normalize(20) }}>

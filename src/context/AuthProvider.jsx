@@ -136,8 +136,15 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
+        
         setGeneralSettings(res.data.data.msg[0]);
-        getGstList();
+
+        // console.log(res.data.data.msg[0].pay_mode_flag, 'pay_mode_flagkoooooooooooooooooooooooo');
+
+        if(res.data.data.msg[0].gst_flag == "Y"){
+          getGstList();
+        }
+
         // appStorage.set("general-settings", JSON.stringify(res.data.data.msg[0]))
       })
       .catch(err => {
@@ -210,6 +217,8 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGstList(res.data.data.msg[0]);
+        // console.log(res.data.data.msg[0], 'tttttttttttttttkkkkkkkkkkkkkkkkkkkk');
+
       })
       .catch(err => {
         console.log("ERR - getGstList - AuthProvider", err);

@@ -29,6 +29,7 @@ import { fixedString } from "../../utils/fixedString";
 import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
 import { loginStorage } from "../../storage/appStorage";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 export default function OperatorWiseReportScreen({ navigation }) {
   const { receiptSettings } = useContext(AuthContext);
@@ -37,7 +38,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [getBlePermission, setBlePermission] = useState();
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
-  const { generalSettings } = useContext(AuthContext);
+  const { generalSettings, gstList } = useContext(AuthContext);
   const { dev_mod, report_password_flag, adv_pay } = generalSettings;
 
   const [detailedReportData, setDetailedReportData] = useState([]);
@@ -94,6 +95,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
+  let gstAmount = {};
 
   // useEffect(() => {
   //   getOperatorwiseReport(mydateFrom, mydateTo);
@@ -170,6 +172,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }, [])
 
   const handlePrint = async () => {
+    let GST_Yes_No = "";
+    
     await checkLocationEnabled();
 
     if (getBlePermission  && device_Type_Check == "M") {
@@ -201,6 +205,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      payloadHeader +=  `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    }
+
     if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
@@ -216,10 +224,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   }
 
+  if (generalSettings.gst_flag == "Y") {
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n[C]--------------------------------\n`;
+  } else {
+    GST_Yes_No += ``;
+  }
+
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]${payloadHeader}\n` +
+          `[C]${payloadHeader}` +
           `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
           `[C]--------------------------------\n` +
           // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -233,6 +247,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]--------------------------------\n` +
           `[L]<font size='normal'>PECEIVED: ${totalAmount}  </font>\n` +
           `[C]--------------------------------\n` +
+          `${GST_Yes_No}` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
           `[C]${payloadFooter}\n`,
@@ -279,6 +294,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      payloadHeader += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    }
+
     if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
@@ -294,10 +313,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   }
 
+  if (generalSettings.gst_flag == "Y") {
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n[C]--------------------------------\n`;
+  } else {
+    GST_Yes_No += ``;
+  }
+
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]${payloadHeader}\n` +
+          `[C]${payloadHeader}` +
           `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
           `[C]--------------------------------\n` +
           // `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -311,6 +336,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]--------------------------------\n` +
           `[L]<font size='normal'>PECEIVED: ${totalAmount}  </font>\n` +
           `[C]--------------------------------\n` +
+          `${GST_Yes_No}` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
           `[C]${payloadFooter}\n`,
@@ -546,6 +572,9 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
                     // totalAdvanceAmount += item?.adv_amt;
+                    {generalSettings.gst_flag == "Y" && (
+                      gstAmount = gstCalculatorReport(totalAmount, gstList.sgst, gstList.cgst)
+                    )}
                     return (
                       <View
                         style={[
@@ -586,6 +615,36 @@ export default function OperatorWiseReportScreen({ navigation }) {
                       {totalAmount}
                     </Text>
                   </View>
+
+                  {generalSettings.gst_flag === "Y" && (
+                  <>
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Base Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {/* {totalAmount} // */}
+                      {generalSettings.gst_flag == "Y" && (
+                        <>
+                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        </>
+                      )}
+                    </Text>
+                   
+                  </View>
+
+                    
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
+                  </View>
+
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
+                  </View>
+                  </>
+                  )}
 
                   {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>

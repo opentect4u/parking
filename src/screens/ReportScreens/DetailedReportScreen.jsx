@@ -31,10 +31,11 @@ import { dateTimefixedString, dateTimefixedStringm, timefixedString123 } from ".
 import { loginStorage } from "../../storage/appStorage";
 import DatePicker from "react-native-date-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 export default function DetailedReportScreen({ navigation }) {
   // const { detailedReports } = useContext(AuthContext);
-  const { receiptSettings } = useContext(AuthContext);
+  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [getBlePermission, setBlePermission] = useState();
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
@@ -100,9 +101,13 @@ export default function DetailedReportScreen({ navigation }) {
 
   let totalAmount = 0;
   let totalAdvanceAmount = 0;
-  // let totalNetAmount = 0;
+  let totalUPIAmount = 0;
+  let totalCashAmount = 0;
+  let gstAmount = {};
 
   const submitDetails = async() => {
+    // console.log(generalSettings, 'generalSettingsgeneralSettingsgeneralSettingsgeneralSettingsgeneralSettings');
+    
     setLoading(true);
       // receiptSettings
 
@@ -116,13 +121,16 @@ export default function DetailedReportScreen({ navigation }) {
     //     );
     //   })}
 // console.log(date_From,  'dddddddddddddddddddd', date_To);
-console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
+// console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString("en-GB"),  'tttttttttttttttttttttttttttt', date_To.toLocaleTimeString("en-GB"));
 
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
     // let rep_data = await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
     let rep_data = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
+
+    // console.log('kkkkkkkkkkkkk>>>', rep_data?.data?.msg, '///////////rep_datarep_datarep_datarep_datarep_datarep_data');
+    
 
     if(rep_data?.data?.suc>0){
       setLoading(false);
@@ -193,6 +201,9 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
   // console.log(getDetailedReport, '___ddddddddddd');
 
   const handlePrint = async () => {
+    let GST_Yes_No = "";
+    let GST_Header = "";
+
     await checkLocationEnabled();
 
     if (getBlePermission && device_Type_Check == "M") {
@@ -238,6 +249,10 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      payloadHeader += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    }
+
     if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
@@ -253,10 +268,16 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
 
   }
 
+  if (generalSettings.gst_flag == "Y") {
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n[C]--------------------------------\n`;
+    } else {
+    GST_Yes_No += ``;
+    }
+
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]${payloadHeader}\n` +
+          `[C]${payloadHeader}` +
           `[C]<u><font size='small'>Detailed Report</font></u>\n` +
           `[C]--------------------------------\n` +
           `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
@@ -267,8 +288,11 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>PAID: ${totalAmount}</font>\n` +
+          `${generalSettings.pay_mode_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} PAID: ${totalAmount}</font>\n` : ""}` +
+          `${generalSettings.pay_mode_flag === "N" ? `[L]<font size='normal'>PAID: ${totalAmount}</font>\n` : ""}` +
+          // `[C]<font size='normal'>PAID: ${totalAmount}</font>\n` +
           `[C]--------------------------------\n` +
+          `${GST_Yes_No}` +
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
           `[C]${payloadFooter}\n`,
@@ -297,6 +321,7 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
     }
 
   } else if (device_Type_Check == "H") {
+    
 
     let payloadHeader = "";
     let payloadBody = "";
@@ -306,7 +331,7 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
       let datetume= dateTimefixedStringm(item.date_time_in.toString())
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       // console.log("datetume",datetume)
-        payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}    ${datetume}  [R]${item.paid_amt.toString()}</font>`
+        payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-4)} [L]${item.vehicle_no.toString().slice(-4)}    ${datetume}  [R]${item.paid_amt.toString()}</font>`
     });
 
 
@@ -339,6 +364,10 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
       payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
+    if (generalSettings.gst_flag == "Y") {
+      payloadHeader += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    }
+
     if(receiptSettings.footer1_flag==1){
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
@@ -354,10 +383,16 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
 
   }
 
+  if (generalSettings.gst_flag == "Y") {
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n[C]--------------------------------\n`;
+  } else {
+    GST_Yes_No += ``;
+  }
+
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]${payloadHeader}\n` +
+          `[C]${payloadHeader}` +
           `[C]<u><font size='small'>Detailed Report</font></u>\n` +
           `[C]--------------------------------\n` +
           `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
@@ -368,8 +403,12 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>PAID: ${totalAmount}</font>\n` +
+          `${generalSettings.pay_mode_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} PAID: ${totalAmount}</font>\n` : ""}` +
+          `${generalSettings.pay_mode_flag === "N" ? `[L]<font size='normal'>PAID: ${totalAmount}</font>\n` : ""}` +
+              // `[C]<font size='normal'>PAID: ${totalAmount}</font>\n` +
           `[C]--------------------------------\n` +
+          `${GST_Yes_No}` +
+
           // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
           // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
           `[C]${payloadFooter}\n`,
@@ -674,10 +713,31 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
 
                   <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
                 </View>
+
+                {generalSettings.pay_mode_flag == "Y" && (
+                <>
+                {getDetailedReport.forEach(item => {
+                if (item?.pay_mode === "U") {
+                totalUPIAmount += item.paid_amt;
+                }
+
+                if (item?.pay_mode === "C") {
+                  totalCashAmount += item.paid_amt;
+                  }
+
+                })}
+                </>
+                )}
+
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     totalAmount += item.paid_amt;
                     // totalAdvanceAmount += item.advance_amt;
+
+                    {generalSettings.gst_flag == "Y" && (
+                      gstAmount = gstCalculatorReport(totalAmount, gstList.sgst, gstList.cgst)
+                    )}
+
                     return (
                       <View
                         style={[
@@ -698,45 +758,76 @@ console.log(date_From.toLocaleDateString("en-GB"), date_From.toLocaleTimeString(
                   })}
                 {
                   <>
-                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+
+
+                  {generalSettings.gst_flag === "Y" && (
+                    <>
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
-                      Advance Amount
+                      Base Amount
                     </Text>
-                    <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
-                  </View> */}
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {/* {totalAmount} // */}
+                      {generalSettings.gst_flag == "Y" && (
+                        <>
+                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        </>
+                      )}
+                    </Text>
+                   
+                  </View>
+                  
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                  <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
+                </View>
+
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
+                  <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
+                </View>
+                  </>
+
+                  )}
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
-                      Paid Amount
+                      Paid Amount 
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                       {totalAmount}
                     </Text>
-                    {/* <Text style={[styles.cell, styles.hcell]}>
-                    {detailedReportData && totalAdvance}
-                  </Text>
-                  <Text style={[styles.cell, styles.hcell]}>
-                    {detailedReportData && totalPrice}
-                  </Text> */}
-                    {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+
                   </View>
 
-                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Net Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                    {totalAmount + totalAdvanceAmount}
+                  {generalSettings.pay_mode_flag == "Y" && (
+                    <>
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                Cash
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {totalCashAmount}
+                </Text>
 
-              
-                  </Text>
+                </View>
 
-                  </View> */}
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                UPI
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {totalUPIAmount}
+                </Text>
+
+                </View>
+                </>
+                )}
 
                   </>
                 }
                 <View style={{}}>
-                  <Text style={{ marginLeft: 10 }}>
+                  <Text style={{ marginLeft: 10,  paddingBottom:120, }}>
                     Report Generated on {date.toLocaleString()}{" "}
                   </Text>
                 </View>

@@ -3,7 +3,7 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
 function useCarIn() {
-    const carIn = async (vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst) => {
+    const carIn = async (vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst, getPayMode) => {
         console.log(vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst, 'baseAmt__UTSAB');
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
@@ -18,6 +18,8 @@ function useCarIn() {
                         gst_flag: gstFlag,
                         cgst: cgst,
                         sgst: sgst,
+                        paymode: getPayMode,
+
                     },
                     {
                         headers: {

@@ -4,7 +4,7 @@ import { loginStorage } from "../../storage/appStorage";
 
 function useDetailedReportScreen() {
     const detailedReportScreen = async (fDate,tDate, getUserName) => {
-        // console.log(getUserName, 'ddddddddd');
+        console.log(fDate,tDate, getUserName, 'ddddddddd');
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
              axios.post(
