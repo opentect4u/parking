@@ -308,11 +308,11 @@ export default function DetailedReportScreen({ navigation }) {
       await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-      if (generalSettings.gst_flag === "Y") {
+      if (generalSettings.pay_mode_flag == "Y") {
         await BluetoothEscposPrinter.printText(`UPI:${totalUPIAmount}  CASH:${totalCashAmount}  NET:${totalAmount}\n`, { align: "left" });  
       }
 
-      if (generalSettings.gst_flag === "N") {
+      if (generalSettings.pay_mode_flag == "N") {
         await BluetoothEscposPrinter.printText(`ADV:${totalAdvanceAmount} PAID:${totalAmount} NET:${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
       }
 
@@ -423,8 +423,8 @@ export default function DetailedReportScreen({ navigation }) {
       `[C]--------------------------------` +
       `[C]${payloadBody}\n` +
       `[C]--------------------------------\n` +
-      `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} NET: ${totalAmount}</font>\n` : ""}` +
-      `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount} CASH: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` : ""}` +
+      `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} NET: ${totalAmount}</font>\n` : ""}` +
+      `${generalSettings.pay_mode_flag == "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount} CASH: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` : ""}` +
       `[C]--------------------------------\n` +
 
       `${GST_Yes_No}` +
@@ -684,7 +684,7 @@ export default function DetailedReportScreen({ navigation }) {
 
                   </View>
 
-                {generalSettings.gst_flag == "Y" && (
+                {generalSettings.pay_mode_flag == "Y" && (
                     <>
                 <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                 <Text style={[styles.cell, styles.hcell]}>
