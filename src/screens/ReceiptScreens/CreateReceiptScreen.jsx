@@ -235,7 +235,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   //   "sgst": 2.5
   //   }]
 
-  console.log(gstSettings[0].gst_flag, 'gstSettingsgstSettingsgstSettingsgstSettingsgstSettings', gstList);
+  // console.log(gstSettings[0].gst_flag, 'gstSettingsgstSettingsgstSettingsgstSettingsgstSettings', gstList);
   
   
     // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
@@ -252,7 +252,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     //vehicle data to update server
 
-
+    // console.log(getPayMode, 'getPayModegetPayModegetPayModegetPayModegetPayMode');
+    
     // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate START
 
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
@@ -340,7 +341,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         }
 
-        if (receiptSettings.header4_flag == 1) {
+        if (generalSettings.gst_flag == "Y") {
           payloadHeader += `[C]GST No.: ${gstList.gst_number}\n`;
         }
 
@@ -364,7 +365,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // }
 
         if (generalSettings.pay_mode_flag == "Y") {
-          pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>PAYMENT MODE : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
+          pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>PAYMENT MODE : [R]UPI</font>\n` : "[L]<font size='normal'>PAYMENT MODE : [R]Cash</font>\n"}`
         }
 
 
@@ -519,7 +520,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // }
 
         if (generalSettings.pay_mode_flag == "Y") {
-          pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>PAYMENT MODE : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
+          pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>PAYMENT MODE : [R]UPI</font>\n` : "[L]<font size='normal'>PAYMENT MODE : [R]Cash</font>\n"}`
         }
 
         
