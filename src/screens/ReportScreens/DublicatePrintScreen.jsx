@@ -148,7 +148,7 @@ export default function DublicatePrintScreen({ navigation }) {
 
     // setgetDetailedReport(rep_data?.data?.msg)
       setgetDetailedReport(rep_data?.data?.data?.msg)
-      console.log(rep_data?.data?.data?.msg, 'rep_data?.data?.data?.msg');
+      // console.log(rep_data?.data?.data?.msg, 'rep_data?.data?.data?.msg');
       
 
     };
@@ -742,7 +742,7 @@ await BluetoothEscposPrinter.printText("-------------------------------\n", { al
 await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
 
 if (generalSettings.pay_mode_flag == "Y") {
-  pay_Mode += `${item.pay_mode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
+  // pay_Mode += `${item.pay_mode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
   await BluetoothEscposPrinter.printText(`${item.pay_mode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`, { align: "left" });
 }
 
