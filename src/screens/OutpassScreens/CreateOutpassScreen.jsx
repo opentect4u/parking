@@ -18,6 +18,11 @@ import BleManager from "react-native-ble-manager";
 import ThermalPrinterModule from "react-native-thermal-printer";
 import RadioButton from '../../components/RadioButton';
 
+// For Scanner
+import QRCode from 'react-native-qrcode-svg';
+
+
+
 
 const CreateOutpassScreen = ({ route, navigation }) => {
 
@@ -40,6 +45,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     { label: 'UPI: ', value: 'U' },
   ];
 
+  // For Scanner
+  const receiptNoObj = data.find(item => item.label === "RECEIPT NO");
+
+
+
+
   const handleRadioSelect = (value) => {
     setRadioState(!radioState);
 
@@ -50,7 +61,11 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    
 
+    
+    // console.log('datadatadatadatadatadatadata', data, 'datadatadatadatadatadatadata', receiptNoObj.value);
+    
     // console.log(route.params,'/////////data',data, '/////////others', others, '/////////gstSettings',gstSettings, '/////////totalRate',totalRate, 'utsabutsabutsabutsabutsabutsab', gstSettings);
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
@@ -325,6 +340,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         } else {
           GST_Header += ``;
         }
+        
 
         if (receiptSettings.footer1_flag == 1) {
           payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -365,6 +381,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
             `${payloadBody}` +
             `${pay_Mode}` +
             // `[L]<font size='normal'>DURATION : [R]</font>\n` +
+            // `[C]<u><font size='small'>${receiptNoObj.value}</font></u>\n` +
+            // `[C]<qrcode size='30'>${receiptNoObj.value.toString()}</qrcode>\n` +
             `[C]-------------------------------\n` +
             `[C]${payloadFooter}\n`,
           printerNbrCharactersPerLine: 30,
@@ -423,12 +441,24 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       <CustomHeader title={'Printer Preview'} />
       <ScrollView>
 
+      {/* <RNCamera ref={ref => {this.camera = ref; }} ></RNCamera> */}
+
+      {/* <View style={styles.container__Scanner}>
+<Text style={styles.numberText__Scanner}>Number: {receiptNoObj.value}</Text>
+      <QRCode
+        value={receiptNoObj.value} // Replace this with your number or data
+        size={200}
+        color="black"
+        backgroundColor="white"
+      />
+    </View> */}
+
         {/* render printer preview and action buttons */}
         <View style={{ padding: PixelRatio.roundToNearestPixel(15) }}>
           {/* data  loop run below */}
           {data &&
             data.map((props, index) => (
-              
+              <>
               <View key={index}>
               {/* <Text style={{ fontFamily: 'monospace', color: 'gray' }}>
         {JSON.stringify(props, null, 2)}
@@ -446,6 +476,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
                   }}
                 />
               </View>
+              </>
             ))}
 
 {/* {if (generalSettings.pay_mode_flag == "Y") {} */}

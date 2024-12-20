@@ -32,6 +32,9 @@ import { dateTimefixedString } from "../../utils/dateTime";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
+// For Scanner
+import QRCode from 'react-native-qrcode-svg';
+
 
 // import React, { useState, useEffect, useContext } from "react";
 
@@ -56,8 +59,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // console.log(route.params, 'route.params__UTSAB');
-  const { type, id, userId, operatorName, deviceId, fixedPriceData } =
-    route.params;
+  const { type, id, userId, operatorName, deviceId, fixedPriceData } = route.params;
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
   const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -72,6 +74,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   //   { label: 'UPI: ', value: 'U' },
   // ];
 
+
+  
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
@@ -270,7 +274,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         let payloadHeader = "";
         let payloadFooter = "";
         let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString().slice(-5);
-        
+        const receiptNoObj = carindata?.data?.td_vehicle_in?.receipt_number;
 
         const options = {
         hour12: false,
@@ -432,6 +436,23 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         [`IN TIME : ${formatDateTime(currentTime)}`],
         {}
       );
+      // await BluetoothEscposPrinter.printQRCode(
+      //   receiptNoObj.toString(), // QR code data
+      //   8, // Size (adjustable)
+      //   BluetoothEscposPrinter.ERROR_CORRECTION.M // Medium error correction
+      // );
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`num : ${receiptNoObj.toString()}`],
+        {}
+      );
+      await BluetoothEscposPrinter.printQRCode(
+        receiptNoObj.toString(), // QR code data
+        250, // Larger size (between 1 and 16)
+        BluetoothEscposPrinter.ERROR_CORRECTION.L // Error correction level
+      );
+      // `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n` +
       await BluetoothEscposPrinter.printText("-------------------------------\n", {});
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
       await BluetoothEscposPrinter.printText("\r\n", {})
@@ -471,6 +492,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
         .toString()
         .slice(-5);
+          // For Scanner
+        const receiptNoObj = carindata?.data?.td_vehicle_in?.receipt_number;
         // let advanceAmount = "";
         let gstShow_pos = "";
         
@@ -567,6 +590,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // `${GST_Yes_No}` +
 
         `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        // `[C]<u><font size='small'>${receiptNoObj}</font></u>\n` +
+        `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n` +
         `[C]-------------------------------\n` +
         `[C]${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
@@ -704,6 +729,16 @@ const CreateReceiptScreen = ({ navigation, route }) => {
               </View>
             </View>
           </View>
+
+          {/* <View style={styles.container__Scanner}>
+<Text style={styles.numberText__Scanner}>Number: {receiptNoObj__}</Text>
+      <QRCode
+        value='12546' // Replace this with your number or data
+        size={200}
+        color="black"
+        backgroundColor="white"
+      />
+    </View> */}
 
           {/* ......... vehicle type .......... */}
           <View style={{ marginTop: normalize(20) }}>
