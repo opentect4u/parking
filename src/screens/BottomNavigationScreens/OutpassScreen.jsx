@@ -11,6 +11,7 @@ import {
   Linking,
   Alert,
   ToastAndroid,
+  Vibration
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../components/CustomHeader";
@@ -79,18 +80,7 @@ export default function OutpassScreen({ navigation }) {
 
   const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
 
-  // For Scanner
-  // const receiptNoObj = data.find(item => item.label === "RECEIPT NO");
-
-  // const codeScanner = useCodeScanner({
-    
-  //   codeTypes: ['qr', 'ean-13'],
-  //   onCodeScanned: (codes) => {
-  //     // console.log(Scanned ${codes.length} codes!)
-  //     console.log(codes);
-      
-  //   }
-  // })
+  // For Scanner Start
   const device = useCameraDevice('back')
   const { hasPermission, requestPermission } = useCameraPermission()
   // const [scannedCode, setScannedCode] = useState(() => "")
@@ -98,11 +88,8 @@ export default function OutpassScreen({ navigation }) {
   const [scanned, setScanned] = useState(false)
   const [isScanning, setIsScanning] = useState(true); // State to control scanning
   const [getVaicle_outSet, setVaicle_outSet] = useState(false); // State to control scanning
-
   let samplingBarcodes = [[]]
   let barcodes = []
-
-  // const codeScanner = useCodeScanner({
 
   const codeScanner = useCodeScanner({
     
@@ -139,11 +126,8 @@ export default function OutpassScreen({ navigation }) {
 useEffect(() => {
   setLoading_scan(false)
   setIsScanning(true)
-  
-
 }, [carNumber])
- 
-  
+
   useEffect(() => {
     
     const cameraPermissionRequest = () => {
@@ -171,8 +155,6 @@ useEffect(() => {
         cameraPermissionRequest()
     }
 }, [])
-
-
 
   // get serch vehicle information
   const getVehicleInfo_forScan = async carNumber => {
@@ -207,6 +189,8 @@ useEffect(() => {
               // ToastAndroid.show("Vehicle Already IN", ToastAndroid.SHORT);
               setLoading_scan(true)
               setVaicle_outSet(false)
+              Vibration.vibrate(1000); 
+              Vibration.cancel()
               handleUploadOutPassData_scan(carNumber, 0, res.data.data.msg[0])
 
             }
@@ -413,6 +397,8 @@ useEffect(() => {
     });
 
   };
+
+  // For Scanner End
 
   const scanner = ()=>{
     if(getScannerOfOn){
