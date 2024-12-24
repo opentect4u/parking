@@ -210,19 +210,19 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
         if (receiptSettings.footer1_flag == 1) {
           // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-          payloadHeader += `${receiptSettings.footer1}\n`;
+          payloadFooter += `${receiptSettings.footer1}\n`;
         }
         if (receiptSettings.footer2_flag == 1) {
           // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-          payloadHeader += `${receiptSettings.footer2}\n`;
+          payloadFooter += `${receiptSettings.footer2}\n`;
         }
         if (receiptSettings.footer3_flag == 1) {
           // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
-          payloadHeader += `${receiptSettings.footer3}\n`;
+          payloadFooter += `${receiptSettings.footer3}\n`;
         }
         if (receiptSettings.footer4_flag == 1) {
           // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-          payloadHeader += `${receiptSettings.footer4}\n`;
+          payloadFooter += `${receiptSettings.footer4}\n`;
         }
 
       }

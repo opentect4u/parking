@@ -156,7 +156,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
     report_password_flag,
     redirection_flag,
     gst_flag,
-    pay_mode_flag
+    pay_mode_flag,
+    qr_code_flag
   } = generalSettings;
 
   const {
@@ -165,7 +166,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     sgst,
   } = gstList;
 
-  console.log(gstList, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
+  console.log(qr_code_flag, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
 
   return (
     <View style={{ flex: 1 }}>
@@ -219,6 +220,18 @@ const GeneralSettingsScreen = ({ navigation }) => {
               </SettingComponent>
             )}
 
+            {/* QR CODE */}
+            {qr_code_flag && (
+              <SettingComponent
+                icon={icons.qrcode(colors["primary-color"], 25)}
+                text={"QR CODE"}>
+                <CustomSwitch
+                  isEnabled={qr_code_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+            )}
+
             {/* GST */}
             {gst_flag && (
               <SettingComponent
@@ -230,6 +243,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
 
             {/* GST % */}
             {gst_flag === "Y" && (

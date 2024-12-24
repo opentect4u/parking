@@ -172,6 +172,11 @@ const gst = (color, size) => (
   <Ionicons name="calculator" color={color} size={size} />
 );
 
+const qrcode = (color, size) => (
+  <Ionicons name="qr-code" color={color} size={size} />
+);
+
+
 const payment_mod = (color, size) => (
   <MaterialIcons name="payments" color={color} size={size} />
 );
@@ -350,6 +355,7 @@ export default icons = {
   print2,
   report,
   gst,
+  qrcode,
   payment_mod,
   paperRoll,
   cellphone,

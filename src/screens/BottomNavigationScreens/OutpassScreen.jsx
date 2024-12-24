@@ -80,7 +80,7 @@ export default function OutpassScreen({ navigation }) {
 
   const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
 
-  // For Scanner Start
+  // For Scannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnner Start
   const device = useCameraDevice('back')
   const { hasPermission, requestPermission } = useCameraPermission()
   // const [scannedCode, setScannedCode] = useState(() => "")
@@ -92,7 +92,6 @@ export default function OutpassScreen({ navigation }) {
   let barcodes = []
 
   const codeScanner = useCodeScanner({
-    
     codeTypes: ['qr', 'ean-13'],
     onCodeScanned: (codes) => {
         // if (codes.length > 0) {
@@ -118,9 +117,6 @@ export default function OutpassScreen({ navigation }) {
         }
             
         }
-        
-        
-    // }
 })
 
 useEffect(() => {
@@ -398,7 +394,6 @@ useEffect(() => {
 
   };
 
-  // For Scanner End
 
   const scanner = ()=>{
     if(getScannerOfOn){
@@ -410,6 +405,10 @@ useEffect(() => {
     }
     
   }
+
+  // For Scannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnner End
+
+
  
 
   // get serch vehicle information

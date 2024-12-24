@@ -107,6 +107,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    console.log(receiptSettings, 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
+    
     setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
     console.log("EFFECT - CreateReceiptScren");
     // console.log(generalSettings.adv_value, 'generalSettings__XXROYYYYYY');
@@ -262,6 +264,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     if(carindata.status){
       // Use for Mobile Device Start 
+      // console.log(getBlePermission && device_Type_Check == "M", 'getBlePermissiongetBlePermissiongetBlePermissiongetBlePermissiongetBlePermission');
+      
         if (getBlePermission && device_Type_Check == "M") {
         // ToastAndroid.showWithGravityAndOffset(
         // "Receipt Created Successfully",
@@ -271,7 +275,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // 50,
         // );
 
-        let payloadHeader = "";
+        var payloadHeader = "";
         let payloadFooter = "";
         let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString().slice(-5);
         const receiptNoObj = carindata?.data?.td_vehicle_in?.receipt_number;
@@ -291,8 +295,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         )} ${dateTime.toLocaleTimeString(undefined, options)}`;
         };
 
+        // console.log(receiptSettings,  'receiptSettingsheader1_flag', receiptSettings.header1);
+        
         // try {
-        if(receiptSettings?.IN_on_off == "Y"){
+        // if(receiptSettings?.IN_on_off == "Y"){
         if (receiptSettings.header1_flag == 1) {
         // payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
         payloadHeader += `${receiptSettings.header1}\n`;
@@ -313,12 +319,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         payloadHeader += `${receiptSettings.header4}\n`;
         }
 
-        // if (generalSettings.gst_flag == "Y") {
-        //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-        //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
-        // } else {
-        //   GST_Header += ``;
-        // }
 
         if (receiptSettings.footer1_flag == 1) {
         // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -337,7 +337,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         payloadFooter += `${receiptSettings.footer4}\n`;
         }
 
-        }
+        // }
 
         if (generalSettings.adv_pay == "Y") {
         // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
@@ -355,7 +355,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           );
   
       await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
+      if(receiptSettings?.IN_on_off == "Y"){
       await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+      }
       // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
       if (generalSettings.gst_flag == "Y") {
         await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
@@ -382,26 +384,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         {}
       );
 
-
-
-     
-
-      //   if (generalSettings.gst_flag == "Y") {
-      //   await BluetoothEscposPrinter.printColumn(
-      //     [30],
-      //     [BluetoothEscposPrinter.ALIGN.LEFT],
-      //     [`CGST : ${gstAmount.CGST}`],
-      //     {}
-      //   );
-
-      //   await BluetoothEscposPrinter.printColumn(
-      //     [30],
-      //     [BluetoothEscposPrinter.ALIGN.LEFT],
-      //     [`SGST : ${gstAmount.SGST}`],
-      //     {}
-      //   );
-      // }
-
       if (generalSettings.adv_pay == "Y") {
 
         await BluetoothEscposPrinter.printColumn(
@@ -411,24 +393,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           {}
         );
       }
-
-      // if (generalSettings.gst_flag == "Y") {
-      //   await BluetoothEscposPrinter.printColumn(
-      //     [30],
-      //     [BluetoothEscposPrinter.ALIGN.LEFT],
-      //     [`GST No. : ${gstList.gst_number}`],
-      //     {}
-      //   );
-      // } else {
-      //   await BluetoothEscposPrinter.printColumn(
-      //     [30],
-      //     [BluetoothEscposPrinter.ALIGN.LEFT],
-      //     [`GST Not Applicable.`],
-      //     {}
-      //   );
-      // }
-
-
 
       await BluetoothEscposPrinter.printColumn(
         [30],
@@ -447,14 +411,20 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         [`num : ${receiptNoObj.toString()}`],
         {}
       );
+
+      if (generalSettings?.qr_code_flag == "Y") {
       await BluetoothEscposPrinter.printQRCode(
         receiptNoObj.toString(), // QR code data
         250, // Larger size (between 1 and 16)
         BluetoothEscposPrinter.ERROR_CORRECTION.L // Error correction level
       );
+    }
+      
       // `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n` +
       await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+      if(receiptSettings?.IN_on_off == "Y"){
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+      }
       await BluetoothEscposPrinter.printText("\r\n", {})
       } catch (e) {
         // alert(e.message || "ERROR")
