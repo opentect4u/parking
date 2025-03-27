@@ -129,7 +129,7 @@ export default function DetailedReportScreen({ navigation }) {
     // let rep_data = await detailedReportScreen(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
     let rep_data = await detailedReportScreen(date_From, date_To, loginData.user.userdata.msg[0].id);
 
-    // console.log('kkkkkkkkkkkkk>>>', rep_data?.data?.msg, '///////////rep_datarep_datarep_datarep_datarep_datarep_data');
+    console.log(date_From, date_To, loginData.user.userdata.msg[0].id, 'kkkkkkkkkkkkk>>>', rep_data?.data?.msg, '///////////rep_datarep_datarep_datarep_datarep_datarep_data');
     
 
     if(rep_data?.data?.suc>0){
