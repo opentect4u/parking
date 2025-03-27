@@ -190,6 +190,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let GST_Yes_No = "";
     let GST_Header = "";
     let advanceAmount = "";
+    let qrcode = "";
     let gstAmount;
 
     if (generalSettings.gst_flag == "Y") {
@@ -526,6 +527,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
         }
 
+        if (generalSettings?.qr_code_flag == "Y") {
+          qrcode += `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
+        }
+
         // if (generalSettings.gst_flag == "Y") {
         // gstShow_pos += `[L]<font size='normal'>CGST : [R] ${gstAmount.CGST} \nSGST : [R] ${gstAmount.SGST} </font>\n`;
         // } else {
@@ -561,7 +566,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
         // `[C]<u><font size='small'>${receiptNoObj}</font></u>\n` +
-        `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n` +
+
+        // `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`+
+        
+        `${qrcode}` +
         `[C]-------------------------------\n` +
         `[C]${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
