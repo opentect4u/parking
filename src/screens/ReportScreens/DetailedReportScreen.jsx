@@ -32,6 +32,7 @@ import { loginStorage } from "../../storage/appStorage";
 import DatePicker from "react-native-date-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import gstCalculatorReport from "../../hooks/gstCalculatorReport";
+import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 
 export default function DetailedReportScreen({ navigation }) {
   // const { detailedReports } = useContext(AuthContext);
@@ -212,12 +213,10 @@ export default function DetailedReportScreen({ navigation }) {
     let payloadBody = "";
     let payloadFooter = "";
 
-    getDetailedReport.map((item, index) => {
-      let datetume= dateTimefixedStringm(item.date_time_in.toString())
-      // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
-      // console.log("datetume",datetume)
-        payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}    ${datetume}  [R]${item.paid_amt.toString()}</font>`
-    });
+    // getDetailedReport.map((item, index) => {
+    //   let datetume= dateTimefixedStringm(item.date_time_in.toString())
+    //     payloadBody += `\n${(item.receipt_no).toString().slice(-5)} ${item.vehicle_no.toString()}    ${datetume}   ${item.paid_amt.toString()}`
+    // });
 
 
     /* The above code is rendering three `<Text>` components in a React component. */
@@ -230,88 +229,222 @@ export default function DetailedReportScreen({ navigation }) {
 
     // Recpt.No.   Veh.No.   In Time   Amount
     
-    if(receiptSettings?.report_flag == "Y"){
+  //   if(receiptSettings?.report_flag == "Y"){
 
-    if(receiptSettings.header1_flag==1){
-      payloadHeader +=
-      `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
-    }
+  //   if(receiptSettings.header1_flag==1){
+  //     payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+  //   }
 
-    if(receiptSettings.header2_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
-    }
+  //   if(receiptSettings.header2_flag==1){
+  //     payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+  //   }
 
-    if(receiptSettings.header3_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
-    }
+  //   if(receiptSettings.header3_flag==1){
+  //     payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+  //   }
 
-    if(receiptSettings.header4_flag==1){
-      payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
-    }
+  //   if(receiptSettings.header4_flag==1){
+  //     payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+  //   }
 
-    if (generalSettings.gst_flag == "Y") {
-      payloadHeader += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
-    }
+  //   if (generalSettings.gst_flag == "Y") {
+  //     payloadHeader += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+  //   }
 
-    if(receiptSettings.footer1_flag==1){
-      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-    }
-    if(receiptSettings.footer2_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-    }
-    if(receiptSettings.footer3_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
-    }
-    if(receiptSettings.footer4_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-    }
+  //   if(receiptSettings.footer1_flag==1){
+  //     payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+  //   }
+  //   if(receiptSettings.footer2_flag==1){
+  //     payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+  //   }
+  //   if(receiptSettings.footer3_flag==1){
+  //     payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+  //   }
+  //   if(receiptSettings.footer4_flag==1){
+  //     payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+  //   }
 
-  }
+  // }
 
-  if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n[C]--------------------------------\n`;
-    } else {
-    GST_Yes_No += ``;
-    }
+  // Header Start 
+        if (receiptSettings.header1_flag == 1) {
+        // payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        payloadHeader += `${receiptSettings.header1}\n`;
+        }
+
+        if (receiptSettings.header2_flag == 1) {
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        payloadHeader += `${receiptSettings.header2}\n`;
+        }
+
+        if (receiptSettings.header3_flag == 1) {
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        payloadHeader += `${receiptSettings.header3}\n`;
+        }
+
+        if (receiptSettings.header4_flag == 1) {
+        // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        payloadHeader += `${receiptSettings.header4}\n`;
+        }
+        // Header End 
+
+
+        // Footte Start 
+        if (receiptSettings.footer1_flag == 1) {
+        // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        payloadFooter += `${receiptSettings.footer1}\n`;
+        }
+        if (receiptSettings.footer2_flag == 1) {
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        payloadFooter += `${receiptSettings.footer2}\n`;
+        }
+        if (receiptSettings.footer3_flag == 1) {
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        payloadFooter += `${receiptSettings.footer3}\n`;
+        }
+        if (receiptSettings.footer4_flag == 1) {
+        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        payloadFooter += `${receiptSettings.footer4}\n`;
+        }
+        // Footte End 
+
+
+  // if (generalSettings.gst_flag == "Y") {
+  //   GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n[C]--------------------------------\n`;
+  //   } else {
+  //   GST_Yes_No += ``;
+  //   }
 
     try {
-      await ThermalPrinterModule.printBluetooth({
-        payload:
-          `[C]${payloadHeader}` +
-          `[C]<u><font size='small'>Detailed Report</font></u>\n` +
-          `[C]--------------------------------\n` +
-          `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
-          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-          `[C]--------------------------------\n` +
-          `[C]--------------------------------\n` +
-          `[L]<font size='12'>Rec.No.  Veh.No.  InTime  Paid</font>\n` +
-          `[C]--------------------------------` +
-          `[C]${payloadBody}\n` +
-          `[C]--------------------------------\n` +
-          `${generalSettings.pay_mode_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} PAID: ${totalAmount}</font>\n` : ""}` +
-          `${generalSettings.pay_mode_flag === "N" ? `[L]<font size='normal'>PAID: ${totalAmount}</font>\n` : ""}` +
-          // `[C]<font size='normal'>PAID: ${totalAmount}</font>\n` +
-          `[C]--------------------------------\n` +
-          `${GST_Yes_No}` +
-          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-          `[C]${payloadFooter}\n`,
-        printerNbrCharactersPerLine: 30,
-        printerDpi: 120,
-        printerWidthMM: 58,
-        mmFeedPaper: 25,
-      });
-      // vehicleWiseReports.map(async (item, index) => {
-      //   await ThermalPrinterModule.printBluetooth({
-      //     payload:
-      //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.adv_amt}  ${item.paid_amt}\n`,
 
+      ToastAndroid.showWithGravityAndOffset(
+              "Receipt Created Successfully",
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              25,
+              50,
+            );
+
+      // if(receiptSettings?.IN_on_off == "Y"){
+      //   await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+      // }
+
+      // await BluetoothEscposPrinter.printText("Detailed Report\n", { align: "center" });
+      // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+      
+
+      // await BluetoothEscposPrinter.printText(`From :${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")} To :${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}\n`, { align: "left" });
+      // await BluetoothEscposPrinter.printText(`Report On :${new Date().toLocaleString("en-GB")}\n`, { align: "left" });
+        if(receiptSettings?.IN_on_off == "Y"){
+        await BluetoothEscposPrinter.printText(`${payloadHeader}\n`, {
+        align: BluetoothEscposPrinter.ALIGN.CENTER,
+        });
+        }
+        await BluetoothEscposPrinter.printText("Detailed Report\n", { align: "center" });
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        await BluetoothEscposPrinter.printText(`From: ${date_From.toLocaleDateString("en-GB")}/${date_From.toLocaleTimeString("en-GB")}\n`, { align: "left" });
+        await BluetoothEscposPrinter.printText(`To:${date_To.toLocaleDateString("en-GB")}/${date_To.toLocaleTimeString("en-GB")}\n`, { align: "left" });
+        await BluetoothEscposPrinter.printText(`Report On: ${new Date().toLocaleString("en-GB")}\n`, { align: "left" });
+
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        // await BluetoothEscposPrinter.printText("Rec.No.  Veh.No.  InTime  Paid\n", {
+        //   align: BluetoothEscposPrinter.ALIGN.LEFT,
+        // });
+
+        await BluetoothEscposPrinter.printColumn(
+        [8,8,7,7],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT ],
+        [`Rec.No.`, `Veh.No.`, `InTime`, `Paid`],
+        {}
+        );
+
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        for (item of getDetailedReport) {
+        let datetume= dateTimefixedStringm(item.date_time_in.toString())
+        await BluetoothEscposPrinter.printColumn(
+        [8,8,7,7],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT ],
+        [`${(item.receipt_no).toString().slice(-5)}`, `${item.vehicle_no.toString().slice(-5)}`, `${datetume}`, `${item.paid_amt.toString()}`],
+        {}
+        );
+        }
+
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        if (generalSettings.pay_mode_flag === "Y") {
+        await BluetoothEscposPrinter.printColumn(
+        [10,10,10],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT ],
+        [`UPI: ${totalUPIAmount}`, `CASH: ${totalCashAmount}`, `PAID: ${totalAmount}` ],
+        {}
+        );
+        }
+
+        if (generalSettings.pay_mode_flag === "N") {
+        await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`PAID: ${totalAmount}` ],
+        {}
+        );
+        }
+
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        if (generalSettings.gst_flag == "Y") {
+        await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`BASE AMOUNT :${totalAmount - (gstAmount.CGST + gstAmount.SGST)}`],
+        {}
+        );
+        }
+
+        if (generalSettings.gst_flag == "Y") {
+        await BluetoothEscposPrinter.printColumn(
+        [15, 15],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        [`CGST @${gstList.cgst}%:${gstAmount.CGST}`, `SGST @${gstList.sgst}%:${gstAmount.SGST}`],
+        {}
+        );
+        }
+        await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+        if(receiptSettings?.IN_on_off == "Y"){
+        await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+        }
+
+        await BluetoothEscposPrinter.printText("\r\n", {})
+       
+
+      // await ThermalPrinterModule.printBluetooth({
+      //   payload:
+      //     `[C]${payloadHeader}` +
+      //     `[C]<u><font size='small'>Detailed Report</font></u>\n` +
+      //     `[C]--------------------------------\n` +
+      //     `[L]<font>From: ${date_From.toLocaleDateString("en-GB")} / ${date_From.toLocaleTimeString("en-GB")}</font>[R]<font>To: ${date_To.toLocaleDateString("en-GB")} / ${date_To.toLocaleTimeString("en-GB")}</font>\n` +
+      //     `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+      //     `[C]--------------------------------\n` +
+      //     `[C]--------------------------------\n` +
+      //     `[L]<font size='12'>Rec.No.  Veh.No.  InTime  Paid</font>\n` +
+      //     `[C]--------------------------------` +
+      //     `[C]${payloadBody}\n` +
+      //     `[C]--------------------------------\n` +
+      //     `${generalSettings.pay_mode_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} PAID: ${totalAmount}</font>\n` : ""}` +
+      //     `${generalSettings.pay_mode_flag === "N" ? `[L]<font size='normal'>PAID: ${totalAmount}</font>\n` : ""}` +
+      //     `[C]--------------------------------\n` +
+      //     `${GST_Yes_No}` +
+      //     `[C]${payloadFooter}\n`,
       //   printerNbrCharactersPerLine: 30,
       //   printerDpi: 120,
       //   printerWidthMM: 58,
       //   mmFeedPaper: 25,
-      //   })
-      // })
+      // });
+
     } catch (err) {
       ToastAndroid.show(
         "ThermalPrinterModule - VehicleWiseFixedReportScreen",
