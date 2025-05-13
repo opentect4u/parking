@@ -170,6 +170,10 @@ const payment_mod = (color, size) => (
   <MaterialIcons name="payments" color={color} size={size} />
 );
 
+const print2 = (color, size) => (
+  <MaterialIcons name="local-print-shop" color={color} size={size} />
+);
+
 const alertIcon = (size, color) => (
   <MaterialCommunityIcons
     name="database-alert"
@@ -348,6 +352,7 @@ export default icons = {
   report,
   gst,
   payment_mod,
+  print2,
   paperRoll,
   cellphone,
   alertIcon,

@@ -275,7 +275,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       // Use for Mobile Device Start 
       if (getBlePermission && device_Type_Check == "M") {
 
-        // console.log("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", loginData.user.userdata.msg[0].customer_type)
+        console.log("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", 'mobile',  loginData.user.userdata.msg[0].customer_type)
 
       ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
@@ -525,7 +525,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         
 
-        // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
+        console.log("============zzzzzzzzzzzzzzz==================",ThermalPrinterModule);
 
 
         await ThermalPrinterModule.printBluetooth({
@@ -720,28 +720,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             <Text style={styles.vehicle_text}>Vechicle Type</Text>
             <RoundedInputComponent placeholder={type} disable={true} />
           </View>
-          {/* ..........receipt type ........... */}
-
-          {/* {fixedVehicleRateObject && (
-            <View style={{ marginTop: normalize(20) }}>
-              <Text style={{ ...styles.vehicle_text, color: "red" }}>
-                {" "}
-                {/* {dev_mod == "F" ? "" : advanceData && "Advance"}{" "} */}
-          {/*  {fixedVehicleRateObject && "Fixed"} Price is On{" "}
-              </Text>
-              <View
-                style={{
-                  marginLeft: normalize(10),
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}>
-                <Text style={{ ...styles.vehicle_text, color: "red" }}>
-                  Collect ₹{fixedVehicleRateObject.vehicle_rate} money from
-                  customer.
-                </Text>
-              </View>
-            </View>
-          )} */}
+          
           {/* ......... vehicle Number .......... */}
           <View style={{ marginTop: normalize(20) }}>
             <Text style={styles.vehicle_text}>Vechicle Number</Text>

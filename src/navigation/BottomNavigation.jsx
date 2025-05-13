@@ -7,16 +7,22 @@ import ReportsNavigation from "./ReportsNavigation";
 import SettingsNavigation from "./SettingsNavigation";
 import { AuthContext } from "../context/AuthProvider";
 import OutpassNavigation from "./OutpassNavigation";
+import { loginStorage } from "../storage/appStorage";
+import PrintNavigation from "./PrintNavigation";
 
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  const { receiptScreen, outpassScreen, reportScreen, settingsScreen } = navigationRoutes;
+  const { receiptScreen, outpassScreen, reportScreen, settingsScreen, printScreen } = navigationRoutes;
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
 
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
+
   // console.log(report_flag, '////////////////////////UTSABBBB');
+
 
 
   return (
@@ -66,6 +72,7 @@ function BottomNavigation() {
       />
       )}
 
+
       {/*Setting Screen */}
       <Tab.Screen
         name={settingsScreen}
@@ -75,6 +82,19 @@ function BottomNavigation() {
         }}
         component={SettingsNavigation}
       />
+
+      {/*Setting Screen */}
+      {device_Type_Check == "M" && (
+      <Tab.Screen
+        name={printScreen}
+        options={{
+          title: "Connect Printer",
+          tabBarIcon: ({ color, size }) => icons.print2(color, 30),
+        }}
+        component={PrintNavigation}
+      />
+       )} 
+
     </Tab.Navigator>
   );
 }
