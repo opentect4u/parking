@@ -320,9 +320,7 @@ const PrintMain = () => {
       <Text style={styles.sectionTitle}>
         Bluetooth connected to this phone:
       </Text>
-      {/* <Text style={styles.sectionSub}>
-      (If not, pair it from your bluetooth)
-      </Text> */}
+     
       {loading ? <ActivityIndicator animating={true} /> : null}
       <View style={styles.containerList}>
         {pairedDevices.map((item, index) => {
