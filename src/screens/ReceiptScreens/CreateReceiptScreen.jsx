@@ -419,7 +419,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
-          [`PARKING FEES: ${vehicleRate}`],
+          [`FEES: ${vehicleRate}`],
           {}
         );
         
@@ -436,7 +436,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           {}
         );
 
-        if (generalSettings.adv_pay == "Y") {
 
         await BluetoothEscposPrinter.printColumn(
           [30],
@@ -444,7 +443,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           [`IN TIME : ${formatDateTime(currentTime)}`],
           {}
         );
-      }
 
       if (generalSettings.pay_mode_flag == "Y") {
         await BluetoothEscposPrinter.printColumn(
@@ -642,7 +640,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             // `[L]<font size='normal'>${"CGST @"+gstSettings[0].cgst+"Rs."} : [R]${gstPrice.CGST}</font>\n` +
             // `[L]<font size='normal'>${"SGST @"+gstSettings[0].sgst+"Rs."} : [R]${gstPrice.SGST}</font>\n` +
             // `[L]<font size='normal'>${loginData.user.userdata.msg[0].customer_type || "Rs."} : [R]${vehicleRate}</font>\n` +
-            `[L]<font size='normal'>PARKING FEES : [R]${vehicleRate}</font>\n` +
+            `[L]<font size='normal'>FEES : [R]${vehicleRate}</font>\n` +
             `[L]<font size='normal'>VEHICLE TYPE : [R]${type}</font>\n` +
             `[L]<font size='normal'>VEHICLE NO : [R]${vehicleNumber}</font>\n` +
             `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
