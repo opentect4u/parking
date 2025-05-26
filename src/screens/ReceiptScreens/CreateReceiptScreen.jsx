@@ -300,6 +300,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         
         // try {
         // if(receiptSettings?.IN_on_off == "Y"){
+
+
+        // Header Start 
         if (receiptSettings.header1_flag == 1) {
         // payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
         payloadHeader += `${receiptSettings.header1}\n`;
@@ -319,8 +322,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
         payloadHeader += `${receiptSettings.header4}\n`;
         }
+        // Header End 
 
 
+        // Footte Start 
         if (receiptSettings.footer1_flag == 1) {
         // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
         payloadFooter += `${receiptSettings.footer1}\n`;
@@ -337,6 +342,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
         payloadFooter += `${receiptSettings.footer4}\n`;
         }
+        // Footte End 
 
         // }
 
@@ -486,6 +492,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         try {
         if(receiptSettings?.IN_on_off == "Y"){
+          
         if (receiptSettings.header1_flag == 1) {
         payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
         }

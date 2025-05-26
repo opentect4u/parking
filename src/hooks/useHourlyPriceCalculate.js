@@ -1,8 +1,8 @@
 import { Alert } from "react-native";
 
 function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
-
-
+    // console.log("UTSABBBB__", dateTimeIn);
+//    alert(price);
     // let price = 0;
 
     
@@ -20,8 +20,12 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
 
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
+
+
+    
+    
     let price = calculatePrice(totalHours, onlyHourlyData)
-    console.log(price, 'pricepricepricepricepricepriceprice', totalHours, 'kkk', onlyHourlyData);
+    
     return price
 
 }
@@ -195,50 +199,97 @@ function calculateNightHours(nightTimeStart, nightTimeEnd, dateTimeIn, dateTimeO
 
 
 
+// function calculatePrice(hours, heyData) {
+//     let price = 0;
+
+//     const index = heyData.findIndex(
+//         range => hours >= range.from_hour && hours <= range.to_hour,
+//     )
+
+
+//     if (index == -1) {
+//         price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData)
+//     }
+//     let currentHour = hours
+//     for (let [i, item] of heyData.entries()) {
+        
+//         if (item.rate_flag == 'F') {
+//             price += parseInt(item.vehicle_rate);
+
+            
+//         }
+
+//         if (item.rate_flag == 'P') {
+//             let thisHour = currentHour
+//             if (currentHour > (item.to_hour - item.from_hour)) {
+//                 thisHour = item.to_hour - item.from_hour
+//             }
+//             price += thisHour * parseInt(item.vehicle_rate);
+
+//         }
+
+//         if (i == index) {
+
+//             break;
+
+//         }
+        
+//         currentHour -= item.to_hour - item.from_hour
+
+//     }
+
+//     console.log(price, 'UTSABBBB__XXXXXXXXXXXXXX');
+
+//     return price;
+// }
+
 function calculatePrice(hours, heyData) {
-    // console.log(hours, heyData, 'jjjjjjjjjjjjjjjjjjjjj');
     let price = 0;
 
-    const index = heyData.findIndex(
+    if (hours <= 24) {
+        // Use existing logic for 0 to 24 hours
+        const index = heyData.findIndex(
+            range => hours >= range.from_hour && hours <= range.to_hour
+        );
 
-        range => hours >= range.from_hour && hours <= range.to_hour,
-        
-
-    )
-
-
-    if (index == -1) {
-        price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData)
-    }
-    let currentHour = hours
-    for (let [i, item] of heyData.entries()) {
-        if (item.rate_flag == 'F') {
-            price += parseInt(item.vehicle_rate);
+        if (index == -1) {
+            price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData);
         }
 
-        if (item.rate_flag == 'P') {
-            let thisHour = currentHour
-            if (currentHour > (item.to_hour - item.from_hour)) {
-                thisHour = item.to_hour - item.from_hour
+        let currentHour = hours;
+
+        for (let [i, item] of heyData.entries()) {
+            if (item.rate_flag == 'F') {
+                price += parseInt(item.vehicle_rate);
             }
-            price += thisHour * parseInt(item.vehicle_rate);
 
+            if (item.rate_flag == 'P') {
+                let thisHour = currentHour;
+                if (currentHour > (item.to_hour - item.from_hour)) {
+                    thisHour = item.to_hour - item.from_hour;
+                }
+                price += thisHour * parseInt(item.vehicle_rate);
+            }
+
+            if (i == index) {
+                break;
+            }
+
+            currentHour -= item.to_hour - item.from_hour;
         }
+    } else {
+        // More than 24 hours
+        const baseCharge = 50; // Charge for first 24 hours
+        const extraDays = Math.ceil((hours - 24) / 24); // Each full or partial day after
+        const extraCharge = extraDays * 60;
 
-        if (i == index) {
-
-            break;
-
-        }
-
-
-
-        currentHour -= item.to_hour - item.from_hour
-
+        price = baseCharge + extraCharge;
     }
+
+    
 
     return price;
-
 }
+
 
 export default HourlyPriceCalculate;
