@@ -157,7 +157,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
     redirection_flag,
     gst_flag,
     pay_mode_flag,
-    qr_code_flag
+    qr_code_flag,
+    day_wise_rate
   } = generalSettings;
 
   const {
@@ -166,7 +167,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
     sgst,
   } = gstList;
 
-  console.log(qr_code_flag, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', gstList);
+  console.log(qr_code_flag, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', generalSettings.day_wise_rate);
 
   return (
     <View style={{ flex: 1 }}>
@@ -219,6 +220,19 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+            {/* QR CODE */}
+            {day_wise_rate && (
+              <SettingComponent
+                icon={icons.calendar_custom(colors["primary-color"], 25)}
+                text={"Daywise Rate"}>
+                <CustomSwitch
+                  isEnabled={day_wise_rate == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+            )}
+
 
             {/* QR CODE */}
             {qr_code_flag && (

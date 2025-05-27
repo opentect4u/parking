@@ -4,18 +4,21 @@ import { loginStorage } from "../../storage/appStorage";
 import HourlyPriceCalculate from "../useHourlyPriceCalculate";
 
 function useOutpass() {
-    const calculateTotalPrice = async (timestamp,vehicle_id,date_time_in,vehicle_no, grace_period, end_time,inTimestamp) => {
+    const calculateTotalPrice = async (daywise, timestamp,vehicle_id,date_time_in,vehicle_no, grace_period, end_time,inTimestamp) => {
         // get Vehicle Rates By Id From Local Storage
         // const result = await getVehicleRatesByVehicleId(vehicleId);
-        const result = await getVehicleRatesByVehicleId(vehicle_id);
+        
+        
+        const result = await getVehicleRatesByVehicleId(vehicle_id, daywise);
+        // console.log(daywise, 'urrrrrrrrrrrrrrrrrrrrrrrrr', vehicle_id, 'urrrrrrrrrrrrrrrrrrrrrrrrr' , result, 'urrrrrrrrrrrrrrrrrrrrrrrrr');
         // console.log("UTSABBBB__", result[0]?.rate_type == 'H');
         // console.log(result[0], 'resultresultresultresultresultresultresult');
         if (result[0]?.rate_type == 'H') {
             // If Rate type is H, H For Hourly
             // const price = HourlyPriceCalculate( result, date_time_in, end_time, grace_period);
-            const price = HourlyPriceCalculate( result, date_time_in, end_time);
+            const price = HourlyPriceCalculate(result, date_time_in, end_time, daywise);
             
-            // console.log("UTSABBBB__", price);
+            console.log("UTSABBBB__", result);
 
             return price;
         }
@@ -35,12 +38,13 @@ function useOutpass() {
 
 
 
-    const getVehicleRatesByVehicleId = async(vehicleId) => {
+    const getVehicleRatesByVehicleId = async(vehicleId, daywise) => {
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
             axios.post(ADDRESSES.FIXED_RATE_DETAILS_LIST,
                 {
-                    vehicle_id: vehicleId
+                    vehicle_id: vehicleId,
+                    day_wise_rate: daywise
                 },
                 {
                     headers: {
@@ -48,7 +52,7 @@ function useOutpass() {
                     },
                 },).then(res => {
                     resolve(res.data.data.msg);
-                    console.log(res.data.data.msg, 'ooooooooooooooooooooooooooooooooooooooo');
+                    console.log('ooooooooooooooooooo', res?.data?.data?.rates?.msg , 'ooooooooooooooooooo', res?.data?.data?.night_rates?.msg);
                 }).catch(err => {
                     console.log(err);
                     reject(err);

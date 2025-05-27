@@ -257,7 +257,9 @@ useEffect(() => {
   
 
   if(paid_Parking){
+    
     var price = await calculateTotalPrice(
+      generalSettings?.day_wise_rate,
       timestamp,
       carData.vehicle_id,
       crindate,
@@ -548,6 +550,7 @@ useEffect(() => {
 
   if(paid_Parking){
     var price = await calculateTotalPrice(
+      generalSettings?.day_wise_rate,
       timestamp,
       carData.vehicle_id,
       // carData.date_time_in,

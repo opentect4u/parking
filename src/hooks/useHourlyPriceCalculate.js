@@ -1,6 +1,13 @@
 import { Alert } from "react-native";
+// import { AuthContext } from "../context/AuthProvider";
+// import { useContext } from "react";
 
-function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
+// const { generalSettings } = useContext(AuthContext);
+
+
+// var daywiseCharge = true
+
+function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise) {
     // console.log("UTSABBBB__", dateTimeIn);
 //    alert(price);
     // let price = 0;
@@ -8,6 +15,8 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
     
     // let graceTim = 00:
     // Alert(grace_period)
+
+    console.log(daywise, 'urrrrrrrrrrrrrrrrrrrrrrrrr', data);
 
     const dateTimeInT = new Date(dateTimeIn)
 
@@ -20,11 +29,11 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
 
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
-
-
+    
+    console.log(daywise, 'xxxxxxxxxx');
     
     
-    let price = calculatePrice(totalHours, onlyHourlyData)
+    let price = daywise == 'Y'? calculatePrice_Daywise(totalHours, onlyHourlyData) : calculatePrice(totalHours, onlyHourlyData);
     
     return price
 
@@ -199,97 +208,162 @@ function calculateNightHours(nightTimeStart, nightTimeEnd, dateTimeIn, dateTimeO
 
 
 
+const calculatePrice_Daywise = function (hours, heyData) {
+    let price = 0;
+
+    // Calculate full 24-hour cycles beyond the first 24 hours
+    if (hours > 24) {
+        const extraHours = hours - 24;
+        const fullDays = Math.floor(extraHours / 24);
+        const remainingHours = extraHours % 24;
+
+        // Get the last rate slab
+        const lastRateSlab = heyData[heyData.length - 1];
+
+        // Apply last rate slab price for each extra 24-hour period
+        price += fullDays * getSlabPriceFor24Hours(lastRateSlab);
+
+        // Add base 24 hour price (using slab structure)
+        price += calculateBase24HourPrice(heyData);
+
+        // Add remaining hours' price using last slab logic
+        const lastRate = parseInt(lastRateSlab.vehicle_rate);
+        if (lastRateSlab.rate_flag === 'F') {
+            price += lastRate; // One-time flat fee
+        } else if (lastRateSlab.rate_flag === 'P') {
+            price += lastRate * remainingHours; // Per hour
+        }
+
+        return price;
+    }
+
+    // If hours <= 24, apply rates using `heyData` chart
+    let currentHour = hours;
+    for (const item of heyData) {
+        const slabHours = item.to_hour - item.from_hour;
+        let applicableHours = Math.min(currentHour, slabHours);
+        const rate = parseInt(item.vehicle_rate);
+
+        if (item.rate_flag === 'F') {
+            price += rate;
+        } else if (item.rate_flag === 'P') {
+            price += applicableHours * rate;
+        }
+
+        currentHour -= applicableHours;
+        if (currentHour <= 0) break;
+    }
+
+    return price;
+}
+
+// Old Existing Code 26/05/2025
+const calculatePrice = function (hours, heyData) {
+    let price = 0;
+
+    const index = heyData.findIndex(
+        range => hours >= range.from_hour && hours <= range.to_hour,
+    )
+
+
+    if (index == -1) {
+        price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData)
+    }
+    let currentHour = hours
+    for (let [i, item] of heyData.entries()) {
+        
+        if (item.rate_flag == 'F') {
+            price += parseInt(item.vehicle_rate);
+
+            
+        }
+
+        if (item.rate_flag == 'P') {
+            let thisHour = currentHour
+            if (currentHour > (item.to_hour - item.from_hour)) {
+                thisHour = item.to_hour - item.from_hour
+            }
+            price += thisHour * parseInt(item.vehicle_rate);
+
+        }
+
+        if (i == index) {
+
+            break;
+
+        }
+        
+        currentHour -= item.to_hour - item.from_hour
+
+    }
+
+    console.log(price, 'UTSABBBB__XXXXXXXXXXXXXX', currentHour);
+
+    return price;
+}
+
+// Helper: Get full 24 hour charge from last rate slab
+function getSlabPriceFor24Hours(slab) {
+    const hours = slab.to_hour - slab.from_hour;
+    const rate = parseInt(slab.vehicle_rate);
+    return slab.rate_flag === 'F' ? rate : hours * rate;
+}
+
+// Helper: Calculate base 24-hour price using heyData
+function calculateBase24HourPrice(heyData) {
+    let total = 0;
+    for (const item of heyData) {
+        const hours = item.to_hour - item.from_hour;
+        const rate = parseInt(item.vehicle_rate);
+        total += item.rate_flag === 'F' ? rate : hours * rate;
+    }
+    return total;
+}
+
+
+
+// Here I fixed Rate, Because now Parking Rate calculate Incrementaly
 // function calculatePrice(hours, heyData) {
 //     let price = 0;
 
-//     const index = heyData.findIndex(
-//         range => hours >= range.from_hour && hours <= range.to_hour,
-//     )
+//     const lastRateSlab = heyData[heyData.length - 1];
+//     const dailyRate = parseInt(lastRateSlab.vehicle_rate);
 
+//     if (hours > 24) {
+//         const fullDays = Math.floor(hours / 24);
+//         const remainingHours = hours % 24;
 
-//     if (index == -1) {
-//         price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData)
-//     }
-//     let currentHour = hours
-//     for (let [i, item] of heyData.entries()) {
-        
-//         if (item.rate_flag == 'F') {
-//             price += parseInt(item.vehicle_rate);
+//         // Charge Rs.100 per full day (as per last slab)
+//         price += fullDays * dailyRate;
 
-            
+//         // If there are remaining hours, it's counted as another full day
+//         if (remainingHours > 0) {
+//             price += dailyRate;
 //         }
 
-//         if (item.rate_flag == 'P') {
-//             let thisHour = currentHour
-//             if (currentHour > (item.to_hour - item.from_hour)) {
-//                 thisHour = item.to_hour - item.from_hour
+//     } else {
+//         // Find the matching slab based on hours
+//         for (let i = 0; i < heyData.length; i++) {
+//             const item = heyData[i];
+//             if (hours <= item.to_hour) {
+//                 price = parseInt(item.vehicle_rate);
+//                 break;
 //             }
-//             price += thisHour * parseInt(item.vehicle_rate);
-
 //         }
-
-//         if (i == index) {
-
-//             break;
-
-//         }
-        
-//         currentHour -= item.to_hour - item.from_hour
-
 //     }
-
-//     console.log(price, 'UTSABBBB__XXXXXXXXXXXXXX');
 
 //     return price;
 // }
 
-function calculatePrice(hours, heyData) {
-    let price = 0;
 
-    if (hours <= 24) {
-        // Use existing logic for 0 to 24 hours
-        const index = heyData.findIndex(
-            range => hours >= range.from_hour && hours <= range.to_hour
-        );
 
-        if (index == -1) {
-            price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData);
-        }
 
-        let currentHour = hours;
 
-        for (let [i, item] of heyData.entries()) {
-            if (item.rate_flag == 'F') {
-                price += parseInt(item.vehicle_rate);
-            }
 
-            if (item.rate_flag == 'P') {
-                let thisHour = currentHour;
-                if (currentHour > (item.to_hour - item.from_hour)) {
-                    thisHour = item.to_hour - item.from_hour;
-                }
-                price += thisHour * parseInt(item.vehicle_rate);
-            }
 
-            if (i == index) {
-                break;
-            }
 
-            currentHour -= item.to_hour - item.from_hour;
-        }
-    } else {
-        // More than 24 hours
-        const baseCharge = 50; // Charge for first 24 hours
-        const extraDays = Math.ceil((hours - 24) / 24); // Each full or partial day after
-        const extraCharge = extraDays * 60;
 
-        price = baseCharge + extraCharge;
-    }
 
-    
-
-    return price;
-}
 
 
 export default HourlyPriceCalculate;
