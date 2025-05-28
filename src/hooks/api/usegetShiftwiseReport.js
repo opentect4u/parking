@@ -4,7 +4,6 @@ import { loginStorage } from "../../storage/appStorage";
 
 function usegetShiftwiseReport() {
     const shift_wise = async (fDate,tDate,shift_id, getUserName) => {
-        console.log(fDate,tDate,shift_id, getUserName, 'fDatetDateshift_idgetUserName')
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
             

@@ -13,7 +13,6 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
 
 
 
-    console.log("totalHours  ", totalHours)
 
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
@@ -25,7 +24,6 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
         const { from_hour, to_hour, rate_flag, vehicle_rate } = nightTimeData
         //total Night Hours
         const totalNightHours = calculateNightHours(from_hour, to_hour, dateTimeInT, dateTimeOutT)
-        console.log("total night hours ", totalNightHours)
         if (rate_flag.toUpperCase() == "P") {
             // if price calculation Hourly
             price += parseInt(vehicle_rate) * totalNightHours
@@ -58,7 +56,6 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
             console.log(actualNightHours, "DAAAAAYSSSS: ", days)
         }
 
-        console.log("price is +++++++++++++++++++", price)
 
 
 
@@ -72,7 +69,6 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut) {
 
     }
 
-    console.log("last price is ", price)
 
     return price
 
@@ -251,7 +247,6 @@ function calculatePrice(hours, heyData) {
 
     let price = 0;
 
-    console.log("-jj-----------",hours)
 
     //  hours * parseInt(heyData[0].vehicle_rate);
 
@@ -265,7 +260,6 @@ function calculatePrice(hours, heyData) {
         price += calculatePrice(hours - parseInt(heyData[heyData.length - 1].to_hour), heyData)
     }
     let currentHour = hours
-    console.log("Index is ", index)
 
     for (let [i, item] of heyData.entries()) {
 
@@ -286,7 +280,6 @@ function calculatePrice(hours, heyData) {
 
             }
 
-            console.log(item.to_hour, 'current hour', thisHour);
 
             price += thisHour * parseInt(item.vehicle_rate);
 
@@ -306,7 +299,6 @@ function calculatePrice(hours, heyData) {
 
         currentHour -= item.to_hour - item.from_hour
 
-        console.log('current hour -- -----', currentHour);
 
     }
 

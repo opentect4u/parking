@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }) => {
       user_id: username,
       device_id: deviceId,
     };
-    // console.log(credentials, 'pppppppppppppppppppppppppppppppppppppppppppppp');
 
     try {
       setLoading(true);
@@ -83,14 +82,12 @@ export const AuthProvider = ({ children }) => {
           },
         })
         .then(res => {
-          // console.log(res.data.message);
           if (res.data.status) {
 
               loginStorage.set("login-data-local", JSON.stringify(credentials));
               loginStorage.set("login-data", JSON.stringify(res.data.data));
               setIsLogin(!isLogin);
 
-              // console.log(loginData, 'llllll');
             
           } else {
 
@@ -147,7 +144,6 @@ export const AuthProvider = ({ children }) => {
         // setGeneralSettings(res.data.data.msg[0]);
         setGeneralSettings(res.data.data.msg[0]);
 
-        console.log(res.data.data.msg[0], 'koooooooooooooooooooooooo');
         
         if(res.data.data.msg[0].gst_flag == "Y"){
           getGstList();
@@ -179,10 +175,8 @@ export const AuthProvider = ({ children }) => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           setREAD_PHONE_STATE(true);
-          // console.log('You can use this');
         } else {
           setREAD_PHONE_STATE(false);
-          // console.log('permission denied');
         }
       } catch (error) {
         console.error(error.message);
@@ -226,7 +220,6 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGstList(res.data.data.msg[0]);
-        // console.log(loginData.token , 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj', res.data.data.msg[0], 'jjjjjjjjjjjjjjjjjjjjjjjjjjjj');
         
       })
       .catch(err => {
@@ -307,7 +300,6 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        console.log("res - getDetailedReport - AuthProvider", res.data.message);
         setDetailedReports(res.data.data.msg);
       });
   };
@@ -354,7 +346,6 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        // console.log("res - getVehicleWiseReport - AuthProvider", res);
         console.log(
           "res - getVehicleWiseReport - AuthProvider",
           res.data.message,
@@ -380,7 +371,6 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        // console.log("res - getOperatorwiseReport - AuthProvider", res);
         console.log(
           "res - getOperatorwiseReport - AuthProvider",
           res.data.message,
@@ -390,7 +380,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const changePassword = async (oldpassword, password, confirmPassword) => {
-    // console.log(oldpassword, password, confirmPassword, 'ppppppppppppp');
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
@@ -480,7 +469,6 @@ export const AuthProvider = ({ children }) => {
       let updateData=await appUpdate();
 
       let version = DeviceInfo.getVersion()
-      // console.log("lllllllllllllllllll",updateData.data?.msg[0])
       if(updateData.data?.msg[0]?.version > version && updateData.data?.msg[0]?.download_flag == 'Y'){
         Alert.alert(
           'Found Update!',

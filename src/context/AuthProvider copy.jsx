@@ -12,14 +12,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // const storageKeys = loginStorage.getAllKeys();
-    // console.log("-------Effect-------", storageKeys);
     // if (storageKeys.length !== 0) {
     // const loginDataObjectFromStorage = loginStorage.getString("login-data");
     // const loginData = JSON.parse(loginDataObjectFromStorage);
     // const loginCredentialsLocal = loginStorage.getString("login-data-local");
     // const loginCredentialsLocalRaw = JSON.parse(loginCredentialsLocal);
-    // console.log("EFFECT - username", loginCredentialsLocalRaw.user_id);
-    // console.log("EFFECT - password", loginCredentialsLocalRaw.password);
     // const username = loginCredentialsLocalRaw.user_id;
     // const password = loginCredentialsLocalRaw.password;
     // const token = loginData.token;
@@ -30,7 +27,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password, token = "") => {
     // const storageKeys = loginStorage.getAllKeys();
-    // console.log("-------------", storageKeys);
 
     const credentials = {
       password: password,
@@ -51,7 +47,6 @@ export const AuthProvider = ({ children }) => {
           if (res.data.status) {
             loginStorage.set("login-data-local", JSON.stringify(credentials));
             loginStorage.set("login-data", JSON.stringify(res.data.data));
-            // console.log("=====================", res.data.data);
             // loginStorage.set("token", JSON.stringify(res.data.data.token))
             // loginStorage.set("userdata", JSON.stringify(res.data.data.user))
             setIsLogin(!isLogin);
@@ -87,7 +82,6 @@ export const AuthProvider = ({ children }) => {
     //       })
     //       .then(res => {
     //         if (res.data.status) {
-    //           console.log("ELSE =====================", res.data.data);
     //           setIsLogin(!isLogin);
     //         } else {
     //           ToastAndroid.showWithGravityAndOffset(

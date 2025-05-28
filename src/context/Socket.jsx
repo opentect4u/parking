@@ -39,7 +39,6 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(true); // Update connection status
       // setSocketId(newSocket.id)
       handleEmit(newSocket.id);
-      console.log(newSocket, 'newSocketnewSocketnewSocketnewSocketnewSocket');
     });
     
 
@@ -75,7 +74,6 @@ export const SocketProvider = ({ children }) => {
         // logout();
           // setSocketOnData(data.msg)
           // const v = data.msg.filter(dt=>(dt.send_user_id==empCode || dt.send_user_id==0) && dt.view_flag != "Y").length;
-          // console.log(data.msg.login_status, 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
           // setCountNoti(v)
           if(data.msg.login_status == 'N'){
             logout();

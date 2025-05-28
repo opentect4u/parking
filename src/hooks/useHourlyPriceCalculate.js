@@ -224,7 +224,6 @@ const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
         // Add base 24 hour price (using slab structure)
         price += calculateBase24HourPrice(heyData);
 
-        console.log(calculateBase24HourPrice(heyData), 'calculateBase24HourPrice');
 
         // Add remaining hours' price using last slab logic
         const lastRate = parseInt(lastRateSlab.vehicle_rate);

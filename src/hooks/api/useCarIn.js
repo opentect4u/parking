@@ -4,7 +4,6 @@ import { loginStorage } from "../../storage/appStorage";
 
 function useCarIn() {
     const carIn = async (vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst) => {
-        console.log(vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
              axios.post(
