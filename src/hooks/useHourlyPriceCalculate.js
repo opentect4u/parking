@@ -1,13 +1,8 @@
 import { Alert } from "react-native";
-// import { AuthContext } from "../context/AuthProvider";
-// import { useContext } from "react";
 
-// const { generalSettings } = useContext(AuthContext);
+// oneDayRate = Rs.100
 
-
-// var daywiseCharge = true
-
-function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise) {
+function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise, oneDayRateAray) {
     // console.log("UTSABBBB__", dateTimeIn);
 //    alert(price);
     // let price = 0;
@@ -16,7 +11,7 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise) {
     // let graceTim = 00:
     // Alert(grace_period)
 
-    console.log(daywise, 'urrrrrrrrrrrrrrrrrrrrrrrrr', data);
+    console.log(daywise, 'urrrrrrrr', data, 'urrrrrrrr', oneDayRateAray, 'oneDayRate');
 
     const dateTimeInT = new Date(dateTimeIn)
 
@@ -30,10 +25,9 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise) {
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
     
-    console.log(daywise, 'xxxxxxxxxx');
     
     
-    let price = daywise == 'Y'? calculatePrice_Daywise(totalHours, onlyHourlyData) : calculatePrice(totalHours, onlyHourlyData);
+    let price = daywise == 'Y'? calculatePrice_Daywise(totalHours, onlyHourlyData, oneDayRateAray) : calculatePrice(totalHours, onlyHourlyData);
     
     return price
 
@@ -208,7 +202,7 @@ function calculateNightHours(nightTimeStart, nightTimeEnd, dateTimeIn, dateTimeO
 
 
 
-const calculatePrice_Daywise = function (hours, heyData) {
+const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
     let price = 0;
 
     // Calculate full 24-hour cycles beyond the first 24 hours
@@ -218,13 +212,19 @@ const calculatePrice_Daywise = function (hours, heyData) {
         const remainingHours = extraHours % 24;
 
         // Get the last rate slab
-        const lastRateSlab = heyData[heyData.length - 1];
+        // const lastRateSlab = heyData[heyData.length - 1];
+        const lastRateSlab = oneDayRateAray;
 
         // Apply last rate slab price for each extra 24-hour period
         price += fullDays * getSlabPriceFor24Hours(lastRateSlab);
 
+        // console.log(fullDays * getSlabPriceFor24Hours(lastRateSlab), 'fullDaysfullDaysfullDaysfullDays');
+        
+
         // Add base 24 hour price (using slab structure)
         price += calculateBase24HourPrice(heyData);
+
+        console.log(calculateBase24HourPrice(heyData), 'calculateBase24HourPrice');
 
         // Add remaining hours' price using last slab logic
         const lastRate = parseInt(lastRateSlab.vehicle_rate);
@@ -259,6 +259,8 @@ const calculatePrice_Daywise = function (hours, heyData) {
 
 // Old Existing Code 26/05/2025
 const calculatePrice = function (hours, heyData) {
+    console.log('normalllllllllllll');
+    
     let price = 0;
 
     const index = heyData.findIndex(

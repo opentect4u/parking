@@ -268,6 +268,9 @@ useEffect(() => {
       currentDate.getTime(),
     );
 
+    console.log(price, 'priceprice');
+    
+
 
   }
 
@@ -561,7 +564,7 @@ useEffect(() => {
       currentDate.toISOString().slice(0, -5) + "Z",
       currentDate.getTime(),
     );
-
+console.log(price, 'priceprice 2222');
 
   }
 
@@ -753,7 +756,7 @@ useEffect(() => {
     setLoading(false);
     setDisabled(false);
 
-    console.log(vData, '////////////////////////////////////////////');
+    console.log('________New________', totalRatearr, 'hh', price);
     
     // return 0;
     navigation.navigate("CreateOutpassScreen", {

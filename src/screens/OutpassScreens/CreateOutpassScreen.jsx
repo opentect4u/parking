@@ -146,7 +146,11 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     // with gst without gst car outpass send to server
 
     // utsab here pass GST Flag, CGST%, SGST%  Backend developer Calculate START
+    
+
     if (generalSettings.gst_flag == "Y") {
+      console.log(totalRate.base_amt, paid_amt, 'jjjjjjjjjjjjjjjjj');
+      
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
     }
 
@@ -167,7 +171,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       // Use for Mobile Device Start 
       if (getBlePermission && device_Type_Check == "M") {
 
-
+        console.log(data, 'datadatadatadata');
+        
         let payloadHeader = "";
         let payloadBody = "";
         let payloadFooter = "";
