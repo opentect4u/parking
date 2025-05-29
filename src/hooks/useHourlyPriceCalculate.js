@@ -8,10 +8,6 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise, oneDayRate
     // let price = 0;
 
     
-    // let graceTim = 00:
-    // Alert(grace_period)
-
-    console.log(daywise, 'urrrrrrrr', data, 'urrrrrrrr', oneDayRateAray, 'oneDayRate');
 
     const dateTimeInT = new Date(dateTimeIn)
 
@@ -328,14 +324,21 @@ function calculateBase24HourPrice(heyData) {
 //     let price = 0;
 
 //     const lastRateSlab = heyData[heyData.length - 1];
+
+//     console.log(lastRateSlab.vehicle_rate, 'bbbbbbbbbbbbbbbbbbbbbbb');
+    
+//     // const dailyRate = parseInt(lastRateSlab.vehicle_rate);
 //     const dailyRate = parseInt(lastRateSlab.vehicle_rate);
+
+//     console.log(lastRateSlab.vehicle_rate, 'bbbbbbbbbbbbbbbbbbbbbbb', dailyRate);
 
 //     if (hours > 24) {
 //         const fullDays = Math.floor(hours / 24);
 //         const remainingHours = hours % 24;
 
 //         // Charge Rs.100 per full day (as per last slab)
-//         price += fullDays * dailyRate;
+//         // price += fullDays * dailyRate;
+//         rice += fullDays * 100;
 
 //         // If there are remaining hours, it's counted as another full day
 //         if (remainingHours > 0) {
