@@ -412,12 +412,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       //   8, // Size (adjustable)
       //   BluetoothEscposPrinter.ERROR_CORRECTION.M // Medium error correction
       // );
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`num : ${receiptNoObj.toString()}`],
-        {}
-      );
+      
+      // await BluetoothEscposPrinter.printColumn(
+      //   [30],
+      //   [BluetoothEscposPrinter.ALIGN.LEFT],
+      //   [`num : ${receiptNoObj.toString()}`],
+      //   {}
+      // );
 
       if (generalSettings?.qr_code_flag == "Y") {
       await BluetoothEscposPrinter.printQRCode(
