@@ -501,6 +501,8 @@ useEffect(() => {
 
   var gTime = endTimeParts__GracePeriod[1],
   crindate = new Date(carData.date_time_in);
+  // crindate = new Date('2025-07-01T12:15:38.000Z');
+
   gTime = parseInt(gTime);
   crindate.setMinutes(crindate.getMinutes() + gTime)
 
@@ -533,6 +535,11 @@ useEffect(() => {
     // console.log(crindate, '///////////////////', new Date(crindate).toLocaleString("en-GB"));
 
     const dateTime = new Date(carData.date_time_in);
+    // const dateTime = new Date('2025-07-01T12:15:38.000Z');
+
+    console.log(dateTime);
+    
+
     const timestamp = dateTime.getTime();
     const currentDate = new Date();
 

@@ -15,18 +15,18 @@ function HourlyPriceCalculate(data, dateTimeIn, dateTimeOut, daywise, oneDayRate
 
 
 
-    // const totalHours = Math.ceil((dateTimeOutT - dateTimeInT) / (1000 * 60 * 60))
-    const totalHours = Math.ceil((dateTimeOutT - dateTimeInT) / (1000 * 60))
-    const totalHours_Normal = Math.ceil((dateTimeOutT - dateTimeInT) / (1000 * 60 * 60))
-    console.log(totalHours, 'UTSABBBB__', 'totalHours');
+    const totalHours = Math.ceil((dateTimeOutT - dateTimeInT) / (1000 * 60 * 60))
+    // const totalHours = Math.ceil((dateTimeOutT - dateTimeInT) / (1000 * 60))
+    console.log((dateTimeOutT - dateTimeInT) / (1000 * 60 * 60), '///////', dateTimeOutT, '<< out', 'in >>', dateTimeInT, 'UTSABBBB__', dateTimeOutT - dateTimeInT);
+    
 
 
     const nightModeIndex = data.findIndex(item => item.night_day_flag == 'N');
     const onlyHourlyData = data.filter(item => item.night_day_flag !== 'N')
     
-    console.log(daywise, "UTSABBBB__", oneDayRateAray);
+    // console.log(daywise, "UTSABBBB__", oneDayRateAray);
     
-    let price = daywise == 'Y'? calculatePrice_Daywise(totalHours, onlyHourlyData, oneDayRateAray) : calculatePrice(totalHours_Normal, onlyHourlyData);
+    let price = daywise == 'Y'? calculatePrice_Daywise(totalHours, onlyHourlyData, oneDayRateAray) : calculatePrice(totalHours, onlyHourlyData);
     
     return price
 
@@ -206,15 +206,16 @@ const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
     
     
     // Calculate full 24-hour cycles beyond the first 24 hours
-    console.log(hours, 'UTSABBBB__', 'hours');
     // if (hours > 24) {
-    if (hours > (24*60)) {
-        // const extraHours = hours - 24;
-        const extraHours = hours - (24*60);
-        // const fullDays = Math.floor(extraHours / 24);
-        const fullDays = Math.floor(extraHours / (24*60));
-        // const remainingHours = extraHours % 24;
-        const remainingHours = extraHours % (24*60);
+    if (hours > 24) {
+        const extraHours = hours - 24;
+        // const extraHours = hours - (24*60);
+        const fullDays = Math.floor(extraHours / 24);
+        // const fullDays = Math.floor(extraHours / (24*60));
+        const remainingHours = extraHours % 24;
+        // const remainingHours = extraHours % (24*60);
+
+        console.log('extraHours' ,extraHours, 'UTSABBBB__', 'hours', hours);
 
         // Get the last rate slab
         // const lastRateSlab = heyData[heyData.length - 1];
@@ -222,6 +223,10 @@ const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
 
         // Apply last rate slab price for each extra 24-hour period
         price += fullDays * getSlabPriceFor24Hours(lastRateSlab);
+
+        
+
+        // console.log(fullDays * getSlabPriceFor24Hours(lastRateSlab), 'fullDaysfullDaysfullDaysfullDays');
         
 
         // Add base 24 hour price (using slab structure)
@@ -233,7 +238,9 @@ const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
         
         if (lastRateSlab.rate_flag === 'F') {
             price += lastRate; // One-time flat fee
+            // console.log(lastRate, 'UTSABBBB__', 'lastRate F', lastRate * remainingHours, 'remainingHours >>>', remainingHours);
         } else if (lastRateSlab.rate_flag === 'P') {
+            // console.log(lastRate, 'UTSABBBB__', 'lastRate P');
             price += lastRate * remainingHours; // Per hour
         }
         
@@ -241,10 +248,7 @@ const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
     }
 
     // If hours <= 24, apply rates using `heyData` chart
-    // let currentHour = hours;
-    let currentHour = Math.ceil(hours / 60);
-    console.log(currentHour, 'UTSABBBB__', 'currentHour');
-    
+    let currentHour = hours;
     for (const item of heyData) {
         const slabHours = item.to_hour - item.from_hour;
         let applicableHours = Math.min(currentHour, slabHours);
@@ -265,7 +269,8 @@ const calculatePrice_Daywise = function (hours, heyData, oneDayRateAray) {
 
 // Old Existing Code 26/05/2025
 const calculatePrice = function (hours, heyData) {
-
+    console.log('normalllllllllllll');
+    
     let price = 0;
 
     const index = heyData.findIndex(
@@ -303,6 +308,8 @@ const calculatePrice = function (hours, heyData) {
         currentHour -= item.to_hour - item.from_hour
 
     }
+
+    console.log(price, 'UTSABBBB__XXXXXXXXXXXXXX', currentHour);
 
     return price;
 }

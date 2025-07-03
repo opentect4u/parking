@@ -157,31 +157,28 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-
-
-
-    // check phone permission is grantend or not
-    const isPermitted = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-          {
-            title: 'Phone state access Permission',
-            message: 'to access your machine imei',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          setREAD_PHONE_STATE(true);
-        } else {
-          setREAD_PHONE_STATE(false);
-        }
-      } catch (error) {
-        console.error(error.message);
+  // check phone permission is grantend or not
+  const isPermitted = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+        {
+          title: 'Phone state access Permission',
+          message: 'to access your machine imei',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setREAD_PHONE_STATE(true);
+      } else {
+        setREAD_PHONE_STATE(false);
       }
-    };
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
     
 
