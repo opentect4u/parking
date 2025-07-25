@@ -279,7 +279,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         var payloadHeader = "";
         let payloadFooter = "";
         let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString().slice(-5);
+        // For Scanner
         const receiptNoObj = carindata?.data?.td_vehicle_in?.receipt_number;
+
+        // let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString();
+        // const receiptNoObj = '1752844434758';
 
         const options = {
         hour12: false,

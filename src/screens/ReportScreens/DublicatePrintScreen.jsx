@@ -1247,7 +1247,9 @@ setLoading(false);
 
                   {/* <Text style={[styles.headerText, styles.hcell]}>   Paid</Text> */}
                 </View>
-                {getDetailedReport &&
+
+
+                {/* {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
                     // totalAmount += item.paid_amt;
                     // totalAdvanceAmount += item.advance_amt;
@@ -1267,11 +1269,49 @@ setLoading(false);
 
 <TouchableOpacity style={styles.button_print} onPress={() => handlePrint_Dublicat(item)}>
 <FontAwsome5 name="print" style={styles.button_print_icon}/>
-      {/* <Text style={styles.text}>{title}</Text> */}
     </TouchableOpacity>
                       </View>
                     );
-                  })}
+                  })} */}
+
+                
+                {getDetailedReport &&
+                    [...getDetailedReport] // create a shallow copy to avoid mutating original array
+                    .sort((a, b) => {
+                    const dateA = new Date(getin_outValue === 'IN' ? a.date_time_in : a.date_time_out);
+                    const dateB = new Date(getin_outValue === 'IN' ? b.date_time_in : b.date_time_out);
+                    return dateB - dateA; // newest first
+                    })
+                .map((item, index) => {
+                    return (
+                    <View
+                    style={[
+                    styles.row,
+                    index % 2 !== 0 ? styles.evenBg : styles.oddbg,
+                    ]}
+                    key={index}>
+                    <Text style={[styles.cell]}>
+                    {(item.receipt_no).toString().slice(-5)}
+                    </Text>
+                    <Text style={[styles.cell]}>
+                    {item.vehicle_no}
+                    </Text>
+                    <Text style={[styles.cell]}>
+                    {getin_outValue === 'IN'
+                    ? new Date(item.date_time_in).toLocaleString("en-GB")
+                    : new Date(item.date_time_out).toLocaleString("en-GB")}
+                    </Text>
+                    <TouchableOpacity
+                    style={styles.button_print}
+                    onPress={() => handlePrint_Dublicat(item)}>
+                    <FontAwsome5 name="print" style={styles.button_print_icon} />
+                    </TouchableOpacity>
+                    </View>
+                    );
+                })}
+
+
+
                 {
                   <>
                   {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>

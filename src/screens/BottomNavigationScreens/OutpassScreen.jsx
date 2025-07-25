@@ -109,8 +109,9 @@ export default function OutpassScreen({ navigation }) {
         barcodes.push(code.value)
         }
         }
-        console.log(codes, 'll' , scanned, '///', scanned)
-        var carNumber = barcodes.toString().slice(-5);
+        console.log(barcodes, 'barcodes' , barcodes.toString(), '///', scanned)
+        // var carNumber = barcodes.toString().slice(-5);
+        var carNumber = barcodes.toString();
 
         getVehicleInfo_forScan(carNumber);
 
@@ -154,7 +155,7 @@ useEffect(() => {
 
   // get serch vehicle information
   const getVehicleInfo_forScan = async carNumber => {
-    // console.log('///', carNumber, 'ppppppppppppppppppppppppp');
+    // console.log('Scane', carNumber, 'ppppppppppppppppppppppppp');
     
     
     try {
@@ -418,7 +419,7 @@ useEffect(() => {
 
   // get serch vehicle information
   const getVehicleInfo = async carNumber => {
-    // console.log('///', carNumber, 'ppppppppppppppppppppppppp');
+    console.log('Typing Number', carNumber, 'ppppppppppppppppppppppppp');
     
     try {
       if (carNumber) {

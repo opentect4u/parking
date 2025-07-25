@@ -102,42 +102,9 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     dashboardData()
   }, [])
 
- // async function checkLocationEnabled() {
-  //   try {
-  //     const granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //       {
-  //         title: "Bluetooth Permission",
-  //         message:
-  //           "This app needs access to your location to check Bluetooth status.",
-  //         buttonNeutral: "Ask Me Later",
-  //         buttonNegative: "Cancel",
-  //         buttonPositive: "OK",
-  //       },
-  //     );
-  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //       BleManager.enableBluetooth()
-  //         .then(() => {
-  //           console.log("The bluetooth is already enabled or the user confirm");
-  //         })
-  //         .catch(error => {
-  //           // Failure code
-  //           console.log("The user refuse to enable bluetooth");
-  //         });
-  //       // const isEnabled = await BluetoothStatus.isEnabled();
-  //       // console.log('Bluetooth Enabled:', isEnabled);
-  //     } else {
-  //       console.log("Bluetooth permission denied");
-  //     }
-  //   } catch (error) {
-  //     console.log("Error checking Bluetooth status:", error);
-  //   }
-  // }
-
 // get Dashboard Data
   const dashboardData = async () => {
     let resData = await getDashboardData(loginData.user.userdata.msg[0].id);
-    // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', resData?.data.advance_amt.msg[0].advance_amt, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     setPaid_amt(resData?.data?.paid_amt?.msg[0]?.paid_amt)
     setVehicleIn(resData?.data?.vehicle_in?.msg[0]?.vehicle_in)
     setVehicleOut(resData?.data?.vehicle_out?.msg[0]?.vehicle_out)
@@ -295,7 +262,6 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
               key={props.vehicle_id}
               style={otherStyle.vehicle}
               onPress={() => {
-                console.log("handleNavigation(props)");
                 handleNavigation(props);
               }}>
               {icons.dynamicvechicleIcon(props.vehicle_icon)}

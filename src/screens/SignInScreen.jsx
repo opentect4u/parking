@@ -10,6 +10,7 @@ import icons from "../resources/icons/icons";
 import styles from "../styles/styles";
 import { AuthContext } from "../context/AuthProvider";
 import strings from "../resources/strings/strings";
+import { version } from '../../package.json';
 
 const SignInScreen = ({ navigation }) => {
   const [username, setUsername] = useState(() => "");
@@ -78,6 +79,10 @@ const SignInScreen = ({ navigation }) => {
             }}>
             {icons.arrowRight}
           </TouchableOpacity>
+
+          <Text style={{ marginTop: 20, fontSize: 12, color: '#888', textAlign:'center', fontWeight:700 }}>
+        App Version: {version}
+      </Text>
         </View>
         <ContactBottom />
       </ScrollView>
