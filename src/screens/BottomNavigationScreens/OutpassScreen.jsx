@@ -419,7 +419,7 @@ useEffect(() => {
 
   // get serch vehicle information
   const getVehicleInfo = async carNumber => {
-    console.log('Typing Number', carNumber, 'ppppppppppppppppppppppppp');
+    // console.log('Typing Number', carNumber, 'ppppppppppppppppppppppppp');
     
     try {
       if (carNumber) {
