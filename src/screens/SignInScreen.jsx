@@ -26,8 +26,8 @@ const SignInScreen = ({ navigation }) => {
 
   return (
     <MainView>
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <SignInHeaderLogo />
+      <ScrollView keyboardShouldPersistTaps="handled" style={{paddingTop:80}}>
+        {/* <SignInHeaderLogo /> */}
 
         {/* .............gretting msg............... */}
         <Text style={styles.grettingText}>WELCOME TO</Text>

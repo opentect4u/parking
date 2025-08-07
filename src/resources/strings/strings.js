@@ -1,6 +1,6 @@
 export default strings = {
-  company_name: "SYNERGIC SOFTEK SOL.PVT.LTD",
-  app_name: "SYNERGIC PAY & PARK POS",
+  company_name: "",
+  app_name: "PAY & PARK POS",
   helper_text:
     "Please enter mobile number and your password to login to your account",
   signUp_helper_text:
