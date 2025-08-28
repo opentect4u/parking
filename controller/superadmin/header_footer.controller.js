@@ -2,6 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { getAllCustomerList } = require("./customer.controller");
 const { db_Select, db_Insert } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const getAllheaderfooterList = (id = 0,cust_id) => {
     return new Promise(async (resolve, reject) => {
@@ -28,6 +29,7 @@ const header_footer = async (req, res) => {
       res.render("common/layouts/main", page_data);
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
   };
@@ -58,7 +60,8 @@ const header_footer = async (req, res) => {
         // console.log(page_data,'ll');
         res.render("common/layouts/main",page_data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
+        logger.error(err); // Log the error
         res.redirect("/superadmin_login");
       }
   };
@@ -145,6 +148,7 @@ const header_footer = async (req, res) => {
     //   res.send(res_dt)
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
       res.redirect("/superadmin/header_footer");
     }

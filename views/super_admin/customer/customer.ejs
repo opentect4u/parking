@@ -154,6 +154,13 @@
               </div>
             </div>
 
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="password" class="text-dark"><b>Password</b></label>
+                <input type="text" class="form-control" id="password" name="password" placeholder="Enter Password here...">
+              </div>
+            </div>
+
 
             <div class="col-md-12">
               <div class="form-group">
@@ -164,7 +171,8 @@
             </div>
           </div>
           <div class="row">
-            <input type="hidden" name="id" value="0">
+            <input type="hidden" name="id" value="<%= data.id %>">
+            <!-- <input type="hidden" name="cust_id" value="<%= data.customer_id %>"> -->
             <div class="form-group col-md-5"></div>
             <div class="form-group col-md-7">
               <input type="submit" value="SUBMIT" class="btn btn-primary" style="border-radius: 6px;" />

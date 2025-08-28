@@ -3,6 +3,7 @@ const dateFormat = require("dateformat");
 const { getAllCustomerList } = require("./customer.controller");
 const { db_Select, db_Insert } = require("../../model/Master.model");
 const bcrypt = require("bcrypt");
+const logger = require('../../model/LoggerModel');
 
 
 const getAllreportList = (id=0,cust_id) => {
@@ -30,6 +31,7 @@ const report_password = async (req, res) => {
       res.render("common/layouts/main", page_data);
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
   };
@@ -64,6 +66,7 @@ const report_password = async (req, res) => {
           res.render("common/layouts/main",page_data);
         } catch (error) {
           // console.log(error);
+          logger.error(err); // Log the error
           res.redirect("/superadmin_login");
         }
   };
@@ -100,6 +103,7 @@ const report_password = async (req, res) => {
     //   res.send(res_dt)
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
       res.redirect("/superadmin/report_pass");
     }

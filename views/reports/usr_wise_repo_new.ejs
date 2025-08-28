@@ -37,7 +37,10 @@
                                     <th scope="col">Operator Name</th>
                                     <th scope="col">MC Srl.No.</th>
                                     <th scope="col">Count</th>
+                                    <th scope="col">Base Amount</th>
                                     <th scope="col"> Advance Amount</th>
+                                    <th scope="col">CGST</th>
+                                    <th scope="col">SGST</th>
                                     <th scope="col"> Paid Amount</th>
                                     <th scope="col"> Net Amount</th>
                                 </tr>
@@ -50,7 +53,10 @@
                                 <tr>
                                     <td scope="col" colspan="3">Total</td>
                                     <td scope="col" id="tot_cnt"><b>0</b></td>
+                                    <td scope="col" id="tot_base"><b>0</b></td>
                                     <td scope="col" id="tot_advance"><b>0</b></td>
+                                    <td scope="col" id="tot_cgst"><b>0</b></td>
+                                    <td scope="col" id="tot_sgst"><b>0</b></td>
                                     <td scope="col" id="tot_paid"><b>0</b></td>
                                     <td scope="col" id="tot_amt"><b>0</b></td>
                                 </tr>   
@@ -88,7 +94,10 @@
                     success: function (result) {
                         var res = JSON.parse(result);
                         var net_amt_tot = 0;
+                        var base_amt_tot = 0;
                         var advance_amt_tot = 0;
+                        var cgst_amt_tot = 0;
+                        var sgst_amt_tot = 0;
                         var paid_amt_tot = 0;
                         var cnt_tot = 0;
                         var tot_amt_tot = 0;
@@ -100,7 +109,10 @@
                                 $('#searchCred').text(`User Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
                                 let i = 1;
                                 for(let dt of res.msg){
+                                    base_amt_tot += dt.base_amt
                                     advance_amt_tot += dt.advance_amt
+                                    cgst_amt_tot += dt.cgst
+                                    sgst_amt_tot += dt.sgst
                                     paid_amt_tot += dt.paid_amt
                                     net_amt_tot = (dt.advance_amt + dt.paid_amt)
                                     tot_amt_tot += net_amt_tot
@@ -111,20 +123,30 @@
                                         <td>${dt.opratorName}</td>
                                         <td>${dt.mc_srl_no_out}</td>
                                         <td>${dt.tot_vehi}</td>
+                                        <td>${dt.base_amt.toFixed(2)}</td>
                                         <td>${dt.advance_amt}</td>
+                                        <td>${dt.cgst.toFixed(2)}</td>
+                                        <td>${dt.sgst.toFixed(2)}</td>
                                         <td>${dt.paid_amt}</td>
                                         <td>${net_amt_tot}</td>
                                     </tr>
                                     `)
                                     i++
                                 }
+                                $('#tot_base').text(base_amt_tot.toFixed(2))
                                 $('#tot_advance').text(advance_amt_tot)
+                                $('#tot_cgst').text(cgst_amt_tot.toFixed(2))
+                                $('#tot_sgst').text(sgst_amt_tot.toFixed(2))
                                 $('#tot_paid').text(paid_amt_tot)
                                 $('#tot_amt').text(tot_amt_tot)
                                 $('#tot_cnt').text(cnt_tot)
                             }else{
                                 $('#resultDiv table tbody').append('<tr><td colspan="7" class="text-center text-danger">No Data Found</td></tr>')
+								
+                                $('#tot_base').text(base_amt_tot.toFixed(2))
                                 $('#tot_advance').text(advance_amt_tot)
+                                $('#tot_cgst').text(cgst_amt_tot.toFixed(2))
+                                $('#tot_sgst').text(sgst_amt_tot.toFixed(2))
                                 $('#tot_paid').text(paid_amt_tot)
                                 $('#tot_amt').text(tot_amt_tot)
                                 $('#tot_cnt').text(cnt_tot)

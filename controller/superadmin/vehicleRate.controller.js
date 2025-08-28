@@ -4,6 +4,7 @@ const { db_Select, db_Insert } = require("../../model/Master.model");
 const { getAllCustomerList } = require("./customer.controller");
 const { getAllSellerList } = require("./seller.controller");
 const { getAllVehicleList, show_vehicle_dtls } = require("./vehicle.controller");
+const logger = require('../../model/LoggerModel');
 
 const getAllVehicleRateList = (id = 0,cust_id) => {
   return new Promise(async (resolve, reject) => {
@@ -54,6 +55,7 @@ const vehicle_rate = async (req, res) => {
     // console.log(page_data, "...");
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     res.redirect("/superadmin_login");
   }
 };
@@ -104,6 +106,7 @@ const vehicle_rate_edit = async(req,res) =>{
       res.render("common/layouts/main",page_data);
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
 };

@@ -2,6 +2,7 @@ const SuperAdminRouter = require('express').Router()
 
 const { CustomerRouter } = require('./SuperAdminRouter/CustomerRouter');
 const { DeviceSettingRouter } = require('./SuperAdminRouter/DeviceSettingRouter');
+const { GstRouter } = require('./SuperAdminRouter/GstRouter');
 const { Header_FooterRouter } = require('./SuperAdminRouter/Header_FooterRouter');
 const { LocationRouter } = require('./SuperAdminRouter/LocationRouter');
 const { OperatorRouter } = require('./SuperAdminRouter/OperatorRouter');
@@ -23,5 +24,6 @@ SuperAdminRouter.use(ShiftRouter);
 SuperAdminRouter.use(ReportPassRouter);
 SuperAdminRouter.use(DeviceSettingRouter);
 SuperAdminRouter.use(View_transRouter);
+SuperAdminRouter.use(GstRouter);
 
 module.exports = {SuperAdminRouter}

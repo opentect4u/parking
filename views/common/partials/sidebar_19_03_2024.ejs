@@ -1,0 +1,280 @@
+<aside class="left-sidebar" data-sidebarbg="skin6">
+  <!-- Sidebar scroll-->
+  <div class="scroll-sidebar" data-sidebarbg="skin6">
+    <!-- Sidebar navigation-->
+    <nav class="sidebar-nav">
+      <ul id="sidebarnav">
+        <!-- <li class="sidebar-item">
+          <a
+            class="sidebar-link sidebar-link"
+            href="/"
+            aria-expanded="false"
+            ><i data-feather="home" class="feather-icon"></i
+            ><span class="hide-menu">Dashboard</span></a
+          >
+        </li>
+
+
+        <li class="list-divider"></li>
+        <li class="nav-small-cap">
+          <span class="hide-menu">Blank</span>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="/blank" aria-expanded="false"
+            ><i data-feather="tag" class="feather-icon"></i
+            ><span class="hide-menu">Blank </span></a
+          >
+        </li>
+
+
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="file-text" class="feather-icon"></i
+            ><span class="hide-menu">Operator </span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+            <li class="sidebar-item">
+              <a href="/operator/add" class="sidebar-link"
+                ><span class="hide-menu">My Operator</span></a>
+              >
+            </li>
+
+            <li class="sidebar-item">
+              <a href="/operator/add" class="sidebar-link"
+                ><span class="hide-menu">Create New Operator</span></a
+              >
+            </li>
+            
+          </ul>
+        </li>
+
+
+
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="file-text" class="feather-icon"></i
+            ><span class="hide-menu">Master </span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+            <li class="sidebar-item">
+              <a href="form-inputs.html" class="sidebar-link"
+                ><span class="hide-menu"> Form Inputs </span></a
+              >
+            </li>
+            <li class="sidebar-item">
+              <a href="form-input-grid.html" class="sidebar-link"
+                ><span class="hide-menu"> Form Grids </span></a
+              >
+            </li>
+            <li class="sidebar-item">
+              <a href="form-checkbox-radio.html" class="sidebar-link"
+                ><span class="hide-menu"> Checkboxes & Radios </span></a
+              >
+            </li>
+          </ul>
+        </li> -->
+        <!-- UPDATE ON 09/01/2024 SUBHAM -->
+        <li class="list-divider"></li>
+        <li class="nav-small-cap">
+          <span class="hide-menu">Reports</span>
+        </li>
+
+        <% if(user.user_data.customer_id=='13'){  %>
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="file-text" class="feather-icon"></i
+            ><span class="hide-menu">Backlog Reports</span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+            <li class="sidebar-item">
+              <a href="/report/details_report" class="sidebar-link"
+                ><span class="hide-menu">Detail Report</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/veh_wise_repo" class="sidebar-link"
+                ><span class="hide-menu">Vehicle Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/dev_wise_repo" class="sidebar-link"
+                ><span class="hide-menu">Device Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/usr_wise_repo" class="sidebar-link"
+                ><span class="hide-menu">User Wise</span></a>
+            </li>
+          </ul>
+        </li>
+
+        <% }  %>
+
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="file-text" class="feather-icon"></i
+            ><span class="hide-menu">New Reports</span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+            <li class="sidebar-item">
+              <a href="/report/unbilled_report" class="sidebar-link"
+                ><span class="hide-menu">Unbilled Report</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/details_report_new" class="sidebar-link"
+                ><span class="hide-menu">Detail Report</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/veh_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Vehicle Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/dev_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Device Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/operator_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Operator Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/combine_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Combine Report</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/usr_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">User Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/shift_wise_repo" class="sidebar-link"
+                ><span class="hide-menu">Shiftwise</span></a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link sidebar-link"
+            href="/operator/manage_operator"
+            aria-expanded="false"
+            ><i data-feather="user-check" class="feather-icon"></i
+            ><span class="hide-menu">Manage Operator</span></a
+          >
+        </li>
+
+        <!-- <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="menu" class="feather-icon"></i
+            ><span class="hide-menu">Master</span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+         
+          </ul>
+        </li> -->
+
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="settings" class="feather-icon"></i
+            ><span class="hide-menu">Settings</span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+          <li class="sidebar-item">
+            <a href="/shift/shift_details" class="sidebar-link"
+              ><span class="hide-menu">Shift Setting</span></a>
+          </li>
+          <li class="sidebar-item">
+            <a href="/device/device_name" class="sidebar-link"
+              ><span class="hide-menu">Device Setting</span></a>
+          </li>
+          <!-- <li class="sidebar-item">
+            <a href="/customer/customer_dt" class="sidebar-link"
+              ><span class="hide-menu">Customer Setting</span></a>
+          </li> -->
+          <li class="sidebar-item">
+            <a href="/header/customer_name" class="sidebar-link"
+              ><span class="hide-menu">Header Footer</span></a>
+          </li>
+            <li class="sidebar-item">
+              <a href="/password" class="sidebar-link"
+                ><span class="hide-menu">Report Password</span></a>
+            </li>
+          </ul>
+        </li>
+
+
+        <!-- <li class="list-divider"></li>
+        <li class="nav-small-cap">
+          <span class="hide-menu">Blank</span>
+        </li>
+
+        <li class="list-divider"></li>
+        <li class="nav-small-cap">
+          <span class="hide-menu">Applications</span>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="ticket-list.html" aria-expanded="false"
+            ><i data-feather="tag" class="feather-icon"></i
+            ><span class="hide-menu">Ticket List </span></a
+          >
+        </li>
+
+        <li class="list-divider"></li>
+        <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link sidebar-link"
+            href="docs/docs.html"
+            aria-expanded="false"
+            ><i data-feather="edit-3" class="feather-icon"></i
+            ><span class="hide-menu">Documentation</span></a
+          >
+        </li> -->
+        <li class="sidebar-item">
+          <a
+            class="sidebar-link sidebar-link"
+            href="/logout"
+            aria-expanded="false"
+            ><i data-feather="log-out" class="feather-icon"></i
+            ><span class="hide-menu">Logout</span></a
+          >
+        </li>
+      </ul>
+    </nav>
+    <!-- End Sidebar navigation -->
+  </div>
+  <!-- End Sidebar scroll-->
+</aside>

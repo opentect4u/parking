@@ -1,0 +1,70 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Operator Edit Details</i></h2>
+          </div> 
+          <form action="/operator/save_edit_operator" id="myForm" method="post">
+          <div class="row mt-4">
+            <div class="form-group col-6">
+                <label for="op_name" class="text-dark"><b>Operator Name:</b></label>
+                <input type="text" class="form-control" name="op_name" id="op_name" value="<%=data.msg[0].operator_name %>" placeholder="Enter Operator Name">
+              </div>
+  
+              <div class="form-group col-6">
+                  <label for="mob_no" class="text-dark"><b>Mobile No:</b></label>
+                  <input type="text" class="form-control" name="mob_no" id="mob_no" value="<%=data.msg[0].user_id %>" placeholder="Enter Mobile No." readonly>
+                </div>
+  
+                <div class="form-group col-6">
+                  <label for="dev_id" class="text-dark"><b>Device ID:</b></label>
+                  <input type="text" class="form-control" name="dev_id" id="dev_id" value="<%=data.msg[0].device_id %>" placeholder="Enter Device ID.">
+                </div>
+  
+                <div class="form-group col-6">
+                  <label for="pwd" class="text-dark"><b>Password:</b></label>
+                  <div class="input-group">
+                  <input type="password" class="form-control" name="pwd" id="pwd" value="" placeholder="Enter Password">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="fa fa-eye-slash"></i>
+                    </button>
+                </div>
+                </div>
+                </div>
+              
+          </div>
+          <div class="row mt-4">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("togglePassword").addEventListener("click", function() {
+        const pwdField = document.getElementById("pwd");
+        if (pwdField.type === "password") {
+            pwdField.type = "text";
+        } else {
+            pwdField.type = "password";
+        }
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/operator/manage_operator";
+      });
+    });
+  </script>

@@ -41,12 +41,15 @@
                 <th class="text-dark text-center">From Hour</th>
                 <th class="text-dark text-center">To Hour</th>
                 <th class="text-dark text-center">Parking Fee</th>
+                <% if (user.user_data.dev_mod == 'D') { %>
+                <th class="text-dark text-center">Flag</th>
+                <% } %>   
                 <th class="text-dark text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colspan="5" class="text-danger text-center">No Data Found</td>
+                <td colspan="6" class="text-danger text-center">No Data Found</td>
               </tr>
             </tbody>
           </table>
@@ -106,14 +109,14 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="frm_hr" class="text-dark"><b>From Hour</b></label>
-               <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="00">
+               <input type="number" class="form-control" id="frm_hr" name="frm_hr" value="00">
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="to_hr" class="text-dark"><b>To Hour</b></label>
-               <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="00">
+               <input type="number" class="form-control" id="to_hr" name="to_hr" value="00">
               </div>
             </div>
 
@@ -123,6 +126,17 @@
                <input type="text" class="form-control" id="park_fee" name="park_fee" placeholder="Enter Parking Fee...." required>
               </div>
             </div>
+
+             <% if (user.user_data.dev_mod == 'D') { %>
+              <div class="form-group col-md-4">
+              <label for="flag"><b style="color: black;">Flag:</b></label>
+              <select name="flag" class="form-control" id="flag" required>
+                <option value="">Select Flag</option>
+                  <option value="O">Old Rate</option>
+                  <option value="N">New rate</option>
+              </select>
+            </div>
+            <% } %>   
 
           </div>
           <div class="row mt-3">
@@ -200,7 +214,20 @@
               "</td>" +
               "<td class='text-dark text-center'>" +
               item.vehicle_rate +
-              "</td>" +
+            //   "</td>" +
+            // "<td class='text-dark text-center'>" +
+            //   (item.night_day_flag === "O"
+            //   ? "<span class='badge bg-warning'>Old Rate</span>"
+            //   : "<span class='badge bg-success'>New Rate</span>") +
+            //   "</td>"+
+            "</td>" +
+           <% if (user.user_data.dev_mod == 'D') { %>
+            "<td class='text-dark text-center'>" +
+            (item.night_day_flag === "O"
+            ? "<span class='badge bg-warning'>Old Rate</span>"
+            : "<span class='badge bg-success'>New Rate</span>") +
+            "</td>" +
+             <% } %>
               "<td class='text-center'><a href='/rate/edit_vehicle_rate_details?customer_id=" + item.customer_id + "&sl_no=" + item.sl_no + "' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>" +
               "</tr>";
             tbody.append(row);

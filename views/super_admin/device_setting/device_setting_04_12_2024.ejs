@@ -1,0 +1,322 @@
+<div class="container-fluid">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="titleSec">
+          <button type="button" class="btn btn-primary" id="myBtn"
+            style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
+        </div>
+        <div class="row mt-4">
+          <h3 class="text-dark"><i data-feather="slack" class="feather-icon text-dark"></i>&nbsp;<b>Device Setting</b>
+          </h3>
+        </div>
+        <form action="/superadmin/device_setting" method="post">
+          <div class="row mt-4">
+            <div class="form-group col-md-4">
+              <label for="cust_name"><b style="color: black;">Customer Name:</b></label>
+              <select name="cust_name" class="form-control" id="cust_name" required>
+                <option value="">Select Customer Name</option>
+                <% customer.forEach(dt=> {
+                  var _selected = ''
+                  if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
+                  <option value="<%= dt.customer_id %>" <%=_selected %>><%= dt.customer_name %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="dev_id_sel"><b style="color: black;">Device ID:</b></label>
+              <select name="dev_id" class="form-control" id="dev_id_sel" required>
+                <option value="">Select Device ID</option>
+
+              </select>
+            </div>
+            <div class="form-group col-md-4" style="margin-top: 30px;">
+              <button type="submit" class="btn btn-primary" style="border-radius: 5px;" id="submitBtn">Submit</button>
+            </div>
+          </div>
+        </form>
+        <% if(selected.cust_id> 0){ %>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive mt-3">
+                <table id="dataTable" class="table table-striped table-bordered no-wrap show_data">
+                  <thead>
+                    <tr>
+                      <th class="text-center text-dark">Sl No.</th>
+                      <th class="text-center text-dark">App ID</th>
+                      <th class="text-center text-dark">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if(data.length> 0){
+                      var i = 1
+                      data.forEach(dt => { %>
+                      <tr>
+                        <td class="text-center text-dark">
+                          <%= i %>
+                        </td>
+                        <td class="text-center text-dark">
+                          <%= dt.app_id %>
+                        </td>
+                        <td class="text-center text-dark"><a
+                            href='/superadmin/edit_device_setting?customer_id=<%= selected.cust_id %>&id=<%= dt.setting_id %>'
+                            class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
+                      </tr>
+                      <% i++; }) }else{ %>
+                        <tr>
+                          <td class="text-center text-danger" colspan="3">No data found</td>
+                        </tr>
+                        <% } %>
+                  </tbody>
+                  <tfoot>
+
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+          <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+  rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h3 class="modal-title text-dark"><i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Add Device</b>
+        </h3>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form action="/superadmin/save_device_setting" method="post" id="myForm">
+          <div class="row">
+            <div class="form-group col-5">
+              <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+              <select name="cust_id" class="form-control" id="cust_id" required>
+                <option value="">Select Customer Name</option>
+                <% customer.forEach(dt=> { %>
+                  <option value="<%= dt.customer_id %>">
+                    <%= dt.customer_name %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="dev_mode" class="text-dark"><b>Mode</b></label>
+                <select name="dev_mode" class="form-control" id="dev_mode" readonly>
+                  <option value="">Select Mode</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="app_id" class="text-dark"><b>Device ID</b></label>
+                <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
+                  value="">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="dev_type" class="text-dark"><b>Device Type</b></label>
+                <select name="dev_type" class="form-control" id="dev_type">
+                  <option value="">Select Device Type</option>
+                  <option value="H">Handheld Device</option>
+                  <option value="M">Mobile Device</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="report_flag" class="text-dark"><b>Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="report_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="report_flag">
+            </div>
+            <div class="col-md-3 cust-toggle1">
+              <label for="tot_col" class="text-dark"><b>Total collection Flag</b></label><br>
+              <input type="checkbox" value="Y" id="tot_col" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="tot_col">
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="redirect_flag" class="text-dark"><b>Redirection</b></label><br>
+              <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Home" data-off="Back" name="redirect_flag">
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="grace_flag" class="text-dark"><b>Grace Period Flag</b></label><br>
+              <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="grace_flag" checked>
+            </div>
+
+            <div class="col-md-3" id="hide_grace">
+              <div class="form-group">
+                <label for="grace_value" class="text-dark"><b>Grace Value &nbsp;<span class=text-danger>(In
+                      Minute)</span></b></label>
+                <input type="text" name="grace_value" id="grace_value" class="form-control" value="00">
+              </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="adv_pay_flag" class="text-dark"><b>Advance Flag</b></label><br>
+              <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="adv_pay_flag" checked>
+            </div>
+
+            <div class="col-md-3" id="hide_adv">
+              <div class="form-group">
+                <label for="adv_value" class="text-dark"><b>Advance Value &nbsp;</b></label>
+                <input type="text" name="adv_value" id="adv_value" class="form-control" value="00">
+              </div>
+            </div>
+
+          </div>
+          <div class="row mt-3">
+            <input type="hidden" name="id" value="0">
+
+            <div class="form-group col-md-3">
+              <input type="submit" value="SUBMIT" id="set_dev_sub" class="btn btn-primary "
+                style="margin-left: 35vw;border-radius: 6px;" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#myBtn").click(function () {
+      $("#myModal").modal();
+    });
+  });
+</script>
+
+<script>
+  $('#grace_flag').on('change', function () {
+    if ($(this).is(':checked')) {
+      $('#hide_grace').show()
+      $('#grace_value').attr('required', 'required')
+    } else {
+      $('#grace_value').removeAttr('required')
+      $('#grace_value').val('00')
+      $('#hide_grace').hide()
+    }
+  })
+</script>
+
+<script>
+  $('#adv_pay_flag').on('change', function () {
+    if ($(this).is(':checked')) {
+      $('#hide_adv').show()
+      $('#adv_value').attr('required', 'required')
+    } else {
+      $('#adv_value').removeAttr('required')
+      $('#adv_value').val('00')
+      $('#hide_adv').hide()
+    }
+  })
+</script>
+
+<script>
+  $(document).ready(function () {
+    var flag = <%= selected.dev_name != '' ? true : false %>;
+    console.log(flag, 'CHange flag');
+    if (flag) {
+      var cust_name = "<%= selected.cust_id != '' ? selected.cust_id : '' %>";
+      change_cust(cust_name)
+    }
+  })
+  $('#cust_name').on('change', function () {
+    console.log('HERE Change');
+    var cust_name = $(this).val();
+
+    change_cust(cust_name)
+  });
+
+  function change_cust(cust_name) {
+    console.log(cust_name, 'Cust Name Here asdasdasda');
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/device_dt",
+      data: { cust_name: cust_name },
+      success: function (response) {
+        $('#dev_id_sel').empty();
+        $('#dev_id_sel').append(`<option value="">Select Device ID</option>`)
+
+        var sel_dev_id = "<%= selected.dev_name != '' ? selected.dev_name : 0 %>"
+        console.log(sel_dev_id);
+        response.SUCCESS.dev_id.msg.forEach(function (resData) {
+          // console.log(response.SUCCESS.dev_id.msg,'pp')
+
+          var _selected = false
+          if (sel_dev_id == resData.app_id) _selected = true
+          $('#dev_id_sel').append($('<option>', { value: resData.app_id, text: resData.app_id, selected: _selected }))
+        });
+
+      },
+      error: function (error) {
+        console.log(error);
+        //   tbody.empty();
+      },
+    });
+  }
+
+</script>
+
+<script>
+  $(document).ready(function () {
+    var mod = <%= selected.dev_mod!= '' ? true : false %>;
+    console.log(mod, 'CHange mod');
+    if (mod) {
+      var cust_name = "<%= selected.cust_id != '' ? selected.cust_id : '' %>";
+      change_mod(cust_id)
+    }
+  })
+  $('#cust_id').change(function () {
+    var cust_id = $(this).val();
+    change_mod(cust_id)
+  });
+
+  function change_mod(cust_id) {
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/dev_dt",
+      data: { cust_id: cust_id },
+      success: function (response) {
+        $('#dev_mode').empty();
+        $('#dev_mode').append(`<option value="">Select Mode</option>`)
+
+        var sel_dev_mod = "<%= selected.dev_mod != '' ? selected.dev_mod : 0 %>"
+        response.SUCCESS.dev_mod.msg.forEach(function (resData) {
+          // console.log(response.SUCCESS.dev_id.msg,'pp')
+
+          var _selected = false
+          if (sel_dev_mod == resData.dev_mod) _selected = true
+          $('#dev_mode').append($('<option>', { value: resData.dev_mod, text: resData.dev_mod == 'D' ? 'Dual' : 'Fixed', selected: true }))
+        });
+
+      },
+      error: function (error) {
+        console.log(error);
+        //   tbody.empty();
+      },
+    });
+  }
+
+
+</script>

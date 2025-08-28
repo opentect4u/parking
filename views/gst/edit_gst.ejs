@@ -1,0 +1,73 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;GST Edit Details</i></h2>
+          </div> 
+          <form action="/gst/save_edit_gst" id="myForm" method="post">
+            <input type="hidden" name="gst_id" value="<%= data.msg[0].gst_id %>">
+          <div class="row mt-4">
+            <div class="form-group col-3">
+                <label for="gst_num" class="text-dark"><b>GST Number:</b></label>
+                <input type="text" class="form-control" name="gst_num" id="gst_num" value="<%=data.msg[0].gst_number %>" placeholder="Enter GST Number">
+              </div>
+              <div class="form-group col-3">
+                <label for="total_gst" class="text-dark"><b>Total GST:</b></label>
+                <select name="total_gst" class="form-control" id="total_gst">
+                  <option value="0" <%= data.msg[0].total_gst=='0' ? 'selected' : '' %>>0%</option>
+                  <option value="5" <%= data.msg[0].total_gst=='5' ? 'selected' : '' %>>5%</option>
+                  <option value="12" <%= data.msg[0].total_gst=='12' ? 'selected' : '' %>>12%</option>
+                  <option value="18" <%= data.msg[0].total_gst=='18' ? 'selected' : '' %>>18%</option>
+                  <option value="28" <%= data.msg[0].total_gst=='28' ? 'selected' : '' %>>28%</option>
+              </select>
+              </div>
+              <div class="form-group col-3">
+                  <label for="cgst" class="text-dark"><b>CGST:</b></label>
+                  <input type="text" class="form-control" name="cgst" id="cgst" value="<%=data.msg[0].cgst %>" placeholder="Enter CGST" readonly>
+                </div>
+  
+                <div class="form-group col-3">
+                  <label for="sgst" class="text-dark"><b>SGST:</b></label>
+                  <input type="text" class="form-control" name="sgst" id="sgst" value="<%=data.msg[0].sgst %>" placeholder="Enter SGST" readonly>
+                </div>
+          </div>
+          <div class="row mt-4">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/gst/show_gst";
+      });
+    });
+  </script>
+
+<script>
+  $(document).ready(function () {
+    $('#total_gst').change(function () {
+      const gstValue = $(this).val();
+
+      if (gstValue) {
+        const gst = gstValue / 2;
+        $('#cgst').val(gst + '%');
+        $('#sgst').val(gst + '%');
+      } else {
+        $('#cgst').val('');
+        $('#sgst').val('');
+      }
+    });
+  });
+</script>

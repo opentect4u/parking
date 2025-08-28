@@ -2,6 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { getAllCustomerList } = require("./customer.controller");
 const { db_Select } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const transaction = async (req, res) => {
     try {
@@ -11,11 +12,12 @@ const transaction = async (req, res) => {
         page_path: "super_admin/view_transaction/view_transaction",
         customer: cust.suc > 0 ? cust.msg : null,
       };
-      console.log(page_data, "999");
+      // console.log(page_data, "999");
       res.render("common/layouts/main", page_data);
       // console.log(page_data, "...");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
   };
@@ -32,7 +34,7 @@ const transaction = async (req, res) => {
                     AND b.customer_id ='${cust_id}'
                     AND c.date_time_out between '${frm_dt}' and '${to_dt}'`;
              const trans_dt = await db_Select(select, table_name, whr, null);
-             console.log(trans_dt);
+            //  console.log(trans_dt);
             resolve(trans_dt);
       });
   };
@@ -41,7 +43,7 @@ const transaction = async (req, res) => {
     var data = req.body
     // console.log(data);
     var trans_dtls = await transaction_show(data.cust_id, data.frm_dt, data.to_dt)
-    console.log(trans_dtls);
+    // console.log(trans_dtls);
     res.send(trans_dtls)
   }
 

@@ -1,0 +1,122 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Customer Edit Details</i></h2>
+          </div> 
+          <form action="/superadmin/customer_save" id="myForm" method="post">
+          <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="sell_name" class="text-dark"><b>Seller Name</b></label>
+                  <select name="sell_name" class="form-control" id="sell_name">
+                          <option value="">Select Seller Name</option>
+                          <% sell.forEach(dt => { %>
+                              <option value="<%= dt.seller_id %>" <% if (dt.seller_id == data[0].seller_id) { %> selected <% } %>><%= dt.seller_name %></option>
+                          <% }) %>
+                  </select>
+                </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
+                      <input type="text" class="form-control" id="cust_name" name="cust_name" value="<%= data[0].customer_name %>">
+                    </div>
+                    </div>   
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="loc_name" class="text-dark"><b>Location Name</b></label>
+                            <select name="loc_name" class="form-control" id="loc_name">
+                                <option value="">Select Location Name</option>
+                                <% location.forEach(dt => { %>
+                                    <option value="<%= dt.location_id %>" <% if (dt.location_id == data[0].location_id) { %> selected <% } %>><%= dt.loction %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>    
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="phone" class="text-dark"><b>Phone No</b></label>
+                          <input type="text" class="form-control" id="phone" name="phone" value="<%= data[0].mobile_no%>">
+                        </div>
+                        </div>
+        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="email" class="text-dark"><b>Email</b></label>
+                              <input type="text" class="form-control" id="email" name="email" value="<%= data[0].email%>">
+                            </div>
+                            </div>      
+                            
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                  <label for="dev_mode" class="text-dark"><b>Mode</b></label>
+                                  <select name="dev_mode" class="form-control" id="dev_mode">
+                                      <option value="D" <%= data[0].dev_mod == 'D' ? 'selected' : '' %>>Dual</option>
+                                      <option value="F" <%= data[0].dev_mod == 'F' ? 'selected' : '' %>>Fixed</option>
+                                  </select>
+                              </div>
+                          </div>   
+                                
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                    <label for="no_device" class="text-dark"><b>No. of Device</b></label>
+                                    <input type="text" class="form-control" id="no_device" name="no_device" value="<%= data[0].no_device%>">
+                                  </div>
+                                  </div>     
+
+                                  <div class="col-md-4">
+                                    <div class="form-group">
+                                    <label for="cust_type" class="text-dark"><b>Customer Type</b></label>
+                                      <select name="cust_type" class="form-control" id="cust_type">
+                                        <option value="P" <%= data[0].customer_type == 'P' ? 'selected' : '' %>>Parking</option>
+                                        <option value="T" <%= data[0].customer_type == 'T' ? 'selected' : '' %>>Toll plaza</option>
+                                      </select>
+                                    </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                      <div class="form-group">
+                                      <label for="dev_type" class="text-dark"><b>Device Type</b></label>
+                                        <select name="dev_type" class="form-control" id="dev_type">
+                                          <option value="H" <%= data[0].device_type == 'H' ? 'selected' : '' %>>Handheld Device</option>
+                                          <option value="M" <%= data[0].device_type == 'M' ? 'selected' : '' %>>Mobile Device</option>
+                                        </select>
+                                      </div>
+                                      </div>     
+
+            <div class="col-md-12">
+                <div class="form-group">
+                  <label for="cust_add" class="text-dark"><b>Customer Address</b></label>
+                  <textarea class="form-control" rows="3" id="cust_add" name="cust_add"><%= data[0].cust_addr%></textarea>
+                </div>
+              </div>
+              
+          </div>
+          <div class="row mt-4">
+            <input type="hidden" name="id" value="<%= id %>">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/superadmin/customer";
+      });
+    });
+  </script>

@@ -2,6 +2,7 @@ const Joi = require("joi");
 const bcrypt = require('bcrypt');
 const dateFormat = require('dateformat');
 const { db_Select, db_Insert } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const test = async (req, res) => {
     try {
@@ -107,12 +108,12 @@ const super_admin_login_post = async (req, res) => {
                 try{
                     await db_Insert('md_super_admin',`last_login='${datetime}',updated_by='SSS',updated_at='${datetime}'`,null,`user_id='${value.user_id}'`,1)
                     userData = userData.msg[0];
-                    console.log(userData);
+                    // console.log(userData);
                     req.session['user'] = { userData, datetime }
                     req.flash('success', "Login successful");
                     res.redirect('/superadmin_dashboard');
                 }catch(err){
-                   console.log(err);
+                //    console.log(err);
                    req.flash('danger', err);
                    res.redirect('/superadmin_login');
                 }
@@ -126,7 +127,8 @@ const super_admin_login_post = async (req, res) => {
             res.redirect('/superadmin_login');
         }
     } catch (error) {
-        console.log(error);
+        // console.log(error);
+        logger.error(err); // Log the error
         req.flash('danger', error);
         res.redirect('/superadmin_login');
     }

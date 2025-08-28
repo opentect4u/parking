@@ -20,16 +20,45 @@ const vehicle_in = (userData, vehicle_id, vehicle_no, dev_mod, receipt_type) => 
 }
 
 
-const insert_receipt = (userData, receipt_no, base_amt, cgst, sgst, paid_amt, gst_flag, trans_flag) => {
+const insert_receipt = (userData, receipt_no, base_amt, cgst, sgst, paid_amt, gst_flag, trans_flag, paymode) => {
     return new Promise(async (resolve, reject) => {
         try {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-            let receipt_fields = `(receipt_no, user_id, base_amt, cgst, sgst, paid_amt, gst_flag, trans_flag, created_at)`,
-                receipt_values = `(${receipt_no},${userData.id},${base_amt},${cgst}, ${sgst}, ${paid_amt}, '${gst_flag}', '${trans_flag}','${datetime}')`;
+            //02.12.2024// 
+
+            var price = 0;
+            var price_values = 0;
+            var tax_amount = 0;
+            var cgsts = 0;
+            var sgsts = 0;
+
+            price = 1 + ((parseFloat(cgst) + parseFloat(sgst)) / 100);
+            console.log(cgst,sgst,(cgst) + (sgst) / 100,price,'price');
+
+            price_values = (paid_amt) / price;
+            var price_value =  parseFloat(price_values.toFixed(2))
+            console.log(price_value,'price_value');
+            
+            tax_amount = parseFloat(paid_amt) - parseFloat(price_value)
+            console.log(tax_amount,'tax_amount');
+
+            cgsts = parseFloat((tax_amount / 2).toFixed(2));
+            sgsts = parseFloat((tax_amount / 2).toFixed(2));
+            console.log(cgsts,sgsts,'csgst');
+            
+            
+            var base_amt = parseFloat(paid_amt) - (parseFloat(cgsts) + parseFloat(sgsts))
+            console.log(base_amt,'base');
+            
+
+            let receipt_fields = `(receipt_no, user_id, base_amt, cgst, sgst, paid_amt, gst_flag, trans_flag, pay_mode, created_at)`,
+                receipt_values = `(${receipt_no},${userData.id},${base_amt},${cgsts}, ${sgsts}, ${paid_amt}, '${gst_flag}', '${trans_flag}', '${paymode}', '${datetime}')`;
             var receipt = await db_Insert("td_receipt", receipt_fields, receipt_values, null, 0);
             resolve(receipt);
         } catch (error) {
+            console.log(error);
+            
             reject(error);
         }
     });
@@ -50,12 +79,12 @@ const insert_advance_receipt_update = (userData, receipt_no, base_amt, advance_a
     });
 }
 
-const outpass_advance_receipt_update = (userData, receipt_no, base_amt, cgst, sgst, paid_amt, gst_flag, trans_flag) => {
+const outpass_advance_receipt_update = (userData, receipt_no, base_amt, cgst, sgst, paid_amt, gst_flag, trans_flag, paymode) => {
     return new Promise(async (resolve, reject) => {
         try {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-            let receipt_fields = `user_id=${userData.id}, base_amt=${base_amt}, cgst=${cgst}, sgst=${sgst}, paid_amt=${paid_amt}, gst_flag='${gst_flag}', trans_flag='${trans_flag}', updated_at='${datetime}'`,
+            let receipt_fields = `user_id=${userData.id}, base_amt=${base_amt}, cgst=${cgst}, sgst=${sgst}, paid_amt=${paid_amt}, gst_flag='${gst_flag}', trans_flag='${trans_flag}', pay_mode = '${paymode}', updated_at='${datetime}'`,
                 where = `receipt_no='${receipt_no}'`;
             var receipt_update = await db_Insert("td_receipt", receipt_fields, null, where, 1);
             resolve(receipt_update);

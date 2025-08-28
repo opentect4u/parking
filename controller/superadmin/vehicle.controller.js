@@ -2,7 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
 const { getAllCustomerList } = require("./customer.controller");
-
+const logger = require('../../model/LoggerModel');
 
 const getAllVehicleList = (id = 0) => {
     return new Promise(async (resolve, reject) => {
@@ -37,6 +37,7 @@ const vehicle = async(req,res) =>{
         res.render("common/layouts/main",page_data);
       } catch (error) {
         // console.log(error);
+        logger.error(err); // Log the error
         res.redirect("/superadmin_login");
       }
 };
@@ -64,10 +65,11 @@ const vehicle_edit = async(req,res) =>{
         data: vehicle_dt.suc > 0 ? vehicle_dt.msg : null,
         customer: customer.suc > 0 ? customer.msg : null,
       };
-      console.log(page_data);
+      // console.log(page_data);
       res.render("common/layouts/main",page_data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
 };
@@ -81,7 +83,7 @@ const save_add_vehicle = async (req, res) => {
       veh_name: Joi.required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    console.log(value);
+    // console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -95,12 +97,13 @@ const save_add_vehicle = async (req, res) => {
     let fields = value.id > 0 ? `vehicle_name='${value.veh_name}',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,vehicle_name,created_by,created_at)",
       values = `('${value.cust_name}','${value.veh_name}','${user_name}','${datetime}')`;
     let res_dt = await db_Insert("md_vehicle", fields, values, value.id > 0 ? `vehicle_id=${value.id} AND customer_id = ${value.cust_id}` : null, value.id > 0 ? 1 : 0);
-    console.log("========vehicle==========", res_dt);
+    // console.log("========vehicle==========", res_dt);
     req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
     res.redirect("/superadmin/vehicle");
   //   res.send(res_dt)
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
     res.redirect("/superadmin/vehicle");
   }

@@ -1,6 +1,14 @@
-<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+<!-- <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
     rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script> -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap Toggle CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+<!-- Bootstrap Toggle JS -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
 
 <div class="container-fluid">
     <div class="row">
@@ -12,7 +20,7 @@
                 </div>
                 <form action="/device/edit_save_device" id="myForm" method="post">
                     <div class="row mt-4">
-                        <div class="form-group col-5">
+                        <div class="form-group col-3">
                             <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Customer Name</option>
@@ -32,12 +40,19 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="app_id" class="text-dark"><b>Device ID</b></label>
                                 <input type="text" name="app_id" id="app_id" class="form-control"
                                     value="<%= data.app_id %>" readonly>
                             </div>
+                        </div>
+                        <div class="col-md-3 cust-toggle1">
+                            <label for="gst_flag" class="text-dark"><b>GST Flag</b></label><br>
+                            <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle"
+                                data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                                name="gst_flag" <%=(data.gst_flag=='Y' )?'checked':''%>
+                            >
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
@@ -99,9 +114,31 @@
                                     value="<%= data.adv_value%>">
                             </div>
                         </div>
+
+                        <div class="col-md-3 cust-toggle1">
+                            <label for="pay_mode_flag" class="text-dark"><b>Pay Mode Flag</b></label><br>
+                            <input type="checkbox" value="Y" id="pay_mode_flag" data-toggle="toggle"
+                                data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                                name="pay_mode_flag" <%=(data.pay_mode_flag=='Y' )?'checked':''%>>
+                        </div>
+
+                        <% if (user.user_data.dev_mod == 'D') { %>
+                        <div class="col-md-3 cust-toggle1">
+                            <label for="qr_code_flag" class="text-dark"><b>QR Code Flag</b></label><br>
+                            <input type="checkbox" value="Y" id="qr_code_flag" data-toggle="toggle" data-onstyle="success"
+                              data-offstyle="danger" data-on="Active" data-off="Deactive" name="qr_code_flag" <%=(data.qr_code_flag=='Y' )?'checked':''%>>
+                          </div>
+                          <% } %>   
+                           <% if (user.user_data.dev_mod == 'D') { %>
+                        <div class="col-md-3 mt-1 cust-toggle1">
+                            <label for="day_wise_rate" class="text-dark"><b>Day wise Vehicle Rate</b></label><br>
+                            <input type="checkbox" value="Y" id="day_wise_rate" data-toggle="toggle" data-onstyle="success"
+                              data-offstyle="danger" data-on="Active" data-off="Deactive" name="day_wise_rate" <%=(data.day_wise_rate=='Y' )?'checked':''%>>
+                          </div>
+                          <% } %>   
                       </div>
-                        <div class="row mt-3">
-                            <div class="col-md-5"></div>
+                        <div class="row mt-4">
+                            <div class="col-md-4"></div>
                             <div class="form-group col-md-3">
                                 <input type="submit" value="SUBMIT" class="btn btn-primary btn-block"/>
                             </div>
@@ -113,16 +150,32 @@
 </div>
 
 <script>
-    $('#grace_flag').on('change', function () {
-        if ($(this).is(':checked')) {
-            $('#hide_grace').show()
-            $('#grace_value').attr('required', 'required')
+   // $('#grace_flag').on('change', function () {
+       // if ($(this).is(':checked')) {
+           // $('#hide_grace').show()
+           // $('#grace_value').attr('required', 'required')
+       // } else {
+            //$('#grace_value').removeAttr('required')
+            //$('#grace_value').val('00')
+            //$('#hide_grace').hide()
+        //}
+    //})
+    function toggleGraceSection() {
+        if ($('#grace_flag').is(':checked')) {
+            $('#hide_grace').show();
+            $('#grace_value').attr('required', 'required');
         } else {
-            $('#grace_value').removeAttr('required')
-            $('#grace_value').val('00')
-            $('#hide_grace').hide()
+            $('#grace_value').removeAttr('required');
+            $('#grace_value').val('00');
+            $('#hide_grace').hide();
         }
-    })
+    }
+
+    // On page load
+    $(document).ready(function () {
+        toggleGraceSection(); // Check state initially
+        $('#grace_flag').on('change', toggleGraceSection); // Also bind to change event
+    });
 </script>
 
 <script>
@@ -155,3 +208,26 @@
                     });
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+      $('#gst_flag').bootstrapToggle();
+      $('#adv_pay_flag').bootstrapToggle();
+  
+      $('#gst_flag').on('change', function () {
+        if ($(this).prop('checked')) {
+          $('#adv_pay_flag').bootstrapToggle('off'); 
+        } else {
+        //   $('#adv_pay_flag').bootstrapToggle('on'); 
+        }
+      });
+  
+    //   $('#adv_pay_flag').on('change', function () {
+    //     if ($(this).prop('checked')) {
+    //       $('#gst_flag').bootstrapToggle('off'); 
+    //     } else {
+    //       $('#gst_flag').bootstrapToggle('on'); 
+    //     }
+    //   });
+    });
+  </script>

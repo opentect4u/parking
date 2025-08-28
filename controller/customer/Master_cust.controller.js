@@ -2,6 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Insert, db_Select } = require("../../model/Master.model");
 const bcrypt = require("bcrypt");
+const logger = require('../../model/LoggerModel');
 
 
 const vehicle = async (req, res) => {
@@ -119,6 +120,7 @@ const save_report_password = async (req, res) => {
     res.redirect("/password");
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     req.flash("error", "Data not Updated Successfully");
     res.send({ suc: 0, msg: error });
   }
@@ -154,6 +156,7 @@ const my_profile_save = async (req, res) =>{
     res.redirect("/report/details_report");
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     res.send({ suc: 0, msg: error });
   }
 };

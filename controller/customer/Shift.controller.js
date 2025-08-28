@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const shift = async (req, res) => {
     try {
@@ -53,6 +54,7 @@ const save_add_shift = async (req, res) => {
       // res.send(res_dt)
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", "Data not saved Successfully");
       res.redirect("/shift/shift_details");
     }
@@ -74,7 +76,7 @@ const save_add_shift = async (req, res) => {
       data: resData.suc > 0 && resData.msg.length > 0 ? resData.msg[0] : [],
       customer_id: custId,
     };
-    console.log(viewData,'12345');
+    // console.log(viewData,'12345');
     res.render("common/layouts/main", viewData);
   };
 
@@ -88,7 +90,7 @@ const save_add_shift = async (req, res) => {
         to_time: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-      console.log(value);
+      // console.log(value);
       if (error) {
         const errors = {};
         error.details.forEach((detail) => {
@@ -103,11 +105,12 @@ const save_add_shift = async (req, res) => {
       let fields = `shift_name='${value.shift_name}',f_time='${value.frm_time}',t_time='${value.to_time}',updated_at='${datetime}'`,
         where = `customer_id='${custId}' AND shift_id='${value.shift_id}'`;
       let res_dt2 = await db_Insert("md_shift", fields, null, where, 1);
-      console.log(res_dt2);
+      // console.log(res_dt2);
       req.flash("success", "Updated successful");
       res.redirect("/shift/shift_details");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", "Data not Updated Successfully");
       res.redirect("/shift/shift_details");
     }

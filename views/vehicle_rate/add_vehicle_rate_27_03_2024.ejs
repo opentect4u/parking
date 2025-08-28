@@ -1,0 +1,220 @@
+<div class="container-fluid">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="card">
+      <div class="card-body">
+    <% if (user.user_data.user_type!='C') { %>
+        <div class="titleSec">
+          <button type="button" class="btn btn-primary" id="myBtn"
+            style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
+        </div>
+        <% } %>  
+        <div class="row mt-4">
+          <h4 class="text-dark"><i data-feather="settings" class="feather-icon"></i>&nbsp;<b>Attach Vehicle Rate</b>
+          </h4>
+        </div>
+        <div class="row mt-3">
+          <div class="form-group col-md-4">
+            <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
+            <select name="rate_type" class="form-control" id="rate_type" required>
+              <option value="">Select Rate Type</option>
+              <option value="H" <%=data.rate_type=='H' ? 'selected' : '' %>>Hourly</option>
+              <option value="F" <%=data.rate_type=='F' ? 'selected' : '' %>>Fixed</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="veh_id"><b style="color: black;">Vehicle Id:</b></label>
+            <select name="veh_id" class="form-control" id="veh_id" required>
+              <option value="">Select Vehicle Id</option>
+
+            </select>
+          </div>
+          <input type="hidden" id="cust_id" name="cust_id" value="<%= data.customer_id %>">
+          <div class="form-group col-md-4" style="margin-top: 30px;">
+            <button type="submit" class="btn btn-primary" style="border-radius: 5px;" id="submitBtn">Submit</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table id="example" class="table table-striped table-bordered show_data" style="width:100%">
+            <thead>
+              <tr>
+                <th class="text-dark text-center">Sl. No.</th>
+                <th class="text-dark text-center">From Hour</th>
+                <th class="text-dark text-center">To Hour</th>
+                <th class="text-dark text-center">Parking Fee</th>
+                <th class="text-dark text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="5" class="text-danger text-center">No Data Found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h3 class="modal-title text-dark"><i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Add Vehicle Rate</b>
+        </h3>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form action="/rate/add_save_vehicle_rate" method="post" id="myForm">
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+              <select name="cust_id" class="form-control" id="cust_id">
+                <option value="<%=user.user_data.customer_id %>">
+                  <%= user.user_data.customer_name %>
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="rate_type"><b style="color: black;">Rate Type:</b></label>
+                <select name="rate_type" class="form-control" id="rate_type" required>
+                  <option value="">Select Rate Type</option>
+                  <option value="H">Hourly</option>
+                  <option value="F">Fixed</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="vehicle_id" class="text-dark"><b>Vehicle ID</b></label>
+               <input type="text" class="form-control" id="vehicle_id" name="vehicle_id" placeholder="Enter Vehicle ID...." required>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="frm_hr" class="text-dark"><b>From Hour</b></label>
+               <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="00">
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="to_hr" class="text-dark"><b>To Hour</b></label>
+               <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="00">
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="park_fee" class="text-dark"><b>Parking Fee</b></label>
+               <input type="text" class="form-control" id="park_fee" name="park_fee" placeholder="Enter Parking Fee...." required>
+              </div>
+            </div>
+
+          </div>
+          <div class="row mt-3">
+            <div class="form-group col-md-3">
+              <input type="submit" value="SUBMIT" class="btn btn-primary "
+                style="margin-left: 38vw;border-radius: 6px;" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#myBtn").click(function () {
+      $("#myModal").modal();
+      // $("#myBtn").hide()
+    });
+  });
+</script>
+
+<script>
+  $('#rate_type').change(function () {
+    var rate_type = $(this).val();
+
+    $.ajax({
+      type: "POST",
+      url: "/rate/get_vehicle_id",
+      data: { rate_type: rate_type },
+      success: function (response) {
+        // console.log(response.SUCCESS.branchData.msg)
+        $('#veh_id').empty();
+        $('#veh_id').append(`<option value="">Select Vehicle Id</option>`)
+
+        response.SUCCESS.vech_id.msg.forEach(function (resData) {
+          $('#veh_id').append('<option value="' + resData.vehicle_id + '">' + resData.vehicle_id + '</option>');
+        });
+
+      },
+      error: function (error) {
+        console.log(error);
+        //   tbody.empty();
+      },
+    });
+  });
+
+</script>
+
+<script>
+  $('#submitBtn').click(function () {
+    var veh_id = $('#veh_id').val();
+
+    var tbody = $(".show_data tbody");
+    $.ajax({
+      type: "GET",
+      url: "/rate/vehicle_details",
+      data: { veh_id: veh_id },
+      success: function (response) {
+        tbody.empty();
+        if (response.suc > 0 && response.msg.length > 0) {
+          response.msg.forEach(function (item, index) {
+            var row =
+              "<tr>" +
+              "<td class='text-dark text-center'>" +
+              (index + 1) +
+              "</td>" +
+              "<td class='text-dark text-center'>" +
+              item.from_hour +
+              "</td>" +
+              "<td class='text-dark text-center'>" +
+              item.to_hour +
+              "</td>" +
+              "<td class='text-dark text-center'>" +
+              item.vehicle_rate +
+              "</td>" +
+              "<td class='text-center'><a href='/rate/edit_vehicle_rate_details?customer_id=" + item.customer_id + "&sl_no=" + item.sl_no + "' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>" +
+              "</tr>";
+            tbody.append(row);
+          });
+        } else {
+          $('.show_data tbody').append(`
+              <tr>
+                <td colspan="5" class="text-danger text-center">No data found</td>
+              </tr>
+            `)
+        }
+
+      },
+      error: function (error) {
+        // console.log(error);
+        tbody.empty();
+
+      },
+    });
+
+  });
+</script>

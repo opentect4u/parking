@@ -5,6 +5,7 @@ const { getAllCustomerList } = require("./customer.controller");
 const { getAllLocationList } = require("./location.controller");
 const { getAllSellerList } = require("./seller.controller");
 const bcrypt = require("bcrypt");
+const logger = require('../../model/LoggerModel');
 
 const getAllOperatorList = (id = 0,cust_id) => {
   return new Promise(async (resolve, reject) => {
@@ -13,7 +14,7 @@ const getAllOperatorList = (id = 0,cust_id) => {
       whr = `a.customer_id = b.customer_id AND a.user_id = b.user_id AND a.customer_id=${cust_id} AND b.user_type='O' ${id > 0 ? `AND a.operator_id = ${id}` : ''}`,
       order = null;
       var operator = await db_Select(select,table_name,whr,order);
-      console.log(operator);
+      // console.log(operator);
       resolve(operator)
   })
 };
@@ -41,10 +42,11 @@ const operator = async(req,res)=>{
         seller: seller.suc > 0 ? seller.msg : null,
         selected
       };
-      console.log(page_data,'lolo');
+      // console.log(page_data,'lolo');
       res.render("common/layouts/main",page_data);
  } catch(error) {
-   console.log(error);
+  //  console.log(error);
+  logger.error(err); // Log the error
    res.redirect("/superadmin_login");
  }
 };
@@ -55,7 +57,7 @@ const show_operator_dtls = (cust_id) => {
         table_name = "md_operator a, md_user b",
         whr = `a.customer_id = b.customer_id AND a.user_id = b.user_id AND a.customer_id=${cust_id} AND b.user_type='O'`;
       const operator_dt = await db_Select(select, table_name, whr, null);
-      console.log(operator_dt,'111');
+      // console.log(operator_dt,'111');
       resolve(operator_dt)
     })
   };
@@ -78,10 +80,11 @@ const show_operator_dtls = (cust_id) => {
           location: loca.suc > 0 ? loca.msg : null,
           seller: seller.suc > 0 ? seller.msg : null,
         };
-        console.log(page_data);
+        // console.log(page_data);
         res.render("common/layouts/main",page_data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
+        logger.error(err); // Log the error
         res.redirect("/superadmin_login");
       }
   };
@@ -100,7 +103,7 @@ const show_operator_dtls = (cust_id) => {
         pwd: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-      console.log(value);
+      // console.log(value);
       if (error) {
         const errors = {};
         error.details.forEach((detail) => {
@@ -112,13 +115,20 @@ const show_operator_dtls = (cust_id) => {
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var password = bcrypt.hashSync(value.pwd.toString(), 10);
 
+        // Check if mobile number already exists
+        const user = await db_Select("user_id", "md_user", `user_id = '${value.mobile}'`, null);
+        if (user.msg.length > 0) {
+            req.flash("error", "Mobile number already exists");
+            return res.redirect("/superadmin/operator");
+        } else {
+
   
       let fields = value.id > 0 ? `operator_name='${value.op_name}',location_id='${value.loc_name}',updated_by='${user_name}',updated_at='${datetime}'`: "(operator_name,user_id,customer_id,location_id,created_by,created_at)",
       values = `('${value.op_name}','${value.mobile}','${value.cust_name}','${value.loc_name}','${user_name}','${datetime}')`;
       where = value.id > 0 ? `customer_id='${value.cust_id}' AND operator_id='${value.id}'` : null;
       flag = value.id > 0 ? 1 : 0 ;
       var res_dt = await db_Insert("md_operator", fields, values, where, flag);
-      console.log(res_dt,'222');
+      // console.log(res_dt,'222');
       if(res_dt.suc > 0){
         let fields_1 = value.id > 0 ? `seller_id='${value.seller_name}',password='${password}',device_id='${value.dev_id}',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_by,created_at)",
         values_1 = `('${value.cust_name}','${value.seller_name}','O','${password}','${value.dev_id}','${value.mobile}','Y','${user_name}','${datetime}')`;
@@ -129,8 +139,10 @@ const show_operator_dtls = (cust_id) => {
       req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
       res.redirect("/superadmin/operator");
     //   res.send(res_dt)
+        }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
       res.redirect("/superadmin/operator");
     }

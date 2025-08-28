@@ -2,6 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { getAllCustomerList } = require("./customer.controller");
 const { db_Select, db_Insert } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const getAllShiftList = (id = 0,cust_id) => {
     return new Promise(async (resolve, reject) => {
@@ -36,6 +37,7 @@ const shift = async(req,res)=>{
          res.render("common/layouts/main",page_data);
     } catch(error) {
     //   console.log(error);
+    logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
    };
@@ -68,7 +70,8 @@ const shift = async(req,res)=>{
         // console.log(page_data,'p');
         res.render("common/layouts/main",page_data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
+        logger.error(err); // Log the error
         res.redirect("/superadmin_login");
       }
   };  
@@ -84,7 +87,7 @@ const shift = async(req,res)=>{
         to_time: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-      console.log(value);
+      // console.log(value);
       if (error) {
         const errors = {};
         error.details.forEach((detail) => {
@@ -98,12 +101,13 @@ const shift = async(req,res)=>{
       let fields = value.id > 0 ? `shift_name='${value.shift_name}',f_time='${value.frm_time}',t_time='${value.to_time}',modified_by='${user_name}',updated_at='${datetime}'` : "(customer_id,shift_name,f_time,t_time,created_by,created_at)",
         values = `('${value.cust_id}','${value.shift_name}','${value.frm_time}','${value.to_time}','${user_name}','${datetime}')`;
       let res_dt = await db_Insert("md_shift", fields, values, value.id > 0 ? `shift_id=${value.id} AND customer_id = ${value.cust_id}` : null, value.id > 0 ? 1 : 0);
-      console.log("========shift==========", res_dt);
+      // console.log("========shift==========", res_dt);
       req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
       res.redirect("/superadmin/shift");
     //   res.send(res_dt)
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
       res.redirect("/superadmin/shift");
     }

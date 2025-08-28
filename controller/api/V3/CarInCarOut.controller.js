@@ -279,17 +279,26 @@ const car_in_out = async (req, res) => {
         
         const userData = req.user;
         var data = {};
+        // console.log(userData,'123');
 
         if(value.car_flag == 'IN'){
-            var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, f.operator_name`,
-            table_name = 'td_vehicle_in a, td_receipt c, md_vehicle d, md_user e, md_operator f',
-            whr = `a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND DATE(a.date_time_in) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
-            order = null;
-             data = await db_Select(select, table_name, whr, order)
+            if(userData.adv_pay != 'N'){
+                var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, f.operator_name`,
+                table_name = 'td_vehicle_in a, td_receipt c, md_vehicle d, md_user e, md_operator f',
+                whr = `a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'N' AND DATE(a.date_time_in) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+                order = null;
+                 data = await db_Select(select, table_name, whr, order)
+            }else{
+                var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, 0 base_amt, 0 cgst, 0 sgst, 0 paid_amt, 0 advance_amt, f.operator_name`,
+                table_name = 'td_vehicle_in a, md_vehicle d, md_user e, md_operator f',
+                whr = `a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'N' AND DATE(a.date_time_in) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+                order = null;
+                 data = await db_Select(select, table_name, whr, order)
+            }
           } else {
-            var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, f.operator_name`,
+           var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, f.operator_name`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
-            whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+            whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND b.user_id=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
             order = null;
              data = await db_Select(select, table_name, whr, order)
           }

@@ -2,7 +2,7 @@ const Joi = require('joi');
 const dateFormat = require("dateformat");
 const { db_Insert, db_Select, db_Check } = require('../../model/Master.model');
 const bcrypt = require("bcrypt");
-
+const logger = require('../../model/LoggerModel');
 
 const operator = async (req, res) => {
     try {
@@ -98,7 +98,8 @@ const operator = async (req, res) => {
     res.redirect("/operator/manage_operator");
        }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", "Data not saved Successfully");
       res.redirect("/operator/manage_operator");
     }
@@ -142,7 +143,8 @@ const operator = async (req, res) => {
       req.flash("success", "Updated successful");
       res.redirect("/operator/manage_operator");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", "Data not updated Successfully");
       res.redirect("/operator/manage_operator");
     }

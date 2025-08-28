@@ -2,6 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
 const { getAllLocationList } = require("./location.controller");
+const logger = require('../../model/LoggerModel');
 
 const getAllSellerList = (id = 0) => {
     return new Promise(async (resolve, reject) => {
@@ -28,6 +29,7 @@ const seller = async(req,res) =>{
         res.render("common/layouts/main",page_data);
       } catch (error) {
         // console.log(error);
+        logger.error(err); // Log the error
         res.redirect("/superadmin_login");
       }
 };
@@ -48,6 +50,7 @@ const seller_edit = async(req,res) =>{
       res.render("common/layouts/main",page_data);
     } catch (error) {
       // console.log(error);
+      logger.error(err); // Log the error
       res.redirect("/superadmin_login");
     }
 };
@@ -83,6 +86,7 @@ const save_add_seller = async (req, res) => {
   //   res.send(res_dt)
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
     res.redirect("/superadmin/seller");
   }

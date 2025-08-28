@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const vehicle = async(req,res) =>{
     try {
@@ -42,17 +43,18 @@ const save_add_vehicle = async (req, res) => {
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var custId = req.session.user.user_data.customer_id;
   
-      console.log(value);
+      // console.log(value);
       let fields =
           "(customer_id,vehicle_name,vehicle_on_off,created_by,created_at)",
         values = `('${custId}','${value.vehicle_name}','Y','${custId}','${datetime}')`;
       let res_dt = await db_Insert("md_vehicle", fields, values, null, 0);
-      console.log("========vehicle==========", res_dt);
+      // console.log("========vehicle==========", res_dt);
       req.flash("success", "Saved successful");
       res.redirect("/vehicle/vehicle_details");
       // res.send(res_dt)
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", "Data not saved Successfully");
       res.redirect("/vehicle/vehicle_details");
     }
@@ -66,7 +68,7 @@ const save_add_vehicle = async (req, res) => {
       table_name = "md_vehicle a, md_customer b",
       whr = `a.customer_id = b.customer_id AND a.customer_id='${custId}' AND a.vehicle_id='${data.vehicle_id}'`;
     const resData = await db_Select(select, table_name, whr, null);
-    console.log(resData);
+    // console.log(resData);
     delete resData.sql;
     var viewData = {
       title: "Vehicle",
@@ -74,7 +76,7 @@ const save_add_vehicle = async (req, res) => {
       data: resData.suc > 0 && resData.msg.length > 0 ? resData.msg[0] : [],
       customer_id: custId,
     };
-    console.log(viewData,'12345');
+    // console.log(viewData,'12345');
     res.render("common/layouts/main", viewData);
   };
 
@@ -107,7 +109,8 @@ const save_add_vehicle = async (req, res) => {
       req.flash("success", "Updated successful");
       res.redirect("/vehicle/vehicle_details");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      logger.error(err); // Log the error
       req.flash("error", "Data not Updated Successfully");
       res.redirect("/vehicle/vehicle_details");
     }

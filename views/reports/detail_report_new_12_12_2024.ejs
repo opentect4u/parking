@@ -1,0 +1,205 @@
+<div class="container-fluid">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <%= title %>
+                </h4>
+                <div class="row dateCalenderField">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="frm_dt">From Date</label>
+                            <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control" required="">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="to_dt">To Date</label>
+                            <input type="datetime-local" id="to_dt" name="to_dt" class="form-control" required="">
+                        </div>
+                    </div>
+                    <div class="col-md-4 searchBtnDataWis">
+                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-primary" id="btnSubmit">Search</button>
+                    </div>
+                </div>
+                <!-- <div class="card-body" id="resultDiv"> -->
+                    <div class="dateWiseDataTable" id="resultDiv">
+                    <h4 class="card-title">
+                        <center>
+                            <span id="searchCred"></span>
+                        </center>
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Receipt No.</th>
+                                    <th scope="col">Date Time In</th>
+                                    <th scope="col">Machine Sl. No. In</th>
+                                    <th scope="col">Vehicle Type</th>
+                                    <th scope="col">Vehicle No.</th>
+                                    <th scope="col">Date Time Out</th>
+                                    <th scope="col">Machine Sl. No. Out</th>
+                                    <th scope="col">Base Amount</th>
+                                    <th scope="col">Advance Amount</th>
+                                    <th scope="col">CGST</th>
+                                    <th scope="col">SGST</th>
+                                    <th scope="col">Paid Amount</th>
+                                    <th scope="col">Net Amount</th>
+                                    <th scope="col">Operator Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td scope="col" colspan="8">Total</td>
+                                    <td scope="col" id="base_amt"><b>0</b></td>
+                                    <td scope="col" id="advance_amt"><b>0</b></td>
+                                    <td scope="col" id="cgst"><b>0</b></td>
+                                    <td scope="col" id="sgst"><b>0</b></td>
+                                    <td scope="col" id="paid_amt"><b>0</b></td>
+                                    <td scope="col" id="tot_amt"><b>0</b></td>
+                                    <td></td>
+                                </tr>   
+                            </tfoot>
+                        </table>
+
+                        <a href="#" class="printBtnDate" onclick="printDiv()"><i class="fa fa-print"></i> Print</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/dateFormat.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#resultDiv').hide()
+        })
+    </script>
+    <script>
+        $('#btnSubmit').on('click', function(){
+            var frm_dt = $('#frm_dt').val()
+            var to_dt = $('#to_dt').val()
+
+            if(frm_dt != '' && to_dt != ''){
+                $.ajax({
+                    method: "POST",
+                    url: "/report/get_details_report_new",
+                    data: { frm_dt, to_dt },
+                    dataType: "html",
+                    beforeSend: function () {
+                        $(".preloader").fadeIn();
+                    },
+                    success: function (result) {
+                        var res = JSON.parse(result);
+                        var base_amt_tot = 0;
+                        var paid_amt_tot = 0;
+                        var advance_amt_tot = 0;
+                        var cgst_tot = 0;
+                        var sgst_tot = 0;
+                        var total_amt_tot = 0;
+                        var tot_amt_tot = 0 ;
+                        $('#resultDiv').show()
+                        $('#resultDiv table tbody').empty()
+                        // console.log(res)
+                        if(res.suc > 0){
+                            if(res.msg.length > 0){
+                                $('#searchCred').text(`Detail Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
+                                let i = 1;
+                                for(let dt of res.msg){
+                                    base_amt_tot += dt.base_amt
+                                    advance_amt_tot += dt.advance_amt
+                                    cgst_tot += dt.cgst
+                                    sgst_tot += dt.sgst
+                                    paid_amt_tot += dt.paid_amt
+                                    total_amt_tot = (dt.paid_amt+dt.advance_amt)
+                                    tot_amt_tot += total_amt_tot
+
+                                    $('#resultDiv table tbody').append(`
+                                    <tr>
+                                        <td>${i}</td>
+                                        <td>${dt.receipt_no}</td>
+                                        <td>${createDateTime(dt.date_time_in)}</td>
+                                        <td>${dt.device_id}</td>
+                                        <td>${dt.vehicle_name}</td>
+                                        <td>${dt.vehicle_no}</td>
+                                        <td>${createDateTime(dt.date_time_out)}</td>
+                                        <td>${dt.device_id_out}</td>
+                                        <td>${dt.base_amt}</td>
+                                        <td>${dt.advance_amt}</td>
+                                        <td>${dt.cgst}</td>
+                                        <td>${dt.sgst}</td>
+                                        <td>${dt.paid_amt}</td>
+                                        <td>${total_amt_tot}</td>
+                                        <td>${dt.operator_name}</td>
+                                    </tr>
+                                    `)
+                                    i++
+                                }
+                                $('#base_amt').text(base_amt_tot)
+                                $('#advance_amt').text(advance_amt_tot)
+                                $('#cgst').text(cgst_tot)
+                                $('#sgst').text(sgst_tot)
+                                $('#paid_amt').text(paid_amt_tot)
+                                $('#tot_amt').text(tot_amt_tot)
+                            }else{
+                                $('#resultDiv table tbody').append('<tr><td colspan="12" class="text-center text-danger">No Data Found</td></tr>')
+                                $('#base_amt').text(base_amt_tot)
+                                $('#advance_amt').text(advance_amt_tot)
+                                $('#cgst').text(cgst_tot)
+                                $('#sgst').text(sgst_tot)
+                                $('#paid_amt').text(paid_amt_tot)
+                                $('#tot_amt').text(tot_amt_tot)
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(".preloader").fadeOut();
+                    }
+                })
+            }
+        })
+    </script>
+
+<script>
+    function printDiv() {
+
+        var divToPrint = document.getElementById('resultDiv');
+
+        var WindowObject = window.open('', 'Print-Window');
+        WindowObject.document.open();
+        WindowObject.document.writeln('<!DOCTYPE html>');
+        WindowObject.document.writeln('<html><head><title></title><style type="text/css">');
+
+
+        WindowObject.document.writeln('@media print { .center { text-align: center;}' +
+            '                                         .inline { display: inline; }' +
+            '                                         .underline { text-decoration: underline; }' +
+            '                                         .left { margin-left: 315px;} ' +
+            '                                         .right { margin-right: 375px; display: inline; }' +
+            '                                          table { border-collapse: collapse; font-size: 10px;}' +
+            '                                          th, td { border: 1px solid black; border-collapse: collapse; padding: 6px; font-family: Arial, Helvetica, sans-serif;}' +
+            '                                           th, td {text-align: left;}' +
+            '.table .thead-dark th {color: #fff; background-color: #1c2d41;}'+
+            ' tfoot{font-weight: 700; color: #000;}'+
+            ' .printBtnDate{display: none;}'+
+            '                                         .border { border: 1px solid black; } ' +
+            '                                         .bottom { bottom: 5px; width: 100%; position: fixed ' +
+            '                                       ' +
+            '                                   } } </style>');
+        WindowObject.document.writeln('</head><body onload="window.print()">');
+        WindowObject.document.writeln(divToPrint.innerHTML);
+        WindowObject.document.writeln('</body></html>');
+        WindowObject.document.close();
+        // setTimeout(function () {
+        //     WindowObject.close();
+        // }, 10);
+
+    }
+</script>

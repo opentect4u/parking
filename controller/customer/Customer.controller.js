@@ -1,6 +1,7 @@
 const { db_Select, db_Insert } = require("../../model/Master.model");
 const dateFormat = require("dateformat");
 const Joi = require('joi')
+const logger = require('../../model/LoggerModel');
 
 const cust_name = async (req, res) =>{
     try {
@@ -43,7 +44,7 @@ const edit_customer = async (req, res) => {
     table_name = "md_setting a, md_customer b",
     whr = `a.customer_id = b.customer_id AND a.customer_id=${custId}`;
   const resData = await db_Select(select, table_name, whr, null);
-  console.log(resData);
+  // console.log(resData);
   delete resData.sql;
   var viewData = {
     title: "Customer Setting",
@@ -64,7 +65,7 @@ const edit_save_customer = async (req, res) => {
       grace_value: Joi.optional(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    console.log(value);
+    // console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -86,7 +87,8 @@ const edit_save_customer = async (req, res) => {
     req.flash("success", "Updated successful");
     res.redirect("/customer/customer_dt");
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    logger.error(err); // Log the error
     req.flash("error", "Data not Updated Successfully");
     res.redirect("/customer/customer_dt");
   }

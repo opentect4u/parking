@@ -1,8 +1,13 @@
 const express = require('express');
 
+//const { Api } = require('./routes/Api.routes');
 const { Api: V1Api } = require('./routes/V1/Api.routes');
 const { Api: V2Api } = require('./routes/V2/Api.routes');
 const { Api: V3Api } = require('./routes/V3/Api.routes');
+const { Api: v4Api } = require('./routes/V4/Api.routes');
+const { Api: v5Api } = require('./routes/V5/Api.routes');
+const { Api: v6Api } = require('./routes/V6/Api.routes');
+const { Api: v8Api } = require('./routes/V8/Api.routes');
 
 const { Customer } = require('./routes/Customer.routes');
 const { reportRouter } = require('./routes/ReportsRouter');
@@ -14,10 +19,12 @@ const { ShiftRouter } = require('./routes/ShiftRouter');
 const { vehicleRouter } = require('./routes/VehicleRouter');
 const { vehicle_rateRouter } = require('./routes/Vehicle_rateRouter');
 const { SuperAdminRouter } = require('./routes/SuperAdminRouter');
-const { saveUserSocketID } = require('./module/socketModule');
+const logger = require('./model/LoggerModel');
+const { gstRouter } = require('./routes/gstRouter');
 
 const app = express(),
     session = require('express-session'),
+	MemoryStore = require('memorystore')(session),
     flash = require('connect-flash'),
     path = require('path'),
     port = process.env.PORT || 3001;
@@ -30,8 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("views", express.static(path.join(__dirname, "views")));
 
-// var server = http.createServer(app)
-// var io = new server(server)
+
 
 // SESSION
 app.use(
@@ -42,22 +48,26 @@ app.use(
       cookie: {
         maxAge: 36000000,//time 1000 h
       },
+		store: new MemoryStore({
+		  checkPeriod: 86400000, // prune expired entries every 24h
+		}),
     })
   );
 // END
 
-const server = require('http').createServer(app);
-const io = require('socket.io')(server, {
-  cors: {
-    origin: "*"
-  }
-})
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user ? req.session.user : null
-  req.io = io
   next()
 })
+
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  logger.error(err); // Log the error
+	next();
+  // res.send('Internal Server Error');
+});
 
 
 
@@ -79,9 +89,14 @@ app.get('/customer', (req, res) => {
     res.send('Hello World');
 });
 
+//app.use('/api', Api);
 app.use('/api', V1Api);
 app.use('/v2/api', V2Api);
 app.use('/v3/api', V3Api);
+app.use('/v4/api', v4Api);
+app.use('/v5/api', v5Api);
+app.use('/v6/api', v6Api);
+app.use('/v8/api', v8Api);
 
 app.use('/', Customer);
 
@@ -99,7 +114,20 @@ app.use('/vehicle',vehicleRouter)
 
 app.use('/rate',vehicle_rateRouter)
 
+app.use('/gst',gstRouter)
+
 app.use('/superadmin', SuperAdminRouter)
+
+
+// Example route that triggers an error
+app.get('/api/error', (req, res, next) => {
+  try {
+    throw new Error('This is a test error');
+  } catch (err) {
+    logger.error(err); // Log the error
+    res.status(500).send('Something broke!');
+  }
+});
 
 
 app.get('*', function(req, res){
@@ -108,41 +136,14 @@ app.get('*', function(req, res){
   // res.send('what???', 404);
 });
 
-var users = []
-io.on('connection', (socket) => {
-  console.log(socket.id, 'SocketID connected');
-  users.push(socket.id)
 
-  socket.on('connect device', async (data) => {
-    console.log(data);
-    var save_user = await saveUserSocketID(data.user_id, data.device_id, data.socket_id)
-    var response = {suc: save_user.suc, msg: {login_status: save_user.suc > 0 ? 'Y' : 'N'}}
-    socket.emit('device status', response)
-    // var notify_dtls = await notification_dtls(data.bank_id)
-    // // console.log(notify_dtls);
-    // socket.emit('send notification', notify_dtls)
-
-    // if(users.length > 1)
-    // socket.to(users[1]).emit('send notification', {suc: 1, msg: `${socket.id} send a message -> Private Message`})
-  })
-
-  socket.on('disconnect', () => {
-    var i = users.indexOf(socket.id)
-    users.splice(i, 1)
-  })
-})
-
-// app.listen(port, (err) => {
-//     if (err) throw new Error(err)
-//     console.table([
-//         { "Server": "Running","Port": port }
-//     ]);
-// });
-
-server.listen(port, (err) => {
-  if (err) throw new Error(err)
-  console.table([
-      { "Server": "Running","Port": port }
-  ]);
+app.listen(port, (err) => {
+    if (err){
+      logger.error(err);
+      throw new Error(err)
+    }
+    console.table([
+        { "Server": "Running","Port": port }
+    ]);
 });
 

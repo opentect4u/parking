@@ -6,6 +6,7 @@ const dateFormat = require('dateformat');
 const vehicle_wise = async (req, res) => {
     try {
         const schema = Joi.object({
+            customerUserName: Joi.optional(),
             from_date: Joi.string().required(),
             to_date: Joi.string().required()
         });
@@ -33,7 +34,7 @@ const vehicle_wise = async (req, res) => {
         var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d',
             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}'`,
-            order = 'GROUP BY a.vehicle_id, d.vehicle_name';
+            order = 'GROUP BY a.vehicle_id';
         var res_dt = await db_Select(select, table_name, whr, order)
 
 
@@ -93,7 +94,6 @@ const  dashboard = async (req, res) => {
         const userData = req.user;
         console.log(userData,'123');
 
-
         let datetime = dateFormat(new Date(), "yyyy-mm-dd")
 
         var select = `SUM(b.paid_amt) as paid_amt`,
@@ -103,7 +103,7 @@ const  dashboard = async (req, res) => {
 
         var select2 = `count(*) as vehicle_out `,
             table_name2 = 'td_vehicle_in a, td_vehicle_out b ',
-            whr2 = `a.receipt_no=b.receipt_no AND DATE(b.date_time_out)='${datetime}' AND a.customer_id = '${userData.customer_id}'`
+            whr2 = `a.receipt_no=b.receipt_no AND DATE(b.date_time_out)='${datetime}' AND a.customer_id = '${userData.customer_id}' `
         var vehicle_out = await db_Select(select2, table_name2, whr2, null)
 
 
@@ -214,7 +214,7 @@ const operator_wise = async (req, res) => {
         var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) as adv_amt, f.operator_name opratorName`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}'`,
-            order = 'GROUP BY a.user_id_in, d.vehicle_name';
+            order = 'GROUP BY a.user_id_in';
         var data = await db_Select(select, table_name, whr, order)
 
         // select adv_amt

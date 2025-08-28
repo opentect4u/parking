@@ -1,11 +1,11 @@
 const express = require('express');
-const { register, login, test, change_password, check_report_password } = require('../../controller/api/V2/Auth.controller');
+const { register, login, test, change_password, check_report_password } = require('../../controller/api/v2/Auth.controller');
 const { checkedToken } = require('../../middleware/ApiAuthChecked.middleware');
-const { vehicle_list } = require('../../controller/api/V2/Vehicle.controller');
-const { general_settings, receipt_setting, rate_dtls_list, gst_list, fixed_rate_dtls_list, my_shift } = require('../../controller/api/V2/Master.controller');
-const { car_in, search_car, out_pass, car_in_fixed, car_advance_amount } = require('../../controller/api/V2/CarInCarOut.controller');
-const { vehicle_wise, detail_report, shift_wise, operator_wise, unbilled, dashboard, shift_wise_report } = require('../../controller/api/V2/ReportApi.controller');
-const { app_update } = require('../../controller/api/V2/AppUpdate');
+const { vehicle_list } = require('../../controller/api/v2/Vehicle.controller');
+const { general_settings, receipt_setting, rate_dtls_list, gst_list, fixed_rate_dtls_list, my_shift } = require('../../controller/api/v2/Master.controller');
+const { car_in, search_car, out_pass, car_in_fixed, car_advance_amount } = require('../../controller/api/v2/CarInCarOut.controller');
+const { vehicle_wise, detail_report, shift_wise, operator_wise, unbilled, dashboard, shift_wise_report } = require('../../controller/api/v2/ReportApi.controller');
+const { app_update } = require('../../controller/api/v2/AppUpdate');
 const Api=express.Router();
 
 Api.post('/auth/register', register);

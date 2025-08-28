@@ -41,14 +41,14 @@
                           <div class="col-md-4">
                             <div class="form-group">
                               <label for="frm_hr" class="text-dark"><b>From Hour</b></label>
-                             <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="<%= data.from_hour %>">
+                             <input type="number"  class="form-control" id="frm_hr" name="frm_hr" value="<%= data.from_hour %>">
                             </div>
                           </div>
               
                           <div class="col-md-4">
                             <div class="form-group">
                               <label for="to_hr" class="text-dark"><b>To Hour</b></label>
-                             <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="<%= data.to_hour %>">
+                             <input type="number" class="form-control" id="to_hr" name="to_hr" value="<%= data.to_hour %>">
                             </div>
                           </div>
               
@@ -59,13 +59,26 @@
                             </div>
                           </div>
 
-                        <div class="row mt-2">
-                            <div class="form-group col-md-6">
-                                <input type="submit" value="SUBMIT" class="btn btn-primary btn-block text-center"
-                                    style="margin-left: 25vw;border-radius: 5px;" />
-                            </div>
+                          <% if (user.user_data.dev_mod == 'D') { %>
+                           <div class="col-md-4">
+                          <div class="form-group">
+                          <label for="flag"><b style="color: black;">Flag:</b></label>
+                          <select name="flag" class="form-control" id="flag">
+                            <option value="">Select Flag</option>
+                            <option value="O" <%= data.night_day_flag === 'O' ? 'selected' : '' %>>Old Rate</option>
+                            <option value="N" <%= data.night_day_flag === 'N' ? 'selected' : '' %>>New Rate</option>
+                          </select>
+                          </div>
+                          </div>
+                          <% } %>
                         </div>
-                        </div>
+                       <div class="row mt-2">
+    <div class="form-group col-md-6">
+        <input type="submit" value="SUBMIT" class="btn btn-primary"
+            style="margin-left: 25vw; border-radius: 5px; padding: 4px 12px; font-size: 0.85rem; width: auto;" />
+    </div>
+</div>
+
                 </form>
             </div>
         </div>

@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
+const logger = require('../../model/LoggerModel');
 
 const customer = async (req, res) => {
   try {
@@ -120,6 +121,7 @@ const add_header_footer = async (req, res) => {
     // res.send(res_dt)
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     req.flash("error", "Data not saved Successfully");
     res.redirect("/header/customer_name");
   }
@@ -192,6 +194,7 @@ const edit_save_header_footer = async (req, res) => {
     res.redirect("/header/customer_name");
   } catch (error) {
     // console.log(error);
+    logger.error(err); // Log the error
     req.flash("error", "Data not Updated Successfully");
     res.redirect("/header/customer_name");
   }

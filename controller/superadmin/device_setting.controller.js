@@ -2,6 +2,7 @@ const Joi = require("joi");
 const dateFormat = require("dateformat");
 const { db_Select, db_Insert } = require("../../model/Master.model");
 const { getAllCustomerList } = require("./customer.controller");
+const logger = require('../../model/LoggerModel');
 
 const getAllDeviceList = (id = 0, cust_id) => {
   return new Promise(async (resolve, reject) => {
@@ -36,10 +37,11 @@ const device = async (req, res) => {
       customer: cust.suc > 0 ? cust.msg : null,
       selected,
     };
-    console.log(data, "lolo");
+    // console.log(data, "lolo");
     res.render("common/layouts/main", page_data);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    logger.error(err); // Log the error
     res.redirect("/superadmin_login");
   }
 };
@@ -60,12 +62,12 @@ const get_device_id = async (req, res) => {
 
 const get_dev_mode = async (req, res) => {
   var data = req.body;
-  console.log(data, "1000");
+  // console.log(data, "1000");
   var select = "dev_mod",
     table_name = "md_customer",
     where = `customer_id = '${data.cust_id}'`;
   var dev_mod = await db_Select(select, table_name, where, null);
-  console.log(dev_mod, "lalala");
+  // console.log(dev_mod, "lalala");
   res.json({
     SUCCESS: { dev_mod },
     status: true,
@@ -86,9 +88,9 @@ const show_device_dtls = (cust_id, dev_name) => {
 const edit_device = async (req, res) => {
   try {
     var data = req.query;
-    console.log(data, ";;;");
+    // console.log(data, ";;;");
     var dev_dt = await getAllDeviceList(data.id, data.customer_id);
-    console.log(dev_dt, "REPORT DETAILS");
+    // console.log(dev_dt, "REPORT DETAILS");
     var cust = await getAllCustomerList();
     const page_data = {
       id: data.id,
@@ -98,10 +100,11 @@ const edit_device = async (req, res) => {
       data: dev_dt.suc > 0 ? dev_dt.msg : null,
       customer: cust.suc > 0 ? cust.msg : null,
     };
-    console.log(page_data, "ll");
+    // console.log(page_data, "ll");
     res.render("common/layouts/main", page_data);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    logger.error(err); // Log the error
     res.redirect("/superadmin_login");
   }
 };
@@ -113,6 +116,7 @@ const save_device = async (req, res) => {
       cust_id: Joi.optional(),
       app_id: Joi.optional(),
       dev_mode: Joi.optional(),
+      gst_flag: Joi.optional(),
       report_flag: Joi.optional(),
       tot_col: Joi.optional(),
       redirect_flag: Joi.optional(),
@@ -121,6 +125,8 @@ const save_device = async (req, res) => {
       adv_pay_flag: Joi.optional(),
       adv_value: Joi.optional(),
       dev_type: Joi.optional(),
+      pay_mode_flag: Joi.optional(),
+      qr_code_flag: Joi.optional(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
     console.log(value, "+++");
@@ -148,8 +154,12 @@ const save_device = async (req, res) => {
               value.grace_value != "" ? `00:${value.grace_value}:00` : 0
             }',redirection_flag='${
               value.redirect_flag == "Y" ? "Y" : "N"
-            }',modified_by='${user_name}',updated_at='${datetime}'`
-          : "(app_id,customer_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag ,grace_value,redirection_flag,created_by,created_at)",
+            }',gst_flag='${ 
+              value.gst_flag == "Y" ? "Y" : "N"
+            }',pay_mode_flag='${ 
+              value.pay_mode_flag == "Y" ? "Y" : "N"}',qr_code_flag='${ 
+              value.qr_code_flag == "Y" ? "Y" : "N"}',modified_by='${user_name}',updated_at='${datetime}'`
+          : "(app_id,customer_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,gst_flag,pay_mode_flag,qr_code_flag,created_by,created_at)",
       values = `('${value.app_id}','${value.cust_id}','${value.dev_type}','${
         value.dev_mode
       }','${value.report_flag == "Y" ? "Y" : "N"}','${
@@ -160,17 +170,26 @@ const save_device = async (req, res) => {
         value.grace_value != "" ? `00:${value.grace_value}:00` : 0
       }','${
         value.redirect_flag == "Y" ? "Y" : "N"
+      }','${
+        value.gst_flag && value.gst_flag == "Y" ? "Y" : "N"
+      }','${
+        value.pay_mode_flag && value.pay_mode_flag == "Y" ? "Y" : "N"
+      }','${
+        value.qr_code_flag && value.qr_code_flag == "Y" ? "Y" : "N"
       }','${user_name}','${datetime}')`;
     let res_dt = await db_Insert(
       "md_setting",
       fields,
       values,
+      // value.id > 0
+      //   ? `setting_id=${value.id} AND customer_id = ${value.cust_id}`
+      //   : null,
       value.id > 0
-        ? `setting_id=${value.id} AND customer_id = ${value.cust_id}`
+        ? `customer_id = ${value.cust_id}`
         : null,
       value.id > 0 ? 1 : 0
     );
-    console.log("========vehicle==========", res_dt);
+    // console.log("========vehicle==========", res_dt);
     req.flash(
       "success",
       value.id > 0 ? "Updated successfully" : "Saved successfully"

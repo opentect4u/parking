@@ -48,14 +48,28 @@ reportRouter.post(
       userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, f.operator_name`,
+    console.log(data,'kk');
+    
+    if(data.pay_mode == 'A'){
+      var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${custId}'`,
       order = "ORDER BY a.receipt_no";
     var res_dt = await db_Select(select, table_name, whr, order);
-    // console.log(res_dt);
+    console.log(res_dt);
     res.send(res_dt);
+    }else {
+      var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name`,
+      table_name =
+        "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
+      whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${custId}' AND c.pay_mode = '${data.pay_mode}'`,
+      order = "ORDER BY a.receipt_no";
+    var res_dt = await db_Select(select, table_name, whr, order);
+    console.log(res_dt);
+    res.send(res_dt);
+    }
+   
   }
 );
 
@@ -120,7 +134,7 @@ reportRouter.post(
       userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt`,
+    var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, SUM(c.base_amt) base_amt,SUM(c.cgst) cgst, SUM(c.sgst) sgst`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${custId}'`,
@@ -167,7 +181,7 @@ reportRouter.post(
       userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `b.device_id mc_srl_no_out,COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt`,
+    var select = `b.device_id mc_srl_no_out,COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${custId}'`,
@@ -195,7 +209,7 @@ reportRouter.post(
       userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) as advance_amt, f.operator_name opratorName`,
+    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) as advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, f.operator_name opratorName`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${custId}'`;
@@ -224,7 +238,7 @@ reportRouter.post("/get_combine_repo_new",  AuthCheckedMW,async (req, res) => {
         userType = req.session.user.user_data.user_type;
   
       var data = req.body;
-      var select = `f.operator_name, a.device_id,sum(c.advance_amt)advance_amt,sum(c.paid_amt)paid_amt`,
+      var select = `f.operator_name, a.device_id,sum(c.advance_amt)advance_amt,sum(c.paid_amt)paid_amt,SUM(c.base_amt) base_amt,SUM(c.cgst) cgst, SUM(c.sgst) sgst`,
         table_name = "td_vehicle_in a,md_vehicle b,td_receipt c,td_vehicle_out d,md_user e,md_operator f",
         whr = `a.vehicle_id = b.vehicle_id and a.receipt_no = c.receipt_no
         and   a.receipt_no = d.receipt_no and c.user_id = e.id
@@ -256,7 +270,7 @@ reportRouter.post("/get_combine_repo_new",  AuthCheckedMW,async (req, res) => {
       userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `f.operator_name, a.device_id, b.vehicle_name vehicleType, sum(c.advance_amt)advance_amt, sum(c.paid_amt)paid_amt`,
+    var select = `f.operator_name, a.device_id, b.vehicle_name vehicleType, sum(c.advance_amt)advance_amt, sum(c.paid_amt)paid_amt,SUM(c.base_amt) base_amt,SUM(c.cgst) cgst, SUM(c.sgst) sgst`,
       table_name = "td_vehicle_in a,md_vehicle b,td_receipt c,td_vehicle_out d,md_user e,md_operator f",
       whr = `a.vehicle_id = b.vehicle_id 
       and    a.receipt_no = c.receipt_no
@@ -308,7 +322,7 @@ reportRouter.post(
       userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, f.operator_name opratorName`,
+    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt,SUM(c.base_amt) base_amt,SUM(c.cgst) cgst, SUM(c.sgst) sgst, f.operator_name opratorName`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${custId}'`,
@@ -352,13 +366,23 @@ reportRouter.post("/shift_wise_repo", AuthCheckedMW, async (req, res) => {
   let ftime = shift_time.msg[0].f_time;
   let ttime = shift_time.msg[0].t_time;
 
-  var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, f.operator_name opratorName`,
+ if(data.pay_mode == 'A'){
+  var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, SUM(c.base_amt) base_amt, c.pay_mode,SUM(c.cgst) cgst,SUM(c.sgst) sgst, f.operator_name opratorName`,
     table_name =
       "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
     whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND TIME(b.date_time_out) BETWEEN '${ftime}' AND '${ttime}' AND a.customer_id = '${custId}'`,
+    order = "GROUP BY a.user_id_in,c.pay_mode";
+  var res_dt = await db_Select(select, table_name, whr, order);
+  res.send(res_dt);
+  }else {
+    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, SUM(c.base_amt) base_amt, c.pay_mode,SUM(c.cgst) cgst,SUM(c.sgst) sgst, f.operator_name opratorName`,
+    table_name =
+      "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
+    whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND TIME(b.date_time_out) BETWEEN '${ftime}' AND '${ttime}' AND a.customer_id = '${custId}' AND c.pay_mode = '${data.pay_mode}'`,
     order = "GROUP BY a.user_id_in";
   var res_dt = await db_Select(select, table_name, whr, order);
   res.send(res_dt);
+  }
 });
 
 module.exports = { reportRouter };
