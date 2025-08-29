@@ -49,6 +49,76 @@ const register = async (req, res) => {
 }
 
 
+// const login = async (req, res) => {
+//     try {
+//         const schema = Joi.object({
+//             password: Joi.string().required(),
+//             user_id: Joi.string().required(),
+//             device_id: Joi.string().required()
+//         });
+//         const { error, value } = schema.validate(req.body, { abortEarly: false });
+//         console.log(value,'value');
+        
+//         if (error) {
+//             const errors = {};
+//             error.details.forEach(detail => {
+//                 errors[detail.context.key] = detail.message;
+//             });
+//             return res.json(sendErrorResponce(errors));
+//         }
+
+//         let whr = `user_id='${value.user_id}' AND allow_flag='Y' AND user_type='O'`
+//         // let whr = `user_id='${value.user_id}' AND allow_flag='Y' AND device_id='${value.device_id}'`
+//         var userData = await db_Select("password", 'md_user', whr, null)
+//         if ((userData.msg).length == 1) {
+//             if (await bcrypt.compare(value.password, userData.msg[0].password)) {
+                
+//                let aaa= await db_Insert('md_user',`device_id='${value.device_id}'`,null,whr,1)
+               
+//                 let table = `md_user a,md_customer b,md_seller c,md_operator d,md_setting e`,
+//                     selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,c.*,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Rs.', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,b.device_type,d.*,e.*`,
+//                     whr2 = `a.customer_id=b.customer_id AND a.seller_id=c.seller_id AND a.user_id=d.user_id AND e.customer_id=a.customer_id AND e.app_id='${value.device_id}'  AND a.user_id='${value.user_id}' AND a.allow_flag='Y' AND a.device_id='${value.device_id}'`
+//                 var userData2 = await db_Select(selectData, table, whr2, null)
+//                     console.log(userData2)
+
+//             /////// add gst flag data(26.11.2024)
+
+//         //     if (userData2.msg[0].gst_flag == 'Y') {
+//         //     let table = `md_gst`,
+//         //     selectData = `gst_number,cgst,sgst`,
+//         //     whr2 = `customer_id = '${userData2.msg[0].customer_id}'`
+//         //     var userData3 = await db_Select(selectData, table, whr2, null)
+//         //     // console.log(userData3,'poiu');
+//         // } else {
+//         //     res.json(sendErrorResponce(null, 'need to check gst flag'));
+//         // }
+//             ///// end gst flag data(26.11.2024)
+               
+//                 if ((userData2.msg).length == 1) {
+//                     delete userData2.msg[0].password
+//                     let data = {
+//                         time: Date(),
+//                         userdata: userData2,
+//                         // gstData: userData3
+//                     }
+//                     const token = createToken(data);
+//                     res.json(sendOkResponce({ token: token, user: data }, null));
+//                 } else {
+//                     res.json(sendErrorResponce(null, 'invalid Information'));
+//                 }
+//             } else {
+//                 res.json(sendErrorResponce(null, 'invalid password'));
+//             }
+//         } else {
+//             res.json(sendErrorResponce(null, 'invalid username'));
+//         }
+//     } catch (error) {
+//         console.log(error);
+        
+//         res.json(sendErrorResponce(error));
+//     }
+// }
+
 const login = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -57,6 +127,8 @@ const login = async (req, res) => {
             device_id: Joi.string().required()
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
+        console.log(value,'value');
+        
         if (error) {
             const errors = {};
             error.details.forEach(detail => {
@@ -73,11 +145,11 @@ const login = async (req, res) => {
                 
                let aaa= await db_Insert('md_user',`device_id='${value.device_id}'`,null,whr,1)
                
-                let table = `md_user a,md_customer b,md_seller c,md_operator d,md_setting e`,
-                    selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,c.*,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Rs.', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,b.device_type,d.*,e.*`,
-                    whr2 = `a.customer_id=b.customer_id AND a.seller_id=c.seller_id AND a.user_id=d.user_id AND e.customer_id=a.customer_id AND e.app_id='${value.device_id}'  AND a.user_id='${value.user_id}' AND a.allow_flag='Y' AND a.device_id='${value.device_id}'`
+                let table = `md_user a,md_customer b,md_operator d,md_setting e`,
+                    selectData = `a.user_type, a.id, a.device_id, a.user_id,b.no_device,b.customer_id,b.seller_id, b.customer_name,b.location_id,b.mobile_no,b.email,b.cust_addr,b.dev_mod,b.no_device,IF(b.customer_type = 'P', 'Rs.', IF(b.customer_type = 'T', 'Toll Fare', '')) customer_type, b.customer_type customer_type_id,b.device_type,d.*,e.*`,
+                    whr2 = `a.customer_id=b.customer_id AND a.user_id=d.user_id AND e.customer_id=a.customer_id AND e.app_id='${value.device_id}'  AND a.user_id='${value.user_id}' AND a.allow_flag='Y' AND a.device_id='${value.device_id}'`
                 var userData2 = await db_Select(selectData, table, whr2, null)
-                    // console.log(userData2)
+                    console.log(userData2)
 
             /////// add gst flag data(26.11.2024)
 

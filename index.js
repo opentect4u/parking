@@ -27,7 +27,7 @@ const app = express(),
 	MemoryStore = require('memorystore')(session),
     flash = require('connect-flash'),
     path = require('path'),
-    port = process.env.PORT || 3001;
+    port = process.env.PORT || 3002;
 
 
 

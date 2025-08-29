@@ -19,6 +19,8 @@ const car_in = async (req, res) => {
             gst_flag: Joi.string().valid('Y', 'N').required(),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
+        console.log(value);
+        
         if (error) {
             const errors = {};
             error.details.forEach(detail => {
