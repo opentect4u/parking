@@ -10,6 +10,8 @@ function useOutpass() {
         
         
         const result = await getVehicleRatesByVehicleId(vehicle_id, daywise);
+        console.log(result, 'resultresultresultresult');
+        
         if (result?.rates?.msg[0]?.rate_type == 'H') {
             const price = HourlyPriceCalculate(result?.rates?.msg, date_time_in, end_time, daywise, result?.night_rates?.msg.length > 0 ? result?.night_rates?.msg[0] : 0 );
 
@@ -23,6 +25,7 @@ function useOutpass() {
 
 
     const getVehicleRatesByVehicleId = async(vehicleId, daywise) => {
+        console.log(vehicleId, 'getVehicleRatesByVehicleId', daywise);
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
             axios.post(ADDRESSES.FIXED_RATE_DETAILS_LIST,
@@ -36,9 +39,11 @@ function useOutpass() {
                     },
                 },).then(res => {
                     // resolve(res.data.data.msg);
+                    console.log('getVehicleRatesByVehicleId>>>>', res?.data?.data?.rates?.msg, 'getVehicleRatesByVehicleId');
+                    
                     resolve(res?.data?.data);
                 }).catch(err => {
-                    console.log(err);
+                    console.log(err, 'errorerrorerrorerror');
                     reject(err);
                 });
         });

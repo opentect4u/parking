@@ -59,7 +59,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // console.log(route.params, 'route.params__UTSAB');
-  const { type, id, userId, operatorName, deviceId, fixedPriceData } = route.params;
+  const { type, id, vehicle_rate, userId, operatorName, deviceId, fixedPriceData } = route.params;
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
   const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -107,7 +107,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log(receiptSettings, 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
+    // console.log(receiptSettings, 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
     
     setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
     console.log("EFFECT - CreateReceiptScren");
@@ -366,6 +366,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           );
   
       await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
       if(receiptSettings?.IN_on_off == "Y"){
       await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
       }
@@ -374,7 +375,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
       }
       // {GST_Header}
-      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
   
       await BluetoothEscposPrinter.printColumn(
         [30],
@@ -395,6 +396,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         {}
       );
 
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`YS Service Charges : ${vehicle_rate}`],
+        {}
+      );
+
       if (generalSettings.adv_pay == "Y") {
 
         await BluetoothEscposPrinter.printColumn(
@@ -411,18 +419,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         [`IN TIME : ${formatDateTime(currentTime)}`],
         {}
       );
-      // await BluetoothEscposPrinter.printQRCode(
-      //   receiptNoObj.toString(), // QR code data
-      //   8, // Size (adjustable)
-      //   BluetoothEscposPrinter.ERROR_CORRECTION.M // Medium error correction
-      // );
-      
-      // await BluetoothEscposPrinter.printColumn(
-      //   [30],
-      //   [BluetoothEscposPrinter.ALIGN.LEFT],
-      //   [`num : ${receiptNoObj.toString()}`],
-      //   {}
-      // );
+
 
       if (generalSettings?.qr_code_flag == "Y") {
       await BluetoothEscposPrinter.printQRCode(
@@ -432,7 +429,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       );
     }
       
-      // `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n` +
       await BluetoothEscposPrinter.printText("-------------------------------\n", {});
       if(receiptSettings?.IN_on_off == "Y"){
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
@@ -540,34 +536,31 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         }
 
         if (generalSettings?.qr_code_flag == "Y") {
-          qrcode += `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
+          // qrcode += `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
+          qrcode += `[R]      <qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
         }
 
-        // if (generalSettings.gst_flag == "Y") {
-        // gstShow_pos += `[L]<font size='normal'>CGST : [R] ${gstAmount.CGST} \nSGST : [R] ${gstAmount.SGST} </font>\n`;
-        // } else {
-        // gstShow_pos += ``;
-        // }
-
-        // if (generalSettings.gst_flag == "Y") {
-        //   GST_Yes_No += `[L]<font size='normal'>GST No. : [R]${gstList.gst_number}</font>\n`;
-        // } else {
-        //   GST_Yes_No += `[L]<font size='normal'>GST Not Applicable.</font>\n`;
-        // }
+        
 
         // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
         await ThermalPrinterModule.printBluetooth({
         payload:
+        // `[L]<font size='normal'>Hertz V1.0</font>\n` +
         `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        `[C]-------------------------------` +
         `[C]${payloadHeader}` +
         `${GST_Header}` +
         // `[C]<img>${headerImg}</img>\n` +
         // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
         // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+        // `[C]-------------------------------\n` +
+        
+        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
         `[C]-------------------------------\n` +
         `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
         `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
         `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+        `[L]<font size='normal'>YS Service Charges : [R] ${vehicle_rate}</font>\n\n` +
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
 
         // `${gstShow_pos}` +
@@ -576,13 +569,14 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
         // `${GST_Yes_No}` +
 
-        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        
         // `[C]<u><font size='small'>${receiptNoObj}</font></u>\n` +
 
         // `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`+
         
         `${qrcode}` +
-        `[C]-------------------------------\n` +
+        // `[C]${qrcode}\n` +
+        `[C]-------------------------------` +
         `[C]${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
         printerDpi: 120,

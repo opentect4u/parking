@@ -142,6 +142,8 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         // setGeneralSettings(res.data.data.msg[0]);
+        // console.log("RES - getGeneralSettings", res.data.data.msg[0]);
+        
         setGeneralSettings(res.data.data.msg[0]);
 
         
@@ -237,6 +239,8 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
+        // console.log(res.data.data.msg[0], 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
+        
         setReceiptSettings(res.data.data.msg[0]);
       })
       .catch(err => {

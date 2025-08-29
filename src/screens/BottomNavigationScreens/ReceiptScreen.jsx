@@ -127,6 +127,8 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
         },
       )
       .then(res => {
+        console.log(res.data.data.msg, "VEHICLE LIST - ReceiptScreen");
+        
         setVehicles(res.data.data.msg);
       })
       .catch(err => {
@@ -155,6 +157,7 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     navigation.navigate("create_receipt", {
       type: props.vehicle_name,
       id: props.vehicle_id,
+      vehicle_rate: props.vehicle_rate, // For Display on Receipt Print
       // adv: props.adv,
       userId: userDetails?.user_id,
       operatorName: userDetails?.operator_name,

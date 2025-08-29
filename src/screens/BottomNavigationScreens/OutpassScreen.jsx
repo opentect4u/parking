@@ -311,7 +311,8 @@ useEffect(() => {
       { label: "FARE", value: totalPrice - (CGST + SGST) },
       { label: "CGST @"+gstList.cgst+'%', value: CGST },
       { label: "SGST @"+gstList.sgst+'%', value: SGST },
-      { label: "PARKING FEES", value: totalPrice }
+      // { label: "PARKING FEES", value: totalPrice }
+      { label: "YS Service Charges", value: totalPrice }
       );
       
     }
@@ -320,7 +321,8 @@ useEffect(() => {
 
       totalRate = price;
       vDatainfo.parking_fees = price;
-      vData.push({ label: "PARKING FEES", value: price });
+      // vData.push({ label: "PARKING FEES", value: price });
+      vData.push({ label: "YS Service Charges", value: price });
     }
     
     if (generalSettings.adv_pay == "Y") {
@@ -355,6 +357,7 @@ useEffect(() => {
     vData.push(
       { label: "VEHICLE TYPE", value: carData.vehicle_name },
       { label: "VEHICLE NO", value: carData.vehicle_no },
+      // { label: "YS Service Charges", value: '14' },
       { label: "IN TIME", value: formatDateTime(dateTime) },
       { label: "OUT TIME", value: formatDateTime(currentDate) },
       { label: "DURATION", value: totalDuration },
@@ -635,7 +638,8 @@ console.log(price, 'priceprice 2222');
       { label: "FARE", value: totalPrice - (CGST + SGST) },
       { label: "CGST @"+gstList.cgst+'%', value: CGST },
       { label: "SGST @"+gstList.sgst+'%', value: SGST },
-      { label: "PARKING FEES", value: totalPrice }
+      // { label: "PARKING FEES", value: totalPrice }
+      { label: "YS Service Charges", value: totalPrice }
       );
       // }
 
@@ -656,8 +660,8 @@ console.log(price, 'priceprice 2222');
 
       totalRate = price;
       vDatainfo.parking_fees = price;
-      vData.push({ label: "PARKING FEES", value: price });
-
+      // vData.push({ label: "PARKING FEES", value: price });
+      vData.push({ label: "YS Service Charges", value: price });
       // console.log(totalRate, 'uuuuuuuuu', price);
       
 
@@ -727,6 +731,7 @@ console.log(price, 'priceprice 2222');
     vData.push(
       { label: "VEHICLE TYPE", value: carData.vehicle_name },
       { label: "VEHICLE NO", value: carData.vehicle_no },
+      // { label: "YS Service Charges", value: '14' },
       { label: "IN TIME", value: formatDateTime(dateTime) },
       { label: "OUT TIME", value: formatDateTime(currentDate) },
       { label: "DURATION", value: totalDuration },

@@ -246,31 +246,21 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           );
 
           await BluetoothEscposPrinter.printText("OUTPASS\n", { align: "center" });
+          await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
           await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
 
           if (generalSettings.gst_flag == "Y") {
             await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
           }
 
-          // if (generalSettings.gst_flag == "Y") {
-          //   await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
-          // }
-          await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+          
+          // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-          // await BluetoothEscposPrinter.printText(`${payloadBody}`, {align: "left"});
           await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
 
           if (generalSettings.pay_mode_flag == "Y") {
-            // pay_Mode += `${getPayMode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`
             await BluetoothEscposPrinter.printText(`${getPayMode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`, { align: "left" });
           }
-          // await BluetoothEscposPrinter.printText(`${pay_Mode}`, { align: "left" });
-          // await BluetoothEscposPrinter.printColumn(
-          //   [30],
-          //   [BluetoothEscposPrinter.ALIGN.LEFT],
-          //   ["Receipt No: " + receiptNo],
-          //   {},
-          // )
 
 
           await BluetoothEscposPrinter.printText("-------------------------------\n", {});
@@ -376,19 +366,21 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
           await ThermalPrinterModule.printBluetooth({
             payload:
+              // `[L]<font size='normal'>Hertz V1.0</font>\n` +
               `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
+              `[C]-------------------------------` +
               `[C]${payloadHeader}` +
               `${GST_Header}` +
               // `[C]<img>${headerImg}</img>\n` +
               // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
               // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-              `[C]-------------------------------\n` +
+              // `[C]-------------------------------\n` +
               `${payloadBody}` +
               `${pay_Mode}` +
               // `[L]<font size='normal'>DURATION : [R]</font>\n` +
               // `[C]<u><font size='small'>${receiptNoObj.value}</font></u>\n` +
               // `[C]<qrcode size='30'>${receiptNoObj.value.toString()}</qrcode>\n` +
-              `[C]-------------------------------\n` +
+              `[C]-------------------------------` +
               `[C]${payloadFooter}\n`,
             printerNbrCharactersPerLine: 30,
             printerDpi: 120,
