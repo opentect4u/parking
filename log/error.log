@@ -46,3 +46,15 @@
     at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
     at Readable.push (node:internal/streams/readable:390:5) 
 ----------------------------------------------
+2025-09-01 14:03:42 error: Error: data and salt arguments required
+    at Object.hashSync (D:\Sayantika\parking_hertz\hertz_parking\node_modules\bcrypt\bcrypt.js:91:15)
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:111:22)
+    at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
+    at next (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\route.js:149:13)
+    at AuthSuperCheckedMW (D:\Sayantika\parking_hertz\hertz_parking\middleware\AuthChecked.middleware.js:18:13)
+    at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
+    at next (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
+    at D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\index.js:284:15 
+----------------------------------------------

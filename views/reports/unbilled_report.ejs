@@ -1,130 +1,197 @@
-<div class="container-fluid">
-    <div class="col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">
-                    <%= title %>
-                </h4>
-                <div class="row dateCalenderField">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="frm_dt">From Date</label>
-                            <!-- <input type="date" id="frm_dt" name="frm_dt" class="form-control" required=""> -->
-                             <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control" required="">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="to_dt">To Date</label>
-                            <!-- <input type="date" id="to_dt" name="to_dt" class="form-control" required=""> -->
-                            <input type="datetime-local" id="to_dt" name="to_dt" class="form-control" required="">
-                        </div>
-                    </div>
-                    <div class="col-md-4 searchBtnDataWis">
-                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-primary" id="btnSubmit">Search</button>
-                    </div>
-                </div>
-                <!-- <div class="card-body" id="resultDiv"> -->
-                    <div class="dateWiseDataTable" id="resultDiv">
-                    <h4 class="card-title">
-                        <center>
-                            <span id="searchCred"></span>
-                        </center>
-                    </h4>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Receipt No.</th>
-                                    <th scope="col">Date Time In</th>
-                                    <th scope="col">Machine Sl. No. In</th>
-                                    <th scope="col">Vehicle Type</th>
-                                    <th scope="col">Vehicle No.</th>
-                                    <th scope="col">Advance Amount</th>
-                                    <th scope="col">Operator Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                
-                            </tbody>
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-lg rounded-4 border-0 p-4" style="background: #f9f9f9;">
+        <h4 class="card-title mb-4 text-center text-primary"><%= title %></h4>
+        
+        <!-- Search Form -->
+        <div class="row g-3 align-items-end">
+          <!-- From Date -->
+          <div class="col-md-4">
+            <label for="frm_dt" class="form-label fw-bold text-dark">From Date</label>
+            <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
+          </div>
 
-                            <tfoot>
-                                <tr>
-                                    <td scope="col" colspan="6">Total</td>
-                                    <td scope="col" id="tot_amt"><b>0</b></td>
-                                    <td></td>
-                                </tr>   
-                            </tfoot>
-                        </table>
+          <!-- To Date -->
+          <div class="col-md-4">
+            <label for="to_dt" class="form-label fw-bold text-dark">To Date</label>
+            <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
+          </div>
 
-                        <a href="#" class="printBtnDate" onclick="printDiv()"><i class="fa fa-print"></i> Print</a>
-                    </div>
-                </div>
-            </div>
+          <!-- Customer Select -->
+          <div class="col-md-4">
+            <label for="custId" class="form-label fw-bold text-dark">Customer Name</label>
+            <select name="custId" class="form-select form-select-lg rounded-pill shadow-sm select-custom" id="custId">
+              <option value="">Select Customer Name</option>
+              <% if (data.msg && data.msg.length > 0) { %>
+                <% data.msg.forEach(customer => { %>
+                  <option value="<%= customer.customer_id %>"><%= customer.customer_name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
         </div>
+
+        <!-- Small Search Button -->
+        <div class="row mt-3">
+          <div class="col text-center">
+            <button type="button" class="btn btn-gradient btn-sm px-4 shadow-sm" id="btnSubmit">
+              <i class="fa fa-search me-1"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="dateWiseDataTable mt-4" id="resultDiv" style="display: none;">
+  <h5 class="text-center text-secondary mb-3"><span id="searchCred"></span></h5>
+  <div class="table-responsive shadow-sm rounded-3" style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-fixed-header">
+        <tr>
+          <th>#</th>
+          <th>Receipt No.</th>
+          <th>Date Time In</th>
+          <th>Machine Sl. No. In</th>
+          <th>Vehicle Type</th>
+          <th>Vehicle No.</th>
+          <th>Advance Amount</th>
+          <th>Operator Name</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6" class="fw-bold text-end">Total</td>
+          <td id="tot_amt" class="fw-bold">0</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Gorgeous Print Button -->
+    <div class="text-end mt-3">
+      <button class="btn btn-gradient-print btn-sm px-4 shadow-sm" onclick="printDiv()">
+        <i class="fa fa-print me-2"></i> Print
+      </button>
     </div>
+  </div>
 </div>
 
-    <script>
-        $(document).ready(function(){
-            $('#resultDiv').hide()
-        })
-    </script>
-    <script>
-        $('#btnSubmit').on('click', function(){
-            var frm_dt = $('#frm_dt').val()
-            var to_dt = $('#to_dt').val()
+      </div>
+    </div>
+  </div>
+</div>
 
-            if(frm_dt != '' && to_dt != ''){
-                $.ajax({
-                    method: "POST",
-                    url: "/report/get_unbilled_report",
-                    data: { frm_dt, to_dt },
-                    dataType: "html",
-                    beforeSend: function () {
-                        $(".preloader").fadeIn();
-                    },
-                    success: function (result) {
-                        var res = JSON.parse(result);
-                        var adv_amt_tot = 0;
-                        $('#resultDiv').show()
-                        $('#resultDiv table tbody').empty()
-                        // console.log(res)
-                        if(res.suc > 0){
-                            if(res.msg.length > 0){
-                                $('#searchCred').text(`Unbilled Report from ${createDate(frm_dt)} to ${createDate(to_dt)}`)
-                                let i = 1;
-                                for(let dt of res.msg){
-                                    adv_amt_tot += dt.advance_amt
-                                    $('#resultDiv table tbody').append(`
-                                    <tr>
-                                        <td>${i}</td>
-                                        <td>${dt.receipt_no}</td>
-                                        <td>${createDateTime(dt.date_time_in)}</td>
-                                        <td>${dt.device_id}</td>
-                                        <td>${dt.vehicle_name}</td>
-                                        <td>${dt.vehicle_no}</td>
-                                        <td>${dt.advance_amt}</td>
-                                        <td>${dt.operator_name}</td>
-                                    </tr>
-                                    `)
-                                    i++
-                                }
-                                $('#tot_amt').text(adv_amt_tot)
-                            }else{
-                                $('#resultDiv table tbody').append('<tr><td colspan="10" class="text-center text-danger">No Data Found</td></tr>')
-                                $('#tot_amt').text(adv_amt_tot)
-                            }
+<style>
+    .table-fixed-header th {
+  background-color: #1c2d41; /* Your fixed color */
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* Optional: keep footer visible too */
+.table tfoot tr {
+  background-color: #f1f1f1;
+  font-weight: 700;
+}
+    .btn-gradient-print {
+  background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Warm gradient */
+  color: rgb(20, 14, 14);
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.btn-gradient-print:hover {
+  /* background: linear-gradient(90deg, #feb47b, #ff7e5f); */
+  /* transform: scale(1.05); */
+  /* box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4); */
+}
+.input-custom, .select-custom {
+  transition: all 0.3s;
+  border: 1px solid #ced4da;
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+.input-custom:focus, .select-custom:focus {
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+  border-color: #0d6efd;
+}
+.btn-gradient {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    $('#btnSubmit').on('click', function() {
+        var frm_dt = $('#frm_dt').val();
+        var to_dt = $('#to_dt').val();
+        var custId = $('#custId').val();
+        var custName = $('#custId option:selected').text();
+        // console.log(frm_dt,to_dt,custId);
+        
+
+        if(frm_dt !== '' && to_dt !== '' && custId !== '') {
+            $.ajax({
+                method: "POST",
+                url: "/report/get_unbilled_report",
+                data: { frm_dt, to_dt, custId },
+                dataType: "html",
+                beforeSend: function () { $(".preloader").fadeIn(); },
+                success: function (result) {
+                    var res = JSON.parse(result);
+                    var adv_amt_tot = 0;
+                    $('#resultDiv').show();
+                    $('#resultDiv table tbody').empty();
+
+                    if(res.suc > 0 && res.msg.length > 0) {
+                        $('#searchCred').html(`<b>Unbilled Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+                        //  $('#searchCred').html(`<b>Unbilled Report${custId ? ' of ' + custName : ''} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+                        let i = 1;
+                        for(let dt of res.msg){
+                            adv_amt_tot += dt.advance_amt;
+                            $('#resultDiv table tbody').append(`
+                                <tr>
+                                    <td class=text-dark>${i}</td>
+                                    <td class=text-dark>${dt.receipt_no}</td>
+                                    <td class=text-dark>${createDateTime(dt.date_time_in)}</td>
+                                    <td class=text-dark>${dt.device_id}</td>
+                                    <td class=text-dark>${dt.vehicle_name}</td>
+                                    <td class=text-dark>${dt.vehicle_no}</td>
+                                    <td class=text-dark>${dt.advance_amt == null ? 0 : dt.advance_amt}</td>
+                                    <td class=text-dark>${dt.operator_name}</td>
+                                </tr>
+                            `);
+                            i++;
                         }
-                    },
-                    complete: function () {
-                        $(".preloader").fadeOut();
+                        $('#tot_amt').text(adv_amt_tot);
+                    } else {
+                        $('#resultDiv table tbody').append('<tr><td colspan="8" class="text-center text-danger">No Data Found</td></tr>');
+                        $('#tot_amt').text(adv_amt_tot);
                     }
-                })
-            }
-        })
-    </script>
+                },
+                complete: function () { $(".preloader").fadeOut(); }
+            });
+        }
+    });
+});
+</script>
+
+
 
 <script>
     function printDiv() {

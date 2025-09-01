@@ -107,6 +107,57 @@
         </li>
 
           <li class="sidebar-item">
+          <a
+            class="sidebar-link has-arrow"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            ><i data-feather="file-text" class="feather-icon"></i
+            ><span class="hide-menu">New Reports</span></a
+          >
+          <ul
+            aria-expanded="false"
+            class="collapse first-level base-level-line"
+          >
+            <li class="sidebar-item">
+              <a href="/report/unbilled_report" class="sidebar-link"
+                ><span class="hide-menu">Unbilled Report</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/details_report_new" class="sidebar-link"
+                ><span class="hide-menu">Detail Report</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/veh_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Vehicle Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/dev_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Device Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/operator_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Operator Wise</span></a>
+            </li>
+            <!-- <li class="sidebar-item">
+              <a href="/report/combine_repo_new" class="sidebar-link"
+                ><span class="hide-menu">Combine Report<br>(Vehicle)</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/combine_repo_dev_new" class="sidebar-link"
+                ><span class="hide-menu">Combine Report<br>(Device)</span></a>
+            </li> -->
+            <!-- <li class="sidebar-item">
+              <a href="/report/usr_wise_repo_new" class="sidebar-link"
+                ><span class="hide-menu">User Wise</span></a>
+            </li>
+            <li class="sidebar-item">
+              <a href="/report/shift_wise_repo" class="sidebar-link"
+                ><span class="hide-menu">Shiftwise</span></a>
+            </li> -->
+          </ul>
+        </li>
+
+          <li class="sidebar-item">
           <a class="sidebar-link" href="/superadmin/location">
             <i data-feather="map-pin"></i>
             <span class="hide-menu">Locations</span>
@@ -196,3 +247,30 @@
     </nav>
   </div>
 </aside>
+
+<script>
+  // Get current path
+  const currentPath = window.location.pathname;
+
+  // Get all sidebar links
+  const links = document.querySelectorAll('.sidebar-link');
+
+  links.forEach(link => {
+    const parentLi = link.closest('.sidebar-item');
+
+    // Match link href with current path
+    if (link.getAttribute('href') === currentPath) {
+      parentLi.classList.add('active'); // highlight this item
+
+      // If inside a submenu, open the parent
+      const collapse = link.closest('.collapse');
+      if (collapse) {
+        collapse.classList.add('show'); // open submenu
+        const parentArrow = collapse.closest('.sidebar-item.has-arrow');
+        if (parentArrow) parentArrow.classList.add('open', 'active');
+      }
+    } else {
+      parentLi.classList.remove('active');
+    }
+  });
+</script>

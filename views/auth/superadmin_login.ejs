@@ -292,6 +292,8 @@
           <div class="mb-4 position-relative">
             <i class="bi bi-lock input-icon"></i>
             <input type="password" class="form-control ps-5" id="password" name="password" placeholder="Password" required>
+           <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3" 
+           id="togglePassword" style="cursor: pointer;"></i>
           </div>
           <button type="submit" class="btn btn-primary w-100">Log In</button>
         </form>
@@ -302,6 +304,19 @@
   <!-- Bootstrap Icons -->
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"> -->
   <div id="toast">Please fill correct details</div>
+<script>
+  const togglePassword = document.getElementById('togglePassword');
+  const password = document.getElementById('password');
+
+  togglePassword.addEventListener('click', function () {
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    
+    // Toggle eye icon
+    this.classList.toggle('bi-eye');
+    this.classList.toggle('bi-eye-slash');
+  });
+</script>
 
 
 <script>

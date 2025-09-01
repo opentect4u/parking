@@ -83,7 +83,7 @@ document.addEventListener("click", (e) => {
 
 </script> -->
 
-<script>
+<!-- <script>
   const btn = document.getElementById("dropdownBtn");
   const menu = document.getElementById("dropdownMenu");
   const locationBox = document.getElementById("locationDetails");
@@ -113,7 +113,47 @@ document.querySelectorAll(".dropdown-item").forEach(item => {
   });
 });
 
-  </script>
+  </script> -->
+
+  <script>
+const btn = document.getElementById("dropdownBtn");
+const menu = document.getElementById("dropdownMenu");
+const locationBox = document.getElementById("locationDetails");
+
+// Toggle dropdown on button click
+btn.addEventListener("click", (e) => {
+  e.stopPropagation(); // prevent click from bubbling to document
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
+
+// Handle selection
+document.querySelectorAll(".dropdown-item").forEach(item => {
+  item.addEventListener("click", () => {
+    const selectedText = item.textContent.trim();
+    btn.textContent = selectedText;
+    menu.style.display = "none";
+
+    if (locationBox) {
+      locationBox.textContent = "Details of " + selectedText.replace("📍", "").trim();
+    }
+
+    // Example: Update total customer count if you have customersByLocation object
+    const locationId = item.dataset.value;
+    if (window.customersByLocation && customersByLocation[locationId]) {
+      document.querySelector("#totalCustomerEl").textContent = customersByLocation[locationId].length;
+    } else {
+      document.querySelector("#totalCustomerEl").textContent = 0;
+    }
+  });
+});
+
+// Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  if (!btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+</script>
 
     <!-- Inner Stats Cards -->
     <div class="row g-4">
@@ -122,7 +162,7 @@ document.querySelectorAll(".dropdown-item").forEach(item => {
         <div class="card dashboard-card gradient-blue">
           <div class="card-body d-flex justify-content-between align-items-center">
             <div>
-              <h2 class="fw-bold text-white mb-0"></h2>
+              <h2 class="fw-bold text-white mb-0">0</h2>
               <p class="mb-1 text-dark small">Total Customer</p>
             </div>
             <div class="icon-box">

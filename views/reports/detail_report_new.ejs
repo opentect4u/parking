@@ -1,46 +1,65 @@
-<div class="container-fluid">
-    <div class="col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg rounded-4 border-0 p-4" style="background: #f9f9f9;">
+                <h4 class="card-title mb-4 text-primary" style="font-size: 25px; margin-left: 30vw;">
                     <%= title %>
                 </h4>
-                <div class="row dateCalenderField">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="frm_dt">From Date</label>
-                            <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control" required="">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="to_dt">To Date</label>
-                            <input type="datetime-local" id="to_dt" name="to_dt" class="form-control" required="">
-                        </div>
-                    </div>
-                    <div class="form-group col-3">
-                        <label for="pay_mode" class="text-dark"><b>Pay Mode:</b></label>
-                        <select name="pay_mode" class="form-control" id="pay_mode">
-                          <option value="">Select Pay Mode</option>
-                          <option value="C">CASH</option>
-                          <option value="U">UPI</option>
-                          <option value="A">All</option>
-                        </select>
-                      </div>
-                    <div class="col-md-3 searchBtnDataWis">
-                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-primary" id="btnSubmit">Search</button>
-                    </div>
-                </div>
+
+                   <div class="row g-3 align-items-end">
+  <!-- From Date -->
+  <div class="col-md-3">
+    <label for="frm_dt" class="form-label fw-bold text-dark">From Date</label>
+    <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
+  </div>
+
+  <!-- To Date -->
+  <div class="col-md-3">
+    <label for="to_dt" class="form-label fw-bold text-dark">To Date</label>
+    <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
+  </div>
+
+  <!-- Customer Select -->
+  <div class="col-md-3">
+    <label for="custId" class="form-label fw-bold text-dark">Customer Name</label>
+    <select name="custId" class="form-select rounded-pill shadow-sm select-custom" id="custId">
+      <option value="">Select Customer Name</option>
+      <% if (data.msg && data.msg.length > 0) { %>
+        <% data.msg.forEach(customer => { %>
+          <option value="<%= customer.customer_id %>"><%= customer.customer_name %></option>
+        <% }) %>
+      <% } %>
+    </select>
+  </div>
+
+  <!-- Pay Mode -->
+  <div class="col-md-3">
+    <label for="pay_mode" class="form-label fw-bold text-dark">Pay Mode</label>
+    <select name="pay_mode" class="form-select rounded-pill shadow-sm select-custom" id="pay_mode">
+      <option value="">Select Pay Mode</option>
+      <option value="C">CASH</option>
+      <option value="U">UPI</option>
+      <option value="A">All</option>
+    </select>
+  </div>
+</div>
+         <div class="row mt-4">
+          <div class="col text-center">
+            <button type="button" class="btn btn-gradient btn-sm px-4 shadow-sm" id="btnSubmit">
+              <i class="fa fa-search me-1"></i> Search
+            </button>
+          </div>
+        </div>
+
+
                 <!-- <div class="card-body" id="resultDiv"> -->
-                    <div class="dateWiseDataTable" id="resultDiv">
-                    <h4 class="card-title">
-                        <center>
-                            <span id="searchCred"></span>
-                        </center>
-                    </h4>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
+                    <div class="dateWiseDataTable" id="resultDiv" style="display: none;">
+                    <h5 class="text-center text-secondary mb-3">
+                       <span id="searchCred"></span>
+                    </h5>
+                    <div class="table-responsive shadow-sm rounded-3" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-bordered table-hover align-middle" style="min-width: 1200px;">
+                            <thead class="table-fixed-header">
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Receipt No.</th>
@@ -60,10 +79,7 @@
                                     <th scope="col">Operator Name</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                
-                            </tbody>
-
+                            <tbody> </tbody>
                             <tfoot>
                                 <tr>
                                     <td scope="col" colspan="8">Total</td>
@@ -87,7 +103,11 @@
                             </tfoot>
                         </table>
 
-                        <a href="#" class="printBtnDate" onclick="printDiv()"><i class="fa fa-print"></i> Print</a>
+                         <div class="text-end mt-3">
+      <button class="btn btn-gradient-print btn-sm px-4 shadow-sm" onclick="printDiv()">
+        <i class="fa fa-print me-2"></i> Print
+      </button>
+    </div>
                     </div>
                 </div>
             </div>
@@ -95,29 +115,85 @@
     </div>
 </div>
 
+<style>
+    .table-fixed-header th {
+  background-color: #1c2d41; /* Your fixed color */
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* Optional: keep footer visible too */
+.table tfoot tr {
+  background-color: #f1f1f1;
+  font-weight: 700;
+}
+    .btn-gradient-print {
+  background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Warm gradient */
+  color: rgb(20, 14, 14);
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.btn-gradient-print:hover {
+  /* background: linear-gradient(90deg, #feb47b, #ff7e5f); */
+  /* transform: scale(1.05); */
+  /* box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4); */
+}
+.input-custom, .select-custom {
+  transition: all 0.3s;
+  border: 1px solid #ced4da;
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+.input-custom:focus, .select-custom:focus {
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+  border-color: #0d6efd;
+}
+.btn-gradient {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+</style>
+
     <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/dateFormat.min.js"></script>
     <script>
         $(document).ready(function(){
             $('#resultDiv').hide()
         })
     </script>
-    <script>
+    <!-- <script>
         $('#btnSubmit').on('click', function(){
             var frm_dt = $('#frm_dt').val()
             var to_dt = $('#to_dt').val()
+            var custId = $('#custId').val()
             var pay_mode = $('#pay_mode').val()
 
-            if(frm_dt != '' && to_dt != '' && pay_mode != ''){
+            if(frm_dt != '' && to_dt != '' && custId != '' && pay_mode != '' ){
                 $.ajax({
                     method: "POST",
                     url: "/report/get_details_report_new",
-                    data: { frm_dt, to_dt, pay_mode },
+                    data: { frm_dt, to_dt, custId, pay_mode },
                     dataType: "html",
                     beforeSend: function () {
                         $(".preloader").fadeIn();
                     },
                     success: function (result) {
                         var res = JSON.parse(result);
+                        console.log(res,'res');
+                        
                         var base_amt_tot = 0;
                         var paid_amt_tot = 0;
                         var advance_amt_tot = 0;
@@ -191,7 +267,7 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                                     $('#tot_cash').text('')
                                 }
                             }else{
-                                $('#resultDiv table tbody').append('<tr><td colspan="12" class="text-center text-danger">No Data Found</td></tr>')
+                                $('#resultDiv table tbody').append('<tr><td colspan="16" class="text-center text-danger">No Data Found</td></tr>')
                                 $('#base_amt').text(base_amt_tot.toFixed(2))
                                 $('#advance_amt').text(advance_amt_tot)
                                 $('#cgst').text(cgst_tot.toFixed(2))
@@ -207,9 +283,127 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                 })
             }
         })
+    </script> -->
+
+
+    <script>
+        $('#btnSubmit').on('click', function(){
+    var frm_dt = $('#frm_dt').val();
+    var to_dt = $('#to_dt').val();
+    var custId = $('#custId').val();
+    var pay_mode = $('#pay_mode').val();
+
+    if(frm_dt && to_dt && custId && pay_mode){
+        $.ajax({
+            method: "POST",
+            url: "/report/get_details_report_new",
+            data: { frm_dt, to_dt, custId, pay_mode },
+            dataType: "json",  // IMPORTANT: tells jQuery to parse JSON automatically
+            beforeSend: function () {
+                $(".preloader").fadeIn();
+            },
+            success: function(res){
+                console.log(res); // DEBUG: check data in console
+
+                $('#resultDiv').show();
+                $('#resultDiv table tbody').empty();
+
+                  let base_amt_tot = 0, advance_amt_tot = 0, cgst_tot = 0, sgst_tot = 0, paid_amt_tot = 0, tot_amt_tot = 0;
+                    let tot_upi = 0, tot_cash = 0;
+
+                if(res.suc > 0 && res.msg.length > 0){
+                    $('#searchCred').html(`<b>Detail Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+                    
+                  
+                    let i = 1;
+
+                    res.msg.forEach(dt => {
+                        const base = parseFloat(dt.base_amt);
+                        const advance = parseFloat(dt.advance_amt);
+                        const cgst = parseFloat(dt.cgst);
+                        const sgst = parseFloat(dt.sgst);
+                        const paid = parseFloat(dt.paid_amt);
+                        const total_amt = paid + advance; // Adjust logic as needed
+
+                        base_amt_tot += base;
+                        advance_amt_tot += advance;
+                        cgst_tot += cgst;
+                        sgst_tot += sgst;
+                        paid_amt_tot += paid;
+                        tot_amt_tot += total_amt;
+
+                        if(dt.pay_mode == 'C') tot_cash += total_amt;
+                        if(dt.pay_mode == 'U') tot_upi += total_amt;
+
+                        $('#resultDiv table tbody').append(`
+                            <tr>
+                                <td class=text-dark>${i}</td>
+                                <td class=text-dark>${dt.receipt_no}</td>
+                                <td class=text-dark>${createDateTime(dt.date_time_in)}</td>
+                                <td class=text-dark>${dt.device_id}</td>
+                                <td class=text-dark>${dt.vehicle_name}</td>
+                                <td class=text-dark>${dt.vehicle_no}</td>
+                                <td class=text-dark>${createDateTime(dt.date_time_out)}</td>
+                                <td class=text-dark>${dt.device_id_out}</td>
+                                <td class=text-dark>${base.toFixed(2)}</td>
+                                <td class=text-dark>${advance.toFixed(2)}</td>
+                                <td class=text-dark>${cgst.toFixed(2)}</td>
+                                <td class=text-dark>${sgst.toFixed(2)}</td>
+                                <td class=text-dark>${paid.toFixed(2)}</td>
+                                <td class=text-dark>${total_amt.toFixed(2)}</td>
+                                <td class=text-dark>${dt.pay_mode == 'U' ? 'UPI' : dt.pay_mode == 'C' ? 'CASH' : ''}</td>
+                                <td class=text-dark>${dt.operator_name}</td>
+                            </tr>
+                        `);
+                        i++;
+                    });
+
+                } else {
+                    $('#resultDiv table tbody').html('<tr><td colspan="16" class="text-center text-danger">No Data Found</td></tr>');
+                }
+
+                // Update footer totals
+                    $('#base_amt').text(base_amt_tot.toFixed(2));
+                    $('#advance_amt').text(advance_amt_tot.toFixed(2));
+                    $('#cgst').text(cgst_tot.toFixed(2));
+                    $('#sgst').text(sgst_tot.toFixed(2));
+                    $('#paid_amt').text(paid_amt_tot.toFixed(2));
+                    $('#tot_amt').text(tot_amt_tot.toFixed(2));
+
+                    $('#base_amt').text(base_amt_tot.toFixed(2));
+    $('#advance_amt').text(advance_amt_tot.toFixed(2));
+    $('#cgst').text(cgst_tot.toFixed(2));
+    $('#sgst').text(sgst_tot.toFixed(2));
+    $('#paid_amt').text(paid_amt_tot.toFixed(2));
+    $('#tot_amt').text(tot_amt_tot.toFixed(2));
+
+    if(pay_mode == 'A'){
+        $('#tot_upi').parent().show();
+        $('#tot_cash').parent().show();
+        $('#tot_upi').text(tot_upi.toFixed(2));
+        $('#tot_cash').text(tot_cash.toFixed(2));
+    } else if(pay_mode == 'U'){
+        $('#tot_upi').parent().show();
+        $('#tot_cash').parent().hide();
+        $('#tot_upi').text(tot_upi.toFixed(2));
+        $('#tot_cash').text('');
+    } else if(pay_mode == 'C'){
+        $('#tot_upi').parent().hide();
+        $('#tot_cash').parent().show();
+        $('#tot_upi').text('');
+        $('#tot_cash').text(tot_cash.toFixed(2));
+    }
+            },
+            complete: function () {
+                $(".preloader").fadeOut();
+            }
+        });
+    }
+});
+
     </script>
 
-<script>
+<!-- <script>
     function printDiv() {
 
         var divToPrint = document.getElementById('resultDiv');
@@ -244,4 +438,40 @@ console.log(cgst_tot,sgst_tot,'oiuy');
         // }, 10);
 
     }
+</script> -->
+
+
+<script>
+function printDiv() {
+    var divToPrint = document.getElementById('resultDiv');
+
+    // Temporarily remove scroll styling
+    var tableWrapper = divToPrint.querySelector('.table-responsive');
+    var originalStyle = tableWrapper.getAttribute('style');
+    tableWrapper.style.maxHeight = 'none';
+    tableWrapper.style.overflowY = 'visible';
+
+    var WindowObject = window.open('', 'Print-Window');
+    WindowObject.document.open();
+    WindowObject.document.writeln('<!DOCTYPE html>');
+    WindowObject.document.writeln('<html><head><title>Print</title><style type="text/css">');
+
+    WindowObject.document.writeln(`
+        @media print {
+            table { border-collapse: collapse; font-size: 10px; width: 100%; }
+            th, td { border: 1px solid black; padding: 6px; font-family: Arial, Helvetica, sans-serif; text-align: left; }
+            .table .thead-dark th { color: #fff; background-color: #1c2d41; }
+            tfoot { font-weight: 700; color: #000; }
+        }
+    `);
+
+    WindowObject.document.writeln('</style></head><body onload="window.print()">');
+    WindowObject.document.writeln(divToPrint.innerHTML);
+    WindowObject.document.writeln('</body></html>');
+    WindowObject.document.close();
+
+    // Restore original styling
+    tableWrapper.setAttribute('style', originalStyle);
+}
+
 </script>
