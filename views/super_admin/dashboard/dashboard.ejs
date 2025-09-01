@@ -1,0 +1,347 @@
+<!-- =======================
+Dashboard Section
+======================= -->
+
+<div class="container-fluid">
+<!-- <div class="location-banner d-flex justify-content-between align-items-center px-4 py-3 rounded-4 shadow-sm bg-gradient">
+  <h4 class="text-light fw-bold mb-0">🌍 Select Your Location</h4>
+  
+
+<select name="locations" class="dropdown-btn" id="dropdownBtn">
+  <option selected disabled>📍 Choose location...</option>
+  <% data.msg.forEach(dt => { %>
+    <option value="<%= dt.location_id %>">📍 <%= dt.loction %></option>
+  <% }) %>
+</select>
+
+</div> -->
+<div class="location-banner d-flex justify-content-between align-items-center px-4 py-3 rounded-4 shadow-sm">
+  <h4 class="text-light fw-bold">🌍 <b>Select Your Location</b></h4>
+
+  <div class="dropdown">
+    <!-- Button -->
+    <button class="dropdown-btn" id="dropdownBtn">🌍 Choose location...</button>
+
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu" id="dropdownMenu">
+      <% if (data && data.msg && data.msg.length > 0) { %>
+        <% data.msg.forEach(dt => { %>
+          <div class="dropdown-item" data-value="<%= dt.location_id %>">
+            📍 <%= dt.loction %>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="dropdown-item disabled">No locations available</div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+  <div class="card shadow-lg rounded-4 border-0 p-4">
+ 
+   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+  <div>
+    <h3 id="greeting" class="page-title text-gradient fw-bold mb-1"></h3>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb bg-transparent p-0 mb-0">
+        <li class="breadcrumb-item">
+          <span id="locationDetails" class="location-box">Details of ...</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+
+    <!-- <script>
+const btn = document.getElementById("dropdownBtn");
+const menu = document.getElementById("dropdownMenu");
+const locationLabel = document.querySelector(".breadcrumb-item"); // breadcrumb text element
+
+btn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
+
+document.querySelectorAll(".dropdown-item").forEach(item => {
+  item.addEventListener("click", (e) => {
+    const selectedText = item.textContent.trim();
+    btn.textContent = selectedText;
+    menu.style.display = "none";
+
+    if (locationLabel) {
+      locationLabel.textContent = "Details of " + selectedText.replace("📍", "").trim();
+    }
+  });
+});
+
+document.addEventListener("click", (e) => {
+  if (!btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+
+</script> -->
+
+<script>
+  const btn = document.getElementById("dropdownBtn");
+  const menu = document.getElementById("dropdownMenu");
+  const locationBox = document.getElementById("locationDetails");
+
+  btn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
+
+document.querySelectorAll(".dropdown-item").forEach(item => {
+  item.addEventListener("click", () => {
+    const selectedText = item.textContent.trim();
+    btn.textContent = selectedText;
+    menu.style.display = "none";
+
+    if (locationBox) {
+      locationBox.textContent = "Details of " + selectedText.replace("📍", "").trim();
+    }
+
+     // ✅ Update total customer count
+      if (customersByLocation[locationId]) {
+        totalCustomerEl.textContent = customersByLocation[locationId].length;
+      } else {
+        totalCustomerEl.textContent = 0;
+      }
+    
+  });
+});
+
+  </script>
+
+    <!-- Inner Stats Cards -->
+    <div class="row g-4">
+      <!-- Card 1 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card gradient-blue">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="fw-bold text-white mb-0"></h2>
+              <p class="mb-1 text-dark small">Total Customer</p>
+            </div>
+            <div class="icon-box">
+              <i data-feather="users"></i>
+            </div>
+          </div>
+          <!-- <span class="badge badge-success position-absolute top-0 end-0 m-2">+18.3%</span> -->
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card gradient-green">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="fw-bold text-white mb-0">0</h2>
+              <p class="mb-1 text-dark small">Total Operator</p>
+            </div>
+            <div class="icon-box">
+              <i data-feather="user-plus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card gradient-red">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="fw-bold text-white mb-0">0</h2>
+              <p class="mb-1 text-dark small">Total Car In</p>
+            </div>
+            <div class="icon-box">
+              <i data-feather="truck"></i>
+            </div>
+          </div>
+          <!-- <span class="badge badge-danger position-absolute top-0 end-0 m-2">-18.3%</span> -->
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card gradient-purple">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="fw-bold text-white mb-0">0</h2>
+              <p class="mb-1 text-dark small">Total Car Out</p>
+            </div>
+            <div class="icon-box">
+              <i data-feather="globe"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =======================
+Custom CSS
+======================= -->
+<style>
+  .text-dark {
+    color: #15171a !important;
+    font-size: 14px;
+}
+  .location-box {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5e536a, #4a83e3);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+.location-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+   .location-banner {
+  background: linear-gradient(135deg, #d8cce4, #a7bcd8);
+  border-radius: 8px;
+  padding: 20px;
+  color: #fff; /* banner text white */
+}
+.text-light {
+    color: #193d62 !important;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-btn {
+  padding: 12px 16px;
+  width: 220px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #f2f0f5, #886fa5);
+  color: #333;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%; left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, #f2f0f5, #886fa5);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  margin-top: 5px;
+  z-index: 1000;
+}
+.dropdown-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  color: #0f0d0d;
+}
+.dropdown-item:hover {
+  background: #f0f4ff;
+}
+.text-gradient {
+  background: linear-gradient(90deg, #6a11cb, #5b85bd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dashboard-card {
+  border-radius: 20px;
+  padding: 1.2rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+.icon-box {
+  font-size: 2rem;
+  opacity: 0.9;
+}
+.gradient-blue {
+  background: linear-gradient(135deg, #36d1dc, #a0afcf);
+}
+.gradient-green {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+.gradient-red {
+  background: linear-gradient(135deg, #e92653, #e49a8d);
+}
+.gradient-purple {
+  background: linear-gradient(135deg, #e46453, #e4a47a);
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.6rem;
+}
+#locationSelect {
+  min-width: 140px;
+  font-size: 0.9rem;
+}
+.page-wrapper {
+    background: #f9fbfd;
+    display: none;
+    box-shadow: 0 3px 9px 0 rgba(162, 176, 190, .15);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+</style>
+
+<script>
+  // function updateGreeting() {
+  //   const now = new Date();
+  //   const hours = now.getHours();
+  //   let greeting = "Hello";
+
+  //   if (hours >= 5 && hours < 12) {
+  //     greeting = "Good Morning";
+  //   } else if (hours >= 12 && hours < 18) {
+  //     greeting = "Good Afternoon";
+  //   } else if (hours >= 18 && hours < 22) {
+  //     greeting = "Good Evening";
+  //   } else {
+  //     greeting = "Good Night";
+  //   }
+
+  //   // Show greeting with name
+  //   document.getElementById("greeting").textContent = `${greeting}, Jason 👋`;
+
+  //   // Format date as: Aug 30, 2025
+  //   const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  //   const formattedDate = now.toLocaleDateString('en-US', options);
+
+  //   document.getElementById("currentDate").textContent = formattedDate;
+  // }
+
+  // Call once on load
+  updateGreeting();
+
+  // Update every minute (in case user stays long on dashboard)
+  setInterval(updateGreeting, 60000);
+
+  // Handle Location Change
+  document.getElementById("locationSelect").addEventListener("change", function() {
+    const selectedLocation = this.value;
+    alert("Location changed to: " + selectedLocation); 
+    // You can replace this alert with actual logic (e.g., reload data for location)
+  });
+
+  feather.replace();
+</script>

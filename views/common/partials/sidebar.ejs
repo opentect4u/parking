@@ -1,408 +1,198 @@
-<aside class="left-sidebar" data-sidebarbg="skin6">
-  <!-- Sidebar scroll-->
-  <div class="scroll-sidebar" data-sidebarbg="skin6">
-    <!-- Sidebar navigation-->
+<style>
+.left-sidebar {
+  position: fixed;
+  top: 0; /* start at very top */
+  left: 0;
+  width: 250px;
+  height: 100%;
+  /* background: linear-gradient(135deg, #6a11cb, #2575fc); */
+  background: linear-gradient(135deg, #e7b8d9, #7799d8);
+  /* border-radius: 0 10px 20px 0; */
+  box-shadow: 4px 0 12px rgba(0,0,0,0.2);
+}
+
+.sidebar-nav #sidebarnav .sidebar-item.selected>.sidebar-link {
+    border-radius: 0 60px 60px 0;
+    color: #f3ebeb !important;
+    background: linear-gradient(to right, #504c60, #483bb7, #7574ea, #6a75e9, #5f76e8);
+    box-shadow: 0 7px 12px 0 rgba(95, 118, 232, .21);
+    opacity: 1;
+}
+.scroll-sidebar {
+  height: 100%;
+  overflow-y: auto;
+  padding-top: 1rem;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item {
+  margin: 5px 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #f1e9e9;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-link i {
+  width: 20px;
+}
+
+.sidebar-link:hover,
+.sidebar-item.active > .sidebar-link {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffd166;
+  transform: translateX(5px);
+}
+
+.sidebar-item.has-arrow > a::after {
+  content: "›";
+  font-size: 14px;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-item.has-arrow.open > a::after {
+  transform: rotate(90deg);
+}
+
+.collapse {
+  display: none;
+  margin-left: 20px;
+}
+
+.sidebar-item.has-arrow.open > .collapse {
+  display: block;
+}
+
+/* Scrollbar styling */
+.scroll-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.sidebar-nav {
+    padding-top: 0px;
+}
+/* .sidebar-item.has-arrow > a:after {
+  content: "\f107"; 
+} */
+</style>
+
+<aside class="left-sidebar">
+  <div class="scroll-sidebar">
     <nav class="sidebar-nav">
       <ul id="sidebarnav">
-        <!-- <li class="sidebar-item">
-          <a
-            class="sidebar-link sidebar-link"
-            href="/"
-            aria-expanded="false"
-            ><i data-feather="home" class="feather-icon"></i
-            ><span class="hide-menu">Dashboard</span></a
-          >
-        </li>
-
-
-        <li class="list-divider"></li>
-        <li class="nav-small-cap">
-          <span class="hide-menu">Blank</span>
-        </li>
-
+        <!-- Example items -->
         <li class="sidebar-item">
-          <a class="sidebar-link" href="/blank" aria-expanded="false"
-            ><i data-feather="tag" class="feather-icon"></i
-            ><span class="hide-menu">Blank </span></a
-          >
+          <a class="sidebar-link" href="/superadmin/dashboard">
+            <i data-feather="home"></i>
+            <span class="hide-menu">Dashboard</span>
+          </a>
         </li>
-
-
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link has-arrow"
-            href="javascript:void(0)"
-            aria-expanded="false"
-            ><i data-feather="file-text" class="feather-icon"></i
-            ><span class="hide-menu">Operator </span></a
-          >
-          <ul
-            aria-expanded="false"
-            class="collapse first-level base-level-line"
-          >
-            <li class="sidebar-item">
-              <a href="/operator/add" class="sidebar-link"
-                ><span class="hide-menu">My Operator</span></a>
-              >
-            </li>
-
-            <li class="sidebar-item">
-              <a href="/operator/add" class="sidebar-link"
-                ><span class="hide-menu">Create New Operator</span></a
-              >
-            </li>
-            
-          </ul>
-        </li>
-
-
-
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link has-arrow"
-            href="javascript:void(0)"
-            aria-expanded="false"
-            ><i data-feather="file-text" class="feather-icon"></i
-            ><span class="hide-menu">Master </span></a
-          >
-          <ul
-            aria-expanded="false"
-            class="collapse first-level base-level-line"
-          >
-            <li class="sidebar-item">
-              <a href="form-inputs.html" class="sidebar-link"
-                ><span class="hide-menu"> Form Inputs </span></a
-              >
-            </li>
-            <li class="sidebar-item">
-              <a href="form-input-grid.html" class="sidebar-link"
-                ><span class="hide-menu"> Form Grids </span></a
-              >
-            </li>
-            <li class="sidebar-item">
-              <a href="form-checkbox-radio.html" class="sidebar-link"
-                ><span class="hide-menu"> Checkboxes & Radios </span></a
-              >
-            </li>
-          </ul>
-        </li> -->
-        <!-- UPDATE ON 09/01/2024 SUBHAM -->
-        <li class="list-divider"></li>
-       
-
-        <% if(user.user_data) {
-          if(user.user_data.customer_id=='13' || user.user_data.customer_id=='11'){  %>
-            <li class="nav-small-cap">
-              <span class="hide-menu">Reports</span>
-            </li>
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link has-arrow"
-            href="javascript:void(0)"
-            aria-expanded="false"
-            ><i data-feather="file-text" class="feather-icon"></i
-            ><span class="hide-menu">Backlog Reports</span></a
-          >
-          <ul
-            aria-expanded="false"
-            class="collapse first-level base-level-line"
-          >
-            <li class="sidebar-item">
-              <a href="/report/details_report" class="sidebar-link"
-                ><span class="hide-menu">Detail Report</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/veh_wise_repo" class="sidebar-link"
-                ><span class="hide-menu">Vehicle Wise</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/dev_wise_repo" class="sidebar-link"
-                ><span class="hide-menu">Device Wise</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/usr_wise_repo" class="sidebar-link"
-                ><span class="hide-menu">User Wise</span></a>
-            </li>
-          </ul>
-        </li>
-
-        <% } } %>
-
-        <% if(user.user_data) {
-          if(user.user_data.user_type=='C'){  %>
-            <li class="nav-small-cap">
-              <span class="hide-menu">Reports</span>
-            </li>
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link has-arrow"
-            href="javascript:void(0)"
-            aria-expanded="false"
-            ><i data-feather="file-text" class="feather-icon"></i
-            ><span class="hide-menu">New Reports</span></a
-          >
-          <ul
-            aria-expanded="false"
-            class="collapse first-level base-level-line"
-          >
-            <li class="sidebar-item">
-              <a href="/report/unbilled_report" class="sidebar-link"
-                ><span class="hide-menu">Unbilled Report</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/details_report_new" class="sidebar-link"
-                ><span class="hide-menu">Detail Report</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/veh_wise_repo_new" class="sidebar-link"
-                ><span class="hide-menu">Vehicle Wise</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/dev_wise_repo_new" class="sidebar-link"
-                ><span class="hide-menu">Device Wise</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/operator_wise_repo_new" class="sidebar-link"
-                ><span class="hide-menu">Operator Wise</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/combine_repo_new" class="sidebar-link"
-                ><span class="hide-menu">Combine Report<br>(Vehicle)</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/combine_repo_dev_new" class="sidebar-link"
-                ><span class="hide-menu">Combine Report<br>(Device)</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/usr_wise_repo_new" class="sidebar-link"
-                ><span class="hide-menu">User Wise</span></a>
-            </li>
-            <li class="sidebar-item">
-              <a href="/report/shift_wise_repo" class="sidebar-link"
-                ><span class="hide-menu">Shiftwise</span></a>
-            </li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link sidebar-link"
-            href="/operator/manage_operator"
-            aria-expanded="false"
-            ><i data-feather="user-check" class="feather-icon"></i
-            ><span class="hide-menu">Manage Operator</span></a
-          >
-        </li>
-
-    
-          <li class="sidebar-item">
-            <a class="sidebar-link sidebar-link"
-            href="/vehicle/vehicle_details"  
-            aria-expanded="false"
-              ><i data-feather="menu" class="feather-icon"></i
-                ><span class="hide-menu">Manage Vehicle</span></a>
-          </li>
 
           <li class="sidebar-item">
-            <a class="sidebar-link sidebar-link"
-            href="/gst/show_gst"  
-            aria-expanded="false"
-              ><i data-feather="tag" class="feather-icon"></i
-                ><span class="hide-menu">Manage GST</span></a>
-          </li>
-
-          <li class="sidebar-item">
-            <a class="sidebar-link sidebar-link"
-            href="/rate/vehicle_rate_dtls"  
-            aria-expanded="false"
-              ><i data-feather="more-horizontal" class="feather-icon"></i
-                ><span class="hide-menu">Manage Vehicle Rate</span></a>
-          </li>
-         
+          <a class="sidebar-link" href="/superadmin/location">
+            <i data-feather="map-pin"></i>
+            <span class="hide-menu">Locations</span>
+          </a>
+        </li>
 
         <li class="sidebar-item">
-          <a
-            class="sidebar-link has-arrow"
-            href="javascript:void(0)"
-            aria-expanded="false"
-            ><i data-feather="settings" class="feather-icon"></i
-            ><span class="hide-menu">Settings</span></a
-          >
-          <ul
-            aria-expanded="false"
-            class="collapse first-level base-level-line"
-          >
-          <li class="sidebar-item">
-            <a href="/shift/shift_details" class="sidebar-link"
-              ><span class="hide-menu">Shift Setting</span></a>
-          </li>
-          <li class="sidebar-item">
-            <a href="/device/device_name" class="sidebar-link"
-              ><span class="hide-menu">Device Setting</span></a>
-          </li>
+          <a class="sidebar-link" href="/superadmin/customer">
+            <i class="fas fa-users"></i>
+            <span class="hide-menu">Customer</span>
+          </a>
+        </li>
 
-          <li class="sidebar-item">
-            <a href="/header/customer_name" class="sidebar-link"
-              ><span class="hide-menu">Header Footer</span></a>
-          </li>
-            <li class="sidebar-item">
-              <a href="/password" class="sidebar-link"
-                ><span class="hide-menu">Report Password</span></a>
-            </li>
-          </ul>
-        </li>
-        <li class="sidebar-item">
-          <a
-            class="sidebar-link sidebar-link"
-            href="/logout"
-            aria-expanded="false"
-            ><i data-feather="log-out" class="feather-icon"></i
-            ><span class="hide-menu">Logout</span></a
-          >
-        </li>
-        <% } } else { %>
-          <li class="sidebar-item">
+         <li class="sidebar-item">
             <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/location"
-              aria-expanded="false"
-              ><i data-feather="map-pin" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Locations</span></a
-            >
-          </li>
-
-          <!-- <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/seller"
-              aria-expanded="false"
-              ><i data-feather="user" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Seller</span></a
-            >
-          </li> -->
-
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/customer"
-              aria-expanded="false"
-              ><i class="fas fa-users text-dark"></i
-              ><span class="hide-menu text-dark">Customer</span></a
-            >
-          </li>
-
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
+              class="sidebar-link"
               href="/superadmin/operator"
-              aria-expanded="false"
-              ><i data-feather="user-check" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Operator</span></a
+              ><i data-feather="user-check"></i
+              ><span class="hide-menu">Operator</span></a
             >
           </li>
 
           <li class="sidebar-item">
             <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/vehicle"
-              aria-expanded="false"
-              ><i class='fas fa-car text-dark'></i><span class="hide-menu text-dark">Vehicle</span></a
-            >
-          </li>
-		  
-		   <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/gst"
-              aria-expanded="false"
-              ><i class='fas fa-tag text-dark'></i><span class="hide-menu text-dark">GST</span></a
+              class="sidebar-link"
+              href="/superadmin/vehicle"><i class='fas fa-car'></i><span class="hide-menu">Vehicle</span></a
             >
           </li>
 
+          
           <li class="sidebar-item">
             <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/vehicle_rate"
-              aria-expanded="false"
-              ><i class="fas fa-ellipsis-h text-dark"></i
-              ><span class="hide-menu text-dark">Vehicle Rate</span></a
+              class="sidebar-link"
+              href="/superadmin/vehicle_rate"><i class="fas fa-ellipsis-h"></i
+              ><span class="hide-menu">Vehicle Rate</span></a
             >
           </li>
 
-          <li class="sidebar-item">
+
+     <li class="sidebar-item">
+  <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+    <i data-feather="settings"></i>
+    <span class="hide-menu">Settings</span>
+  </a>
+  <ul aria-expanded="false" class="collapse first-level base-level-line">
+    <li class="sidebar-item">
+      <a href="/superadmin/device_setting" class="sidebar-link">
+        <i data-feather="slack"></i>
+        <span class="hide-menu">Device Setting</span>
+      </a>
+    </li>
+    <li class="sidebar-item">
+      <a href="/superadmin/report_pass" class="sidebar-link">
+        <i data-feather="key"></i>
+        <span class="hide-menu">Report Password</span>
+      </a>
+    </li>
+    <li class="sidebar-item">
             <a
-            class="sidebar-link has-arrow"
-            href="javascript:void(0)"
-            aria-expanded="false"
-            ><i data-feather="settings" class="feather-icon text-dark"></i
-            ><span class="hide-menu text-dark">Settings</span></a
-          >
-            <ul
-            aria-expanded="false"
-            class="collapse first-level base-level-line"
-          >
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/device_setting"
-              aria-expanded="false"
-              ><i data-feather="slack" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Device Setting</span></a
-            >
-          </li>
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/report_pass"
-              aria-expanded="false"
-              ><i data-feather="key" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Report Password</span></a
-            >
-          </li>
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin/shift"
-              aria-expanded="false"
-              ><i data-feather="corner-up-right" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Shift</span></a
-            >
-          </li>
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
+              class="sidebar-link"
               href="/superadmin/header_footer"
               aria-expanded="false"
-              ><i data-feather="activity" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark">Header & Footer</span></a
+              ><i data-feather="activity" class="feather-icon"></i
+              ><span class="hide-menu">Header & Footer</span></a
             >
           </li>
-          </ul>
-          </li>
-
-          <li class="sidebar-item">
+  </ul>
+</li>
+      <li class="sidebar-item">
             <a
-              class="sidebar-link sidebar-link"
+              class="sidebar-link"
               href="/superadmin/view_trans"
               aria-expanded="false"
-              ><i class="fas fa-eye text-dark"></i
-              ><span class="hide-menu text-dark">View Transactions</span></a
+              ><i class="fas fa-eye"></i
+              ><span class="hide-menu">View Transactions</span></a
             >
           </li>
 
-          <li class="sidebar-item">
-            <a
-              class="sidebar-link sidebar-link"
-              href="/superadmin_logout"
-              aria-expanded="false"
-              ><i data-feather="log-out" class="feather-icon text-dark"></i
-              ><span class="hide-menu text-dark" >Logout</span></a
-            >
-          </li>
-       <% } %>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin_logout">
+            <i data-feather="log-out"></i>
+            <span class="hide-menu">Logout</span>
+          </a>
+        </li>
       </ul>
     </nav>
-    <!-- End Sidebar navigation -->
   </div>
-  <!-- End Sidebar scroll-->
 </aside>

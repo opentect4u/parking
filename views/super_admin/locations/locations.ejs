@@ -1,99 +1,163 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="titleSec">
-                        <button type="button" class="btn btn-primary" id="myBtn"
-                          style="float: inline-end;border-radius: 6px;width: 6vw;">Add</button>
-                      </div>
-                    <h3 class="card-title"><i data-feather="map-pin" class="feather-icon text-dark"></i>  Locations</h3>
-                    <div class="table-responsive mt-4">
-                        <table id="dataTable" class="table table-striped table-bordered no-wrap">
-                            <thead>
-                                <tr>
-                                    <th class="text-center text-dark">Sl No.</th>
-                                    <th class="text-center text-dark">Location Name</th>
-                                    <th class="text-center text-dark">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if(data.msg && data.msg.length> 0) { %>
-                                    <% data.msg.forEach(function(item,index) { %>
-                                      <tr>
-                                        <td class="text-center text-dark">
-                                          <%=(index+1)%>
-                                        </td>
-                                        <td class="text-center text-dark">
-                                          <%=item.loction %>
-                                        </td>
-                                        <td class="text-center text-dark">
-                                          <a href="edit_location?id=<%= item.location_id %>"
-                                            class="btn btn-info" style="border-radius: 5px;"><i class="fa fa-edit"></i></a>
-                                        </td>
-                                      </tr>
-                                      <% }); %>
-                                        <% } else { %>
-                                          <tr>
-                                            <td colspan="3" class="text-danger text-center">No data available</td>
-                                          </tr>
-                                          <% } %>
-                               
-                            </tbody>
-                            <tfoot>
-                               
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h3 class="modal-title text-dark"><i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Add Location</b>
-          </h3>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
-        </div>
-  
-        <!-- Modal body -->
-        <div class="modal-body">
-          <form action="/superadmin/location_save" method="post" id="myForm">
-            <div class="row">
-  
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="loc_name" class="text-dark"><b>Location Name</b></label>
-                  <textarea class="form-control" rows="3" id="loc_name" name="loc_name" placeholder="Enter Location here....."></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-                <input type="hidden" name="id" value="0">
-                <div class="form-group col-md-5"></div>
-                <div class="form-group col-md-7">
-                        <input type="submit" value="SUBMIT" class="btn btn-primary"
-                          style="border-radius: 6px;" />
-                      </div>
-                
-            </div>
-          </form>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-lg rounded-4 border-0">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="card-title mb-0 text-gradient fw-bold">
+              <i data-feather="map-pin" class="feather-icon"></i> Locations
+            </h3>
+            <button type="button" class="btn btn-gradient" id="myBtn">
+              <i class="fa fa-plus"></i> Add
+            </button>
+          </div>
+
+         <div class="table-responsive mt-3">
+  <table id="dataTable" class="table table-bordered align-middle table-striped shadow-sm">
+    <thead class="table-light text-center custom-header">
+      <tr>
+        <th class="text-center">Sl No.</th>
+        <th class="text-center">Location Name</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if(data.msg && data.msg.length> 0) { %>
+        <% data.msg.forEach(function(item,index) { %>
+          <tr>
+            <td class="text-center text-dark"><b><%=(index+1)%></b></td>
+            <td class="text-center text-dark"><b><%=item.loction %></b></td>
+            <td class="text-center">
+             <a href="edit_location?id=<%= item.location_id %>" 
+                class="btn btn-gradient btn btn-sm">
+                <i class="fa fa-edit"></i> Edit
+              </a>
+            </td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr>
+          <td colspan="3" class="text-danger text-center fw-bold text-dark"><b>No data available</b></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg border-0 glass-bg">
+      <!-- Modal Header -->
+      <div class="modal-header border-0">
+        <h4 class="modal-title fw-bold text-dark">
+          <i data-feather="plus-circle" class="feather-icon"></i>&nbsp; Add Location
+        </h4>
+        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal"></button> -->
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form action="/superadmin/location_save" method="post" id="myForm">
+          <div class="mb-3">
+            <label for="loc_name" class="form-label fw-bold text-dark">Location Name</label>
+            <textarea class="form-control rounded-3 shadow-sm" rows="3" id="loc_name" 
+              name="loc_name" placeholder="Enter location here..."></textarea>
+          </div>
+
+          <input type="hidden" name="id" value="0">
+
+          <div class="text-end">
+            <input type="submit" value="Submit" class="btn btn-gradient px-4 rounded-pill" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    #dataTable {
+    border: 2px solid #dee2e6; /* outer border */
+    border-radius: 10px;       /* rounded corners */
+    overflow: hidden;          /* smooth corners */
+  }
+
+  #dataTable th, #dataTable td {
+    border: 1px solid #dee2e6; /* inner cell borders */
+  }
+
+  #dataTable thead th {
+    background: linear-gradient(45deg,  #dbbcda, #6d83e2);
+    font-weight: 500;
+    /* text-transform: uppercase; */
+  }
+
+  #dataTable tbody tr:hover {
+    background-color: #f1f5ff !important;
+    transition: 0.3s;
+  }
+/* Gradient Button */
+.btn-gradient {
+  background: linear-gradient(to right, #cc86c9, #42b7bd);
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  transition: 0.3s;
+}
+.btn-gradient:hover {
+  background: linear-gradient(45deg,  #cc86c9, #42b7bd);
+  transform: scale(1.05);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Card Gradient Title */
+.text-gradient {
+  background: linear-gradient(to right, #0a4578, #48b3b9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.custom-header {
+  background: linear-gradient(to right,  #cc86c9, #42b7bd);
+  color: #004d66;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
+}
+.table thead th {
+  border: none;
+}
+.table tbody tr:hover {
+  background: rgba(0, 242, 254, 0.08);
+  transition: 0.3s;
+  /* border-radius: 14px; */
+}
+
+/* Modal Glassmorphism */
+.glass-bg {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+}
+</style>
 
 <script>
-    $(document).ready(function () {
-      $("#myBtn").click(function () {
-        $("#myModal").modal();
-      });
-    });
-  </script>
+$(document).ready(function () {
+  $("#myBtn").click(function () {
+    $("#myModal").modal("show");
+  });
+});
+</script>

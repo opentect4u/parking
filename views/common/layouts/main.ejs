@@ -32,6 +32,18 @@
 
   <link href="/template/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
 
+  <!-- Bootstrap 4 CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+
   <style>
     /* .cust-toggle .toggle{
     width: 20% !important;
@@ -122,215 +134,272 @@
 
 
        <!-- The Modal -->
-       <div class="modal fade" id="myAccount">
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header" style="background-color: aliceblue;">
-              <h3 class="modal-title"><i data-feather="user"
-                class="svg-icon mr-2 ml-1" style="color: black;"></i><b style="color: black;">My Profile&nbsp; (<%= user.user_data ? (user.user_data.user_type=='C' ? user.user_data.customer_name : user.user_data.seller_name) : user.userData.user_name %>)</b></h3>
-              <button type="button" class="close" data-dismiss="modal">
-                &times;
-              </button>
-            </div>
-            
-            <!-- Modal body -->
-            <div class="modal-body" style="background-color: antiquewhite;">
-              <% if(user.user_data){
-                if (user.user_data.user_type=='C') { %>
-                  <form action="/save_my_profile" method="post">
-                  <div class="row" style="align-items: center;margin-left: 5vw;">
-                    <div class="col-md-10">
-                      <h4 class="badge badge-success" style="font-size: 21px;margin-left: 25vw;"><%= user.user_data ? user.user_data.customer_name : '' %></h4>
-                    <div class="row mt-4 ml-5">
-                      <div class="form-group col-md-4">
-                        <label for="loc_id"><b style="color: black;">Location Name:</b></label>
-                        <select name="loc_id" class="form-control" id="loc_id" required>
-                        <option value="">Select Location Name</option>
-                      
-                        </select>
-                        </div>
-                        <div class="form-group col-md-4">
-                          <label for="phone"><b style="color: black;">Phone No:</b></label>
-                          <input type="text" id="phone" name="phone" class="form-control" value="<%= user.user_data.mobile_no %>" />
-                          </div>
-                          <div class="form-group col-md-4">
-                            <label for="email_id"><b style="color: black;">Email:</b></label>
-                            <input type="text" id="email_id" name="email_id" class="form-control" value="<%= user.user_data.email %>" />
-                            </div>    
-                       </div>
-                          <div class="row ml-5">
-                            <div class="form-group col-md-4">
-                              <label for="mode"><b style="color: black;">Mode:</b></label>
-                              <input type="text" id="mode" name="mode" class="form-control" value="<%= user.user_data.dev_mod == 'D' ? 'Dual' : 'Fixed' %>" readonly style="background-color: #b0cfec;"/>
-                              </div>   
-                              <div class="form-group col-md-4">
-                                <label for="device"><b style="color: black;">No. of Users:</b></label>
-                                <input type="text" id="device" name="device" class="form-control" value="<%= user.user_data.no_device %>" readonly style="background-color: #b0cfec;"/>
-                                </div>
-                              <div class="form-group col-md-4">
-                                  <label for="dev_type"><b style="color: black;">Device Type:</b></label>
-                                  <input type="text" id="dev_type" name="dev_type" class="form-control" value="<%= user.user_data.device_type=='H' ? 'Handheld Device' : user.user_data.device_type=='M' ? 'Mobile Device' : '' %>" readonly style="background-color: #b0cfec;"/>
-                                  </div>      
-                          </div>  
-                          <div class="row ml-5">
-                            <div class="form-group col-md-12">
-                                 <label for="cust_add"><b style="color: black;">Customer Address:</b></label>
-                                 <textarea id="cust_add" name="cust_add" class="form-control" rows="4"><%= user.user_data.cust_addr %></textarea>
-                             </div>  
-                         </div>        
-                    </div>
-                  
-                 <div class="row mt-3">
-                  <button type="submit" class="btn btn-primary" style="border-radius: 5px;margin-left: 31vw;">Submit</button>
-                 </div>
-                </div>
-              </div>
-              </form>
-                 <% }} %>
-            </div>
-  
-            <!-- Modal footer -->
-            <div class="modal-footer" style="background-color: aliceblue;">
-              <!-- <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button> -->
-            </div>
-          </div>
-        </div>
+      <style>
+/* Modal Glass & Shadow */
+.modal-content {
+  border-radius: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+/* Header Gradient */
+.modal-header {
+  border-bottom: none;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  justify-content: center;
+  position: relative;
+}
+
+/* Title Icon */
+.modal-title i {
+  margin-right: 0.5rem;
+}
+
+/* Close Button */
+.modal-header .close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 28px;
+  color: #fff;
+  opacity: 0.8;
+  transition: 0.3s;
+}
+.modal-header .close:hover { opacity: 1; }
+
+/* Modal Body */
+.modal-body {
+  background: rgba(250, 250, 250, 0.9);
+  padding: 2rem;
+  border-radius: 0 0 20px 20px;
+}
+
+/* Form Labels */
+.modal-body label {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Form Inputs */
+.modal-body .form-control, .modal-body select, .modal-body textarea {
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  transition: all 0.3s ease;
+}
+.modal-body .form-control:focus, .modal-body select:focus, .modal-body textarea:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 8px rgba(106, 17, 203, 0.5);
+  outline: none;
+}
+
+/* Submit Button */
+.modal-body .btn-primary {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  border: none;
+  padding: 0.7rem 2rem;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: 0.3s ease;
+}
+.modal-body .btn-primary:hover {
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}
+
+/* Footer */
+.modal-footer {
+  background: linear-gradient(135deg, #e7b8d9, #7799d8);
+  border-top: none;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.modal.fade .modal-dialog {
+  animation: fadeInUp 0.3s ease;
+}
+</style>
+
+<div class="modal fade" id="myAccount" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered"><!-- smaller modal -->
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">
+          <i data-feather="user" class="svg-icon mr-2"></i>
+          My Profile&nbsp; 
+          (<%= user.userData.user_name %>)
+        </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
+
+      <!-- Body -->
+      <div class="modal-body p-3"><!-- reduced padding -->
+          <form action="/save_my_profile" method="post">
+            <div class="row justify-content-center">
+              <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="phone">Phone No:</label>
+                    <input type="text" name="phone" id="phone" class="form-control" readonly value="<%= user.userData.user_mobile_no %>">
+                  </div>
+                  </div>
+                  <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="email_id">Email:</label>
+                    <input type="text" name="email_id" id="email_id" class="form-control" readonly value="<%= user.userData.user_id %>">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </form>
+      </div>
+
+    </div>
+  </div>
+<!-- </div> -->
+
+
 
 
        <!--change password modal-->
 
-    <div class="modal fade" id="changepwd">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header" style="background-color: aliceblue;">
-            <h4 class="modal-title"><i class="fa fa-key" style="font-size:30px;color: black;">&nbsp;Change Password</i></h4>
-            <button type="button" class="close" data-dismiss="modal">
-              &times;
-            </button>
-          </div>
-          
-          <!-- Modal body -->
-          <div class="modal-body" style="background-color: antiquewhite;">
-            <% if(user.user_data){
-              if (user.user_data.user_type=='C') { %>
-          <form action="/password" method="post" id="myForm">
-            <div class="row">
-              <div class="col-md-4">
-                <label for="old_pwd"><b style="color: black;">Old Password:</b></label>
-                <input
-                    type="password"
-                    name="old_pwd"
-                    class="form-control"
-                    id="old_pwd"
-                    maxlength="4"
-                    placeholder="Enter old password....."
-                    required
-                  />
-              </div>
-              <div class="col-md-4">
-                <label for="new_pwd"><b style="color: black;">New Password:<span class="text-danger" style="font-size: small;">&nbsp;&nbsp;(Max 4 digits)</span></b></label>
-                <input
-                    type="password"
-                    name="new_pwd"
-                    class="form-control"
-                    id="new_pwd"
-                    maxlength="4"
-                    placeholder="Enter new password....."
-                    required
-                  />
-              </div>
-              <div class="col-md-4">
-                <label for="con_pwd"><b style="color: black;">Confirm Password:</b></label>
-                <input
-                    type="password"
-                    name="con_pwd"
-                    class="form-control"
-                    id="con_pwd"
-                    maxlength="4"
-                    placeholder="Enter confirm password....."
-                    required
-                  />
-              </div>
-              <div class="form-group col-3 mt-4">
-                <button
-                  type="submit"
-                  value="SUBMIT"
-                  class="btn btn-primary" style="margin-left: 40vw;border-radius: 5px;">Submit
-              </button>
-              </div>
-            </div>
-            </form>
-            <% }} else { %>
-              <form action="/superadmin_password" method="post" id="myForm">
-                <div class="row">
-                  <div class="col-md-4">
-                    <label for="old_pwd"><b style="color: black;">Old Password:</b></label>
-                    <input
-                        type="password"
-                        name="old_pwd"
-                        class="form-control"
-                        id="old_pwd"
-                        placeholder="Enter old password....."
-                        required
-                      />
-                  </div>
-                  <div class="col-md-4">
-                    <label for="new_pwd"><b style="color: black;">New Password:</b></label>
-                    <input
-                        type="password"
-                        name="new_pwd"
-                        class="form-control"
-                        id="new_pwd"
-                        placeholder="Enter new password....."
-                        required
-                      />
-                  </div>
-                  <div class="col-md-4">
-                    <label for="con_pwd"><b style="color: black;">Confirm Password:</b></label>
-                    <input
-                        type="password"
-                        name="con_pwd"
-                        class="form-control"
-                        id="con_pwd"
-                        placeholder="Enter confirm password....."
-                        required
-                      />
-                  </div>
-                  <div class="form-group col-3 mt-4">
-                    <button
-                      type="submit"
-                      value="SUBMIT"
-                      class="btn btn-primary" style="margin-left: 40vw;border-radius: 5px;">Submit
-                  </button>
-                  </div>
-                </div>
-                </form>
-           <% } %>
-            
-          </div>
 
-          <!-- Modal footer -->
-          <div class="modal-footer" style="background-color: aliceblue;">
-            <!-- <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button> -->
-          </div>
-        </div>
+       <style>
+/* Modal Glass Effect */
+.modal-content {
+  border-radius: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Modal Header */
+.modal-header {
+  border-bottom: none;
+  text-align: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e7b8d9, #7799d8);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.modal-header .close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  color: #fff;
+  opacity: 0.8;
+  font-size: 28px;
+  transition: 0.3s;
+}
+.modal-header .close:hover { opacity: 1; }
+
+/* Modal Body */
+.modal-body {
+  padding: 2rem;
+  background: #ddd; /* temporary visible color */
+  border-radius: 0 0 20px 20px;
+}
+
+
+
+/* Labels */
+.modal-body label {
+  font-weight: 600;
+  color: #444;
+}
+
+/* Inputs */
+.modal-body .form-control {
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
+}
+.modal-body .form-control:focus {
+  border-color: #7799d8;
+  box-shadow: 0 0 8px rgba(119, 153, 216, 0.5);
+}
+
+/* Submit Button */
+.modal-body .btn-primary {
+  background: linear-gradient(135deg, #e7b8d9, #7799d8);
+  border: none;
+  padding: 0.7rem 2rem;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: 0.3s ease;
+  display: block;
+  margin: 2rem auto 0; /* centers button */
+}
+.modal-body .btn-primary:hover {
+  background: linear-gradient(135deg, #7799d8, #e7b8d9);
+  transform: scale(1.05);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+        <!-- Modal -->
+<div class="modal fade" id="changepwd" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg"><!-- Centered Modal -->
+    <div class="modal-content">
+      
+      <!-- Header -->
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="fa fa-key"></i> Change Password</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <form action="/superadmin_password" method="post" id="myForm">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="old_pwd">Old Password</label>
+              <input type="password" name="old_pwd" id="old_pwd" class="form-control" placeholder="Enter old password" required>
+            </div>
+            <div class="col-md-4">
+              <label for="new_pwd">New Password</label>
+              <input type="password" name="new_pwd" id="new_pwd" class="form-control" placeholder="Enter new password" required>
+            </div>
+            <div class="col-md-4">
+              <label for="con_pwd">Confirm Password</label>
+              <input type="password" name="con_pwd" id="con_pwd" class="form-control" placeholder="Confirm password" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+
     </div>
+  </div>
+</div>
 
 
     <script src="/template/assets/libs/jquery/dist/jquery.min.js"></script>

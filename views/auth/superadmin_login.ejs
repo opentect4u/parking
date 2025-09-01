@@ -14,7 +14,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 
-  <title>Parking || Sign In</title>
+  <!-- <title>Parking || Sign In</title> -->
+  <link rel="icon" type="image/png" href="/image/VPark logo 2.png" width="5%">
+<title>VPark || Sign In</title>
 
   <style>
     body {
@@ -149,7 +151,7 @@
   padding: 12px 45px;
   padding-left: 45px !important; /* make space for icon */
   color: #333;                /* ✅ dark text */
-  position: relative;
+  /* position: relative; */
 }
 
 .form-control:focus {
@@ -194,7 +196,7 @@
     }
 
     .btn-primary:hover {
-      background: linear-gradient(135deg, #2575fc, #6a11cb);
+      background: linear-gradient(135deg, #728ab3, #8b5fb9);
       transform: scale(1.08);
       box-shadow: 0 10px 25px rgba(0,0,0,0.35);
     }
@@ -302,7 +304,7 @@
   <div id="toast">Please fill correct details</div>
 
 
-<!-- <script>
+<script>
   document.getElementById("myForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -318,15 +320,17 @@
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData,
-        redirect: "follow"   // ✅ let fetch follow redirects
+        redirect: "follow"   // ✅ allow redirects
       });
 
-      // after redirect, check where we landed
-      if (response.url.includes("/superadmin_dashboard")) {
-        window.location.href = "/superadmin/location";
+      // ✅ If backend redirected (login success)
+      if (response.redirected && response.url.includes("/superadmin/dashboard")) {
+        window.location.href = response.url;
       } else {
-        showToast("Please check your userid or password");
+        // ❌ Login failed
+        showToast("Incorrect user ID or password");
       }
+
     } catch (error) {
       showToast("Something went wrong. Try again!");
     }
@@ -341,7 +345,9 @@
       toast.className = toast.className.replace("show", "");
     }, 3000);
   }
-</script> -->
+</script>
+
+
 
 </body>
 </html>

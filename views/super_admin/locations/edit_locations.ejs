@@ -1,40 +1,75 @@
 <div class="container-fluid">
-    <div class="row">
-      <div class="card col-12">
-        <div class="card-body">
-          <div class="titleSec">
-             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Location Edit Details</i></h2>
-          </div> 
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card rounded-4 shadow-lg border-0">
+        
+        <!-- Card Header -->
+        <div class="card-header border-0 rounded-top-4 text-white d-flex align-items-center"
+             style="background: linear-gradient(45deg, #dbbcda, #7188ee);">
+          <button type="button" id="back" class="btn btn-light btn-sm ms-auto rounded-pill px-3 shadow-sm">
+            <i class="fa fa-arrow-left"></i> Back
+          </button>
+          <h5 class="fw-bold mb-0" style="margin-left: 12vw;
+    font-size: 19px;
+    color: black;">
+            <i class="fa fa-edit me-2"></i> Edit Location
+          </h5>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body rounded-bottom-4">
           <form action="/superadmin/location_save" id="myForm" method="post">
-          <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="form-group">
-                  <label for="loc_name" class="text-dark"><b>Location Name</b></label>
-                  <textarea class="form-control" rows="3" id="loc_name" name="loc_name"><%= data[0].loction %></textarea>
-                </div>
-              </div>
-              
-          </div>
-          <div class="row mt-4">
+            <div class="mb-3">
+              <label for="loc_name" class="form-label fw-bold text-dark"><b>Location Name</b></label>
+              <textarea class="form-control rounded-3 shadow-sm" rows="3" id="loc_name"  style="border-radius: 12px;"
+                name="loc_name"><%= data[0].loction %></textarea>
+            </div>
+
             <input type="hidden" name="id" value="<%= id %>">
-            <div class="form-group col-md-3">
-                <input
-                  type="submit"
-                  value="SUBMIT"
-                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
-                />
-              </div>
-          </div>
+
+            <div class="text-end mt-2">
+              <input type="submit" value="Update" class="btn btn-gradient px-4 rounded-pill shadow-sm" />
+            </div>
           </form>
         </div>
+
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    $(document).ready(function () {
-      $("#back").click(function () {
-        window.location.href = "/superadmin/location";
-      });
+<script>
+  $(document).ready(function () {
+    $("#back").click(function () {
+      window.location.href = "/superadmin/location";
     });
-  </script>
+  });
+</script>
+
+<style>
+  .btn-gradient {
+    background: linear-gradient(to right,  #cc86c9, #42b7bd);
+    color: #fff;
+    border: none;
+    transition: 0.3s ease-in-out;
+  }
+  .btn-gradient:hover {
+    background: linear-gradient(to right,  #cc86c9, #42b7bd);
+    transform: scale(1.05);
+    color: white;
+  }
+
+  .card {
+    overflow: hidden; /* keeps rounded corners clean */
+  }
+
+  .card-body {
+        padding: 2rem;
+    background: #f7f3f3;
+    /* border-radius: 0 0 20px 20px; */
+  }
+
+  .btn-light {
+    font-weight: 500;
+  }
+</style>

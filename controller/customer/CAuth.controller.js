@@ -103,6 +103,8 @@ const super_admin_login_post = async (req, res) => {
 
         let whr = `user_id='${value.user_id}'`
         var userData = await db_Select("sl_no,user_id,password,user_name,user_mobile_no,last_login,created_by,created_at", 'md_super_admin', whr, null)
+        // console.log(userData);
+        
         if ((userData.msg).length == 1) {
             if (await bcrypt.compare(value.password, userData.msg[0].password)) {
                 try{
@@ -111,7 +113,8 @@ const super_admin_login_post = async (req, res) => {
                     // console.log(userData);
                     req.session['user'] = { userData, datetime }
                     req.flash('success', "Login successful");
-                    res.redirect('/superadmin_dashboard');
+                    // res.redirect('/superadmin_dashboard');
+                    res.redirect('/superadmin/dashboard');
                 }catch(err){
                 //    console.log(err);
                    req.flash('danger', err);

@@ -98,6 +98,10 @@ app.use('/v5/api', v5Api);
 app.use('/v6/api', v6Api);
 app.use('/v8/api', v8Api);
 
+app.get('/', (req, res) => {
+  res.redirect('/superadmin_login');
+});
+
 app.use('/', Customer);
 
 // MODIFY 09/01/2024 SUBHAM
