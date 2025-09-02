@@ -1,110 +1,61 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="card col-12">
-      <div class="card-body">
-        <div class="titleSec">
-           <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Customer Edit Details</i></h2>
-        </div> 
+<div class="container-fluid py-4" style="background: #f5f7fa;">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-header bg-gradient text-white rounded-top-4 py-2">
+          <h4 class="mb-0">
+            <i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;"></i>
+           &nbsp;Customer Edit Details
+          </h4>
+         </div>
+ 
+        <div class="card-body p-3">
         <form action="/superadmin/customer_save" id="myForm" method="post">
-        <div class="row mt-4">
-          <div class="col-md-6">
+
+          <div class="row g-2">
+            <!-- Location Name -->
+            <div class="col-md-4">
+                <label for="cust_name" class="form-label"><b>Location Name</b></label>
+                <input type="text" class="form-control shadow-sm rounded-pill" id="cust_name" name="cust_name" value="<%= data[0].customer_name %>">
+             
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-4">
               <div class="form-group">
-                <label for="sell_name" class="text-dark"><b>Seller Name</b></label>
-                <select name="sell_name" class="form-control" id="sell_name">
-                        <option value="">Select Seller Name</option>
-                        <% sell.forEach(dt => { %>
-                            <option value="<%= dt.seller_id %>" <% if (dt.seller_id == data[0].seller_id) { %> selected <% } %>><%= dt.seller_name %></option>
-                        <% }) %>
-                </select>
-              </div>
-              </div>
-
-              <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
-                    <input type="text" class="form-control" id="cust_name" name="cust_name" value="<%= data[0].customer_name %>">
-                  </div>
-                  </div>   
-                  
-                  <div class="col-md-6">
-                      <div class="form-group">
-                          <label for="loc_name" class="text-dark"><b>Location Name</b></label>
-                          <select name="loc_name" class="form-control" id="loc_name">
-                              <option value="">Select Location Name</option>
-                              <% location.forEach(dt => { %>
-                                  <option value="<%= dt.location_id %>" <% if (dt.location_id == data[0].location_id) { %> selected <% } %>><%= dt.loction %></option>
-                              <% }) %>
-                          </select>
-                      </div>
-                  </div>    
-
-                  <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="phone" class="text-dark"><b>Phone No</b></label>
-                        <input type="text" class="form-control" id="phone" name="phone" value="<%= data[0].mobile_no%>">
-                      </div>
-                      </div>
-      
-                      <div class="col-md-6">
-                          <div class="form-group">
-                            <label for="email" class="text-dark"><b>Email</b></label>
-                            <input type="text" class="form-control" id="email" name="email" value="<%= data[0].email%>">
-                          </div>
-                          </div>      
-                          
-                          <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="dev_mode" class="text-dark"><b>Mode</b></label>
-                                <select name="dev_mode" class="form-control" id="dev_mode">
-                                    <option value="D" <%= data[0].dev_mod == 'D' ? 'selected' : '' %>>Dual</option>
-                                    <option value="F" <%= data[0].dev_mod == 'F' ? 'selected' : '' %>>Fixed</option>
-                                </select>
-                            </div>
-                        </div>   
-                              
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                  <label for="no_device" class="text-dark"><b>No. of Device</b></label>
-                                  <input type="text" class="form-control" id="no_device" name="no_device" value="<%= data[0].no_device%>">
-                                </div>
-                                </div>     
-
-                                <div class="col-md-6">
-                                  <div class="form-group">
-                                  <label for="cust_type" class="text-dark"><b>Customer Type</b></label>
-                                    <select name="cust_type" class="form-control" id="cust_type">
-                                      <option value="P" <%= data[0].customer_type == 'P' ? 'selected' : '' %>>Parking</option>
-                                      <option value="T" <%= data[0].customer_type == 'T' ? 'selected' : '' %>>Toll plaza</option>
-                                    </select>
-                                  </div>
-                                  </div>
-                      
-                                  <div class="col-md-12">
-                                    <div class="form-group">
-                                      <label for="password" class="text-dark"><b>Password</b></label>
-                                      <input type="text" class="form-control" id="password" name="password" placeholder="Enter Password here...">
-                                    </div>
-                                  </div>
-                                  
-          <div class="col-md-12">
-              <div class="form-group">
-                <label for="cust_add" class="text-dark"><b>Customer Address</b></label>
-                <textarea class="form-control" rows="3" id="cust_add" name="cust_add"><%= data[0].cust_addr%></textarea>
+                <label for="phone" class="form-label"><b>Phone No</b></label>
+                <input type="text" class="form-control shadow-sm rounded-pill" id="phone" name="phone" value="<%= data[0].mobile_no%>">
               </div>
             </div>
-            
-        </div>
-        <div class="row mt-4">
-          <input type="hidden" name="id" value="<%= id %>">
-          <div class="form-group col-md-3">
-              <input
-                type="submit"
-                value="SUBMIT"
-                class="btn btn-primary btn-block" style="margin-left: 25vw;"
-              />
+
+            <!-- No. of Device -->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="no_device" class="form-label"><b>No. of Device</b></label>
+                <input type="text" class="form-control shadow-sm rounded-pill" id="no_device" name="no_device" value="<%= data[0].no_device%>">
+              </div>
             </div>
-        </div>
+
+            <!-- Customer Address -->
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="cust_add" class="form-label"><b>Customer Address</b></label>
+                <textarea class="form-control shadow-sm" rows="3" id="cust_add" name="cust_add"><%= data[0].cust_addr%></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4 justify-content-center">
+            <input type="hidden" name="id" value="<%= id %>">
+            <div class="form-group col-md-4 text-center">
+             <input
+              type="submit"
+              value="SUBMIT"
+              class="btn btn-gradient btn-block"/>
+            </div>
+          </div>
         </form>
+
       </div>
     </div>
   </div>
@@ -117,3 +68,64 @@
     });
   });
 </script>
+
+<style>
+.btn-gradient {
+  background: linear-gradient(45deg, #dbbcda, #5568c0); /* purple to blue */
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 50px; /* makes pill shape */
+}
+
+/* .btn-gradient:hover {
+  background: linear-gradient(90deg, #2575fc, #6a11cb); 
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+} */
+
+  .form-control:focus, .form-select:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 0.15rem rgba(106,17,203,0.25);
+  }
+  .card-header.bg-gradient {
+    background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  }
+  .custom-select {
+  transition: all 0.3s ease;
+  border: 2px solid #ccc;
+  padding-right: 2.5rem; /* space for icon */
+  background-color: #fff;
+  appearance: none; /* remove default arrow */
+}
+
+.custom-select:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 0.15rem rgba(106,17,203,0.25);
+  background: linear-gradient(90deg, #f0f4ff, #ffffff);
+}
+
+.custom-select:hover {
+  border-color: #2575fc;
+}
+
+.position-relative select {
+  padding-left: 1rem; /* optional, for symmetry */
+}
+
+.position-relative i {
+  pointer-events: none; /* icon won't block clicking */
+  font-size: 0.9rem;
+}
+.card.rounded-5 {
+  border-radius: 1.5rem; /* bigger round corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card.rounded-5:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+</style>
