@@ -10,12 +10,12 @@ function useOutpass() {
         
         
         const result = await getVehicleRatesByVehicleId(vehicle_id, daywise);
-        console.log(result, 'resultresultresultresult');
+        // console.log(result, 'resultresultresultresult');
         
         if (result?.rates?.msg[0]?.rate_type == 'H') {
             const price = HourlyPriceCalculate(result?.rates?.msg, date_time_in, end_time, daywise, result?.night_rates?.msg.length > 0 ? result?.night_rates?.msg[0] : 0 );
 
-            console.log(price, 'pricepricepriceprice');
+            // console.log(price, 'pricepricepriceprice');
             
             return price;
         }
