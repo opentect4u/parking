@@ -105,9 +105,9 @@ document.querySelectorAll(".dropdown-item").forEach(item => {
 
      // ✅ Update total customer count
       if (customersByLocation[locationId]) {
-        totalCustomerEl.textContent = customersByLocation[locationId].length;
+        totalReceiptEl.textContent = customersByLocation[locationId].length;
       } else {
-        totalCustomerEl.textContent = 0;
+        totalReceiptEl.textContent = 0;
       }
     
   });
@@ -120,6 +120,12 @@ const btn = document.getElementById("dropdownBtn");
 const menu = document.getElementById("dropdownMenu");
 const locationBox = document.getElementById("locationDetails");
 
+// Elements for counts
+const totalReceiptEl = document.getElementById("totalReceiptEl");
+const totalOperatorEl = document.getElementById("totalOperatorEl");
+const totalAmounttEl = document.getElementById("totalAmounttEl");
+const totalDeviceEl = document.getElementById("totalDeviceEl");
+
 // Toggle dropdown on button click
 btn.addEventListener("click", (e) => {
   e.stopPropagation(); // prevent click from bubbling to document
@@ -130,19 +136,33 @@ btn.addEventListener("click", (e) => {
 document.querySelectorAll(".dropdown-item").forEach(item => {
   item.addEventListener("click", () => {
     const selectedText = item.textContent.trim();
+    const locationId = item.dataset.value;
+
     btn.textContent = selectedText;
     menu.style.display = "none";
+    console.log(locationId,'location');
+    
 
     if (locationBox) {
       locationBox.textContent = "Details of " + selectedText.replace("📍", "").trim();
     }
 
-    // Example: Update total customer count if you have customersByLocation object
-    const locationId = item.dataset.value;
-    if (window.customersByLocation && customersByLocation[locationId]) {
-      document.querySelector("#totalCustomerEl").textContent = customersByLocation[locationId].length;
-    } else {
-      document.querySelector("#totalCustomerEl").textContent = 0;
+    try{
+        fetch(`/superadmin/dashboard_page?location_id=${locationId}`)
+        .then(res => res.json())
+         .then(data => {
+          console.log("API Response:", data);
+     
+            // ✅ Update dashboard cards
+        document.getElementById("totalReceiptEl").innerText = data.receipts;
+        document.getElementById("totalOperatorEl").innerText = data.operators;
+        document.getElementById("totalDeviceEl").innerText = data.devices;
+        document.getElementById("totalAmounttEl").innerText = data.totalAmount;
+    })
+    .catch(err => console.error("Error fetching dashboard data:", err));
+
+    }catch (err) {
+      console.error("Error fetching dashboard data", err);
     }
   });
 });
@@ -158,62 +178,61 @@ document.addEventListener("click", (e) => {
     <!-- Inner Stats Cards -->
     <div class="row g-4">
       <!-- Card 1 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card dashboard-card gradient-blue">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div>
-              <h2 class="fw-bold text-white mb-0">0</h2>
-              <p class="mb-1 text-dark small">Total Customer</p>
-            </div>
-            <div class="icon-box">
-              <i data-feather="users"></i>
-            </div>
-          </div>
-          <!-- <span class="badge badge-success position-absolute top-0 end-0 m-2">+18.3%</span> -->
-        </div>
-      </div>
 
-      <!-- Card 2 -->
       <div class="col-md-6 col-lg-3">
-        <div class="card dashboard-card gradient-green">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div>
-              <h2 class="fw-bold text-white mb-0">0</h2>
-              <p class="mb-1 text-dark small">Total Operator</p>
-            </div>
-            <div class="icon-box">
-              <i data-feather="user-plus"></i>
-            </div>
-          </div>
-        </div>
+  <div class="card dashboard-card gradient-blue">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h2 id="totalReceiptEl" class="fw-bold text-white mb-0">0</h2>
+        <p class="mb-1 text-dark small">Total Receipt</p>
       </div>
+      <div class="icon-box">
+        <i data-feather="book"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Card 2 -->
+<div class="col-md-6 col-lg-3">
+  <div class="card dashboard-card gradient-green">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h2 id="totalOperatorEl" class="fw-bold text-white mb-0">0</h2>
+        <p class="mb-1 text-dark small">Total Operator</p>
+      </div>
+      <div class="icon-box">
+        <i data-feather="user-plus"></i>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- Card 3 -->
       <div class="col-md-6 col-lg-3">
-        <div class="card dashboard-card gradient-red">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div>
-              <h2 class="fw-bold text-white mb-0">0</h2>
-              <p class="mb-1 text-dark small">Total Car In</p>
-            </div>
-            <div class="icon-box">
-              <i data-feather="truck"></i>
-            </div>
-          </div>
-          <!-- <span class="badge badge-danger position-absolute top-0 end-0 m-2">-18.3%</span> -->
-        </div>
+  <div class="card dashboard-card gradient-red">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h2 id="totalAmounttEl" class="fw-bold text-white mb-0">0</h2>
+        <p class="mb-1 text-dark small">Total Amount</p>
       </div>
+      <div class="icon-box">
+        <i data-feather="credit-card"></i>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- Card 4 -->
       <div class="col-md-6 col-lg-3">
         <div class="card dashboard-card gradient-purple">
           <div class="card-body d-flex justify-content-between align-items-center">
             <div>
-              <h2 class="fw-bold text-white mb-0">0</h2>
-              <p class="mb-1 text-dark small">Total Car Out</p>
+              <h2 id="totalDeviceEl" class="fw-bold text-white mb-0">0</h2>
+              <p class="mb-1 text-dark small">Total Device</p>
             </div>
             <div class="icon-box">
-              <i data-feather="globe"></i>
+              <i data-feather="smartphone"></i>
             </div>
           </div>
         </div>
@@ -249,7 +268,7 @@ Custom CSS
 }
 
    .location-banner {
-  background: linear-gradient(135deg, #d8cce4, #a7bcd8);
+  background: linear-gradient(135deg, #b596d6, #a7bcd8);
   border-radius: 8px;
   padding: 20px;
   color: #fff; /* banner text white */

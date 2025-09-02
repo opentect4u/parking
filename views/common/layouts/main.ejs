@@ -273,11 +273,9 @@
 
 
 
+<!--change password modal-->
 
-       <!--change password modal-->
-
-
-       <style>
+<style>
 /* Modal Glass Effect */
 .modal-content {
   border-radius: 20px;
@@ -318,11 +316,9 @@
 /* Modal Body */
 .modal-body {
   padding: 2rem;
-  background: #ddd; /* temporary visible color */
+  background: #ddd;
   border-radius: 0 0 20px 20px;
 }
-
-
 
 /* Labels */
 .modal-body label {
@@ -330,16 +326,31 @@
   color: #444;
 }
 
-/* Inputs */
-.modal-body .form-control {
+/* Inputs with eye */
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper .form-control {
   border-radius: 10px;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 2.5rem 0.6rem 1rem; /* space for eye */
   border: 1px solid #ccc;
   transition: 0.3s ease;
 }
-.modal-body .form-control:focus {
+.password-wrapper .form-control:focus {
   border-color: #7799d8;
   box-shadow: 0 0 8px rgba(119, 153, 216, 0.5);
+}
+.password-wrapper .toggle-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+}
+.password-wrapper .toggle-eye:hover {
+  color: #000;
 }
 
 /* Submit Button */
@@ -351,7 +362,7 @@
   border-radius: 50px;
   transition: 0.3s ease;
   display: block;
-  margin: 2rem auto 0; /* centers button */
+  margin: 2rem auto 0;
 }
 .modal-body .btn-primary:hover {
   background: linear-gradient(135deg, #7799d8, #e7b8d9);
@@ -365,9 +376,9 @@
 }
 </style>
 
-        <!-- Modal -->
+<!-- Modal -->
 <div class="modal fade" id="changepwd" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg"><!-- Centered Modal -->
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       
       <!-- Header -->
@@ -382,15 +393,24 @@
           <div class="row g-3">
             <div class="col-md-4">
               <label for="old_pwd">Old Password</label>
-              <input type="password" name="old_pwd" id="old_pwd" class="form-control" placeholder="Enter old password" required>
+              <div class="password-wrapper">
+                <input type="password" name="old_pwd" id="old_pwd" class="form-control" placeholder="Enter old password" required>
+                <i class="fa fa-eye toggle-eye" onclick="togglePassword('old_pwd', this)"></i>
+              </div>
             </div>
             <div class="col-md-4">
               <label for="new_pwd">New Password</label>
-              <input type="password" name="new_pwd" id="new_pwd" class="form-control" placeholder="Enter new password" required>
+              <div class="password-wrapper">
+                <input type="password" name="new_pwd" id="new_pwd" class="form-control" placeholder="Enter new password" required>
+                <i class="fa fa-eye toggle-eye" onclick="togglePassword('new_pwd', this)"></i>
+              </div>
             </div>
             <div class="col-md-4">
               <label for="con_pwd">Confirm Password</label>
-              <input type="password" name="con_pwd" id="con_pwd" class="form-control" placeholder="Confirm password" required>
+              <div class="password-wrapper">
+                <input type="password" name="con_pwd" id="con_pwd" class="form-control" placeholder="Confirm password" required>
+                <i class="fa fa-eye toggle-eye" onclick="togglePassword('con_pwd', this)"></i>
+              </div>
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
@@ -400,6 +420,22 @@
     </div>
   </div>
 </div>
+
+<script>
+function togglePassword(fieldId, icon) {
+  const field = document.getElementById(fieldId);
+  if (field.type === "password") {
+    field.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  } else {
+    field.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  }
+}
+</script>
+
 
 
     <script src="/template/assets/libs/jquery/dist/jquery.min.js"></script>

@@ -47,34 +47,63 @@ const getAllcustomerlist = (id = 0) => {
 const dashboard_data = async (req, res) => {
   try {
     const loca = await getAllLocationList();
-    const customer = await getAllcustomerlist(); // might be { msg: [...] }
-
-    // Group customers by location
-    const customersByLocation = {};
-    (customer.msg || []).forEach(cust => {
-      if (!customersByLocation[cust.location_id]) {
-        customersByLocation[cust.location_id] = [];
-      }
-      customersByLocation[cust.location_id].push(cust);
-    });
-
     const page_data = {
       title: "Dashboard details",
       page_path: "/super_admin/dashboard/dashboard",
       data: loca,
-      customer_data: customer,
-      customersByLocation: customersByLocation
     };
-    console.log(page_data);
-    
-
+    // console.log(page_data);
     res.render("common/layouts/main", page_data);
   } catch (err) {
     console.error(err);
-    logger.error(err);
+    // logger.error(err);
     res.redirect("/superadmin_login");
   }
 };
 
+const dashboard_page = async (req, res) => {
+  try {
+    const locationId = req.query.location_id;
 
-module.exports = {dashboard_data}
+    const operator = await db_Select(
+      "COUNT(*) as op_cnt",
+      "md_user",
+      `customer_id='${locationId}' AND user_type = 'O'`
+    );
+
+    const receipt = await db_Select(
+      "COUNT(*) as rec_cnt",
+      "td_vehicle_in",
+      `customer_id='${locationId}'`
+    );
+
+    const device = await db_Select(
+      "COUNT(*) as dev_cnt",
+      "md_customer",
+      `customer_id='${locationId}'`
+    );
+
+    // 👉 If you want totalAmount, calculate it here
+    const amount = await db_Select(
+      "SUM(paid_amt) total_amt",
+      `td_receipt a LEFT JOIN td_vehicle_in b ON a.user_id = b.user_id_in AND a.receipt_no = b.receipt_no`,
+      `customer_id='${locationId}'`
+    );
+
+    res.json({
+      receipts: receipt.msg[0]?.rec_cnt || 0,
+      operators: operator.msg[0]?.op_cnt || 0,
+      devices: device.msg[0]?.dev_cnt || 0,
+      totalAmount: amount.msg[0]?.total_amt || 0
+    });
+
+    // console.log("Dashboard data:", { receipt, operator, device });
+
+  } catch (err) {
+    console.error(err);
+    res.json({ error: "Server error" });
+  }
+};
+
+
+module.exports = {dashboard_data, dashboard_page}
