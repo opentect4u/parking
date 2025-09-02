@@ -16,7 +16,13 @@ Dashboard Section
 
 </div> -->
 <div class="location-banner d-flex justify-content-between align-items-center px-4 py-3 rounded-4 shadow-sm">
-  <h4 class="text-light fw-bold">🌍 <b>Select Your Location</b></h4>
+  <h4 class="text-light fw-bold mb-0">🌍 <b>Select Your Location</b></h4>
+
+ <!-- Current Date & Time -->
+  <div class="text-light fw-bold d-flex gap-3 align-items-center" style="font-weight: 500;">
+    <span>🗓️ <span id="currentDate"></span></span>&nbsp; |  &nbsp;
+    <span>⏰ <span id="currentTime"></span></span>
+  </div>
 
   <div class="dropdown">
     <!-- Button -->
@@ -51,6 +57,23 @@ Dashboard Section
     </nav>
   </div>
 </div>
+
+<script>
+function updateDateTime() {
+  const now = new Date();
+
+  const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+  document.getElementById("currentDate").textContent = now.toLocaleDateString('en-US', dateOptions);
+
+  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+  document.getElementById("currentTime").textContent = now.toLocaleTimeString('en-IN', timeOptions);
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
+</script>
+
+
 
 
     <!-- <script>
@@ -220,7 +243,7 @@ document.addEventListener("click", (e) => {
       </div>
       <div class="icon-box">
         <!-- <i data-feather="credit-card"></i> -->
-         ₹
+         💵
       </div>
     </div>
   </div>

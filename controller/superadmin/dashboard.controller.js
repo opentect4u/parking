@@ -91,10 +91,10 @@ const dashboard_page = async (req, res) => {
     );
 
     res.json({
-      receipts: receipt.msg[0]?.rec_cnt || 0,
-      operators: operator.msg[0]?.op_cnt || 0,
-      devices: device.msg[0]?.dev_cnt || 0,
-      totalAmount: amount.msg[0]?.total_amt || 0
+      receipts: receipt.msg[0].rec_cnt || 0,
+      operators: operator.msg[0].op_cnt || 0,
+      devices: device.msg[0].dev_cnt || 0,
+      totalAmount: amount.msg[0].total_amt || 0
     });
 
     // console.log("Dashboard data:", { receipt, operator, device });
