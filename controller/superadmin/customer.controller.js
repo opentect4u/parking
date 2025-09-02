@@ -22,7 +22,7 @@ const logger = require('../../model/LoggerModel');
 //   });
 // };
 
-const getAllCustomerList = (id = 0, sailer_id = 0) => {
+const getAllCustomerList = (id = 0) => {
   return new Promise(async (resolve, reject) => {
     var select =
         "a.*,c.*",

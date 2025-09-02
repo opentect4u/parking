@@ -1,50 +1,95 @@
-<div class="container-fluid">
-    <div class="row">
-      <div class="card col-12">
-        <div class="card-body">
-          <div class="titleSec">
-             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Vehicle Edit Details</i></h2>
-          </div> 
-          <form action="/superadmin/vehicle_save" id="myForm" method="post">
-            <div class="row mt-3">
-                <div class="col-md-6">
-                  <div class="form-group">
-                      <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
-                      <select name="cust_name" class="form-control" id="cust_name" disabled>
-                          <option value="">Select Customer Name</option>
-                         <% customer.forEach(dt =>{ %>
-                            <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
-                         <% }) %>
-                      </select>
-                  </div>
-              </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="veh_name" class="text-dark"><b>Vehicle Name</b></label>
-                      <input type="text" class="form-control" id="veh_name" name="veh_name" value="<%= data[0].vehicle_name%>">
-                    </div>
-                    </div> 
-              </div>
-              <div class="row mt-3">
-                <input type="hidden" name="id" value="<%= id %>">
-                <input type="hidden" name="cust_id" value="<%= customer_id %>">
+<div class="container-fluid py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border-radius: 15px;">
+        
+        <!-- Card Header with Linear Gradient -->
+        <div class="card-header text-white d-flex align-items-center justify-content-between" 
+             style="background: linear-gradient(135deg, #e7b8d9, #7799d8)">
+          <h4 class="mb-0">
+            <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor: pointer;"></i>
+            Vehicle Edit Details
+          </h4>
+        </div>
+        
+        <div class="card-body p-5">
 
-                  <div class="form-group col-md-5"></div>
-                  <div class="form-group col-md-7">
-                          <input type="submit" value="SUBMIT" class="btn btn-primary"
-                            style="border-radius: 6px;" />
-                        </div>
-              </div>
+          <form action="/superadmin/vehicle_save" id="myForm" method="post">
+
+            <!-- Customer Name -->
+            <div class="mb-4">
+              <label for="cust_name" class="form-label fw-bold"><b>Location Name</b></label>
+              <select name="cust_name" id="cust_name" class="form-select custom-input" disabled>
+                <option value="">Select Location Name</option>
+                <% customer.forEach(dt =>{ %>
+                  <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
+                    <%= dt.customer_name %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+
+            <!-- Vehicle Name -->
+            <div class="mb-4">
+              <label for="veh_name" class="form-label fw-bold"><b>Vehicle Name</b></label>
+              <input type="text" class="form-control custom-input" id="veh_name" name="veh_name" 
+                     value="<%= data[0].vehicle_name %>" placeholder="Enter vehicle name">
+            </div>
+
+            <!-- Hidden Fields -->
+            <input type="hidden" name="id" value="<%= id %>">
+            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-centered">
+              <button type="submit" class="btn gradient-btn px-5 py-2 shadow-sm">
+                <i class="fa fa-save me-2"></i> Save Changes
+              </button>
+            </div>
+
           </form>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    $(document).ready(function () {
-      $("#back").click(function () {
-        window.location.href = "/superadmin/vehicle";
-      });
+<style>
+  /* Input & Select Gorgeous Style */
+  .custom-input {
+    border-radius: 12px;
+    padding: 10px 15px;
+    border: 1px solid #d1d1d1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .custom-input:focus {
+    border-color: #4facfe;
+    box-shadow: 0 0 12px rgba(79, 172, 254, 0.5);
+    outline: none;
+  }
+
+  /* Gradient Button */
+  .gradient-btn {
+    background: linear-gradient(135deg, #e7b8d9, #7799d8);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 18px;
+    transition: all 0.3s ease;
+  }
+
+  .gradient-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(56, 249, 215, 0.4);
+  }
+</style>
+
+<script>
+  $(document).ready(function () {
+    $("#back").click(function () {
+      window.location.href = "/superadmin/vehicle";
     });
-  </script>
+  });
+</script>

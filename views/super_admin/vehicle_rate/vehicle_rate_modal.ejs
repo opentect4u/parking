@@ -2,7 +2,7 @@
 <div class="modal-body">
     <form action="/superadmin/vehicle_rate_save" method="post" id="myForm">
       <div class="row">
-        <div class="form-group col-md-4">
+        <!-- <div class="form-group col-md-4">
           <label for="sell_id" class="text-dark"><b>Seller Name:</b></label>
           <select name="sell_id" class="form-control" id="sell_id">
             <option value="">Select Seller Name</option>
@@ -12,8 +12,8 @@
               </option>
               <% }) %>
           </select>
-        </div>
-        <div class="form-group col-md-4">
+        </div> -->
+        <div class="form-group col-md-6">
           <label for="cust_name" class="text-dark"><b>Customer Name:</b></label>
           <select name="cust_name" class="form-control" id="cust_name">
             <option value="">Select Customer Name</option>
@@ -21,17 +21,18 @@
           </select>
         </div>
 
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-6">
           <label for="rate_name"><b style="color: black;">Rate Type:</b></label>
-          <select name="rate_name" class="form-control" id="rate_name" disabled>
+          <!-- <select name="rate_name" class="form-control" id="rate_name" disabled>
             <option value="">Select Rate Type</option>
 
-          </select>
+          </select> -->
+          <input type="text" class="form-control" id="rate_name" name="rate_name" value="Hourly" disabled>
         </div>
 
-        <input type="hidden" name="rate_type" id="rate_type_modal" value="">
+        <input type="hidden" name="rate_type" id="rate_type_modal" value="H">
 
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-6">
           <label for="veh_id"><b style="color: black;">Vehicle Name:</b></label>
           <select name="veh_id" class="form-control" id="veh_id">
             <option value="">Select Vehicle Name</option>
@@ -39,21 +40,21 @@
           </select>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group">
             <label for="frm_hr" class="text-dark"><b>From Hour:</b></label>
-            <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="00">
+            <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="0">
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group">
             <label for="to_hr" class="text-dark"><b>To Hour:</b></label>
-            <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="00">
+            <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="24">
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group">
             <label for="park_fee" class="text-dark"><b>Parking Fee:</b></label>
             <input type="text" class="form-control" id="park_fee" name="park_fee"
@@ -63,12 +64,15 @@
 
       </div>
       <input type="hidden" name="id" value="0">
-      <div class="row mt-3">
+      <!-- <div class="row mt-3">
         <div class="form-group col-md-3">
-          <input type="submit" value="SUBMIT" class="btn btn-primary "
-            style="margin-left: 38vw;border-radius: 6px;" />
+          <input type="submit" value="SUBMIT" class="btn btn-primary"
+            style="border-radius: 6px;" />
         </div>
-      </div>
+      </div> -->
+      <div class="text-center mt-3">
+  <input type="submit" value="SUBMIT" class="btn btn-primary" style="background: linear-gradient(135deg, #e7b8d9, #274b8f);"/>
+</div>
     </form>
   </div>
 
@@ -124,7 +128,7 @@
      });
    }
  </script>
-
+<!-- 
  <script>
      $('#sell_id').on('change', function () {
      console.log('here lalalalal');
@@ -158,4 +162,42 @@
 
   
  
- </script>
+ </script> -->
+
+ <script>
+  $(document).ready(function () {
+    // Fetch all customers when page loads
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/cust_list_ajax",
+      data: {}, // no seller id now
+      success: function (response) {
+        $('#cust_name').empty();
+        $('#cust_name').append(`<option value="">Select Customer Name</option>`);
+
+        response.msg.forEach(function (resData) {
+          $('#cust_name').append(
+            $('<option>', { value: resData.customer_id, text: resData.customer_name })
+          );
+        });
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+</script>
+
+<style>
+  .modal-body .btn-primary {
+    background: linear-gradient(135deg, #e7b8d9, #2f5293);
+    border: none;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: 0.3s ease;
+    display: block;
+    margin: 1rem auto 0;
+    margin-left: 18vw;
+}
+</style>

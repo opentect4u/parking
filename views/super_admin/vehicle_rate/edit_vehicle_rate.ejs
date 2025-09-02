@@ -1,84 +1,150 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="card col-12">
-      <div class="card-body">
-        <div class="titleSec">
-           <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Vehicle Rate Edit Details</i></h2>
-        </div> 
-        <form action="/superadmin/vehicle_rate_save" id="myForm" method="post">
-          <div class="row mt-3">
-            <div class="form-group col-md-4">
-              <label for="sell_id" class="text-dark"><b>Seller Name:</b></label>
-              <select name="sell_id" class="form-control" id="sell_id" disabled>
-                <option value="">Select Seller Name</option>
-                <% seller.forEach(dt =>{ %>
-                  <option value="<%= dt.seller_id %>" <%= dt.seller_id == data[0].seller_id ? 'selected' : '' %>><%= dt.seller_name %></option>
-               <% }) %>
-              </select>
-            </div>
-            <div class="form-group col-md-4">
-              <label for="cust_name" class="text-dark"><b>Customer Name:</b></label>
-              <select name="cust_name" class="form-control" id="cust_name" disabled>
-                <option value="">Select Customer Name</option>
-                <% customer.forEach(dt =>{ %>
-                  <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
-               <% }) %>
-              </select>
-            </div>
-            <div class="form-group col-md-4">
-              <label for="rate_name"><b style="color: black;">Rate Type:</b></label>
-              <select name="rate_name" class="form-control" id="rate_name" disabled>
-                  <option value="">Select Rate Type</option>
-                  <option value="H" <% if (data[0].rate_type === 'H') { %>selected<% } %>>Hourly</option>
-                  <option value="F" <% if (data[0].rate_type === 'F') { %>selected<% } %>>Fixed</option>
-              </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="veh_id"><b style="color: black;">Vehicle Name:</b></label>
-            <select name="veh_id" class="form-control" id="veh_id" disabled>
-              <option value="">Select Vehicle Name</option>
-              <% vehicle.forEach(dt =>{ %>
-                <option value="<%= dt.vehicle_id %>" <%= dt.vehicle_id == data[0].vehicle_id ? 'selected' : '' %>><%= dt.vehicle_name %></option>
-             <% }) %>
-            </select>
-          </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="frm_hr" class="text-dark"><b>From Hour:</b></label>
-                <input type="number" max="24" min="0" class="form-control" id="frm_hr" name="frm_hr" value="<%= data[0].from_hour %>">
-              </div>
-            </div>
-    
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="to_hr" class="text-dark"><b>To Hour:</b></label>
-                <input type="number" max="24" min="0" class="form-control" id="to_hr" name="to_hr" value="<%= data[0].to_hour %>">
-              </div>
-            </div>
-    
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="park_fee" class="text-dark"><b>Parking Fee:</b></label>
-                <input type="text" class="form-control" id="park_fee" name="park_fee"
-                 value="<%= data[0].vehicle_rate %>">
-              </div>
-            </div>
-            </div>
-            <div class="row mt-3">
-              <input type="hidden" name="id" value="<%= id %>">
-              <input type="hidden" name="cust_id" value="<%= customer_id %>">
+<div class="container-fluid py-4" style="background: #f5f7fa;">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-header bg-gradient text-white rounded-top-4 py-2">
+          <h4 class="mb-0">
+            <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor: pointer;"></i>
+            Vehicle Rate Edit Details
+          </h4>
+        </div>
+        <div class="card-body p-3">
+          <form action="/superadmin/vehicle_rate_save" id="myForm" method="post">
+            <div class="row g-2">
 
-                <div class="form-group col-md-5"></div>
-                <div class="form-group col-md-7">
-                        <input type="submit" value="SUBMIT" class="btn btn-primary"
-                          style="border-radius: 6px;" />
-                      </div>
+              <!-- Customer Name -->
+<div class="col-md-4">
+  <label for="cust_name" class="form-label"><b>Customer Name:</b></label>
+  <div class="position-relative">
+    <select name="cust_name" class="form-select shadow-sm rounded-pill custom-select" id="cust_name" disabled>
+      <option value="">Select Customer Name</option>
+      <% customer.forEach(dt =>{ %>
+        <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+      <% }) %>
+    </select>
+  </div>
+</div>
+
+<!-- Rate Type -->
+<div class="col-md-4">
+  <label for="rate_name" class="form-label"><b>Rate Type:</b></label>
+  <div class="position-relative">
+    <select name="rate_name" class="form-select shadow-sm rounded-pill custom-select" id="rate_name" disabled>
+      <option value="">Select Rate Type</option>
+      <option value="H" <% if (data[0].rate_type === 'H') { %>selected<% } %>>Hourly</option>
+      <option value="F" <% if (data[0].rate_type === 'F') { %>selected<% } %>>Fixed</option>
+    </select>
+  </div>
+</div>
+
+<!-- Vehicle Name -->
+<div class="col-md-4">
+  <label for="veh_id" class="form-label"><b>Vehicle Name:</b></label>
+  <div class="position-relative">
+    <select name="veh_id" class="form-select shadow-sm rounded-pill custom-select" id="veh_id" disabled>
+      <option value="">Select Vehicle Name</option>
+      <% vehicle.forEach(dt =>{ %>
+        <option value="<%= dt.vehicle_id %>" <%= dt.vehicle_id == data[0].vehicle_id ? 'selected' : '' %>><%= dt.vehicle_name %></option>
+      <% }) %>
+    </select>
+  </div>
+</div>
+
+
+              <!-- From Hour -->
+              <div class="col-md-4 mt-3">
+                <label for="frm_hr" class="form-label"><b>From Hour:</b></label>
+                <input type="number" max="24" min="0" class="form-control shadow-sm rounded-pill" id="frm_hr" name="frm_hr" value="<%= data[0].from_hour %>">
+              </div>
+
+              <!-- To Hour -->
+              <div class="col-md-4 mt-3">
+                <label for="to_hr" class="form-label"><b>To Hour:</b></label>
+                <input type="number" max="24" min="0" class="form-control shadow-sm rounded-pill" id="to_hr" name="to_hr" value="<%= data[0].to_hour %>">
+              </div>
+
+              <!-- Parking Fee -->
+              <div class="col-md-4 mt-3">
+                <label for="park_fee" class="form-label"><b>Parking Fee:</b></label>
+                <input type="text" class="form-control shadow-sm rounded-pill" id="park_fee" name="park_fee" value="<%= data[0].vehicle_rate %>">
+              </div>
             </div>
-        </form>
+
+            <!-- Hidden Fields -->
+            <input type="hidden" name="id" value="<%= id %>">
+            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+            <!-- Submit Button -->
+            <div class="row mt-3">
+              <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-gradient shadow-sm rounded-pill px-4 py-2">
+                  SUBMIT
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Custom Styles -->
+<style>
+  .btn-gradient {
+    background: linear-gradient(45deg, #dbbcda, #5568c0);
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s ease;
+  }
+  /* .btn-gradient:hover {
+    background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  } */
+  .form-control:focus, .form-select:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 0.15rem rgba(106,17,203,0.25);
+  }
+  .card-header.bg-gradient {
+    background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  }
+  .custom-select {
+  transition: all 0.3s ease;
+  border: 2px solid #ccc;
+  padding-right: 2.5rem; /* space for icon */
+  background-color: #fff;
+  appearance: none; /* remove default arrow */
+}
+
+.custom-select:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 0.15rem rgba(106,17,203,0.25);
+  background: linear-gradient(90deg, #f0f4ff, #ffffff);
+}
+
+.custom-select:hover {
+  border-color: #2575fc;
+}
+
+.position-relative select {
+  padding-left: 1rem; /* optional, for symmetry */
+}
+
+.position-relative i {
+  pointer-events: none; /* icon won't block clicking */
+  font-size: 0.9rem;
+}
+.card.rounded-5 {
+  border-radius: 1.5rem; /* bigger round corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card.rounded-5:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+</style>
 
 <script>
   $(document).ready(function () {
