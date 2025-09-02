@@ -22,7 +22,7 @@
         
         <form action="/superadmin/vehicle_rate" method="post" class="p-3">
           <div class="row g-3 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <label for="cust_name_sel"><b style="color: black;">Location Name:</b></label>
               <select name="cust_name" class="form-control custom-select" id="cust_name_sel" required>
                 <option value="">Select Location Name</option>
@@ -34,15 +34,15 @@
                   <% }) %>
               </select>
             </div>
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <label for="rate_type_name"><b style="color: black;">Rate Type:</b></label>
               <select name="rate_type_name" class="form-control" id="rate_type_name" disabled>
                 <option value="">Select Rate Type</option>
 
               </select>
               <input type="hidden" name="rate_type" value="">
-            </div>
-            <div class="col-md-4">
+            </div> -->
+            <div class="col-md-5">
               <label for="veh_id_sel"><b style="color: black;">Vehicle Name:</b></label>
               <select name="veh_id" class="form-control" id="veh_id_sel" required>
                 <option value="">Select Vehicle Name</option>
@@ -68,8 +68,8 @@
                   <thead class="custom-header text-center">
                     <tr>
                       <th class="text-center text-dark">Sl No.</th>
-                      <th class="text-center text-dark">From Hour</th>
-                      <th class="text-center text-dark">To Hour</th>
+                      <!-- <th class="text-center text-dark">From Hour</th> -->
+                      <!-- <th class="text-center text-dark">To Hour</th> -->
                       <th class="text-center text-dark">Parking Fee</th>
                       <th class="text-center text-dark">Action</th>
                     </tr>
@@ -82,12 +82,12 @@
                         <td class="text-center text-dark">
                           <%= i %>
                         </td>
-                        <td class="text-center text-dark">
+                        <!-- <td class="text-center text-dark">
                           <%= dt.from_hour %>
                         </td>
                         <td class="text-center text-dark">
                           <%= dt.to_hour %>
-                        </td>
+                        </td> -->
                         <td class="text-center text-dark">
                           <%= dt.vehicle_rate %>
                         </td>
@@ -97,7 +97,7 @@
                       </tr>
                       <% i++; }) }else{ %>
                         <tr>
-                          <td class="text-center text-danger" colspan="5">No data found</td>
+                          <td class="text-center text-danger" colspan="3">No data found</td>
                         </tr>
                         <% } %>
                   </tbody>

@@ -151,7 +151,7 @@ const save_add_vehicle_rate = async (req, res) => {
         value.id > 0
           ? `from_hour=${value.frm_hr},to_hour=${value.to_hr},vehicle_rate='${value.park_fee}',updated_by='${user_name}',updated_at='${datetime}'`
           : "(seller_id,customer_id,rate_type,vehicle_id,from_hour,to_hour,vehicle_rate,rate_flag,night_day_flag,created_by,created_at)",
-      values = `('0','${value.cust_name}','${value.rate_type}','${value.veh_id}','${value.frm_hr}','${value.to_hr}','${value.park_fee}','F','O','${user_name}','${datetime}')`;
+      values = `('0','${value.cust_name}','H','${value.veh_id}','0','24','${value.park_fee}','F','O','${user_name}','${datetime}')`;
     let res_dt = await db_Insert(
       "md_rate_dtls",
       fields,
