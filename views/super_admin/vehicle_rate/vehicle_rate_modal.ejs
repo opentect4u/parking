@@ -170,7 +170,7 @@
       data: {}, // no seller id now
       success: function (response) {
         $('#cust_name').empty();
-        $('#cust_name').append(`<option value="">Select Customer Name</option>`);
+        $('#cust_name').append(`<option value="">Select Location Name</option>`);
 
         response.msg.forEach(function (resData) {
           $('#cust_name').append(
