@@ -118,10 +118,10 @@
 
               <div class="col-md-3">
                 <label for="dev_type" class="form-label">Device Type</label>
-                <select name="dev_type" class="form-control" id="dev_type">
-                  <option value="">Select Device Type</option>
+                <select name="dev_type" class="form-control" id="dev_type" disabled>
+                  <!-- <option value="">Select Device Type</option> -->
                   <option value="H" <% if (data[0].device_type === 'H') { %>selected<% } %>>Handheld Device</option>
-                  <option value="M" <% if (data[0].device_type === 'M') { %>selected<% } %>>Mobile Device</option>
+                  <!-- <option value="M" <% if (data[0].device_type === 'M') { %>selected<% } %>>Mobile Device</option> -->
                 </select>
               </div>
 

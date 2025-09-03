@@ -119,11 +119,20 @@
                             </tfoot>
                         </table>
 
-                         <div class="text-end mt-3">
+                         <!-- <div class="text-end mt-3">
       <button class="btn btn-gradient-print btn-sm px-4 shadow-sm" onclick="printDiv()">
         <i class="fa fa-print me-2"></i> Print
       </button>
-    </div>
+    </div> -->
+
+              <div class="text-end mt-3">
+  <button class="btn btn-gradient-print btn-sm px-4 shadow-sm me-2 no-print" onclick="printDiv()">
+    <i class="fa fa-print me-2"></i> Print
+  </button>
+  <button class="btn btn-success btn-sm px-4 shadow-sm no-print" onclick="downloadExcel()">
+    <i class="fa fa-file-excel me-2"></i> Excel
+  </button>
+</div>
                     </div>
                 </div>
             </div>
@@ -132,6 +141,18 @@
 </div>
 
 <style>
+    @media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+@media print {
+    .no-prints {
+        display: none !important;
+    }
+}
+
     .table-fixed-header th {
    background-color: #1c2d41; /* Your fixed color */
   color: #ffffff;
@@ -186,9 +207,36 @@
   height: calc(2.25rem + 2px); /* default .form-select height */
   font-size: 0.95rem;
 }
-
+.btn-success {
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: white;
+  border-radius: 50px;
+  border: none;
+}
 
 </style>
+
+<script>
+function downloadExcel() {
+    // Get the table element
+    var table = document.querySelector("#resultDiv table");
+
+    if (!table) {
+        alert("No data available to export!");
+        return;
+    }
+
+    // Convert table to worksheet
+    var workbook = XLSX.utils.book_new();
+    var worksheet = XLSX.utils.table_to_sheet(table);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Detail Report");
+
+    // Download Excel file
+    XLSX.writeFile(workbook, "Detail_Report.xlsx");
+}
+</script>
+
 
     <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/dateFormat.min.js"></script>
     <script>
@@ -526,6 +574,9 @@ function printDiv() {
             th, td { border: 1px solid black; padding: 6px; font-family: Arial, Helvetica, sans-serif; text-align: left; }
             .table .thead-dark th { color: #fff; background-color: #1c2d41; }
             tfoot { font-weight: 700; color: #000; }
+
+             /* Hide elements with no-print or no-prints class */
+            .no-print, .no-prints { display: none !important; }
         }
     `);
 
@@ -534,8 +585,13 @@ function printDiv() {
     WindowObject.document.writeln('</body></html>');
     WindowObject.document.close();
 
+     setTimeout(function () {
+            WindowObject.close();
+        }, 10);
+
     // Restore original styling
     tableWrapper.setAttribute('style', originalStyle);
 }
+
 
 </script>

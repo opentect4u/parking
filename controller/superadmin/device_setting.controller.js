@@ -142,7 +142,7 @@ const save_device = async (req, res) => {
 
     let fields =
         value.id > 0
-          ? `device_type='${value.dev_type}',report_flag='${
+          ? `report_flag='${
               value.report_flag == "Y" ? "Y" : "N"
             }',total_collection='${
               value.tot_col == "Y" ? "Y" : "N"
@@ -165,7 +165,7 @@ redirection_flag='${
               value.pay_mode_flag == "Y" ? "Y" : "N"}',qr_code_flag='${ 
               value.qr_code_flag == "Y" ? "Y" : "N"}',modified_by='${user_name}',updated_at='${datetime}'`
           : "(app_id,customer_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,gst_flag,pay_mode_flag,qr_code_flag,created_by,created_at)",
-      values = `('${value.app_id}','${value.cust_id}','${value.dev_type}','${
+      values = `('${value.app_id}','${value.cust_id}','H','${
         value.dev_mode
       }','${value.report_flag == "Y" ? "Y" : "N"}','${
         value.tot_col == "Y" ? "Y" : "N"

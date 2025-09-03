@@ -77,11 +77,20 @@
                         </table>
 
                          <!-- Gorgeous Print Button -->
-                        <div class="text-end mt-3">
+                        <!-- <div class="text-end mt-3">
                           <button class="btn btn-gradient-print btn-sm px-4 shadow-sm" onclick="printDiv()">
                             <i class="fa fa-print me-2"></i> Print
                           </button>
-                        </div>
+                        </div> -->
+                                            
+      <div class="text-end mt-3">
+  <button class="btn btn-gradient-print btn-sm px-4 shadow-sm me-2 no-print" onclick="printDiv()">
+    <i class="fa fa-print me-2"></i> Print
+  </button>
+  <button class="btn btn-success btn-sm px-4 shadow-sm no-print" onclick="downloadExcel()">
+    <i class="fa fa-file-excel me-2"></i> Excel
+  </button>
+</div>
                     </div>
                 </div>
             </div>
@@ -140,6 +149,12 @@
 }
 .table-hover tbody tr:hover {
   background-color: rgba(13, 110, 253, 0.1);
+}
+    .btn-success {
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: white;
+  border-radius: 50px;
+  border: none;
 }
 </style>
 
@@ -324,6 +339,27 @@ $('#btnSubmit').on('click', function () {
 </script>
 
 <script>
+function downloadExcel() {
+    // Get the table element
+    var table = document.querySelector("#resultDiv table");
+
+    if (!table) {
+        alert("No data available to export!");
+        return;
+    }
+
+    // Convert table to worksheet
+    var workbook = XLSX.utils.book_new();
+    var worksheet = XLSX.utils.table_to_sheet(table);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Operator Report");
+
+    // Download Excel file
+    XLSX.writeFile(workbook, "Operator_Report.xlsx");
+}
+</script>
+
+<script>
     function printDiv() {
 
         var divToPrint = document.getElementById('resultDiv');
@@ -344,7 +380,7 @@ $('#btnSubmit').on('click', function () {
             '                                           th, td {text-align: left;}' +
             '.table .thead-dark th {color: #fff; background-color: #1c2d41;}' +
             ' tfoot{font-weight: 700; color: #000;}' +
-            ' .printBtnDate{display: none;}' +
+            ' .printBtnDate{display: none;}' + '.no-print{ display: none !important;}'+
             '                                         .border { border: 1px solid black; } ' +
             '                                         .bottom { bottom: 5px; width: 100%; position: fixed ' +
             '                                       ' +
@@ -353,9 +389,9 @@ $('#btnSubmit').on('click', function () {
         WindowObject.document.writeln(divToPrint.innerHTML);
         WindowObject.document.writeln('</body></html>');
         WindowObject.document.close();
-        // setTimeout(function () {
-        //     WindowObject.close();
-        // }, 10);
+        setTimeout(function () {
+            WindowObject.close();
+        }, 10);
 
     }
 </script>
