@@ -1,200 +1,211 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <!-- Bootstrap Toggle CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
 
 <!-- Bootstrap Toggle JS -->
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
 
+<style>
+  .btn-gradient {
+    background: linear-gradient(135deg,#e7b8d9, #7799d8); /* gradient colors */
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 35px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  body {
+    background: #f5f7fa;
+  }
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="card col-12">
-      <div class="card-body">
-        <div class="titleSec">
-          <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back"
-              style="cursor: pointer;">&nbsp;Device Edit Details</i></h2>
+  .card-custom {
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    border: none;
+    overflow: hidden;
+  }
+
+  .card-header-custom {
+    background: linear-gradient(135deg, #e7b8d9, #7799d8);
+    color: white;
+    padding: 20px;
+    border-bottom: none;
+  }
+
+  .card-header-custom h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .btn-primary {
+    border-radius: 30px;
+    padding: 8px 30px;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .cust-toggle1 {
+    margin-top: 15px;
+  }
+
+  .form-control {
+    border-radius: 12px;
+  }
+</style>
+
+<div class="container mt-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-11">
+      <div class="card card-custom">
+        
+        <!-- Card Header -->
+        <div class="card-header-custom d-flex align-items-center">
+          <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor:pointer;"></i>
+          <h2>Device Edit Details</h2>
         </div>
-        <form action="/superadmin/save_device_setting" id="myForm" method="post">
-          <div class="row">
-            <div class="form-group col-3">
-              <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
-              <select name="cust_id" class="form-control" id="cust_id" disabled>
-                <option value="">Select Customer Name</option>
-                <% customer.forEach(dt =>{ %>
-                  <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
-               <% }) %>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="dev_mode" class="text-dark"><b>Mode</b></label>
-                <select name="dev_mode" class="form-control" id="dev_mode" readonly>
-                  <option value="">Select Mode</option>
-                  <option value="D" <% if (data[0].dev_mod === 'D') { %>selected<% } %>>Dual</option>
-                  <option value="F" <% if (data[0].dev_mod === 'F') { %>selected<% } %>>Fixed</option>
+
+        <!-- Card Body -->
+        <div class="card-body p-4">
+          <form action="/superadmin/save_device_setting" id="myForm" method="post">
+            <div class="row g-4">
+
+              <div class="col-md-3">
+                <label for="cust_id" class="form-label">Location Name</label>
+                <select name="cust_id" class="form-control" id="cust_id" disabled>
+                  <option value="">Select Location Name</option>
+                  <% customer.forEach(dt =>{ %>
+                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
+                      <%= dt.customer_name %>
+                    </option>
+                  <% }) %>
                 </select>
               </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="app_id" class="text-dark"><b>Device ID</b></label>
-                <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
-                  value="<%= data[0].app_id %>" readonly>
+
+              <div class="col-md-3">
+                <label for="dev_mode" class="form-label">Mode</label>
+                <select name="dev_mode" class="form-control" id="dev_mode" disabled>
+                  <!-- <option value="">Select Mode</option> -->
+                  <option value="D" <% if (data[0].dev_mod === 'D') { %>selected<% } %>>Dual</option>
+                  <!-- <option value="F" <% if (data[0].dev_mod === 'F') { %>selected<% } %>>Fixed</option> -->
+                </select>
               </div>
-            </div>
-            <div class="col-md-3 cust-toggle1">
-              <label for="gst_flag" class="text-dark"><b>GST Flag</b></label><br>
-              <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle"
+
+              <div class="col-md-3">
+                <label for="app_id" class="form-label">Device ID</label>
+                <input type="text" class="form-control" id="app_id" name="app_id"
+                  placeholder="Enter Device ID...." value="<%= data[0].app_id %>" readonly>
+              </div>
+
+              <div class="col-md-3 cust-toggle1">
+                <label for="gst_flag" class="form-label">GST Flag</label><br>
+                <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle"
                   data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="gst_flag" <%=(data[0].gst_flag=='Y' )?'checked':''%>
-              >
-          </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="dev_type" class="text-dark"><b>Device Type</b></label>
+                  name="gst_flag" <%=(data[0].gst_flag=='Y' )?'checked':''%>>
+              </div>
+
+              <div class="col-md-3">
+                <label for="dev_type" class="form-label">Device Type</label>
                 <select name="dev_type" class="form-control" id="dev_type">
                   <option value="">Select Device Type</option>
                   <option value="H" <% if (data[0].device_type === 'H') { %>selected<% } %>>Handheld Device</option>
                   <option value="M" <% if (data[0].device_type === 'M') { %>selected<% } %>>Mobile Device</option>
                 </select>
               </div>
-            </div>
 
-            <div class="col-md-3 cust-toggle1">
-              <label for="report_flag" class="text-dark"><b>Report Flag</b></label><br>
-              <input type="checkbox" value="Y" id="report_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Active" data-off="Deactive" name="report_flag" <%=(data[0].report_flag=='Y' )?'checked':''%>>
-            </div>
-            <div class="col-md-3 cust-toggle1">
-              <label for="tot_col" class="text-dark"><b>Total collection Flag</b></label><br>
-              <input type="checkbox" value="Y" id="tot_col" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Active" data-off="Deactive" name="tot_col" <%=(data[0].total_collection=='Y' )?'checked':''%>>
-            </div>
+              <!-- More Toggle Fields -->
+              <div class="col-md-3 cust-toggle1">
+                <label for="report_flag" class="form-label">Report Flag</label><br>
+                <input type="checkbox" value="Y" id="report_flag" data-toggle="toggle" 
+                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                  name="report_flag" <%=(data[0].report_flag=='Y' )?'checked':''%>>
+              </div>
 
-            <div class="col-md-3 cust-toggle1">
-              <label for="redirect_flag" class="text-dark"><b>Redirection</b></label><br>
-              <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Home" data-off="Back" name="redirect_flag" <%=(data[0].redirection_flag=='Y' )?'checked':''%>>
-            </div>
+              <div class="col-md-3 cust-toggle1">
+                <label for="tot_col" class="form-label">Total Collection</label><br>
+                <input type="checkbox" value="Y" id="tot_col" data-toggle="toggle" 
+                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                  name="tot_col" <%=(data[0].total_collection=='Y' )?'checked':''%>>
+              </div>
 
-            <div class="col-md-3 cust-toggle1">
-              <label for="grace_flag" class="text-dark"><b>Grace Period Flag</b></label><br>
-              <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Active" data-off="Deactive" name="grace_flag" <%=(data[0].grace_period_flag=='Y' )?'checked':''%>>
-            </div>
+              <div class="col-md-3 cust-toggle1">
+                <label for="redirect_flag" class="form-label">Redirection</label><br>
+                <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" 
+                  data-onstyle="success" data-offstyle="danger" data-on="Home" data-off="Back"
+                  name="redirect_flag" <%=(data[0].redirection_flag=='Y' )?'checked':''%>>
+              </div>
 
-            <div class="col-md-3" id="hide_grace">
-              <div class="form-group">
-                <label for="grace_value" class="text-dark"><b>Grace Value &nbsp;<span class=text-danger>(In
-                      Minute)</span></b></label>
+              <div class="col-md-3 cust-toggle1">
+                <label for="grace_flag" class="form-label">Grace Period Flag</label><br>
+                <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" 
+                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                  name="grace_flag" <%=(data[0].grace_period_flag=='Y' )?'checked':''%>>
+              </div>
+
+              <div class="col-md-3" id="hide_grace">
+                <label for="grace_value" class="form-label">Grace Value <span class="text-danger">(Minutes)</span></label>
                 <input type="text" name="grace_value" id="grace_value" class="form-control" value="<%= data[0].grace_value %>">
               </div>
-            </div>
 
-            <div class="col-md-3 cust-toggle1">
-              <label for="adv_pay_flag" class="text-dark"><b>Advance Flag</b></label><br>
-              <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Active" data-off="Deactive" name="adv_pay_flag" <%=(data[0].adv_pay=='Y' )?'checked':''%>>
-            </div>
+              <div class="col-md-3 cust-toggle1">
+                <label for="adv_pay_flag" class="form-label">Advance Flag</label><br>
+                <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" 
+                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                  name="adv_pay_flag" <%=(data[0].adv_pay=='Y' )?'checked':''%>>
+              </div>
 
-            <div class="col-md-3" id="hide_adv">
-              <div class="form-group">
-                <label for="adv_value" class="text-dark"><b>Advance Value &nbsp;</b></label>
+              <div class="col-md-3" id="hide_adv">
+                <label for="adv_value" class="form-label">Advance Value</label>
                 <input type="text" name="adv_value" id="adv_value" class="form-control" value="<%= data[0].adv_value %>">
               </div>
-            </div>
 
-            <div class="col-md-3 cust-toggle1">
-              <label for="pay_mode_flag" class="text-dark"><b>Pay Mode Flag</b></label><br>
-              <input type="checkbox" value="Y" id="pay_mode_flag" data-toggle="toggle"
+              <div class="col-md-3 cust-toggle1">
+                <label for="pay_mode_flag" class="form-label">Pay Mode Flag</label><br>
+                <input type="checkbox" value="Y" id="pay_mode_flag" data-toggle="toggle" 
                   data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
                   name="pay_mode_flag" <%=(data[0].pay_mode_flag=='Y' )?'checked':''%>>
-          </div>
-          <div class="col-md-3 cust-toggle1">
-            <label for="qr_code_flag" class="text-dark"><b>QR Code Flag</b></label><br>
-            <input type="checkbox" value="Y" id="qr_code_flag" data-toggle="toggle" data-onstyle="success"
-              data-offstyle="danger" data-on="Active" data-off="Deactive" name="qr_code_flag" <%=(data[0].qr_code_flag=='Y' )?'checked':''%>>
-          </div>
-          </div>
-          <div class="row mt-3">
-            <input type="hidden" name="id" value="<%= id %>">
-            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+              </div>
 
-            <div class="form-group col-md-5"></div>
-            <div class="form-group col-md-7">
-              <input type="submit" value="SUBMIT" class="btn btn-primary" style="border-radius: 6px;" />
+              <div class="col-md-3 cust-toggle1">
+                <label for="qr_code_flag" class="form-label">QR Code Flag</label><br>
+                <input type="checkbox" value="Y" id="qr_code_flag" data-toggle="toggle" 
+                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
+                  name="qr_code_flag" <%=(data[0].qr_code_flag=='Y' )?'checked':''%>>
+              </div>
+
             </div>
-          </div>
-        </form>
+
+            <!-- Submit Section -->
+            <div class="row mt-4">
+              <div class="col text-center">
+                <input type="hidden" name="id" value="<%= id %>">
+                <input type="hidden" name="cust_id" value="<%= customer_id %>">
+                <button type="submit" class="btn btn-primary btn-gradient">SUBMIT</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
-
-<script>
-  $('#grace_flag').on('change', function () {
-      if ($(this).is(':checked')) {
-          $('#hide_grace').show()
-          $('#grace_value').attr('required', 'required')
-      } else {
-          $('#grace_value').removeAttr('required')
-          $('#grace_value').val('00')
-          $('#hide_grace').hide()
-      }
-  })
-</script>
-
-<script>
-  $('#adv_pay_flag').on('change', function () {
-      if ($(this).is(':checked')) {
-          $('#hide_adv').show()
-          $('#adv_value').attr('required', 'required')
-      } else {
-          $('#adv_value').removeAttr('required')
-          $('#adv_value').val('00')
-          $('#hide_adv').hide()
-      }
-  })
-</script>
-
 <script>
   $(document).ready(function () {
-      <% if (data.grace_period_flag != 'Y') { %>
-          $('#grace_value').removeAttr('required')
-          $('#grace_value').val('00')
-          $('#hide_grace').hide()
-              <% } %>
-      <% if (data.adv_pay != 'Y') { %>
-          $('#adv_value').removeAttr('required')
-          $('#adv_value').val('00')
-          $('#hide_adv').hide()
-              <% } %>        
-                  $("#back").click(function () {
-                      window.location.href = "/superadmin/device_setting";
-                  });
-  });
-</script>
-
-<script>
-  $(document).ready(function () {
-    $('#gst_flag').bootstrapToggle();
-    $('#adv_pay_flag').bootstrapToggle();
-
-    $('#gst_flag').on('change', function () {
-      if ($(this).prop('checked')) {
-        $('#adv_pay_flag').bootstrapToggle('off'); 
-      } else {
-      //   $('#adv_pay_flag').bootstrapToggle('on'); 
-      }
+    $("#back").click(function () {
+      window.location.href = "/superadmin/device_setting";
     });
-
-  //   $('#adv_pay_flag').on('change', function () {
-  //     if ($(this).prop('checked')) {
-  //       $('#gst_flag').bootstrapToggle('off'); 
-  //     } else {
-  //       $('#gst_flag').bootstrapToggle('on'); 
-  //     }
-  //   });
   });
 </script>

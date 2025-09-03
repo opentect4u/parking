@@ -1,95 +1,182 @@
-<div class="container-fluid">
-    <div class="row">
-      <div class="card col-12">
-        <div class="card-body">
-          <div class="titleSec">
-             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Operator Edit Details</i></h2>
-          </div> 
-          <form action="/superadmin/operator_save" id="myForm" method="post">
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
-                        <select name="cust_name" class="form-control" id="cust_name" disabled>
-                            <option value="">Select Customer Name</option>
-                            <% customer.forEach(dt =>{ %>
-                                <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
-                             <% }) %>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="seller_name" class="text-dark"><b>Seller Name</b></label>
-                        <select name="seller_name" class="form-control" id="seller_name">
-                            <option value="">Select Seller Name</option>
-                            <% seller.forEach(dt => { %>
-                              <option value="<%= dt.seller_id %>" <%= dt.seller_id == data[0].seller_id ? 'selected' : '' %>><%= dt.seller_name %></option>
-                              <% }) %>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="op_name" class="text-dark"><b>Operator Name</b></label>
-                      <input type="text" class="form-control" id="op_name" name="op_name" value="<%= data[0].operator_name %>">
-                    </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="mobile" class="text-dark"><b>Mobile No</b></label>
-                        <input type="text" class="form-control" id="mobile" name="mobile" value="<%= data[0].user_id %>" readonly>
-                      </div>
-                      </div>
-                      <div class="col-md-6">
-                          <div class="form-group">
-                          <label for="loc_name" class="text-dark"><b>Location Name</b></label>
-                            <select name="loc_name" class="form-control" id="loc_name">
-                              <option value="">Select Location Name</option>
-                              <% location.forEach(dt => { %>
-                                <option value="<%= dt.location_id %>" <%= dt.location_id == data[0].location_id ? 'selected' : '' %>><%= dt.loction %></option>
-                              <% })%>
-                            </select>
-                          </div>
-                          </div> 
-                          <div class="col-md-6">
-                              <div class="form-group">
-                                <label for="dev_id" class="text-dark"><b>Device ID</b></label>
-                                <input type="text" class="form-control" id="dev_id" name="dev_id" value="<%= data[0].device_id %>">
-                              </div>
-                              </div>
-                              <div class="form-group col-6">
-                                  <label for="pwd" class="text-dark"><b>Password:</b></label>
-                                  <div class="input-group">
-                                    <input type="password" class="form-control" name="pwd" id="pwd" value="" placeholder="Enter Password">
-                                    <div class="input-group-append">
-                                      <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                        <i class="fa fa-eye-slash"></i>
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div> 
-              </div>
-              <div class="row mt-3">
-                <input type="hidden" name="id" value="<%= id %>">
-                <input type="hidden" name="cust_id" value="<%= customer_id %>">
+<div class="container-fluid py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-md-8">
+      <!-- Card -->
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border-radius: 20px;">
+        
+        <!-- Card Header -->
+        <div class="card-header text-white d-flex align-items-center justify-content-between"
+             style="background: linear-gradient(135deg, #e7b8d9, #7799d8); border-radius: 20px 20px 0 0;">
+          <h4 class="mb-0">
+            <i class="fa fa-arrow-circle-left me-2" aria-hidden="true" id="back" style="cursor: pointer;"></i>
+            Operator Edit Details
+          </h4>
+        </div>
 
-                  <div class="form-group col-md-5"></div>
-                  <div class="form-group col-md-7">
-                          <input type="submit" value="SUBMIT" class="btn btn-primary"
-                            style="border-radius: 6px;" />
-                        </div>
+        <!-- Card Body -->
+        <div class="card-body p-4">
+          <form action="/superadmin/operator_save" id="myForm" method="post">
+            <div class="row gx-2 gy-3 align-items-end">
+              
+              <!-- Customer Name -->
+              <div class="col-md-6">
+                <label for="cust_name" class="form-label fw-semibold text-dark">Location Name</label>
+                <select name="cust_name" class="form-select custom-input" id="cust_name" disabled>
+                  <option value="">Select Location Name</option>
+                  <% customer.forEach(dt =>{ %>
+                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
+                      <%= dt.customer_name %>
+                    </option>
+                  <% }) %>
+                </select>
               </div>
+
+              <!-- Operator Name -->
+              <div class="col-md-6">
+                <label for="op_name" class="form-label fw-semibold text-dark">Operator Name</label>
+                <input type="text" class="form-control custom-input" id="op_name" name="op_name" value="<%= data[0].operator_name %>">
+              </div>
+
+              <!-- Mobile No -->
+              <div class="col-md-6 mt-3">
+                <label for="mobile" class="form-label fw-semibold text-dark">Mobile No</label>
+                <input type="text" class="form-control custom-input" id="mobile" name="mobile" value="<%= data[0].user_id %>" readonly>
+              </div>
+
+              <!-- Device ID -->
+              <div class="col-md-6 mt-3">
+                <label for="dev_id" class="form-label fw-semibold text-dark">Device ID</label>
+                <input type="text" class="form-control custom-input" id="dev_id" name="dev_id" value="<%= data[0].device_id %>">
+              </div>
+
+              <!-- Password -->
+              <div class="col-md-6 mt-3">
+  <label for="pwd" class="form-label fw-semibold text-dark">Password</label>
+  <div class="input-group">
+    <input type="password" class="form-control custom-input" name="pwd" id="pwd" placeholder="Enter Password">
+    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+      <i class="fa fa-eye-slash"></i>
+    </button>
+  </div>
+</div>
+
+            </div>
+
+            <!-- Hidden Fields -->
+            <input type="hidden" name="id" value="<%= id %>">
+            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+            <!-- Submit -->
+            <div class="text-center mt-4">
+              <button type="submit" class="btn gradient-btn px-5 py-2 shadow-sm">
+                <i class="fa fa-save me-2"></i> Save Changes
+              </button>
+            </div>
           </form>
         </div>
+
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    $(document).ready(function () {
-      $("#back").click(function () {
-        window.location.href = "/superadmin/operator";
-      });
+<!-- Styles -->
+<style>
+/* Card */
+.card {
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: none;
+  background: #fff;
+}
+
+/* Card Header */
+.card-header {
+  background: linear-gradient(135deg, #d6a4e7, #7799d8);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 16px 16px 0 0 !important;
+  padding: 12px 20px;
+}
+
+/* Input & Select */
+.custom-input {
+  border-radius: 8px 0 0 8px;  /* left side rounded */
+  padding: 8px 12px;
+  font-size: 14px;
+  height: 38px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  width: 100%;
+}
+
+.custom-input:focus {
+  border-color: #7799d8;
+  box-shadow: 0 0 6px rgba(119, 153, 216, 0.3);
+  outline: none;
+}
+
+/* Password input group */
+.input-group .form-control {
+  height: 38px;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px 0 0 8px;
+}
+
+.input-group .btn {
+  height: 38px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-left: none;           /* merge with input */
+  border-radius: 0 8px 8px 0;  /* right side rounded */
+  background-color: #f8f9fa;
+}
+
+.input-group .btn:hover {
+  background-color: #e9ecef;
+}
+
+/* Save Button */
+.gradient-btn {
+  background: linear-gradient(135deg, #d6a4e7, #7799d8);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 28px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.gradient-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(119, 153, 216, 0.4);
+}
+
+
+</style>
+
+<script>
+  $(document).ready(function () {
+    $("#back").click(function () {
+      window.location.href = "/superadmin/operator";
     });
-  </script>
+
+    // Password toggle
+    $("#togglePassword").click(function () {
+      const input = $("#pwd");
+      const icon = $(this).find("i");
+      if (input.attr("type") === "password") {
+        input.attr("type", "text");
+        icon.removeClass("fa-eye-slash").addClass("fa-eye");
+      } else {
+        input.attr("type", "password");
+        icon.removeClass("fa-eye").addClass("fa-eye-slash");
+      }
+    });
+  });
+</script>

@@ -1,8 +1,8 @@
 <div class="container-fluid py-4" style="background: #f5f7fa;">
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <div class="card shadow-sm rounded-4 border-0">
-        <div class="card-header bg-gradient text-white rounded-top-4 py-2">
+      <div class="card shadow-sm border-0 rounded-card">
+        <div class="card-header bg-gradient text-white py-2">
           <h4 class="mb-0">
             <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor: pointer;"></i>
             Vehicle Rate Edit Details
@@ -91,6 +91,24 @@
 
 <!-- Custom Styles -->
 <style>
+.rounded-card {
+  border-radius: 25px; /* Full card rounding */
+  overflow: hidden;    /* Ensures header & body respect border radius */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rounded-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+
+/* Optional: make the header rounded top corners consistent */
+.card-header.bg-gradient {
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
   .btn-gradient {
     background: linear-gradient(45deg, #dbbcda, #5568c0);
     color: #fff;

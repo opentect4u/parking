@@ -1,39 +1,42 @@
 <div class="container-fluid py-5">
   <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border-radius: 15px;">
+    <div class="col-lg-10 col-md-8">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border-radius: 20px;">
         
-        <!-- Card Header with Linear Gradient -->
+        <!-- Card Header -->
         <div class="card-header text-white d-flex align-items-center justify-content-between" 
-             style="background: linear-gradient(135deg, #e7b8d9, #7799d8)">
+             style="background: linear-gradient(135deg, #e7b8d9, #7799d8); border-radius: 20px 20px 0 0;">
           <h4 class="mb-0">
             <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor: pointer;"></i>
             Vehicle Edit Details
           </h4>
         </div>
         
-        <div class="card-body p-5">
-
+        <div class="card-body p-4">
           <form action="/superadmin/vehicle_save" id="myForm" method="post">
+            
+            <div class="row gx-2 gy-3 align-items-end"> <!-- reduced gap -->
+              
+              <!-- Location Name -->
+              <div class="col-md-6">
+                <label for="cust_name" class="form-label fw-bold">Location Name</label>
+                <select name="cust_name" id="cust_name" class="form-select custom-input" disabled>
+                  <option value="">Select Location Name</option>
+                  <% customer.forEach(dt =>{ %>
+                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
+                      <%= dt.customer_name %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
 
-            <!-- Customer Name -->
-            <div class="mb-4">
-              <label for="cust_name" class="form-label fw-bold"><b>Location Name</b></label>
-              <select name="cust_name" id="cust_name" class="form-select custom-input" disabled>
-                <option value="">Select Location Name</option>
-                <% customer.forEach(dt =>{ %>
-                  <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
-                    <%= dt.customer_name %>
-                  </option>
-                <% }) %>
-              </select>
-            </div>
+              <!-- Vehicle Name -->
+              <div class="col-md-6">
+                <label for="veh_name" class="form-label fw-bold">Vehicle Name</label>
+                <input type="text" class="form-control custom-input" id="veh_name" name="veh_name" 
+                       value="<%= data[0].vehicle_name %>" placeholder="Enter vehicle name">
+              </div>
 
-            <!-- Vehicle Name -->
-            <div class="mb-4">
-              <label for="veh_name" class="form-label fw-bold"><b>Vehicle Name</b></label>
-              <input type="text" class="form-control custom-input" id="veh_name" name="veh_name" 
-                     value="<%= data[0].vehicle_name %>" placeholder="Enter vehicle name">
             </div>
 
             <!-- Hidden Fields -->
@@ -41,7 +44,7 @@
             <input type="hidden" name="cust_id" value="<%= customer_id %>">
 
             <!-- Submit Button -->
-            <div class="d-flex justify-content-centered">
+            <div class="text-center mt-4">
               <button type="submit" class="btn gradient-btn px-5 py-2 shadow-sm">
                 <i class="fa fa-save me-2"></i> Save Changes
               </button>
@@ -55,18 +58,20 @@
 </div>
 
 <style>
-  /* Input & Select Gorgeous Style */
+  /* Compact Input & Select */
   .custom-input {
-    border-radius: 12px;
-    padding: 10px 15px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
     border: 1px solid #d1d1d1;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     transition: all 0.3s ease;
+    width: 100%;
   }
 
   .custom-input:focus {
     border-color: #4facfe;
-    box-shadow: 0 0 12px rgba(79, 172, 254, 0.5);
+    box-shadow: 0 0 8px rgba(79, 172, 254, 0.4);
     outline: none;
   }
 
@@ -76,13 +81,20 @@
     border: none;
     color: #fff;
     font-weight: 600;
-    border-radius: 18px;
-    transition: all 0.3s ease;
+    border-radius: 20px;
+    font-size: 16px;
+    /* transition: all 0.3s ease; */
   }
 
-  .gradient-btn:hover {
+  /* .gradient-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(56, 249, 215, 0.4);
+    box-shadow: 0 6px 12px rgba(56, 249, 215, 0.3);
+  } */
+
+  /* Remove extra gap between input columns */
+  .row.gx-2 > [class*='col-'] {
+    padding-left: 5px;
+    padding-right: 5px;
   }
 </style>
 

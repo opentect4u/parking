@@ -1,47 +1,63 @@
-<div class="container-fluid">
-  <div class="col-sm-12 col-md-12 col-lg-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="titleSec">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-lg rounded-4 border-0 p-3" style="border-radius: 20px;">
+        <!-- <div class="titleSec">
           <button type="button" class="btn btn-primary" id="myBtn"
             style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
-        </div>
-        <div class="row mt-4">
-          <h3 class="text-dark"><i data-feather="slack" class="feather-icon text-dark"></i>&nbsp;<b>Device Setting</b>
+        </div> -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="card-title mb-0 text-gradient fw-bold">
+            <i data-feather="slack" class="feather-icon text-dark"></i>&nbsp;<b>Device Setting</b>
           </h3>
+          <button type="button" class="btn btn-gradient" id="myBtn">
+            <i class="fa fa-plus"></i> Add
+          </button>
         </div>
-        <form action="/superadmin/device_setting" method="post">
-          <div class="row mt-4">
-            <div class="form-group col-md-4">
-              <label for="cust_name"><b style="color: black;">Customer Name:</b></label>
-              <select name="cust_name" class="form-control" id="cust_name" required>
-                <option value="">Select Customer Name</option>
-                <% customer.forEach(dt=> {
-                  var _selected = ''
-                  if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
-                  <option value="<%= dt.customer_id %>" <%=_selected %>><%= dt.customer_name %>
-                  </option>
-                  <% }) %>
-              </select>
-            </div>
-            <div class="form-group col-md-4">
-              <label for="dev_id_sel"><b style="color: black;">Device ID:</b></label>
-              <select name="dev_id" class="form-control" id="dev_id_sel" required>
-                <option value="">Select Device ID</option>
 
-              </select>
-            </div>
-            <div class="form-group col-md-4" style="margin-top: 30px;">
+        <form action="/superadmin/device_setting" method="post">
+          <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+  <label for="cust_name"><b style="color: black;">Location Name:</b></label>
+  <select name="cust_name" class="form-control custom-dropdown" id="cust_name" required>
+    <option value="">Select Location Name</option>
+    <% customer.forEach(dt=> {
+      var _selected = ''
+      if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
+      <option value="<%= dt.customer_id %>" <%=_selected %>><%= dt.customer_name %></option>
+    <% }) %>
+  </select>
+</div>
+
+<div class="col-md-4">
+  <label for="dev_id_sel"><b style="color: black;">Device ID:</b></label>
+  <select name="dev_id" class="form-control custom-dropdown" id="dev_id_sel" required>
+    <option value="">Select Device ID</option>
+  </select>
+</div>
+            <!-- <div class="form-group col-md-4" style="margin-top: 30px;">
               <button type="submit" class="btn btn-primary" style="border-radius: 5px;" id="submitBtn">Submit</button>
-            </div>
+            </div> -->
+             <div class="col-md-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-gradient ms-3" id="submitBtn">
+        <i class="fa fa-search"></i> Search
+      </button>
+    </div>
           </div>
         </form>
+
+
         <% if(selected.cust_id> 0){ %>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="table-responsive mt-3">
-                <table id="dataTable" class="table table-striped table-bordered no-wrap show_data">
-                  <thead>
+          <!-- <div class="row"> -->
+            <!-- <div class="col-md-12"> -->
+              <div class="table-responsive mt-4">
+                <table id="dataTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
+                  <thead class="custom-header text-center">
                     <tr>
                       <th class="text-center text-dark">Sl No.</th>
                       <th class="text-center text-dark">App ID</th>
@@ -69,13 +85,11 @@
                         </tr>
                         <% } %>
                   </tbody>
-                  <tfoot>
-
-                  </tfoot>
+                  <tfoot></tfoot>
                 </table>
               </div>
-            </div>
-          </div>
+            <!-- </div> -->
+          <!-- </div> -->
           <% } %>
       </div>
     </div>
@@ -89,6 +103,7 @@
 
 <!-- Bootstrap Toggle JS -->
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
+
 
 <div class="modal fade" id="myModal">
   <div class="modal-dialog modal-xl">
@@ -107,9 +122,9 @@
         <form action="/superadmin/save_device_setting" method="post" id="myForm">
           <div class="row">
             <div class="form-group col-3">
-              <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+              <label for="cust_id" class="text-dark"><b>Location Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
-                <option value="">Select Customer Name</option>
+                <option value="">Select Location Name</option>
                 <% customer.forEach(dt=> { %>
                   <option value="<%= dt.customer_id %>">
                     <%= dt.customer_name %>
@@ -365,3 +380,81 @@
 
 
 </script>
+
+<style>
+  .modal-lg-custom {
+  max-width: 60%;  /* Increase width as needed */
+}
+
+@media (max-width: 1200px) {
+  .modal-lg-custom {
+    max-width: 90%; /* Responsive for smaller screens */
+  }
+}
+
+  /* Gorgeous Gradient Select */
+.gorgeous-select {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  color: #1b1414;
+  background: linear-gradient(90deg, #8e2de2, #4a00e0); /* Purple gradient */
+  appearance: none; /* Remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: 0.3s;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 140,0 70,70' fill='%23fff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
+}
+
+.gorgeous-select:hover {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.gorgeous-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(142, 45, 226, 0.5);
+}
+
+.gorgeous-select option {
+  color: #000; /* Options text color */
+  background: #fff; /* Options background */
+}
+
+  .card {
+  border-radius: 20px; /* Make whole card rounded */
+  overflow: hidden;
+}
+
+.btn-gradient {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: #fff;
+  font-weight: 400;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+}
+
+#dataTable thead th {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: #fff;
+}
+
+#dataTable tbody tr:hover {
+  background-color: rgba(106, 17, 203, 0.08) !important;
+  transition: 0.3s;
+}
+
+.custom-dropdown {
+    border-radius: 12px !important; /* adjust as needed */
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+  }
+
+</style>

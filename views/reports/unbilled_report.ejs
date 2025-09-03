@@ -1,28 +1,28 @@
 <div class="container-fluid py-4">
   <div class="row justify-content-center">
-    <div class="col-lg-10">
-      <div class="card shadow-lg rounded-4 border-0 p-4" style="background: #f9f9f9;">
-        <h4 class="card-title mb-4 text-center text-primary"><%= title %></h4>
+    <div class="col-lg-12">
+      <div class="card shadow-lg rounded-4 border-0 p-4" style="background: linear-gradient(to right, #c5cedf, #bb9f9f00)">
+        <h3 class="card-title mb-4 text-center text-primary"><%= title %></h3>
         
         <!-- Search Form -->
         <div class="row g-3 align-items-end">
           <!-- From Date -->
           <div class="col-md-4">
-            <label for="frm_dt" class="form-label fw-bold text-dark">From Date</label>
+            <label for="frm_dt" class="form-label fw-bold text-dark"><b>From Date</b></label>
             <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
           </div>
 
           <!-- To Date -->
           <div class="col-md-4">
-            <label for="to_dt" class="form-label fw-bold text-dark">To Date</label>
+            <label for="to_dt" class="form-label fw-bold text-dark"><b>To Date</b></label>
             <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
           </div>
 
           <!-- Customer Select -->
           <div class="col-md-4">
-            <label for="custId" class="form-label fw-bold text-dark">Customer Name</label>
+            <label for="custId" class="form-label fw-bold text-dark"><b>Location Name</b></label>
             <select name="custId" class="form-select form-select-lg rounded-pill shadow-sm select-custom" id="custId">
-              <option value="">Select Customer Name</option>
+              <option value="">Select Location Name</option>
               <% if (data.msg && data.msg.length > 0) { %>
                 <% data.msg.forEach(customer => { %>
                   <option value="<%= customer.customer_id %>"><%= customer.customer_name %></option>
@@ -70,7 +70,7 @@
 
     <!-- Gorgeous Print Button -->
     <div class="text-end mt-3">
-      <button class="btn btn-gradient-print btn-sm px-4 shadow-sm" onclick="printDiv()">
+      <button class="btn btn-gradient-print btn-sm px-5 shadow-sm" onclick="printDiv()">
         <i class="fa fa-print me-2"></i> Print
       </button>
     </div>
@@ -93,7 +93,7 @@
 
 /* Optional: keep footer visible too */
 .table tfoot tr {
-  background-color: #f1f1f1;
+  background-color: #c0b9b9;
   font-weight: 700;
 }
     .btn-gradient-print {
@@ -102,13 +102,13 @@
   border: none;
   border-radius: 50px;
   font-weight: 500;
-  transition: all 0.3s;
+  /* transition: all 0.3s; */
 }
-.btn-gradient-print:hover {
-  /* background: linear-gradient(90deg, #feb47b, #ff7e5f); */
-  /* transform: scale(1.05); */
-  /* box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4); */
-}
+/* .btn-gradient-print:hover {
+  background: linear-gradient(90deg, #feb47b, #ff7e5f);
+  transform: scale(1.05); 
+  box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4);
+}  */
 .input-custom, .select-custom {
   transition: all 0.3s;
   border: 1px solid #ced4da;
@@ -124,12 +124,12 @@
   color: white;
   border: none;
   border-radius: 50px;
-  transition: all 0.3s;
+  /* transition: all 0.3s; */
 }
-.btn-gradient:hover {
+/* .btn-gradient:hover {
   background: linear-gradient(90deg, #2575fc, #6a11cb);
   transform: scale(1.05);
-}
+} */
 .table-hover tbody tr:hover {
   background-color: rgba(13, 110, 253, 0.1);
 }
@@ -141,11 +141,18 @@ $(document).ready(function() {
         var frm_dt = $('#frm_dt').val();
         var to_dt = $('#to_dt').val();
         var custId = $('#custId').val();
-        var custName = $('#custId option:selected').text();
+       var custName = $("#custId option:selected").text(); // Get selected location name
         // console.log(frm_dt,to_dt,custId);
         
 
         if(frm_dt !== '' && to_dt !== '' && custId !== '') {
+           $('#resultDiv').show();
+           $('#resultDiv table tbody').empty();
+
+            $('#searchCred').html(`<b>Unbilled Report of ${custName} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+
+
+
             $.ajax({
                 method: "POST",
                 url: "/report/get_unbilled_report",
@@ -155,11 +162,11 @@ $(document).ready(function() {
                 success: function (result) {
                     var res = JSON.parse(result);
                     var adv_amt_tot = 0;
-                    $('#resultDiv').show();
-                    $('#resultDiv table tbody').empty();
+                    // $('#resultDiv').show();
+                    // $('#resultDiv table tbody').empty();
 
                     if(res.suc > 0 && res.msg.length > 0) {
-                        $('#searchCred').html(`<b>Unbilled Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+                        // $('#searchCred').html(`<b>Unbilled Report of ${custName} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
                         //  $('#searchCred').html(`<b>Unbilled Report${custId ? ' of ' + custName : ''} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
                         let i = 1;
                         for(let dt of res.msg){

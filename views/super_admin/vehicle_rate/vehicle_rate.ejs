@@ -6,111 +6,84 @@
 <div class="container-fluid py-4">
   <div class="row">
     <div class="col-12">
-      <div class="card shadow-lg rounded-4 border-0">
-        <!-- <div class="titleSec">
-          <button type="button" class="btn btn-primary" id="myBtn"
-            style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
-        </div> -->
-        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+      <div class="card shadow-lg rounded-4 border-0 p-3" style="border-radius: 20px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
           <h3 class="card-title mb-0 text-gradient fw-bold">
             <i class="fas fa-ellipsis-h text-dark"></i>&nbsp;<b>Vehicle Rate</b>
           </h3>
-            <button type="button" class="btn btn-gradient" id="myBtn">
-              <i class="fa fa-plus"></i> Add
-            </button>
+          <button type="button" class="btn btn-gradient" id="myBtn">
+            <i class="fa fa-plus"></i> Add
+          </button>
         </div>
-        
-        <form action="/superadmin/vehicle_rate" method="post" class="p-3">
-          <div class="row g-3 align-items-end">
-            <div class="col-md-5">
-              <label for="cust_name_sel"><b style="color: black;">Location Name:</b></label>
-              <select name="cust_name" class="form-control custom-select" id="cust_name_sel" required>
-                <option value="">Select Location Name</option>
-                <% customer.forEach(dt=> {
-                  var _selected = ''
-                  if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
-                  <option value="<%= dt.customer_id %>" <%=_selected %>><%= dt.customer_name %>
-                  </option>
-                  <% }) %>
-              </select>
-            </div>
-            <!-- <div class="col-md-4">
-              <label for="rate_type_name"><b style="color: black;">Rate Type:</b></label>
-              <select name="rate_type_name" class="form-control" id="rate_type_name" disabled>
-                <option value="">Select Rate Type</option>
 
-              </select>
-              <input type="hidden" name="rate_type" value="">
-            </div> -->
-            <div class="col-md-5">
-              <label for="veh_id_sel"><b style="color: black;">Vehicle Name:</b></label>
-              <select name="veh_id" class="form-control" id="veh_id_sel" required>
-                <option value="">Select Vehicle Name</option>
+       <form action="/superadmin/vehicle_rate" method="post">
+  <div class="row g-3 align-items-end">
+ <div class="col-md-4">
+  <label for="cust_name_sel"><b style="color: black;">Location Name:</b></label>
+  <select name="cust_name" class="gorgeous-select" id="cust_name_sel" required>
+    <option value="">Select Location Name</option>
+    <% customer.forEach(dt=> {
+      var _selected = ''
+      if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
+      <option value="<%= dt.customer_id %>" <%=_selected %>><%= dt.customer_name %></option>
+    <% }) %>
+  </select>
+</div>
 
-              </select>
-            </div>
+<div class="col-md-4">
+  <label for="veh_id_sel"><b style="color: black;">Vehicle Name:</b></label>
+  <select name="veh_id" class="gorgeous-select" id="veh_id_sel" required>
+    <option value="">Select Vehicle Name</option>
+  </select>
+</div>
+
+
+    <div class="col-md-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-gradient ms-3" id="submitBtn">
+        <i class="fa fa-search"></i> Search
+      </button>
+    </div>
+  </div>
+</form>
+
+        <% if(selected.cust_id>0){ %>
+          <div class="table-responsive mt-4">
+            <table id="dataTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
+              <thead class="custom-header text-center">
+                <tr>
+                  <th class="text-center text-dark">Sl No.</th>
+                  <th class="text-center text-dark">Parking Fee</th>
+                  <th class="text-center text-dark">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if(data.length> 0){
+                  var i = 1
+                  data.forEach(dt => { %>
+                  <tr>
+                    <td class="text-center text-dark"><%= i %></td>
+                    <td class="text-center text-dark"><%= dt.vehicle_rate %></td>
+                    <td class="text-center text-dark">
+                      <a href='/superadmin/vehicle_edit_rate?customer_id=<%= selected.cust_id %>&id=<%= dt.sl_no %>' class='btn btn-info' style='border-radius:5px'>
+                        <i class='fa fa-edit'></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <% i++; }) 
+                } else { %>
+                  <tr>
+                    <td class="text-center text-danger" colspan="3">No data found</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
           </div>
-          <div class="row mt-4">
-            <!-- <button type="submit" class="btn btn-primary" style="border-radius: 5px;margin-left: 31vw;"
-              id="submitBtn">Submit</button> -->
-               <button type="submit" class="btn btn-gradient text-center" id="submitBtn">
-                <i class="fa fa-search"></i> Submit
-              </button>
-          </div>
-        </form>
-
-
-        <% if(selected.cust_id> 0){ %>
-          <!-- <div class="row" id=""> -->
-            <!-- <div class="col-md-12"> -->
-              <div class="table-responsive p-3">
-                <table id="dataTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
-                  <thead class="custom-header text-center">
-                    <tr>
-                      <th class="text-center text-dark">Sl No.</th>
-                      <!-- <th class="text-center text-dark">From Hour</th> -->
-                      <!-- <th class="text-center text-dark">To Hour</th> -->
-                      <th class="text-center text-dark">Parking Fee</th>
-                      <th class="text-center text-dark">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% if(data.length> 0){
-                      var i = 1
-                      data.forEach(dt => { %>
-                      <tr>
-                        <td class="text-center text-dark">
-                          <%= i %>
-                        </td>
-                        <!-- <td class="text-center text-dark">
-                          <%= dt.from_hour %>
-                        </td>
-                        <td class="text-center text-dark">
-                          <%= dt.to_hour %>
-                        </td> -->
-                        <td class="text-center text-dark">
-                          <%= dt.vehicle_rate %>
-                        </td>
-                        <td class="text-center text-dark"><a
-                            href='/superadmin/vehicle_edit_rate?customer_id=<%= selected.cust_id %>&id=<%= dt.sl_no %>'
-                            class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
-                      </tr>
-                      <% i++; }) }else{ %>
-                        <tr>
-                          <td class="text-center text-danger" colspan="3">No data found</td>
-                        </tr>
-                        <% } %>
-                  </tbody>
-                  <tfoot></tfoot>
-                </table>
-              </div>
-            </div>
-          </div>
-          <% } %>
+        <% } %>
       </div>
     </div>
   </div>
 </div>
+
 
 
 <div class="modal fade" id="myModal">
@@ -214,81 +187,73 @@ $(document).ready(function(){
 </script>
 
 <style>
-/* Gradient Button */
+  .modal-lg-custom {
+  max-width: 60%;  /* Increase width as needed */
+}
+
+@media (max-width: 1200px) {
+  .modal-lg-custom {
+    max-width: 90%; /* Responsive for smaller screens */
+  }
+}
+
+  /* Gorgeous Gradient Select */
+.gorgeous-select {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  color: #1b1414;
+  background: linear-gradient(90deg, #8e2de2, #4a00e0); /* Purple gradient */
+  appearance: none; /* Remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: 0.3s;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 140,0 70,70' fill='%23fff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
+}
+
+.gorgeous-select:hover {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.gorgeous-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(142, 45, 226, 0.5);
+}
+
+.gorgeous-select option {
+  color: #000; /* Options text color */
+  background: #fff; /* Options background */
+}
+
+  .card {
+  border-radius: 20px; /* Make whole card rounded */
+  overflow: hidden;
+}
+
 .btn-gradient {
   background: linear-gradient(45deg, #dbbcda, #6d83e2);
-  color: rgb(7, 5, 5);
+  color: #fff;
   font-weight: 400;
   border: none;
   padding: 10px 20px;
   border-radius: 30px;
-  margin-left: 30vw;
-  /* transition: 0.3s; */
-}
-/* .btn-gradient:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-  color: #fff;
-} */
-
-/* Gradient Text */
-.text-gradient {
-  background: linear-gradient(to right, #b983b8, #4355a7);;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
-/* Custom Table */
 #dataTable thead th {
   background: linear-gradient(45deg, #dbbcda, #6d83e2);
   color: #fff;
-  font-weight: 600;
 }
+
 #dataTable tbody tr:hover {
   background-color: rgba(106, 17, 203, 0.08) !important;
   transition: 0.3s;
 }
 
-/* Glassmorphism Modal */
-.glass-bg {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-}
-
-/* Form Controls */
-.form-control {
-  border-radius: 12px;
-  color: #0e0a0a;
-  /* padding: 12px; */
-}
-.custom-select option {
-  background: linear-gradient(45deg, #dbbcda, #6d83e2);
-  color: #0e0a0a;
-}
-.modal-lg-custom {
-  max-width: 50%;
-}
-.gradient-select {
-  background: linear-gradient(90deg, #8e2de2, #4a00e0); /* Purple gradient */
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
-  font-size: 14px;
-  appearance: none; /* removes default arrow */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.gradient-select option {
-  background: #fff; /* Dropdown list background */
-  color: #0e0a0a;      /* Dropdown list text */
-}
-
-.gradient-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(142, 45, 226, 0.5);
-}
 </style>

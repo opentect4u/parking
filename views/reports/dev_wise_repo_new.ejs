@@ -1,28 +1,28 @@
 <div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-lg-12">
-            <div class="card shadow-lg rounded-4 border-0 p-4" style="background: #f9f9f9;">
-                <h5 class="card-title mb-4 text-center text-primary">
+            <div class="card shadow-lg rounded-4 border-0 p-4" style= "background: linear-gradient(to right, #c5cedf, #bb9f9f00);">
+                <h3 class="card-title mb-4 text-center text-primary">
                     <%= title %>
-                </h5>
+                </h3>
                 <div class="row g-3 align-items-end">
 
                    <div class="col-md-4">
-                     <label for="frm_dt" class="form-label fw-bold text-dark">From Date</label>
+                     <label for="frm_dt" class="form-label fw-bold text-dark"><b>From Date</b></label>
                      <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
                     </div>
 
 
                    <!-- To Date -->
                     <div class="col-md-4">
-                      <label for="to_dt" class="form-label fw-bold text-dark">To Date</label>
+                      <label for="to_dt" class="form-label fw-bold text-dark"><b>To Date</b></label>
                       <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
                     </div>
 
                     <div class="col-md-4">
-                      <label for="custId" class="form-label fw-bold text-dark">Customer Name</label>
+                      <label for="custId" class="form-label fw-bold text-dark"><b>Location Name</b></label>
                       <select name="custId" class="form-select form-select-lg rounded-pill shadow-sm select-custom" id="custId">
-                        <option value="">Select Customer Name</option>
+                        <option value="">Select Location Name</option>
                         <% if (data.msg && data.msg.length > 0) { %>
                           <% data.msg.forEach(customer => { %>
                             <option value="<%= customer.customer_id %>"><%= customer.customer_name %></option>
@@ -96,7 +96,7 @@
 
 /* Optional: keep footer visible too */
 .table tfoot tr {
-  background-color: #f1f1f1;
+  background-color: #c0b9b9;
   font-weight: 700;
 }
     .btn-gradient-print {
@@ -234,8 +234,15 @@
     var frm_dt = $('#frm_dt').val()
     var to_dt = $('#to_dt').val()
     var custId = $('#custId').val()
+    var custName = $("#custId option:selected").text(); // Get selected location name
     
     if(frm_dt && to_dt && custId){
+      $('#resultDiv').show();
+      $('#resultDiv table tbody').empty();
+
+      $('#searchCred').html(`<b>Device Wise Report of ${custName} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+
+
         $.ajax({
             method: "POST",
             url: "/report/get_dev_wise_report_new",
@@ -249,11 +256,11 @@
                 var net_amt_tot = 0, base_amt_tot = 0, advance_amt_tot = 0,
                     cgst_amt_tot = 0, sgst_amt_tot = 0, paid_amt_tot = 0, cnt_tot = 0, tot_amt_tot = 0;
 
-                $('#resultDiv').show();
-                $('#resultDiv table tbody').empty();
+                // $('#resultDiv').show();
+                // $('#resultDiv table tbody').empty();
 
                 if(res.suc > 0 && res.msg.length > 0){
-                    $('#searchCred').html(`<b>Device Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+                    // $('#searchCred').html(`<b>Device Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
 
                     let i = 1;
                     for(let dt of res.msg){

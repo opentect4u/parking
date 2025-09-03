@@ -82,24 +82,96 @@ const customer_edit = async (req, res) => {
   }
 };
 
+// const save_add_customer = async (req, res) => {
+//   try {
+//     const schema = Joi.object({
+//       id: Joi.required(),
+//       sell_name: Joi.required(),
+//       cust_name: Joi.required(),
+//       loc_name: Joi.required(),
+//       phone: Joi.required(),
+//       email: Joi.required(),
+//       dev_mode: Joi.required(),
+//       no_device: Joi.required(),
+//       cust_type: Joi.required(),
+//       dev_type: Joi.optional(),
+//       password: Joi.optional(),
+//       cust_add: Joi.required(),
+//     });
+//     const { error, value } = schema.validate(req.body, { abortEarly: false });
+//     // console.log(value);
+//     if (error) {
+//       const errors = {};
+//       error.details.forEach((detail) => {
+//         errors[detail.context.key] = detail.message;
+//       });
+//       return res.json({ error: errors });
+//     }
+//     var user_name = req.session.user.userData.user_name;
+//     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var pwd = bcrypt.hashSync(value.password, 10);
+
+//     let fields =
+//         value.id > 0
+//           ? `seller_id='${value.sell_name}',customer_name='${value.cust_name}',location_id='${value.loc_name}',mobile_no='${value.phone}',email='${value.email}',cust_addr='${value.cust_add}',dev_mod='${value.dev_mode}',no_device='${value.no_device}',customer_type='${value.cust_type}',updated_by='${user_name}',updated_at='${datetime}'`
+//           : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,device_type,created_by,created_at)",
+//       values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','H','${user_name}','${datetime}')`;
+//     let res_dt = await db_Insert(
+//       "md_customer",
+//       fields,
+//       values,
+//       value.id > 0 ? `customer_id=${value.id}` : null,
+//       value.id > 0 ? 1 : 0
+//     );
+//     // res_dt['customer_id']=
+//     // console.log(res_dt,'ressss');
+//       var cust_id = value.id > 0 ? value.id : res_dt.lastId.insertId
+//     if(res_dt.suc > 0){
+//       let fields1 =
+//       value.id > 0
+//         ? `seller_id='${value.sell_name}',password='${pwd}',user_id='${value.phone}',updated_by='${user_name}',updated_at='${datetime}'`
+//         : "(seller_id,customer_id,user_type,password,user_id,allow_flag,created_by,created_at)",
+//     values1 = `('${value.sell_name}','${cust_id}','C','${pwd}','${value.phone}','Y','${user_name}','${datetime}')`;
+//     let user_dt = await db_Insert(
+//     "md_user",
+//     fields1,
+//     values1,
+//     value.id > 0 ? `id=${value.id}` : null,
+//     value.id > 0 ? 1 : 0
+//   );
+//     }
+
+//     // console.log("========customer==========", res_dt);
+//     req.flash(
+//       "success",
+//       value.id > 0 ? "Updated successfully" : "Saved successfully"
+//     );
+//     res.redirect("/superadmin/customer");
+//       // res.send(res_dt,'resssss')
+//   } catch (error) {
+//     // console.log(error);
+//     logger.error(err); // Log the error
+//     req.flash(
+//       "error",
+//       value.id > 0
+//         ? "Data not updated Successfully"
+//         : "Data not saved Successfully"
+//     );
+//     res.redirect("/superadmin/customer");
+//   }
+// };
+
 const save_add_customer = async (req, res) => {
   try {
     const schema = Joi.object({
       id: Joi.required(),
-      sell_name: Joi.required(),
       cust_name: Joi.required(),
-      loc_name: Joi.required(),
       phone: Joi.required(),
-      email: Joi.required(),
-      dev_mode: Joi.required(),
       no_device: Joi.required(),
-      cust_type: Joi.required(),
-      dev_type: Joi.optional(),
-      password: Joi.optional(),
       cust_add: Joi.required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    // console.log(value);
+    console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -109,54 +181,47 @@ const save_add_customer = async (req, res) => {
     }
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    var pwd = bcrypt.hashSync(value.password, 10);
+    // var pwd = bcrypt.hashSync(value.password, 10);
 
     let fields =
-        value.id > 0
-          ? `seller_id='${value.sell_name}',customer_name='${value.cust_name}',location_id='${value.loc_name}',mobile_no='${value.phone}',email='${value.email}',cust_addr='${value.cust_add}',dev_mod='${value.dev_mode}',no_device='${value.no_device}',customer_type='${value.cust_type}',updated_by='${user_name}',updated_at='${datetime}'`
-          : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,device_type,created_by,created_at)",
-      values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','H','${user_name}','${datetime}')`;
+        `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',updated_by='${user_name}',updated_at='${datetime}'`,
+      values = null;
     let res_dt = await db_Insert(
       "md_customer",
       fields,
       values,
-      value.id > 0 ? `customer_id=${value.id}` : null,
-      value.id > 0 ? 1 : 0
+     `customer_id=${value.id}`,
+      1
     );
     // res_dt['customer_id']=
     // console.log(res_dt,'ressss');
       var cust_id = value.id > 0 ? value.id : res_dt.lastId.insertId
-    if(res_dt.suc > 0){
-      let fields1 =
-      value.id > 0
-        ? `seller_id='${value.sell_name}',password='${pwd}',user_id='${value.phone}',updated_by='${user_name}',updated_at='${datetime}'`
-        : "(seller_id,customer_id,user_type,password,user_id,allow_flag,created_by,created_at)",
-    values1 = `('${value.sell_name}','${cust_id}','C','${pwd}','${value.phone}','Y','${user_name}','${datetime}')`;
-    let user_dt = await db_Insert(
-    "md_user",
-    fields1,
-    values1,
-    value.id > 0 ? `id=${value.id}` : null,
-    value.id > 0 ? 1 : 0
-  );
-    }
+  //   if(res_dt.suc > 0){
+  //     let fields1 =
+  //     value.id > 0
+  //       ? `seller_id='${value.sell_name}',password='${pwd}',user_id='${value.phone}',updated_by='${user_name}',updated_at='${datetime}'`
+  //       : "(seller_id,customer_id,user_type,password,user_id,allow_flag,created_by,created_at)",
+  //   values1 = `('${value.sell_name}','${cust_id}','C','${pwd}','${value.phone}','Y','${user_name}','${datetime}')`;
+  //   let user_dt = await db_Insert(
+  //   "md_user",
+  //   fields1,
+  //   values1,
+  //   value.id > 0 ? `id=${value.id}` : null,
+  //   value.id > 0 ? 1 : 0
+  // );
+  //   }
 
     // console.log("========customer==========", res_dt);
     req.flash(
-      "success",
-      value.id > 0 ? "Updated successfully" : "Saved successfully"
+      "success","Updated successfully"
     );
     res.redirect("/superadmin/customer");
       // res.send(res_dt,'resssss')
   } catch (error) {
-    // console.log(error);
-    logger.error(err); // Log the error
+    console.log(error);
+    // logger.error(err); // Log the error
     req.flash(
-      "error",
-      value.id > 0
-        ? "Data not updated Successfully"
-        : "Data not saved Successfully"
-    );
+      "error","Data not updated Successfully"    );
     res.redirect("/superadmin/customer");
   }
 };

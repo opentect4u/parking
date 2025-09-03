@@ -1,11 +1,11 @@
 <div class="container-fluid py-4" style="background: #f5f7fa;">
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <div class="card shadow-sm rounded-4 border-0">
-        <div class="card-header bg-gradient text-white rounded-top-4 py-2">
+      <div class="card shadow-sm rounded-4 border-0 full-rounded-card">
+        <div class="card-header bg-gradient text-white py-2">
           <h4 class="mb-0">
             <i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;"></i>
-           &nbsp;Customer Edit Details
+           &nbsp;Edit Location Details
           </h4>
          </div>
  
@@ -70,6 +70,20 @@
 </script>
 
 <style>
+  .full-rounded-card {
+  border-radius: 1.5rem; /* full rounded corners */
+  overflow: hidden;      /* ensures header and body follow the rounded corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.full-rounded-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.card-header.bg-gradient {
+  border-radius: 0; /* header will follow parent card radius via overflow:hidden */
+}
 .btn-gradient {
   background: linear-gradient(45deg, #dbbcda, #5568c0); /* purple to blue */
   color: #fff;

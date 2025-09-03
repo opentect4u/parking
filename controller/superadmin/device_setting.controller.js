@@ -151,8 +151,13 @@ const save_device = async (req, res) => {
             }',adv_value='${value.adv_value}',grace_period_flag='${
               value.grace_flag == "Y" ? "Y" : "N"
             }',grace_value='${
-              value.grace_value != "" ? `00:${value.grace_value}:00` : 0
-            }',redirection_flag='${
+            value.grace_value && value.grace_value.includes(":")
+    ? value.grace_value                      // already HH:MM:SS
+    : value.grace_value != "" 
+        ? `00:${value.grace_value.padStart(2, "0")}:00` // treat as minutes
+        : "00:00:00"
+}',
+redirection_flag='${
               value.redirect_flag == "Y" ? "Y" : "N"
             }',gst_flag='${ 
               value.gst_flag == "Y" ? "Y" : "N"

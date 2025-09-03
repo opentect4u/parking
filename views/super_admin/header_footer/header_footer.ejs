@@ -17,7 +17,7 @@
                     <thead>
                         <tr>
                             <th class="text-center text-dark">Sl No.</th>
-                            <th class="text-center text-dark">Customer Name</th>
+                            <th class="text-center text-dark">Location Name</th>
                             <th class="text-center text-dark">Action</th>
                         </tr>
                     </thead>
@@ -77,9 +77,9 @@
           <form action="/superadmin/save_header_footer" method="post" id="myForm">
             <div class="row">
               <div class="form-group col-9">
-                <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+                <label for="cust_id" class="text-dark"><b>Location Name:</b></label>
                 <select name="cust_id" class="form-control" id="cust_id">
-                  <option value="">Select Customer Name</option>
+                  <option value="">Select Location Name</option>
                   <% customer.forEach(dt => { %>
                     <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
                     <% }) %>
@@ -233,6 +233,91 @@
       </div>
     </div>
   </div>
+
+  <style>
+  /* Card styling */
+  /* Full card border radius */
+  .card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+
+  /* Gradient for table header */
+  #dataTable thead th {
+    background: linear-gradient(135deg, #dbbcda, #6d83e2);
+    color: white !important;
+    text-align: center;
+    font-weight: 600;
+    border: none;
+  }
+
+  /* Gradient row hover */
+  #dataTable tbody tr:hover {
+    background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+    color: #000;
+    transition: 0.3s ease-in-out;
+  }
+
+  /* Dropdown select inside modal */
+  select.form-control {
+    border-radius: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    background: linear-gradient(135deg, #ffffff, #f2f2f2);
+    color: #333;
+    font-weight: 500;
+  }
+
+  /* Submit button with gradient */
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    transform: scale(1.05);
+  }
+
+  /* Table styling */
+  .table {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* Dropdown styling */
+  .form-control {
+    border-radius: 12px !important;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+  }
+
+  /* Buttons */
+  .btn {
+    border-radius: 12px !important;
+    transition: 0.3s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Modal styling */
+  .modal-content {
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+</style>
+
 
 <script>
     $(document).ready(function () {

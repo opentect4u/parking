@@ -5,9 +5,9 @@
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 <div class="container-fluid py-4">
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow-lg rounded-4 border-0">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow-lg rounded-4 border-0 p-0 custom-card" style="background: linear-gradient(to right, #c5cedf, #bb9f9f00);">
           <!-- <div class="card-body"> -->
             <!-- <button type="button" class="btn btn-primary" id="myBtn"
               style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button> -->
@@ -212,6 +212,23 @@
 .gradient-select:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(142, 45, 226, 0.5);
+}
+.custom-card {
+  border-radius: 20px; /* Rounded corners for whole card */
+  overflow: hidden; /* Ensure inner elements respect the border-radius */
+}
+.card.p-0 {
+  padding: 0 !important;
+}
+#cust_name,
+#cust_name_modal {
+  color: #000 !important; /* Dark text */
+}
+
+/* Optional: keep placeholder lighter */
+#cust_name option:first-child,
+#cust_name_modal option:first-child {
+  color: #6c757d; /* light gray for placeholder */
 }
 </style>
 

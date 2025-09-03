@@ -12,12 +12,12 @@
           <form action="/superadmin/save_header_footer" id="myForm" method="post">
           <div class="row mt-4">
             <div class="form-group col-9">
-                <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
+                <label for="cust_id" class="text-dark"><b>Location Name:</b></label>
                 <select name="cust_id"
                 class="form-control"
                 id="cust_id" disabled
                 >
-                <option value="">Select Customer Name</option>
+                <option value="">Select Location Name</option>
                 <% customer.forEach(dt => { %>
                     <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
                     <% }) %>
@@ -244,7 +244,93 @@
     </div>
   </div>
 
- 
+ <style>
+  /* Card styling with gradient & radius */
+  .card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    border: none;
+  }
+
+  .card-body {
+    background: linear-gradient(135deg, #ffffff, #f3f4f7);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  /* Title section */
+  .titleSec h2 {
+    font-weight: 600;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Input & textarea fields */
+  .form-control, textarea.form-control {
+    border-radius: 12px !important;
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    font-size: 14px;
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    color: #333;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .form-control:focus, textarea.form-control:focus {
+    border: 1px solid #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    background: #fff;
+  }
+
+  /* Labels */
+  label.text-dark b {
+    font-size: 15px;
+    background: linear-gradient(90deg, #764ba2, #667eea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Submit button with gradient */
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    padding: 10px 20px;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    transform: scale(1.05);
+  }
+
+  /* Toggle section spacing */
+  .cust-toggle1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Character counter style */
+  .char-count {
+    font-size: 13px;
+    color: #555;
+  }
+#cust_id {
+  height: auto !important;         /* let browser adjust height */
+  line-height: normal !important;  /* reset Bootstrap’s forced line-height */
+  padding: 6px 12px !important;    /* enough space for text */
+  border-radius: 8px;              /* keep rounded */
+  background-position: right 10px center; /* fix arrow alignment */
+}
+
+
+</style>
+
 
   <script>
     $(document).ready(function () {
