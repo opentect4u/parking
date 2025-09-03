@@ -20,14 +20,34 @@ reportRouter.get("/details_report", AuthCheckedMW, async (req, res) => {
 
 reportRouter.get("/details_report_new", AuthCheckedMW, async (req, res) => {
   var customer = await getcustomerlist();
+  var custId = customer.length > 0 ? customer[0].cust_id : null;
+  var operator = [];
+    if (custId) {
+      operator = await getoperatorlist(custId);  // ✅ pass customer id
+    }
+
   var data = {
     title: "Detail Report",
     page_path: "reports/detail_report_new.ejs",
     dtFormat: dateFormat,
-    data: customer
+    data: customer,
+    operators: operator
   };
   res.render("common/layouts/main", data);
 });
+
+reportRouter.post("/get_operators_by_location", AuthCheckedMW, async (req, res) => {
+  try {
+    const { custId } = req.body;
+    const operators = await getoperatorlist(custId);  // ✅ pass custId
+    res.send({ suc: operators.length, msg: operators });
+  } catch (err) {
+    console.error(err);
+    res.send({ suc: 0, msg: [] });
+  }
+});
+
+
 
 reportRouter.post("/get_details_report", AuthCheckedMW, async (req, res) => {
   var custId = req.session.user.user_data.customer_id,
@@ -42,38 +62,89 @@ reportRouter.post("/get_details_report", AuthCheckedMW, async (req, res) => {
   res.send(res_dt);
 });
 
+// reportRouter.post(
+//   "/get_details_report_new",
+//   AuthCheckedMW,
+//   async (req, res) => {
+
+//     var data = req.body;
+//     console.log(data,'kk');
+    
+//     if(data.pay_mode == 'A'){
+//       var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name`,
+//       table_name =
+//         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
+//       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`,
+//       order = "ORDER BY a.receipt_no";
+//     var res_dt = await db_Select(select, table_name, whr, order);
+//     console.log(res_dt);
+//     res.send(res_dt);
+//     }else {
+//       var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name`,
+//       table_name =
+//         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
+//       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}' AND c.pay_mode = '${data.pay_mode}'`,
+//       order = "ORDER BY a.receipt_no";
+//     var res_dt = await db_Select(select, table_name, whr, order);
+//     console.log(res_dt);
+//     res.send(res_dt);
+//     }
+   
+//   }
+// );
+
 reportRouter.post(
   "/get_details_report_new",
   AuthCheckedMW,
   async (req, res) => {
-    // var custId = req.session.user.user_data.customer_id,
-      // userType = req.session.user.user_data.user_type;
+    try {
+      const data = req.body;
+      console.log(data, "kk");
 
-    var data = req.body;
-    console.log(data,'kk');
-    
-    if(data.pay_mode == 'A'){
-      var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name`,
-      table_name =
-        "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
-      whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`,
-      order = "ORDER BY a.receipt_no";
-    var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
-    res.send(res_dt);
-    }else {
-      var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt, c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name`,
-      table_name =
-        "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
-      whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}' AND c.pay_mode = '${data.pay_mode}'`,
-      order = "ORDER BY a.receipt_no";
-    var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
-    res.send(res_dt);
+      let select = `
+        a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no,
+        b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt,
+        c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name
+      `;
+
+      let table_name = `
+        td_vehicle_in a, td_vehicle_out b, td_receipt c,
+        md_vehicle d, md_user e, md_operator f
+      `;
+
+      let whr = `
+        a.receipt_no=b.receipt_no
+        AND a.receipt_no=c.receipt_no
+        AND a.vehicle_id=d.vehicle_id
+        AND a.user_id_in=e.id
+        AND e.user_id=f.user_id
+        AND a.car_out_flag='Y'
+        AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}'
+        AND a.customer_id='${data.custId}'
+      `;
+
+      // ✅ Handle filters
+      if (data.pay_mode && data.pay_mode !== "A") {
+        whr += ` AND c.pay_mode='${data.pay_mode}'`;
+      }
+
+      if (data.operator_id && data.operator_id !== "A") {
+        whr += ` AND f.operator_id='${data.operator_id}'`;
+      }
+
+      let order = "ORDER BY a.receipt_no";
+
+      let res_dt = await db_Select(select, table_name, whr, order);
+      console.log(res_dt);
+      res.send(res_dt);
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: "Server error" });
     }
-   
   }
 );
+
 const getcustomerlist = () => {
     return new Promise(async (resolve, reject) => {
        var select = "customer_id,customer_name",
@@ -83,6 +154,18 @@ const getcustomerlist = () => {
        var customer_data = await db_Select(select,table_name,where,order);
        console.log(customer_data);
         resolve(customer_data)
+    })
+  };
+
+  const getoperatorlist = (custId) => {
+    return new Promise(async (resolve, reject) => {
+       var select = "operator_id,operator_name",
+       table_name = "md_operator",
+       where = `customer_id = '${custId}'`,
+       order=null;
+       var operator_data = await db_Select(select,table_name,where,order);
+       console.log(operator_data);
+        resolve(operator_data)
     })
   };
 

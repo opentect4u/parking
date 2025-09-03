@@ -54,18 +54,18 @@
           <th>Machine Sl. No. In</th>
           <th>Vehicle Type</th>
           <th>Vehicle No.</th>
-          <th>Advance Amount</th>
+          <!-- <th>Advance Amount</th> -->
           <th>Operator Name</th>
         </tr>
       </thead>
       <tbody></tbody>
-      <tfoot>
+      <!-- <tfoot>
         <tr>
           <td colspan="6" class="fw-bold text-end">Total</td>
           <td id="tot_amt" class="fw-bold">0</td>
           <td></td>
         </tr>
-      </tfoot>
+      </tfoot> -->
     </table>
 
     <!-- Gorgeous Print Button -->
@@ -179,7 +179,6 @@ $(document).ready(function() {
                                     <td class=text-dark>${dt.device_id}</td>
                                     <td class=text-dark>${dt.vehicle_name}</td>
                                     <td class=text-dark>${dt.vehicle_no}</td>
-                                    <td class=text-dark>${dt.advance_amt == null ? 0 : dt.advance_amt}</td>
                                     <td class=text-dark>${dt.operator_name}</td>
                                 </tr>
                             `);
@@ -187,7 +186,7 @@ $(document).ready(function() {
                         }
                         $('#tot_amt').text(adv_amt_tot);
                     } else {
-                        $('#resultDiv table tbody').append('<tr><td colspan="8" class="text-center text-danger">No Data Found</td></tr>');
+                        $('#resultDiv table tbody').append('<tr><td colspan="7" class="text-center text-danger">No Data Found</td></tr>');
                         $('#tot_amt').text(adv_amt_tot);
                     }
                 },

@@ -1,12 +1,12 @@
 const AuthCheckedMW=(req, res,next)=>{
     try {
         if (!req.session.user){
-            res.redirect('/login')
+            res.redirect('/superadmin_login')
         }else{
             next()
         }
     } catch (error) {
-        res.redirect('/login')
+        res.redirect('/superadmin_login')
     }
 }
 

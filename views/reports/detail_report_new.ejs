@@ -39,17 +39,33 @@
       <option value="">Select Pay Mode</option>
       <option value="C">CASH</option>
       <option value="U">UPI</option>
-      <option value="A">All</option>
+      <option value="A" selected>All</option>
     </select>
   </div>
 </div>
-         <div class="row mt-4">
-          <div class="col text-center">
-            <button type="button" class="btn btn-gradient btn-sm px-4 shadow-sm" id="btnSubmit">
-              <i class="fa fa-search me-1"></i> Search
-            </button>
-          </div>
-        </div>
+<div class="row mt-3 align-items-end">
+  <!-- Operator Select -->
+  <div class="col-md-4">
+    <label for="operator_id" class="form-label fw-bold text-dark"><b>Operator Name</b></label>
+    <select name="operator_id" class="form-select rounded-pill shadow-sm select-custom" id="operator_id">
+      <option value="">Select Operator Name</option>
+      <!-- <option value="A" selected>All Operators</option> -->
+      <!-- <% if (operators.msg && operators.msg.length > 0) { %>
+        <% operators.msg.forEach(operator => { %>
+          <option value="<%= operator.operator_id %>"><%= operator.operator_name %></option>
+        <% }) %>
+      <% } %> -->
+    </select>
+  </div>
+
+  <!-- Search button beside -->
+<div class="col-md-2 d-flex align-items-end">
+    <button type="button" class="btn btn-gradient shadow-sm px-4" id="btnSubmit">
+      <i class="fa fa-search me-2"></i> Search
+    </button>
+  </div>
+</div>
+
 
 
                 <!-- <div class="card-body" id="resultDiv"> -->
@@ -166,6 +182,12 @@
 .table-hover tbody tr:hover {
   background-color: rgba(13, 110, 253, 0.1);
 }
+#btnSubmit {
+  height: calc(2.25rem + 2px); /* default .form-select height */
+  font-size: 0.95rem;
+}
+
+
 </style>
 
     <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/dateFormat.min.js"></script>
@@ -292,9 +314,10 @@ console.log(cgst_tot,sgst_tot,'oiuy');
     var to_dt = $('#to_dt').val();
     var custId = $('#custId').val();
     var pay_mode = $('#pay_mode').val();
+    var operator_id = $('#operator_id').val();
     var custName = $("#custId option:selected").text(); // Get selected location name
 
-    if(frm_dt && to_dt && custId && pay_mode){
+    if(frm_dt && to_dt && custId && pay_mode, operator_id){
                 $('#resultDiv').show();
                 $('#resultDiv table tbody').empty();
 
@@ -303,7 +326,7 @@ console.log(cgst_tot,sgst_tot,'oiuy');
         $.ajax({
             method: "POST",
             url: "/report/get_details_report_new",
-            data: { frm_dt, to_dt, custId, pay_mode },
+            data: { frm_dt, to_dt, custId, pay_mode, operator_id },
             dataType: "json",  // IMPORTANT: tells jQuery to parse JSON automatically
             beforeSend: function () {
                 $(".preloader").fadeIn();
@@ -445,6 +468,41 @@ console.log(cgst_tot,sgst_tot,'oiuy');
 
     }
 </script> -->
+
+<script>
+  $('#custId').on('change', function () {
+    var custId = $(this).val();
+
+    if (custId) {
+        $.ajax({
+            method: "POST",
+            url: "/report/get_operators_by_location",
+            data: { custId },
+            dataType: "json",
+            beforeSend: function () {
+                $("#operator_id").html('<option value="">Loading...</option>');
+            },
+            success: function (res) {
+    if (res.msg && res.msg.suc > 0 && res.msg.msg.length > 0) {
+        let options = '<option value="">Select Operator Name</option><option value="A">All Operators</option>';
+        res.msg.msg.forEach(op => {
+            options += `<option value="${op.operator_id}">${op.operator_name}</option>`;
+        });
+        $("#operator_id").html(options);
+    } else {
+        $("#operator_id").html('<option value="">No Operator Found</option>');
+    }
+},
+            error: function () {
+                $("#operator_id").html('<option value="">Error loading operators</option>');
+            }
+        });
+    } else {
+        $("#operator_id").html('<option value="">Select Operator Name</option>');
+    }
+});
+
+</script>
 
 
 <script>
