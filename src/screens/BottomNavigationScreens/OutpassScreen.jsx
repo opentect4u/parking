@@ -302,6 +302,8 @@ useEffect(() => {
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
 
+      // console.log('pppppppppppppppppppppppppppppppppppp', gstPrice);
+
       vDatainfo.base_amount = baseAmount;
       vDatainfo.cgst = CGST;
       vDatainfo.sgst = SGST;
@@ -606,11 +608,9 @@ console.log(price, 'priceprice 2222');
     // ) {
       if(generalSettings.gst_flag === "Y"){
 
-        // console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
-        
-      // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
       totalRate = gstPrice.totalPrice || price;
+      
       
 
       const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;

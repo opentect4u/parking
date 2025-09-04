@@ -192,11 +192,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let advanceAmount = "";
     let qrcode = "";
     let gstAmount;
+    
 
     if (generalSettings.gst_flag == "Y") {
+
+      
     gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
+    
     // const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
-    // console.log(vehicleAdv, 'pppppppppppppppppppppppppppppppppppp', gstAmount.CGST, gstAmount.SGST);
+    
     
 
     }

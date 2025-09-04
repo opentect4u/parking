@@ -1,5 +1,6 @@
 // function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
 function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
+    
     let price = 0;
     let CGST = 0;
     let SGST = 0;

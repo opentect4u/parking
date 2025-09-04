@@ -282,7 +282,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
         navigation.goBack();
       } else if (device_Type_Check == "H") {
-        // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh', device_Type_Check);
+        // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh', data);
         try {
           let payloadHeader = "";
           let payloadBody = "";

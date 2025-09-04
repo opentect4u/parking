@@ -84,14 +84,14 @@ function BottomNavigation() {
       />
       )}
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="DublicatePrintScreen"
         options={{
           title: "Duplicate",
           tabBarIcon: ({ color, size }) => icons.duplicate(color, 30),
         }}
         component={DublicatePrintScreen}
-      />
+      /> */}
 
       {/*Setting Screen */}
       <Tab.Screen

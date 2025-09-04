@@ -1,5 +1,5 @@
 export default strings = {
-  company_name: "SYNERGIC SOFTEK SOL.PVT.LTD",
+  company_name: "V Park",
   app_name: "V Park",
   helper_text:
     "Please enter mobile number and your password to login to your account",

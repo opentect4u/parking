@@ -27,7 +27,7 @@ const ChangePasswordScreen = ({ navigation }) => {
   //   await changePassword(password, confirmPassword);
   // }
 
-  // console.log(password, 'Confirm__Pass', confirmPassword);
+  console.log('Confirm__Pass>>>>', loginStorage.getString("login-data"), 'Confirm__Pass');
 
   // loginData = JSON.parse(loginStorage.getString("login-data"));
   const loginDataString = loginStorage.getString("login-data");
