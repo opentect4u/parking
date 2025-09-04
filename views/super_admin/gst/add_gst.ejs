@@ -1,23 +1,35 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <div class="container-fluid">
-  <div class="col-sm-12 col-md-12 col-lg-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="titleSec">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-lg rounded-4 border-0">
+        <div class="card-body">
+        <!-- <div class="titleSec">
           <button type="button" class="btn btn-primary" id="myBtn"
             style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
-        </div>
-        <div class="row mt-4">
-          <h3 class="text-dark"><i data-feather="tag" class="feather-icon text-dark"></i>&nbsp;<b>GST</b>
+        </div> -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="card-title mb-0 text-gradient fw-bold">
+            <i data-feather="tag" class="feather-icon text-dark"></i>&nbsp;<b>GST</b>
           </h3>
+          <button type="button" class="btn btn-gradient" id="myBtn">
+              <i class="fa fa-plus"></i> Add
+            </button>
         </div>
-        <div class="row">
-          <div class="col-md-12">
+
+        <!-- <div class="row"> -->
+          <!-- <div class="col-md-12"> -->
+
             <div class="table-responsive mt-3">
-              <table id="dataTable" class="table table-striped table-bordered no-wrap show_data">
-                  <thead>
+              <table id="dataTable" class="table table-bordered align-middle table-striped shadow-sm">
+                  <thead class="table-light text-center custom-header">
                       <tr>
                           <th class="text-center text-dark">Sl No.</th>
-                          <th class="text-center text-dark">Customer Name</th>
+                          <th class="text-center text-dark">Location Name</th>
                           <th class="text-center text-dark">GST No.</th>
                           <th class="text-center text-dark">GST Flag</th>
                           <th class="text-center text-dark">Action</th>
@@ -55,12 +67,11 @@
                             <% } %>
                  
                   </tbody>
-                  <tfoot>
-                     
-                  </tfoot>
+                  <tfoot></tfoot>
               </table>
             </div>
-          </div>
+            <!-- </div> -->
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -71,18 +82,20 @@
   <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
   
   <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-lg-custom">
+      <div class="modal-content rounded-4 shadow-lg border-0 glass-bgt">
         <!-- Modal Header -->
-        <div class="modal-header">
-          <h3 class="modal-title text-dark"><i data-feather="user-plus" class="feather-icon"></i>&nbsp;&nbsp;<b>Add
+        <div class="modal-header border-0">
+          <h3 class="modal-title fw-bold text-dark">
+            <i data-feather="user-plus" class="feather-icon"></i>&nbsp;&nbsp;<b>Add
               GST</b>
           </h3>
-          <button type="button" class="close" data-dismiss="modal">
+          <!-- <button type="button" class="close" data-dismiss="modal">
             &times;
-          </button>
+          </button> -->
         </div>
   
         <!-- Modal body -->
@@ -91,23 +104,27 @@
             <div class = "row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="cust_name" class="text-dark"><b>Customer Name</b></label>
+                        <label for="cust_name" class="text-dark"><b>Location Name</b></label>
                         <select name="cust_name" class="form-control" id="cust_name">
-                            <option value="">Select Customer Name</option>
+                            <option value="">Select Location Name</option>
                             <% customer.forEach(dt => { %>
                               <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
                               <% }) %>
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-3">
+            <!-- </div> -->
+            <!-- <div class="row"> -->
+              <div class="col-md-6">
+                <div class="form-group">
                 <label for="gst_num" class="text-dark"><b>GST Number:</b></label>
                 <input type="text" class="form-control" name="gst_num" id="gst_num" value=""
                   placeholder="Enter GST Number">
+                  </div>
               </div>
-              <div class="form-group col-3">
+
+              <div class="col-md-6">
+                <div class="form-group">
                 <label for="total_gst" class="text-dark"><b>Total GST:</b></label>
                 <select name="total_gst" class="form-control" id="total_gst">
                   <option value="">Select Total GST</option>
@@ -117,21 +134,34 @@
                   <option value="18">18%</option>
                   <option value="28">28%</option>
                 </select>
+                </div>
               </div>
-              <div class="form-group col-3">
+
+              <div class="col-md-6">
+                <div class="form-group">
                 <label for="cgst" class="text-dark"><b>CGST:</b></label>
-                <input type="text" class="form-control" name="cgst" id="cgst" value="" placeholder="Enter CGST" readonly>
+                <!-- <input type="text" class="form-control" name="cgst" id="cgst" value="" placeholder="Enter CGST" readonly> -->
+                 <input type="text" class="form-control" id="cgst_display" value="" placeholder="Enter CGST" readonly>
+                 <input type="hidden" name="cgst" id="cgst">
+              </div>
               </div>
   
-              <div class="form-group col-3">
+              <div class="col-md-6">
+                <div class="form-group">
                 <label for="sgst" class="text-dark"><b>SGST:</b></label>
-                <input type="text" class="form-control" name="sgst" id="sgst" value="" placeholder="Enter SGST" readonly>
+                <!-- <input type="text" class="form-control" name="sgst" id="sgst" value="" placeholder="Enter SGST" readonly> -->
+                 <input type="text" class="form-control" id="sgst_display" value="" placeholder="Enter SGST" readonly>
+                 <input type="hidden" name="sgst" id="sgst">
               </div>
             </div>
+            </div>
+
             <div class="row mt-3">
-              <div class="form-group col-md-3">
-                <input type="submit" value="SUBMIT" class="btn btn-primary"
-                  style="margin-left: 32vw;border-radius: 5px;" />
+              <div class="form-group col-md-5"></div>
+              <div class="form-group col-md-0">
+                <!-- <input type="submit" value="SUBMIT" class="btn btn-primary"
+                  style="margin-left: 32vw;border-radius: 5px;" /> -->
+                  <input type="submit" value="SUBMIT" class="btn btn-primary" style="border-radius: 6px; background: linear-gradient(135deg, #c172a9, #7799d8)" />
               </div>
             </div>
           </form>
@@ -150,7 +180,7 @@
     });
   </script>
 
-<script>
+<!-- <script>
   $(document).ready(function () {
     $('#total_gst').change(function () {
       const gstValue = $(this).val();
@@ -165,4 +195,194 @@
       }
     });
   });
+</script> -->
+
+<script>
+  // $(document).ready(function () {
+  //   $('#total_gst').change(function () {
+  //     const gstValue = $(this).val();
+
+  //     if (gstValue) {
+  //       const gst = gstValue / 2;
+  //       $('#cgst').val(gst);
+  //       $('#sgst').val(gst);
+  //     } else {
+  //       $('#cgst').val('');
+  //       $('#sgst').val('');
+  //     }
+  //   });
+  // });
+  $('#total_gst').change(function () {
+  const gstValue = $(this).val();
+
+  if (gstValue) {
+    const gst = gstValue / 2;
+    // Show with % to user
+    $('#cgst_display').val(gst + '%');
+    $('#sgst_display').val(gst + '%');
+    // Send numeric values only
+    $('#cgst').val(gst);
+    $('#sgst').val(gst);
+  } else {
+    $('#cgst_display, #sgst_display, #cgst, #sgst').val('');
+  }
+});
 </script>
+
+<style>
+  #cust_name {
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    height: 43px;   /* makes it taller */
+    width: 100%;    /* keep it responsive */
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+  }
+
+  #cust_name:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+    outline: none;
+  }
+  .modal-body .form-control {
+    border-radius: 10px;
+    padding: 1.6rem 1rem;
+    border: 1px solid #ccc;
+    transition: 0.3s ease;
+}
+  .modal-lg-custom {
+  max-width: 50%; /* or set a specific width like 1000px */
+  max-height: 50%;
+}
+
+.modal-lg-custom .modal-content {
+  border-radius: 20px; /* optional, keep glass effect */
+}
+    #dataTable {
+    border: 2px solid #dee2e6; /* outer border */
+    border-radius: 10px;       /* rounded corners */
+    overflow: hidden;          /* smooth corners */
+  }
+
+  #dataTable th, #dataTable td {
+    border: 1px solid #dee2e6; /* inner cell borders */
+  }
+
+  #dataTable thead th {
+    background: linear-gradient(45deg,  #dbbcda, #6d83e2);
+    font-weight: 500;
+    /* text-transform: uppercase; */
+  }
+
+  #dataTable tbody tr:hover {
+    background-color: #f1f5ff !important;
+    transition: 0.3s;
+  }
+/* Gradient Button */
+.btn-gradient {
+  background: linear-gradient(135deg, #bf8eb0, #607cb1);
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  transition: 0.3s;
+}
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #bf8eb0, #607cb1);
+  transform: scale(1.05);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Card Gradient Title */
+.text-gradient {
+  background: linear-gradient(to right, #ced5db, #48b3b9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.custom-header {
+  background: linear-gradient(to right,  #cc86c9, #42b7bd);
+  color: #004d66;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
+}
+.table thead th {
+  border: none;
+}
+.table tbody tr:hover {
+  background: rgba(0, 242, 254, 0.08);
+  transition: 0.3s;
+  /* border-radius: 14px; */
+}
+
+/* Modal Glassmorphism */
+.glass-bg {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.dropdown-btn {
+  padding: 12px 16px;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 12px;
+  border: none;
+  background: white;
+  color: #0e0a0a;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%; left: 0;
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 5px;
+  z-index: 1000;
+}
+.dropdown-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    background: linear-gradient(135deg, #f2f0f5, #dad1e4);
+    color: #161212;
+    border-bottom: 11px solid rgba(255, 255, 255, 0.2);
+}
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+.dropdown-item:hover {
+  /* background: linear-gradient(135deg, #5b85bd, #36d1dc); */
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #1e4465, #48b3b9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* .modal-body .btn-primary {
+    background: linear-gradient(135deg, #e7b8d9, #7799d8);
+    border: none;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: 0.3s ease;
+    display: block;
+    margin: 1rem auto 0;
+    margin-right: 36vw;
+} */
+
+</style>

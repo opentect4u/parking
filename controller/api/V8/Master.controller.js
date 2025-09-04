@@ -212,6 +212,12 @@ const gst_list = async (req, res) => {
         // let where=`customer_id=${userData.customer_id} AND gst_flag='Y'`;
         let where = `customer_id=${userData.customer_id} AND gst_flag='Y'`;
         var data = await db_Select('gst_number,cgst,sgst', 'md_gst', where, null)
+        // console.log(data,'ju');
+        
+        data.suc > 0 ? data.msg.length > 0 ? data.msg.filter(dt => { 
+            dt['cgst'] = +dt['cgst']; 
+            dt['sgst'] = +dt['sgst']
+        }) : '' : ''
         res.json(sendOkResponce(data, null));
     } catch (error) {
         res.json(sendErrorResponce(error));

@@ -1,86 +1,152 @@
-<div class="container-fluid">
-    <div class="row">
-      <div class="card col-12">
-        <div class="card-body">
-          <div class="titleSec">
-             <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;GST Edit Details</i></h2>
-          </div> 
-          <form action="/superadmin/gst_save" id="myForm" method="post">
-            <div class="form-group col-9">
-                <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
-                <select name="cust_id"
-                class="form-control"
-                id="cust_id" disabled
-                >
-                <option value="">Select Customer Name</option>
-                <% customer.forEach(dt => { %>
-                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
-                    <% }) %>
-                </select>
-              </div>
-          <div class="row mt-4">
-            <div class="form-group col-3">
-                <label for="gst_num" class="text-dark"><b>GST Number:</b></label>
-                <input type="text" class="form-control" name="gst_num" id="gst_num" value="<%=data[0].gst_number %>" placeholder="Enter GST Number">
-              </div>
-              <div class="form-group col-3">
-                <label for="total_gst" class="text-dark"><b>Total GST:</b></label>
-                <select name="total_gst" class="form-control" id="total_gst">
-                  <option value="0" <%= data[0].total_gst=='0' ? 'selected' : '' %>>0%</option>
-                  <option value="5" <%= data[0].total_gst=='5' ? 'selected' : '' %>>5%</option>
-                  <option value="12" <%= data[0].total_gst=='12' ? 'selected' : '' %>>12%</option>
-                  <option value="18" <%= data[0].total_gst=='18' ? 'selected' : '' %>>18%</option>
-                  <option value="28" <%= data[0].total_gst=='28' ? 'selected' : '' %>>28%</option>
-              </select>
-              </div>
-              <div class="form-group col-3">
-                  <label for="cgst" class="text-dark"><b>CGST:</b></label>
-                  <input type="text" class="form-control" name="cgst" id="cgst" value="<%=data[0].cgst %>" placeholder="Enter CGST" readonly>
-                </div>
-  
-                <div class="form-group col-3">
-                  <label for="sgst" class="text-dark"><b>SGST:</b></label>
-                  <input type="text" class="form-control" name="sgst" id="sgst" value="<%=data[0].sgst %>" placeholder="Enter SGST" readonly>
-                </div>
-          </div>
-          <div class="row mt-4">
-            <input type="hidden" name="id" value="<%= id %>">
-            <input type="hidden" name="cust_id" value="<%= customer_id %>">
-            <div class="form-group col-md-3">
-                <input
-                  type="submit"
-                  value="SUBMIT"
-                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
-                />
-              </div>
-          </div>
-          </form>
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa, #e3e8ff); min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-lg border-0 rounded-4 form-card">
+        <!-- Header -->
+        <div class="card-header gradient-header text-white py-3">
+          <h4 class="mb-0 d-flex align-items-center">
+            <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor: pointer;"></i>
+            GST Edit Details
+          </h4>
         </div>
+
+        <!-- Form -->
+        <form action="/superadmin/gst_save" id="myForm" method="post" class="p-4">
+          <!-- Customer -->
+          <div class="form-group mb-4">
+            <label for="cust_id" class="form-label text-dark"><b>Customer Name:</b></label>
+            <select name="cust_id" class="form-control rounded-input" id="cust_id" disabled>
+              <option value="">Select Customer Name</option>
+              <% customer.forEach(dt => { %>
+                <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
+                  <%= dt.customer_name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- GST fields -->
+          <div class="row">
+            <div class="form-group col-md-3 mb-3">
+              <label for="gst_num" class="form-label text-dark"><b>GST Number:</b></label>
+              <input type="text" class="form-control rounded-input" name="gst_num" id="gst_num" value="<%=data[0].gst_number %>" placeholder="Enter GST Number">
+            </div>
+
+            <div class="form-group col-md-3 mb-3">
+              <label for="total_gst" class="form-label text-dark"><b>Total GST:</b></label>
+              <select name="total_gst" class="form-control rounded-input" id="total_gst">
+                <option value="0" <%= data[0].total_gst==0 ? 'selected' : '' %>>0%</option>
+                <option value="5" <%= data[0].total_gst==5 ? 'selected' : '' %>>5%</option>
+                <option value="12" <%= data[0].total_gst==12 ? 'selected' : '' %>>12%</option>
+                <option value="18" <%= data[0].total_gst==18 ? 'selected' : '' %>>18%</option>
+                <option value="28" <%= data[0].total_gst==28 ? 'selected' : '' %>>28%</option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-3 mb-3">
+              <label for="cgst" class="form-label text-dark"><b>CGST:</b></label>
+              <input type="text" class="form-control rounded-input readonly-field" name="cgst" id="cgst" value="<%=data[0].cgst %>" readonly>
+            </div>
+
+            <div class="form-group col-md-3 mb-3">
+              <label for="sgst" class="form-label text-dark"><b>SGST:</b></label>
+              <input type="text" class="form-control rounded-input readonly-field" name="sgst" id="sgst" value="<%=data[0].sgst %>" readonly>
+            </div>
+          </div>
+
+          <!-- Hidden -->
+          <input type="hidden" name="id" value="<%= id %>">
+          <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+          <!-- Submit -->
+          <div class="text-center mt-4">
+            <button type="submit" class="btn-gradient-pill">
+              <i class="fa fa-save me-2"></i> Submit
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-
-  <script>
-    $(document).ready(function () {
-      $("#back").click(function () {
-        window.location.href = "/superadmin/gst";
-      });
-    });
-  </script>
+</div>
 
 <script>
   $(document).ready(function () {
+    $("#back").click(function () {
+      window.location.href = "/superadmin/gst";
+    });
+
+    // Auto update CGST & SGST
     $('#total_gst').change(function () {
       const gstValue = $(this).val();
-
       if (gstValue) {
         const gst = gstValue / 2;
-        $('#cgst').val(gst + '%');
-        $('#sgst').val(gst + '%');
+        $('#cgst').val(gst);
+        $('#sgst').val(gst);
       } else {
-        $('#cgst').val('');
-        $('#sgst').val('');
+        $('#cgst, #sgst').val('');
       }
     });
   });
 </script>
+
+<style>
+/* Card */
+.form-card {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.form-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+/* Header gradient */
+.gradient-header {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  border: none;
+}
+
+/* Inputs */
+.rounded-input {
+  border-radius: 12px;
+  height: 45px;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db;
+  transition: all 0.3s ease;
+}
+.rounded-input:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 0.2rem rgba(106,17,203,0.25);
+}
+.readonly-field {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Gradient Button */
+.btn-gradient-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.btn-gradient-pill:hover {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+</style>

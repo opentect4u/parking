@@ -92,8 +92,8 @@ const save_add_gst = async (req, res) => {
   
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-        const fields = value.id > 0 ? `gst_number = '${value.gst_num}', total_gst = '${value.total_gst}', cgst = '${value.cgst}', sgst = '${value.sgst}', updated_by = '${value.cust_id}', updated_at = '${datetime}'` : "(customer_id,gst_flag,gst_type,gst_number,total_gst,cgst,sgst,created_by,created_at)",
-        values = `('${value.cust_name}','Y','I','${value.gst_num}','${value.total_gst}','${value.cgst}','${value.sgst}','${value.cust_name}','${datetime}')`
+        const fields = value.id > 0 ? `gst_number = '${value.gst_num}', total_gst = '${value.total_gst}', cgst = '${value.cgst}', sgst = '${value.sgst}', updated_by = '${value.cust_id}', updated_at = '${datetime}'` : "(customer_id,gst_flag,gst_type,gst_number,total_gst,cgst,sgst,created_by,created_at,updated_by,updated_at)",
+        values = `('${value.cust_name}','Y','I','${value.gst_num}','${value.total_gst}','${value.cgst}','${value.sgst}','${value.cust_name}','${datetime}','${value.cust_name}','${datetime}')`
         whr = value.id > 0 ? `customer_id='${value.cust_id}' AND gst_id='${value.id}'` : null,
         flag = value.id > 0 ? 1 : 0;
     var res_dt = await db_Insert("md_gst", fields, values, whr , flag);
