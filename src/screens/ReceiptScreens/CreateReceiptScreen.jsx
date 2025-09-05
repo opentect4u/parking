@@ -34,12 +34,18 @@ import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 // For Scanner
 import QRCode from 'react-native-qrcode-svg';
+import { RadioButton } from "react-native-radio-buttons-group";
+import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
+import { create } from "react-test-renderer";
 
 
 // import React, { useState, useEffect, useContext } from "react";
 
 const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
+
+  
+
   const isOnline = useContext(InternetStatusContext);
 
   const { carIn } = useCarIn();
@@ -58,6 +64,19 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const [radioState, setRadioState] = useState(false);
+  const [getPayMode, setPayMode] = useState('C');
+  const radioOptions = [
+    { label: 'Cash: ', value: 'C' },
+    { label: 'UPI: ', value: 'U' },
+  ];
+
+    const handleRadioSelect = (value) => {
+    setRadioState(!radioState);
+
+    setPayMode(value);
+  };
+
   // console.log(route.params, 'route.params__UTSAB');
   const { type, id, vehicle_rate, userId, operatorName, deviceId, fixedPriceData } = route.params;
 
@@ -67,6 +86,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [getdevice_type, setdevice_type] = useState();
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
+  const [currentShift, setCurrentShift] = useState("");
+
   // const [radioState, setRadioState] = useState(false);
   // const [getPayMode, setPayMode] = useState('C');
   // const radioOptions = [
@@ -75,7 +96,28 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   // ];
 
 
-  
+  const getCurrentShift = (shifts) => {
+    const now = new Date();
+    const currentTime = now.toTimeString().split(" ")[0]; // "HH:MM:SS"
+
+    for (let shift of shifts) {
+      const { f_time, t_time, shift_name } = shift;
+
+      if (f_time < t_time) {
+        // Normal case (doesn't cross midnight)
+        if (currentTime >= f_time && currentTime <= t_time) {
+          return shift_name;
+        }
+      } else {
+        // Cross midnight case (e.g., 20:01 → 04:59)
+        if (currentTime >= f_time || currentTime <= t_time) {
+          return shift_name;
+        }
+      }
+    }
+
+    return "No shift found";
+  }
 
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
@@ -107,7 +149,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // console.log(receiptSettings, 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
+    
+    const shift = getCurrentShift(receiptSettings?.shifts || []);
+    setCurrentShift(shift.toUpperCase());
+
+    // console.log('>>>',  shift.toUpperCase(), 'receiptSettingsxxxxxreceiptSettingsreceiptSettings', '/////');
     
     setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
     console.log("EFFECT - CreateReceiptScren");
@@ -189,15 +235,22 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     let GST_Yes_No = "";
     let GST_Header = "";
+    let GST_Print = "";
     let advanceAmount = "";
     let qrcode = "";
     let gstAmount;
+    let gstPrice = [];
     
+    const gstSettings = await handleGetGst();
 
     if (generalSettings.gst_flag == "Y") {
 
       
     gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
+    
+    // gstPrice = useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
+
+    // console.log(gstPrice, 'gstSettingsgstSettingsgstSettings', 'top', gstSettings[0], vehicleRate, generalSettings.gst_flag);
     
     // const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
     
@@ -237,16 +290,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
 
     // let vehicleRate = parseInt(fixedVehicleRateObject.vehicle_rate);
+    let vehicleRate = parseInt(fixedVehicleRateObject?.vehicle_rate);
+    let paidamt = vehicleRate;
     let vehicleId = parseInt(id);
 
-    let gstData = await handleGetGst();
 
+    // let gstData = await handleGetGst();
+    
+
+    
     await checkLocationEnabled();
-    // console.log(gstList, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk', generalSettings.gst_flag);
+    
     //vehicle data to update server
 
     // const currentTime___ = currentTime;
-  // console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
+ 
   
     // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
     // date 261124 // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
@@ -254,11 +312,50 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let carindata = "";
 
     if (generalSettings.gst_flag == "Y") {
-    carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
+    gstPrice = useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
+      // gstPrice = await useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
+      // const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+    console.log(gstList, 'gstSettingsgstSettingsgstSettings', 'on', gstPrice?.price);
+
+    // carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
+
+    carindata = await carIn(
+    vehicleId, 
+    vehicleNumber, 
+    vehicleRate, // ADDDDDDDDDD
+    paidamt, // ADDDDDDDDDD
+    // vehicleAdv,  // REMOVED
+    generalSettings.gst_flag, 
+    gstList.cgst, 
+    gstList.sgst,
+    gstPrice?.CGST,
+    gstPrice?.SGST,
+    gstList.other_charges,
+    getPayMode // ADDDDDDDDDD
+    );
+
     }
 
     if (generalSettings.gst_flag == "N") {
-      carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
+      
+      console.log(gstList, 'gstSettingsgstSettingsgstSettings', 'off');
+      // carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
+
+    carindata = await carIn(
+    vehicleId, 
+    vehicleNumber, 
+    vehicleRate, // ADDDDDDDDDD
+    paidamt, // ADDDDDDDDDD
+    // vehicleAdv,   // REMOVED
+    "N",
+    0, 
+    0,
+    0,
+    0,
+    0,
+    getPayMode // ADDDDDDDDDD
+    );
+
       }
 
     // if (generalSettings.gst_flag == "N") {
@@ -461,6 +558,20 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         // navigation.navigate("ReceiptScreen");
         } else if (device_Type_Check == "H") {
+
+        if (generalSettings.gst_flag == "Y") {
+        gstPrice = useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
+        }
+
+        console.log(gstPrice, 'gstSettingsgstSettingsgstSettings', 'jjjjj');
+        
+
+        // return
+
+        // const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+
+        // console.log(gstPrice, 'gstSettingsgstSettingsgstSettings', 'jjjjj');
+        
         ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
         ToastAndroid.LONG,
@@ -516,8 +627,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         if (generalSettings.gst_flag == "Y") {
           GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+
+          GST_Print += `[L]<font size='normal'>FARE : [R] ${gstPrice?.price}</font>\n` +
+        `[L]<font size='normal'>${"CGST @"+gstList?.cgst+'%'} : [R] ${gstPrice?.CGST}</font>\n` +
+        `[L]<font size='normal'>${"SGST @"+gstList?.sgst+'%'} : [R] ${gstPrice?.SGST}</font>\n`;
+
+          
         } else {
           GST_Header += ``;
+          GST_Print += ``;
         }
 
         if (receiptSettings.footer1_flag == 1) {
@@ -562,9 +680,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
         `[C]-------------------------------\n` +
         `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number}</font>\n` +
+
+        `${GST_Print}` +
+        
+        `[L]<font size='normal'>MISC CHARGES : [R] ${gstList.other_charges}</font>\n` +
+        `[L]<font size='normal'>YS Service Charges : [R] ${(Number(gstPrice?.totalPrice) + Number(gstList?.other_charges)).toFixed(2)}</font>\n` +
+
         `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
         `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-        `[L]<font size='normal'>YS Service Charges : [R] ${vehicle_rate}</font>\n\n` +
+        
         // `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n` +
 
         // `${gstShow_pos}` +
@@ -580,8 +704,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         
         `${qrcode}` +
         // `[C]${qrcode}\n` +
-        `[C]-------------------------------` +
-        `[C]${payloadFooter}\n`,
+        `[C]------------------------------\n` +
+        `[C]<font size='small'>PTU: SHIFT-${currentShift}:${loginData.user.userdata.msg[0].operator_name}</font>` +
+        `${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
         printerDpi: 120,
         printerWidthMM: 58,
@@ -778,6 +903,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             
           )}
 
+        {generalSettings.pay_mode_flag == "Y" && (
+        <View style={styles.radioButton_new}>
+        {radioOptions.map(option => (
+        <RadioButton
+        key={option.value}
+        label={option.label}
+        // labelStyle={styles.radioButtonText} // Apply text style
+        selected={option.value === getPayMode}
+        onPress={() => handleRadioSelect(option.value)}
+        customFont={20}
+        />
+        ))}
+        </View>
+         )} 
+
           {/* ......... vehicle Advance Amount .......... */}
 
           {/*............... action buttons ......... */}
@@ -825,6 +965,11 @@ const styles = StyleSheet.create({
   date_time_container: {
     flexDirection: "row",
     alignItems: "baseline",
+  },
+  radioButton_new:{
+    flexDirection:'row',lineHeight: 24, justifyContent: 'space-between',
+    marginTop:15,
+    paddingLeft:15, paddingRight:0, display:'inline',
   },
   date_time: {
     color: colors.black,

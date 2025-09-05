@@ -239,7 +239,7 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        // console.log(res.data.data.msg[0], 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
+        console.log(res.data.data.msg[0], 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
         
         setReceiptSettings(res.data.data.msg[0]);
       })

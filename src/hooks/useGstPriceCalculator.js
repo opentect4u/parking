@@ -1,6 +1,8 @@
 // function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
 function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
     
+    // console.log(gstSettings.gst_type, 'gstSettings.gst_type');
+    
     let price = 0;
     let CGST = 0;
     let SGST = 0;
@@ -40,26 +42,41 @@ function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
     
     
     // Inclusive GST
-    if (gst_flag === "Y") {
-
-        // console.log(gstSettings, 'yyyyyyyyyyyyccccccccccyyyyyyyyyyyyyyy', parkingFees);   
+    // if (gst_flag === "Y") {
 
     // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
-    // cgstAmount = sgstAmount = ((parkingFees - price)) / 2;
-    // SGST = cgstAmount;
-    // SGST = cgstAmount;
+    // cgstAmount = sgstAmount = ((parkingFees - price)) / 2
+    // CGST = parseFloat(cgstAmount.toFixed(2));
+    // SGST = parseFloat(cgstAmount.toFixed(2));
+
+    // }
+
+    // Exclusive GST
+if (gst_flag === "Y") {
+    const totalGstRate = gstSettings.cgst + gstSettings.sgst;
+
+    // Base price (before GST)
+    price = parkingFees;
+
+    let TotalGST = Math.round(price * (totalGstRate / 100));
+
+    console.log(price, 'ppppppppppppppppppppppppppppppppppppppppppppppppppppp', TotalGST);
     
-    // Calculate Amount on Due Amount
-    // parkingFees = parkingFees - advance
 
-    // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
+    // GST split equally into CGST & SGST
+    let cgstAmount = TotalGST / 2;
+    let sgstAmount = TotalGST / 2;
 
-    price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
-    cgstAmount = sgstAmount = ((parkingFees - price)) / 2
-    CGST = parseFloat(cgstAmount.toFixed(2));
-    SGST = parseFloat(cgstAmount.toFixed(2));
+    // Round off GST values
+    CGST = cgstAmount;
+    SGST = sgstAmount;
 
+    // Final total = base + CGST + SGST
+    totalPrice = price + CGST + SGST;
 }
+
+
+
 
     totalPrice = price + CGST + SGST
     totalPrice = Math.round(totalPrice)

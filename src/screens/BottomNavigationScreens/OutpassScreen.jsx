@@ -294,7 +294,7 @@ useEffect(() => {
     });
 
 
-      if(generalSettings.gst_flag === "Y"){
+    if(generalSettings.gst_flag === "Y"){
 
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
       totalRate = gstPrice.totalPrice || price;
