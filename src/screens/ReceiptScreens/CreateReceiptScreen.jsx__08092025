@@ -59,7 +59,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   const { dev_mod, adv_value } = generalSettings;
   const [vehicleNumber, setVehicleNumber] = useState("");
-  // const [vehicleAdv, setVehicleAdv] = useState(adv_value.toString() || ""); // 08/09/2025
+  const [vehicleAdv, setVehicleAdv] = useState(adv_value.toString() || "");
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -240,7 +240,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let GST_Yes_No = "";
     let GST_Header = "";
     let GST_Print = "";
-    // let advanceAmount = "";
+    let advanceAmount = "";
     let qrcode = "";
     let gstAmount;
     let gstPrice = [];
@@ -249,14 +249,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     
     
 
-    // if (generalSettings.gst_flag == "Y") {
+    if (generalSettings.gst_flag == "Y") {
       
-    // gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
+    gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
 
-    // console.log(gstAmount, 'gstAmountgstAmountgstAmount', vehicleAdv, gstList.sgst, gstList.cgst);
-    
-
-    // }
+    }
     
     if (loading == true) {
       return;
@@ -276,16 +273,16 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       );
     }
 
-  //   if (generalSettings.adv_pay == "Y"){
-  //   if (!vehicleAdv) {
-  //     setLoading(false);
-  //     return ToastAndroid.showWithGravity(
-  //       "Please add Advance Amount to continue.",
-  //       ToastAndroid.SHORT,
-  //       ToastAndroid.CENTER,
-  //     );
-  //   }
-  // }
+    if (generalSettings.adv_pay == "Y"){
+    if (!vehicleAdv) {
+      setLoading(false);
+      return ToastAndroid.showWithGravity(
+        "Please add Advance Amount to continue.",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    }
+  }
 
 
 
@@ -325,7 +322,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     if (generalSettings.gst_flag == "N") {
       
-      // console.log(gstList, 'gstSettingsgstSettingsgstSettings', 'off');
+      console.log(gstList, 'gstSettingsgstSettingsgstSettings', 'off');
       // carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
 
     carindata = await carIn(
@@ -415,10 +412,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         // }
 
-        // if (generalSettings.adv_pay == "Y") {
-        // // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
-        // advanceAmount += `${vehicleAdv}`;
-        // }
+        if (generalSettings.adv_pay == "Y") {
+        // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        advanceAmount += `${vehicleAdv}`;
+        }
 
 
         try {
@@ -468,15 +465,15 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         {}
       );
 
-      // if (generalSettings.adv_pay == "Y") {
+      if (generalSettings.adv_pay == "Y") {
 
-      //   await BluetoothEscposPrinter.printColumn(
-      //     [30],
-      //     [BluetoothEscposPrinter.ALIGN.LEFT],
-      //     [`ADVANCE : ${advanceAmount}`],
-      //     {}
-      //   );
-      // }
+        await BluetoothEscposPrinter.printColumn(
+          [30],
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          [`ADVANCE : ${advanceAmount}`],
+          {}
+        );
+      }
 
       await BluetoothEscposPrinter.printColumn(
         [30],
@@ -516,19 +513,17 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         setLoading(false);
 
         setVehicleNumber("");
-        // setVehicleAdv(adv_value.toString() || "");
+        setVehicleAdv(adv_value.toString() || "");
         }
         // navigation.navigate("ReceiptScreen");
 
         // navigation.navigate("ReceiptScreen");
         } else if (device_Type_Check == "H") {
 
+        if (generalSettings.gst_flag == "Y") {
+        gstPrice = useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
+        }
 
-          
-
-        // if (generalSettings.gst_flag == "Y") {
-        // gstPrice = useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
-        // }
         
         ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
@@ -611,9 +606,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         }
 
-        // if (generalSettings.adv_pay == "Y") {
-        // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
-        // }
+        if (generalSettings.adv_pay == "Y") {
+        advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        }
 
         if (generalSettings?.qr_code_flag == "Y") {
           // qrcode += `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
@@ -647,7 +642,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         // `${gstShow_pos}` +
 
-        // `${advanceAmount}` +
+        `${advanceAmount}` +
         // `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime,)}</font>\n` +
         // `${GST_Yes_No}` +
 
@@ -688,7 +683,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         setLoading(false);
 
         setVehicleNumber("");
-        // setVehicleAdv(adv_value.toString() || "");
+        setVehicleAdv(adv_value.toString() || "");
         }
         // navigation.navigate("ReceiptScreen");
 
@@ -699,7 +694,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
           setLoading(false);
           setVehicleNumber("");
-          // setVehicleAdv(adv_value.toString() || "");
+          setVehicleAdv(adv_value.toString() || "");
 
           ToastAndroid.showWithGravityAndOffset(
           "Sorry, Receipt Creation Failed, Allow Nearby Devices",
@@ -711,7 +706,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
           setLoading(true);
           setVehicleNumber("");
-          // setVehicleAdv(adv_value.toString() || "");
+          setVehicleAdv(adv_value.toString() || "");
 
           navigation.navigate("ReceiptScreen");
 
@@ -720,7 +715,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         if(device_Type_Check == "H"){
         setLoading(false);
         setVehicleNumber("");
-        // setVehicleAdv(adv_value.toString() || "");
+        setVehicleAdv(adv_value.toString() || "");
 
         ToastAndroid.showWithGravityAndOffset(
         "Sorry, Receipt Creation Failed",
@@ -732,7 +727,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         setLoading(true);
         setVehicleNumber("");
-        // setVehicleAdv(adv_value.toString() || "");
+        setVehicleAdv(adv_value.toString() || "");
 
         navigation.navigate("ReceiptScreen");
 
@@ -844,7 +839,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             />
           </View>
 
-          {/* {generalSettings?.adv_pay == "Y" && (
+          {generalSettings?.adv_pay == "Y" && (
             <View style={{ marginTop: normalize(20) }}>
               <Text style={styles.vehicle_text}>Vechicle Advance</Text>
               <RoundedInputComponent
@@ -855,7 +850,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
               />
             </View>
             
-          )} */}
+          )}
 
         {generalSettings.pay_mode_flag == "Y" && (
         <View style={styles.radioButton_new}>
