@@ -149,9 +149,12 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     
 
     if (generalSettings.gst_flag == "Y") {
-      console.log(totalRate.base_amt, paid_amt, 'jjjjjjjjjjjjjjjjj');
+      console.log(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode, 'jjjjjjjjjjjjjjjjj');
       
       var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, gstSettings?.cgst, gstSettings?.sgst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
+    console.log(insert_car_outpass, 'insert_car_outpassinsert_car_outpass', insert_car_outpass?.data?.vehicle_outpass?.suc);
+    
+    
     }
 
     if (generalSettings.gst_flag == "N") {
@@ -164,9 +167,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
     //if upload server successfully then print receipt
-    if (insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1) {
-      // console.log(insert_car_outpass?.data?.update_car_in_flag_status, 'ooooooooooooooooooooooooooooooooooooo');
-      // console.log(device_Type_Check == "M", 'kkkkkkkkkkkkkkkkkkkkk', device_Type_Check == "H");
+    // if (insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1) {
+    if (insert_car_outpass?.data?.vehicle_outpass?.suc == 1) {  
 
       // Use for Mobile Device Start 
       if (getBlePermission && device_Type_Check == "M") {
@@ -291,22 +293,9 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           data.map((props, index) => (
             payloadBody += `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`
 
-            //  `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-            //  `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-            //  `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime)}</font>\n`+
           ));
 
 
-          // console.log(payloadBody,'ooooooooooooooooooooooooooooooooooooooooooo')
-
-
-          // payloadBody += `[L]<font size='normal'>RECEIPT NO : [R] ${(totalRate?.vDatainfo?.receipt_no).toString().slice(-5)}</font>\n` +
-          //   `[L]<font size='normal'>VEHICLE TYPE. : [R] ${totalRate?.vDatainfo?.vehicle_type}</font>\n` +
-          //   `[L]<font size='normal'>VEHICLE NO : [R] ${totalRate?.vDatainfo?.vehicle_no}</font>\n` +
-          //   `[L]<font size='normal'>PARKING FEES : [R]${totalRate?.vDatainfo?.parking_fees}</font>\n` +
-          //   `[L]<font size='normal'>IN TIME : [R]${totalRate?.vDatainfo?.in_time}</font>\n` +
-          //   `[L]<font size='normal'>OUT TIME : [R]${totalRate?.vDatainfo?.out_time}</font>\n` +
-          //   `[L]<font size='normal'>DURATION : [R]${totalRate?.vDatainfo?.duration}</font>\n`;
 
 
 
@@ -370,16 +359,9 @@ const CreateOutpassScreen = ({ route, navigation }) => {
               `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
               `[C]-------------------------------` +
               `[C]${payloadHeader}` +
-              `${GST_Header}` +
-              // `[C]<img>${headerImg}</img>\n` +
-              // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-              // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-              // `[C]-------------------------------\n` +
+              // `${GST_Header}` +
               `${payloadBody}` +
-              `${pay_Mode}` +
-              // `[L]<font size='normal'>DURATION : [R]</font>\n` +
-              // `[C]<u><font size='small'>${receiptNoObj.value}</font></u>\n` +
-              // `[C]<qrcode size='30'>${receiptNoObj.value.toString()}</qrcode>\n` +
+              // `${pay_Mode}` +
               `[C]-------------------------------` +
               `[C]${payloadFooter}\n`,
             printerNbrCharactersPerLine: 30,
@@ -476,8 +458,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
               </>
             ))}
 
-          {/* {if (generalSettings.pay_mode_flag == "Y") {} */}
-          {generalSettings.pay_mode_flag == "Y" && (
+          {/* {generalSettings.pay_mode_flag == "Y" && (
             <View style={styles.radioButton_new}>
               {radioOptions.map(option => (
                 <RadioButton
@@ -490,7 +471,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
                 />
               ))}
             </View>
-          )}
+          )} */}
 
           {/* render action buttons */}
           <View

@@ -71,6 +71,8 @@ export default function OutpassScreen({ navigation }) {
   const { generalSettings, receiptSettings, gstList } = useContext(AuthContext);
   // const { dev_mod } = generalSettings;
 
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+
   const options = {
     hour12: false,
     hour: "2-digit",
@@ -309,13 +311,12 @@ useEffect(() => {
       vDatainfo.sgst = SGST;
       vDatainfo.parking_fees = totalPrice;
 
-      vData.push(
-      { label: "FARE", value: totalPrice - (CGST + SGST) },
-      { label: "CGST @"+gstList.cgst+'%', value: CGST },
-      { label: "SGST @"+gstList.sgst+'%', value: SGST },
-      // { label: "PARKING FEES", value: totalPrice }
-      { label: "YS Service Charges", value: totalPrice }
-      );
+      // vData.push(
+      // { label: "FARE", value: totalPrice - (CGST + SGST) },
+      // { label: "CGST @"+gstList.cgst+'%', value: CGST },
+      // { label: "SGST @"+gstList.sgst+'%', value: SGST },
+      // { label: "YS Service Charges", value: totalPrice }
+      // );
       
     }
 
@@ -327,33 +328,33 @@ useEffect(() => {
       vData.push({ label: "YS Service Charges", value: price });
     }
     
-    if (generalSettings.adv_pay == "Y") {
+    // if (generalSettings.adv_pay == "Y") {
       
 
-      const getAdvAmount = await check_Advance(carData.receipt_no);
-      setAdvAmount_para(getAdvAmount?.data?.msg[0]?.advance_amt)
+    //   const getAdvAmount = await check_Advance(carData.receipt_no);
+    //   setAdvAmount_para(getAdvAmount?.data?.msg[0]?.advance_amt)
 
-      var advAmount = getAdvAmount?.data?.msg[0]?.advance_amt;
+    //   var advAmount = getAdvAmount?.data?.msg[0]?.advance_amt;
 
 
-      if (totalRate < advAmount) {
-        vData.push(
-          { label: "ADVANCE", value: advAmount },
-          { label: "REFUND AMOUNT", value: advAmount - totalRate },
-        );
-      } else if (totalRate > advAmount) {
-        vData.push(
-          { label: "ADVANCE", value: advAmount },
-          { label: "DUE AMOUNT", value: totalRate - advAmount },
-        );
-      } else if (totalRate == advAmount) {
-        vData.push(
-          { label: "ADVANCE", value: advAmount },
-          { label: "DUE AMOUNT", value: totalRate - advAmount },
-        );
-      }
+    //   if (totalRate < advAmount) {
+    //     vData.push(
+    //       { label: "ADVANCE", value: advAmount },
+    //       { label: "REFUND AMOUNT", value: advAmount - totalRate },
+    //     );
+    //   } else if (totalRate > advAmount) {
+    //     vData.push(
+    //       { label: "ADVANCE", value: advAmount },
+    //       { label: "DUE AMOUNT", value: totalRate - advAmount },
+    //     );
+    //   } else if (totalRate == advAmount) {
+    //     vData.push(
+    //       { label: "ADVANCE", value: advAmount },
+    //       { label: "DUE AMOUNT", value: totalRate - advAmount },
+    //     );
+    //   }
 
-    }
+    // }
 
 
     vData.push(
@@ -588,6 +589,9 @@ console.log(price, 'priceprice 2222');
 
     const gstSettings = await handleGetGst();
 
+    
+    
+
 
     
     await setCarOutPrice(price);
@@ -596,8 +600,14 @@ console.log(price, 'priceprice 2222');
 
     vData.push({
       label: "RECEIPT NO",
-      value: carData.receipt_no.toString().slice(-5) || "",
+      // value: carData.receipt_no.toString().slice(-5) || "",
+      value: (carData.receipt_no + '.' + loginData?.user?.userdata?.msg[0].receipt_no).toString().slice(-5) ,
     });
+
+    
+
+    //  return
+    
 
 
     // if (
@@ -607,7 +617,7 @@ console.log(price, 'priceprice 2222');
     //   gstSettings[0]?.gst_flag === "Y"
     // ) {
       if(generalSettings.gst_flag === "Y"){
-
+      console.log(gstSettings[0], price, generalSettings.gst_flag, 'gstSettingsgstSettingsgstSettings');
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
       totalRate = gstPrice.totalPrice || price;
       
@@ -634,13 +644,13 @@ console.log(price, 'priceprice 2222');
       // );
 
       // if (generalSettings.gst_flag == "Y") {
-      vData.push(
-      { label: "FARE", value: totalPrice - (CGST + SGST) },
-      { label: "CGST @"+gstList.cgst+'%', value: CGST },
-      { label: "SGST @"+gstList.sgst+'%', value: SGST },
-      // { label: "PARKING FEES", value: totalPrice }
-      { label: "YS Service Charges", value: totalPrice }
-      );
+      // vData.push(
+      // { label: "FARE", value: totalPrice - (CGST + SGST) },
+      // { label: "CGST @"+gstList.cgst+'%', value: CGST },
+      // { label: "SGST @"+gstList.sgst+'%', value: SGST },
+      // // { label: "PARKING FEES", value: totalPrice }
+      // { label: "YS Service Charges", value: totalPrice }
+      // );
       // }
 
       // if (generalSettings.gst_flag == "N") {

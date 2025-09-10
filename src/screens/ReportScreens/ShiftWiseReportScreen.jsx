@@ -107,6 +107,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
   // }, [mydateFrom, mydateTo]);
 
   let totalAmount = 0;
+  let other_charges = 0;
   let totalAdvanceAmount = 0;
   let totalUPIAmount = 0;
   let totalCashAmount = 0;
@@ -334,7 +335,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
     useOperatorData.map((item, index) => {
       // payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
-      payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>`
     });
 
     if(receiptSettings?.report_flag == "Y"){
@@ -387,23 +388,21 @@ export default function ShiftWiseReportScreen({ navigation }) {
       await ThermalPrinterModule.printBluetooth({
         payload:
           `[C]${payloadHeader}\n` +
-          `${GST_Header}` +
+          // `${GST_Header}` +    // GST OFF on Print 
           `[C]<u><font size='small'>${useShiftName} Shift Report</font></u>\n` +
           `[C]--------------------------------\n` +
           `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
+          `[L]<font size='normal'>Name.      Count        Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          // `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` +
           `[C]--------------------------------\n` +
 
-          `${GST_Yes_No}` +
-          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
           `[C]${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
         printerDpi: 120,
@@ -563,7 +562,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
                   </Text>
                   
                   {/* {generalSettings.gst_flag === "N" && ( */}
-                  <Text style={[styles.headerText, styles.hcell]}>Adv</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Adv</Text> */}
                   {/* )} */}
                   <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
 
@@ -589,9 +588,11 @@ export default function ShiftWiseReportScreen({ navigation }) {
                 {useOperatorData &&
                   useOperatorData.map((item, index) => {
                     totalAmount += item.tot_amt;
+                    other_charges += item.other_charges;
                     totalAdvanceAmount += item?.advance_amt;
                     {generalSettings.gst_flag == "Y" && (
-                      gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                      // gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                      gstAmount = gstCalculatorReport(useOperatorData)
                     )}
                     return (
                     <View
@@ -606,10 +607,10 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
                       
                       {/* {generalSettings.gst_flag === "N" && ( */}
-                      <Text style={[styles.cell]}>{item?.advance_amt}</Text>
+                      {/* <Text style={[styles.cell]}>{item?.advance_amt}</Text> */}
                       {/* )} */}
 
-                      <Text style={[styles.cell]}>{item.tot_amt}</Text>
+                      <Text style={[styles.cell]}>{item.tot_amt + item?.other_charges}</Text>
                       {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                     </View>
                     );
@@ -637,13 +638,12 @@ export default function ShiftWiseReportScreen({ navigation }) {
                 </>
                   )} 
 
-                  {generalSettings.gst_flag === "Y" && (
+                  {/* {generalSettings.gst_flag === "Y" && (
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Base Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                      {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
                         {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
@@ -652,8 +652,10 @@ export default function ShiftWiseReportScreen({ navigation }) {
                     </Text>
                    
                   </View>
-                  )}
-                  {generalSettings.gst_flag == "Y" && (
+                  )}    // GST OFF on Print  */}
+
+
+                  {/* {generalSettings.gst_flag == "Y" && (
                     <>
                     <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
@@ -665,14 +667,15 @@ export default function ShiftWiseReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
                     </>
-                  )}        
+                  )}      // GST OFF on Print       */}
                   
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                   <Text style={[styles.cell, styles.hcell]}>
                   Net Amount
                   </Text>
-                  <Text style={[styles.cell, styles.hcell]}> {totalAmount + totalAdvanceAmount} </Text>
+                   <Text style={[styles.cell, styles.hcell]}></Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAmount + other_charges} </Text>
                   </View>
 
                   {/* {generalSettings.gst_flag == "Y" && (

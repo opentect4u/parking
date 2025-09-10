@@ -61,7 +61,7 @@ function BottomNavigation() {
       }
 
       {/* Out pass bill */}
-      {dev_mod != "R" && dev_mod != "F" && (
+      {/* {dev_mod != "R" && dev_mod != "F" && ( */}
         <Tab.Screen
           name={outpassScreen}
           options={{
@@ -70,7 +70,7 @@ function BottomNavigation() {
           }}
           component={OutpassNavigation}
         />
-      )}
+      {/* )} */}
 
       {/* report genarate */}
       {report_flag == "Y" && ( 

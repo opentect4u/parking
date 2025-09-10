@@ -92,6 +92,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   // }, [mydateFrom, mydateTo]);
 
   let totalAmount = 0;
+  let other_charges = 0;
   let totalAdvanceAmount = 0;
   let totalUPIAmount = 0;
   let totalCashAmount = 0;
@@ -105,7 +106,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     
 
     let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
-    // console.log('>>>>>>>', resdata?.data?.msg, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+    console.log('>>>>>>>', resdata?.data?.msg, 'hhhhhhhhhhhhhhhhhhhhhhh');
     setVehicleWiseReports(resdata?.data?.msg);
 
   };
@@ -370,7 +371,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     await ThermalPrinterModule.printBluetooth({
       payload:
         `[C]${payloadHeader}` +
-        `${GST_Header}` +
+        // `${GST_Header}` + // GST OFF on Print 
         `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
         `[C]--------------------------------\n` +
         `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -387,7 +388,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount}</font>\n` : ""}` +
         `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` : ""}` +
         `[C]--------------------------------\n` +
-        `${GST_Yes_No}` +
+        // `${GST_Yes_No}` +   // GST OFF on Print
         // `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +
         // `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
         
@@ -536,13 +537,18 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
-                    totalAmount += item.tot_amt;
+                    totalAmount += item?.tot_amt;
+                    other_charges += item?.other_charges;
                     totalAdvanceAmount += item?.advance_amt;
                     totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
 
                     {generalSettings.gst_flag == "Y" && (
-                      gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                      // gstAmount = gstCalculatorReport(totalAmount, gstList.sgst, gstList.cgst)
+                      gstAmount = gstCalculatorReport(vehicleWiseReports)
                     )}
+
+                    // console.log(gstAmount, 'ppppppppppppppppppppppppppppp', gstList.sgst, gstList.cgst);
+                    
                     
 
                     return (
@@ -554,17 +560,15 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                         key={index}>
                         <Text style={[styles.cell]}>{item.vehicleType} </Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
-                        {/* <Text style={[styles.cell]}>
-                        {new Date(item.date_time_in).toLocaleString()}
-                      </Text> */}
-
                         {generalSettings.gst_flag === "N" && (
                         <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         )}
                         
-                        {/* <Text style={[styles.cell]}>{gstList.sgst}% </Text> */}
-                        <Text style={[styles.cell]}>{item.tot_amt}</Text>
-                        {/* <Text style={[styles.cell]}>{item.tot_amt + item.advance_amt}</Text> */}
+                        <Text style={[styles.cell]}>{Math.round(item?.base_amt) +
+                        Math.round(item?.cgst) +
+                        Math.round(item?.sgst) +
+                        (item?.other_charges || 0)}</Text>
+                        {/* <Text style={[styles.cell]}>{gstAmount?.CGST} {gstAmount?.SGST} {item?.other_charges}</Text> */}
                       </View>
                     );
                   })}
@@ -595,27 +599,26 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                 </>
                   )}
                   
-                  {generalSettings.gst_flag === "Y" && (
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Base Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {/* {totalAmount} // */}
-                      {generalSettings.gst_flag == "Y" && (
-                        <>
-                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
-                        </>
-                      )}
-                    </Text>
-                   
-                  </View>
-)}
+                {/* {generalSettings.gst_flag === "Y" && (
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                Base Amount
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {generalSettings.gst_flag == "Y" && (
+                <>
+                {totalAmount}
+                </>
+                )}
+                </Text>
+
+                </View>
+                )}    // GST OFF on Print  */}
                 
 
                   
 
-                  {generalSettings.gst_flag == "Y" && (
+                  {/* {generalSettings.gst_flag == "Y" && (
                     <>
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
@@ -627,13 +630,15 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
                   </>
-                  )}
+                  )}    // GST OFF on Print  */}
+
+
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Net Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                    {totalAmount + totalAdvanceAmount}
+                    {totalAmount + other_charges}
                   </Text>
                   </View>
 

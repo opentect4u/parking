@@ -1,21 +1,21 @@
-
-function gstCalculatorReport(totalAmount, sgst, cgst){
-    let price = 0;
-    let CGST = 0;
-    let SGST = 0;
-    let totalPrice = 0;
-
-
-    price = totalAmount / (1 + (sgst + cgst) / 100)
-    cgstAmount = sgstAmount = ((totalAmount - price)) / 2
-    CGST = parseFloat(cgstAmount.toFixed(2));
-    SGST = parseFloat(cgstAmount.toFixed(2));
-
-    // totalPrice = price + CGST + SGST
-    // totalPrice = Math.round(totalPrice)
-  
-    return {CGST, SGST}; // Return the GST amount
-
+function gstCalculatorReport(data) {
+  return data.reduce(
+    (acc, item) => {
+      acc.CGST += Number(item.cgst) || 0;
+      acc.SGST += Number(item.sgst) || 0;
+      return acc;
+    },
+    { CGST: 0, SGST: 0 }
+  );
 }
 
-export default gstCalculatorReport
+// Wrap reduce result with rounding
+function gstCalculatorReportRounded(data) {
+  const result = gstCalculatorReport(data);
+  return {
+    CGST: Math.round(result.CGST),
+    SGST: Math.round(result.SGST),
+  };
+}
+
+export default gstCalculatorReportRounded;

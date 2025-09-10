@@ -84,6 +84,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
    */
 
   let totalAmount = 0;
+  let other_charges = 0;
   let totalAdvanceAmount = 0;
   let totalUPIAmount = 0;
   let totalCashAmount = 0;
@@ -98,7 +99,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-// console.log(formattedDateFrom, 'oooooooooooo', formattedDateTo, 'sssssssssssssss');
+console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id, 'sssssssssssssss');
 
     let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
 // console.log('ooooooooooooooooooooooooooooooooooo', operator_wise_report?.data?.msg, 'ooooooooooooooooooooooooooooooooooo');
@@ -308,7 +309,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
       // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
@@ -363,7 +364,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
       await ThermalPrinterModule.printBluetooth({
         payload:
           `[C]${payloadHeader}` +
-          `${GST_Header}` +
+          // `${GST_Header}` +    // GST OFF on Print 
           `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
           `[C]--------------------------------\n` +
           `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
@@ -377,10 +378,10 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]--------------------------------\n` +
           // `[C]<font size='normal'>ADV: ${totalAdvanceAmount} PAID: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
           // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} [L]CASH: ${totalCashAmount} [R]NET: ${totalAmount}</font>\n` : ""}` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount}</font>\n` : ""}` +
+          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
           `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount} [L]PAID: ${totalAmount} [R]NET: ${totalAmount + totalAdvanceAmount}</font>\n` : ""}` +
           `[C]--------------------------------\n` +
-          `${GST_Yes_No}` +
+          // `${GST_Yes_No}` +    // GST OFF on Print 
           // `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
           // `[C]<font size='normal'>GST No.: ${gstList.gst_number}</font>\n` +
           // `[C]--------------------------------\n` +
@@ -525,14 +526,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
+                    other_charges += item.other_charges;
                     // totalAdvanceAmount += item?.advance_amt;
                     totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
                     // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
                     {generalSettings.gst_flag == "Y" && (
-                      gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                      // gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
+                      gstAmount = gstCalculatorReport(operatorwiseReports)
                     )}
 
-                    console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
+                    // console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
                     
                     return (
                       <View
@@ -548,7 +551,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                         <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         )}
                         
-                        <Text style={[styles.cell]}>{item.tot_amt}</Text>
+                        <Text style={[styles.cell]}>{item.tot_amt + item?.other_charges}</Text>
 
                         {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
                         {/* <Text style={[styles.cell]}>
@@ -584,13 +587,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   )}
 
 
-                  {generalSettings.gst_flag === "Y" && (
+                  {/* {generalSettings.gst_flag === "Y" && (
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Base Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                      {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
                         {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
@@ -599,13 +601,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     </Text>
                    
                   </View>
-                  )}
+                  )}    // GST OFF on Print */}
 
                   
 
                   
 
-                  {generalSettings.gst_flag == "Y" && (
+                  {/* {generalSettings.gst_flag == "Y" && (
                   <>
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
@@ -617,14 +619,14 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
                   </>
-                  )}
+                  )}   // GST OFF on Print  */}
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Net Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                    {totalAmount + totalAdvanceAmount}
+                    {totalAmount + other_charges}
                   </Text>
                   </View>
 

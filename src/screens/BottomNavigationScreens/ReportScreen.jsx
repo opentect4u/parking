@@ -97,13 +97,13 @@ export default function ReportScreen({ navigation }) {
 
 
 
-          <View style={styles.ActionBox_style}>
+          {/* <View style={styles.ActionBox_style}>
             <ActionBox2
               title="Unbilled Reports"
               onAction={() => navigation.navigate("Unbilled_Reports")}
               disabled={rep_ststus}
             />
-          </View>
+          </View> */}
           <View style={styles.ActionBox_style}>
             <ActionBox2
               title="Vehicle Wise Reports"
@@ -116,7 +116,7 @@ export default function ReportScreen({ navigation }) {
               title="Operatorwise Reports"
               onAction={() => navigation.navigate("Operatorwise_Report_Screen")}
               icon={icons.users}
-              disabled={rep_ststus}
+              // disabled={rep_ststus}
             />
           </View>
           <View style={styles.ActionBox_style}>

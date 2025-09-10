@@ -176,9 +176,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     getVehicleRateFixedByVehicleId(dev_mod, id);
   }, [generalSettings]);
 
-  useEffect(() => {
-    getVehicleRateFixedByVehicleId(dev_mod, id);
-  }, []);
   
 
   

@@ -21,7 +21,7 @@ function usegetOperatorwiseReport() {
                     },
                 )
                 .then(res => {
-                    console.log("res - operator_wise - usegetOperatorwiseReport", res.data);
+                    console.log("res - operator_wise - usegetOperatorwiseReport", res.data?.data?.msg);
                     resolve(res.data);
                 })
                 .catch(err => {
