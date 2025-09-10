@@ -56,6 +56,7 @@
                   <th class="text-center text-dark">Sl No.</th>
                   <th class="text-center text-dark">Operator Name</th>
                   <th class="text-center text-dark">User ID</th>
+                  <th class="text-center text-dark">Device ID</th>
                   <th class="text-center text-dark">Action</th>
                 </tr>
               </thead>
@@ -67,6 +68,7 @@
                     <td class="text-center text-dark"><%= i %></td>
                     <td class="text-center text-dark"><%= dt.operator_name %></td>
                     <td class="text-center text-dark"><%= dt.user_id %></td>
+                    <td class="text-center text-dark"><%= dt.device_id %></td>
                     <td class="text-center text-dark">
                       <a href='/superadmin/edit_operator?customer_id=<%= selected.cust_id %>&id=<%= dt.operator_id %>' 
                          class='btn btn-info btn-sm rounded-pill'>
@@ -77,7 +79,7 @@
                 <% i++; })
                 }else{ %>
                 <tr>
-                  <td class="text-center text-danger" colspan="4">No data found</td>
+                  <td class="text-center text-danger" colspan="5">No data found</td>
                 </tr>
                 <% } %>
               </tbody>
@@ -112,7 +114,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                     <label for="cust_name" class="text-dark"><b>Location Name</b></label>
-                    <select name="cust_name" class="form-control" id="cust_name">
+                    <select name="cust_name" class="form-control" id="cust_name_modal">
                         <option value="">Select Location Name</option>
                         <% customer.forEach(dt => { %>
                           <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
@@ -129,7 +131,8 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="mobile" class="text-dark"><b>Mobile No</b></label>
-                      <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile No.....">
+                      <input type="text" class="form-control" id="mobile" name="mobile" maxlength="10" placeholder="Enter Mobile No....." oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                      <small id="mobileError" class="text-danger fw-bold"></small>
                     </div>
                     </div>
                         <div class="col-md-6">
@@ -164,6 +167,7 @@
       </div>
     </div>
   </div>
+
 
 <script>
     $(document).ready(function () {
@@ -278,3 +282,89 @@
   color: #6c757d; /* light gray for placeholder */
 }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!-- <script>
+  $(document).ready(function () {
+    $('#mobile').on('change', function () {
+      let mobile = $(this).val().trim();
+      console.log("Input changed:", mobile);
+
+      if (mobile.length === 10) {
+        $.ajax({
+          url: '/superadmin/check-mobile',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ mobile }),
+          success: function (data) {
+            console.log("API response:", data);
+            let errorField = $('#mobileError');
+
+            if (data.exists) {
+              // ❌ Duplicate → show error + clear field
+              errorField.text("* Phone number already exists");
+              $('#mobile').val('').focus();
+            } else {
+              // ✅ Not duplicate → clear error, keep value
+              errorField.text("");
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error checking mobile:", error);
+            $('#mobileError').text("* Server error while checking number");
+          }
+        });
+      } else {
+        $('#mobileError').text("* Enter a valid 10 digit number");
+      }
+    });
+  });
+</script> -->
+
+<script>
+  $(document).ready(function () {
+  $('#mobile').on('change', function () {
+    let mobile = $(this).val().trim();
+    let customer_id = $('#cust_name_modal').val() || $('#cust_name').val(); // 👈 check modal OR form dropdown
+
+    console.log("Input changed:", mobile, "Customer ID:", customer_id);
+
+    // Check only if mobile is 10 digits & customer is selected
+    if (mobile.length === 10 && customer_id) {
+      $.ajax({
+        url: '/superadmin/check-mobile',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ mobile, customer_id }), // send both
+        success: function (data) {
+          console.log("API response:", data);
+          let errorField = $('#mobileError');
+
+          if (data.exists) {
+            // ❌ Duplicate → show error + clear field
+            errorField.text("* Phone number already exists for this location");
+            $('#mobile').val('').focus();
+          } else {
+            // ✅ Not duplicate → clear error, keep value
+            errorField.text("");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error checking mobile:", error);
+          $('#mobileError').text("* Server error while checking number");
+        }
+      });
+    } else if (!customer_id) {
+      $('#mobileError').text("* Please select a location first");
+      $('#mobile').val('').focus();
+    } else {
+      $('#mobileError').text("* Enter a valid 10 digit number");
+    }
+  });
+});
+</script>

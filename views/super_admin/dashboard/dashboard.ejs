@@ -30,6 +30,11 @@ Dashboard Section
 
     <!-- Dropdown Menu -->
     <div class="dropdown-menu" id="dropdownMenu">
+      <!---- Deafault option-->
+       <div class="dropdown-item" data-value="0">
+    📍 Choose Location
+       </div>
+
       <% if (data && data.msg && data.msg.length > 0) { %>
         <% data.msg.forEach(dt => { %>
           <div class="dropdown-item" data-value="<%= dt.location_id %>">
@@ -432,4 +437,14 @@ Custom CSS
   });
 
   feather.replace();
+</script>
+
+<script>
+  document.querySelectorAll('#dropdownMenu .dropdown-item').forEach(item => {
+  item.addEventListener('click', function() {
+    let value = this.getAttribute('data-value');
+    console.log("Selected:", value); // will log 0 if "Choose Location" clicked
+  });
+});
+
 </script>

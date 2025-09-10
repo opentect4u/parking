@@ -1,4 +1,4 @@
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
@@ -331,7 +331,12 @@
 
 </style>
 
-
+<script>
+  $(document).ready(function () {
+    // initialize all bootstrap toggles on page load
+    $('[data-toggle="toggle"]').bootstrapToggle();
+  });
+</script>
   <script>
     $(document).ready(function () {
       $("#back").click(function () {

@@ -58,3 +58,28 @@
     at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
     at D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\index.js:284:15 
 ----------------------------------------------
+2025-09-08 19:11:31 error: SyntaxError: Unexpected token ''', ..."number" : '175733799"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parse (D:\Sayantika\parking_hertz\hertz_parking\node_modules\body-parser\lib\types\json.js:92:19)
+    at D:\Sayantika\parking_hertz\hertz_parking\node_modules\body-parser\lib\read.js:128:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (D:\Sayantika\parking_hertz\hertz_parking\node_modules\raw-body\index.js:238:16)
+    at done (D:\Sayantika\parking_hertz\hertz_parking\node_modules\raw-body\index.js:227:7)
+    at IncomingMessage.onEnd (D:\Sayantika\parking_hertz\hertz_parking\node_modules\raw-body\index.js:287:7)
+    at IncomingMessage.emit (node:events:519:28)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) 
+----------------------------------------------
+2025-09-08 19:12:24 error: SyntaxError: Unexpected token 'F', ..."number" : Fgh
+}" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parse (D:\Sayantika\parking_hertz\hertz_parking\node_modules\body-parser\lib\types\json.js:92:19)
+    at D:\Sayantika\parking_hertz\hertz_parking\node_modules\body-parser\lib\read.js:128:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (D:\Sayantika\parking_hertz\hertz_parking\node_modules\raw-body\index.js:238:16)
+    at done (D:\Sayantika\parking_hertz\hertz_parking\node_modules\raw-body\index.js:227:7)
+    at IncomingMessage.onEnd (D:\Sayantika\parking_hertz\hertz_parking\node_modules\raw-body\index.js:287:7)
+    at IncomingMessage.emit (node:events:519:28)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) 
+----------------------------------------------

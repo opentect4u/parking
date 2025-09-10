@@ -69,7 +69,7 @@
 
 
                 <!-- <div class="card-body" id="resultDiv"> -->
-                    <div class="dateWiseDataTable" id="resultDiv" style="display: none;">
+                    <div class="dateWiseDataTable mt-5" id="resultDiv" style="display: none;">
                     <h5 class="text-center text-secondary mb-3">
                        <span id="searchCred"></span>
                     </h5>
@@ -89,34 +89,37 @@
                                     <th scope="col">Advance Amount</th>
                                     <th scope="col">CGST</th>
                                     <th scope="col">SGST</th>
-                                    <th scope="col">Paid Amount</th>
+                                    <!-- <th scope="col">Paid Amount</th> -->
+                                    <th scope="col">MIS Charges</th>
                                     <th scope="col">Net Amount</th>
                                     <th scope="col">Mode</th>
                                     <th scope="col">Operator Name</th>
                                 </tr>
                             </thead>
                             <tbody> </tbody>
+                            
                             <tfoot>
-                                <tr>
-                                    <td scope="col" colspan="8">Total</td>
-                                    <td scope="col" id="base_amt"><b>0</b></td>
-                                    <td scope="col" id="advance_amt"><b>0</b></td>
-                                    <td scope="col" id="cgst"><b>0</b></td>
-                                    <td scope="col" id="sgst"><b>0</b></td>
-                                    <td scope="col" id="paid_amt"><b>0</b></td>
-                                    <td scope="col" id="tot_amt"><b>0</b></td>
-                                    <td scope="col" id="mode"><b></b></td>
-                                    <td></td>
-                                </tr>
-                                <tr style="display: none;">
-                                    <td scope="col" colspan="2">Total UPI</td>
-                                    <td scope="col" class="text-left" id="tot_upi" colspan="14"></td>
-                                </tr>
-                                <tr style="display: none;">
-                                    <td scope="col" colspan="2">Total Cash</td>
-                                    <td scope="col" class="text-left" id="tot_cash" colspan="14"></td>
-                                </tr> 
-                            </tfoot>
+    <tr>
+        <td colspan="8">Total</td>
+        <td scope="col" id="base_amt"><b>0</b></td>
+        <td scope="col" id="advance_amt"><b>0</b></td>
+        <td scope="col" id="cgst"><b>0</b></td>
+        <td scope="col" id="sgst"><b>0</b></td>
+        <td scope="col" id="other_chrges"><b>0</b></td>
+        <td scope="col" id="tot_amt"><b>0</b></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr style="display: none;">
+        <td scope="col" colspan="2">Total UPI</td>
+        <td scope="col" class="text-left" id="tot_upi" colspan="14"></td>
+    </tr>
+    <tr style="display: none;">
+        <td scope="col" colspan="2">Total Cash</td>
+        <td scope="col" class="text-left" id="tot_cash" colspan="14"></td>
+    </tr> 
+</tfoot>
+
                         </table>
 
                          <!-- <div class="text-end mt-3">
@@ -160,6 +163,14 @@
   top: 0;
   z-index: 5;
 }
+/* table {
+    table-layout: fixed; 
+}
+
+tfoot td {
+    text-align: right;
+    min-width: 80px;
+} */
 
 /* Optional: keep footer visible too */
 .table tfoot tr {
@@ -385,13 +396,13 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                 // $('#resultDiv').show();
                 // $('#resultDiv table tbody').empty();
 
-                  let base_amt_tot = 0, advance_amt_tot = 0, cgst_tot = 0, sgst_tot = 0, paid_amt_tot = 0, tot_amt_tot = 0;
+                  let base_amt_tot = 0, advance_amt_tot = 0, cgst_tot = 0, sgst_tot = 0, paid_amt_tot = 0, other_chrges_tot = 0, tot_amt_tot = 0;
                     let tot_upi = 0, tot_cash = 0;
+
 
                 if(res.suc > 0 && res.msg.length > 0){
                     // $('#searchCred').html(`<b>Detail Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
-                    
-                  
+
                     let i = 1;
 
                     res.msg.forEach(dt => {
@@ -399,18 +410,25 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                         const advance = parseFloat(dt.advance_amt);
                         const cgst = parseFloat(dt.cgst);
                         const sgst = parseFloat(dt.sgst);
-                        const paid = parseFloat(dt.paid_amt);
-                        const total_amt = paid + advance; // Adjust logic as needed
+                        // const paid = parseFloat(dt.paid_amt);
+                        const other_charges = parseFloat(dt.other_charges);
+                        // const total_amt = paid + advance; 
+                        const total_amt = base + advance + cgst + sgst + other_charges; // Adjust logic as needed
 
                         base_amt_tot += base;
                         advance_amt_tot += advance;
                         cgst_tot += cgst;
                         sgst_tot += sgst;
-                        paid_amt_tot += paid;
+                        // paid_amt_tot += paid;
+                        other_chrges_tot += other_charges;
                         tot_amt_tot += total_amt;
 
                         if(dt.pay_mode == 'C') tot_cash += total_amt;
                         if(dt.pay_mode == 'U') tot_upi += total_amt;
+
+                        let dateTimeOut = dt.date_time_out && dt.date_time_out !== dt.date_time_in ? createDateTime(dt.date_time_out) : '';
+                        
+                         // ✅ check if date_time_in == date_time_out
 
                         $('#resultDiv table tbody').append(`
                             <tr>
@@ -420,13 +438,13 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                                 <td class=text-dark>${dt.device_id}</td>
                                 <td class=text-dark>${dt.vehicle_name}</td>
                                 <td class=text-dark>${dt.vehicle_no}</td>
-                                <td class=text-dark>${createDateTime(dt.date_time_out)}</td>
+                                 <td class=text-dark>${dateTimeOut}</td>
                                 <td class=text-dark>${dt.device_id_out}</td>
                                 <td class=text-dark>${base.toFixed(2)}</td>
                                 <td class=text-dark>${advance.toFixed(2)}</td>
                                 <td class=text-dark>${cgst.toFixed(2)}</td>
                                 <td class=text-dark>${sgst.toFixed(2)}</td>
-                                <td class=text-dark>${paid.toFixed(2)}</td>
+                                <td class=text-dark>${other_charges.toFixed(2)}</td>
                                 <td class=text-dark>${total_amt.toFixed(2)}</td>
                                 <td class=text-dark>${dt.pay_mode == 'U' ? 'UPI' : dt.pay_mode == 'C' ? 'CASH' : ''}</td>
                                 <td class=text-dark>${dt.operator_name}</td>
@@ -435,24 +453,42 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                         i++;
                     });
 
+                    // ✅ After rows are appended, hide/show column based on hasDifferentDate
+// if (!hasDifferentDate) {
+//     $('#resultDiv table tr').each(function () {
+//         $(this).find("th:nth-child(" + colIndex + "), td:nth-child(" + colIndex + ")").hide();
+//     });
+//      $(".firFtTotCol").removeAttr('colspan').attr('colspan', 7)
+//                         $(".othFtTotCol").removeAttr('colspan').attr('colspan', 13)
+// } else {
+//     $('#resultDiv table tr').each(function () {
+//         $(this).find("th:nth-child(" + colIndex + "), td:nth-child(" + colIndex + ")").show();
+//     });
+//      $(".firFtTotCol").removeAttr('colspan').attr('colspan', 8)
+//                         $(".othFtTotCol").removeAttr('colspan').attr('colspan', 14)
+// }
+
                 } else {
                     $('#resultDiv table tbody').html('<tr><td colspan="16" class="text-center text-danger">No Data Found</td></tr>');
                 }
 
                 // Update footer totals
+
                     $('#base_amt').text(base_amt_tot.toFixed(2));
                     $('#advance_amt').text(advance_amt_tot.toFixed(2));
                     $('#cgst').text(cgst_tot.toFixed(2));
                     $('#sgst').text(sgst_tot.toFixed(2));
-                    $('#paid_amt').text(paid_amt_tot.toFixed(2));
-                    $('#tot_amt').text(tot_amt_tot.toFixed(2));
+                    $('#other_chrges').text(other_chrges_tot.toFixed(2));
+                    // $('#paid_amt').text(paid_amt_tot.toFixed(2));
+                    $('#tot_amt').text(tot_amt_tot.toFixed(2)).show();
 
-                    $('#base_amt').text(base_amt_tot.toFixed(2));
-    $('#advance_amt').text(advance_amt_tot.toFixed(2));
-    $('#cgst').text(cgst_tot.toFixed(2));
-    $('#sgst').text(sgst_tot.toFixed(2));
-    $('#paid_amt').text(paid_amt_tot.toFixed(2));
-    $('#tot_amt').text(tot_amt_tot.toFixed(2));
+    //                 $('#base_amt').text(base_amt_tot.toFixed(2));
+    // $('#advance_amt').text(advance_amt_tot.toFixed(2));
+    // $('#cgst').text(cgst_tot.toFixed(2));
+    // $('#sgst').text(sgst_tot.toFixed(2));
+    // $('#other_chrges').text(other_chrges_tot.toFixed(2));
+    // $('#tot_amt').text(tot_amt_tot.toFixed(2));
+
 
     if(pay_mode == 'A'){
         $('#tot_upi').parent().show();

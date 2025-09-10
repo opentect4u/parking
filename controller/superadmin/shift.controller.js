@@ -46,8 +46,9 @@ const shift = async(req,res)=>{
     return new Promise(async (resolve, reject) => {
       let select = "*",
         table_name = "md_shift",
-        whr = `customer_id=${cust_id}`;
-      const shift_dt = await db_Select(select, table_name, whr, null);
+        whr = `customer_id=${cust_id}`,
+        order =  `ORDER BY FIELD(shift_name, 'Morning', 'Evening', 'Night')`;
+      const shift_dt = await db_Select(select, table_name, whr, order);
     //   console.log(shift_dt,'111');
       resolve(shift_dt)
     })

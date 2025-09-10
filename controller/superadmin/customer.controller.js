@@ -168,6 +168,7 @@ const save_add_customer = async (req, res) => {
       cust_name: Joi.required(),
       phone: Joi.required(),
       no_device: Joi.required(),
+      rec_no: Joi.required(),
       cust_add: Joi.required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -184,7 +185,7 @@ const save_add_customer = async (req, res) => {
     // var pwd = bcrypt.hashSync(value.password, 10);
 
     let fields =
-        `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',updated_by='${user_name}',updated_at='${datetime}'`,
+        `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',receipt_no='${value.rec_no}',updated_by='${user_name}',updated_at='${datetime}'`,
       values = null;
     let res_dt = await db_Insert(
       "md_customer",

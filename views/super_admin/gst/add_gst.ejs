@@ -31,6 +31,7 @@
                           <th class="text-center text-dark">Sl No.</th>
                           <th class="text-center text-dark">Location Name</th>
                           <th class="text-center text-dark">GST No.</th>
+                          <th class="text-center text-dark">MIS Charges</th>
                           <th class="text-center text-dark">GST Flag</th>
                           <th class="text-center text-dark">Action</th>
                       </tr>
@@ -49,6 +50,9 @@
                             <%=item.gst_number %>
                           </td>
                           <td class="text-center text-dark">
+                            <%=item.other_charges %>
+                          </td>
+                          <td class="text-center text-dark">
                             <span class="<%=(item.gst_flag=='Y')?'badge badge-success':'badge badge-danger'%>"
                               style="font-size: 16px;">
                               <%=(item.gst_flag=='Y')?"Active":"Deactive"%>
@@ -62,7 +66,7 @@
                         <% }); %>
                           <% } else { %>
                             <tr>
-                              <td colspan="5" class="text-danger text-center">No data available</td>
+                              <td colspan="6" class="text-danger text-center">No data available</td>
                             </tr>
                             <% } %>
                  
@@ -154,6 +158,13 @@
                  <input type="hidden" name="sgst" id="sgst">
               </div>
             </div>
+             <div class="col-md-6">
+                <div class="form-group">
+                <label for="other_charges" class="text-dark"><b>Miscellaneous Charges:</b></label>
+                <!-- <input type="text" class="form-control" name="sgst" id="sgst" value="" placeholder="Enter SGST" readonly> -->
+                 <input type="text" class="form-control" id="other_charges"  name="other_charges" value="" placeholder="Enter Miscellaneous Charges">
+              </div>
+            </div>
             </div>
 
             <div class="row mt-3">
@@ -161,7 +172,7 @@
               <div class="form-group col-md-0">
                 <!-- <input type="submit" value="SUBMIT" class="btn btn-primary"
                   style="margin-left: 32vw;border-radius: 5px;" /> -->
-                  <input type="submit" value="SUBMIT" class="btn btn-primary" style="border-radius: 6px; background: linear-gradient(135deg, #c172a9, #7799d8)" />
+                  <input type="submit" value="SUBMIT" id="submitBtn" class="btn btn-primary" style="border-radius: 6px; background: linear-gradient(135deg, #c172a9, #7799d8)"/>
               </div>
             </div>
           </form>

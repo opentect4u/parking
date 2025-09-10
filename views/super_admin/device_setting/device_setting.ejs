@@ -74,7 +74,6 @@
                         </td>
                         <td class="text-center text-dark">
                           <%= dt.app_id %>
-                        </td>
                         <td class="text-center text-dark"><a
                             href='/superadmin/edit_device_setting?customer_id=<%= selected.cust_id %>&id=<%= dt.setting_id %>'
                             class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
@@ -142,7 +141,7 @@
             </div>
             <div class="col-md-3">
               <div class="form-group">
-                <label for="app_id" class="text-dark"><b>Device ID</b></label>
+                <label for="app_id" class="text-dark form-label"><b>Device ID</b></label>
                 <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
                   value="">
               </div>
@@ -150,8 +149,9 @@
             <div class="col-md-3 cust-toggle1">
               <label for="gst_flag" class="text-dark"><b>GST Flag</b></label><br>
               <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle" data-onstyle="success"
-                data-offstyle="danger" data-on="Active" data-off="Deactive" name="gst_flag">
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="gst_flag" checked disabled>
             </div>
+
             <div class="col-md-3">
               <div class="form-group">
                 <label for="dev_type" class="text-dark"><b>Device Type</b></label>
@@ -237,6 +237,37 @@
 
 <script>
   $(document).ready(function () {
+     // On page load - check if grace_flag is checked
+    toggleGraceValue();
+    toggleAdvanceValue();
+    
+
+    // When grace_flag toggle changes
+    $('#grace_flag').change(function () {
+      toggleGraceValue();
+    });
+
+       // When advance_flag toggle changes
+    $('#adv_pay_flag').change(function () {
+      toggleAdvanceValue();
+    });
+
+    function toggleGraceValue() {
+      if ($('#grace_flag').prop('checked')) {
+        $('#hide_grace').show();
+      } else {
+        $('#hide_grace').hide();
+      }
+    }
+
+    function toggleAdvanceValue() {
+      if ($('#adv_pay_flag').prop('checked')) {
+        $('#hide_adv').show();
+      } else {
+        $('#hide_adv').hide();
+      }
+    }
+
     $("#myBtn").click(function () {
       $("#myModal").modal();
     });
@@ -337,6 +368,8 @@
   }
 
 </script>
+
+
 
 <script>
   $(document).ready(function () {
@@ -455,6 +488,15 @@
     border-radius: 12px !important; /* adjust as needed */
     padding: 6px 10px;
     border: 1px solid #ccc;
+  }
+
+   /* .cust-toggle1 {
+    margin-top: 15px;
+  } */
+
+  .form-label {
+    font-weight: 600;
+    color: #333;
   }
 
 </style>

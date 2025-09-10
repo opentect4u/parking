@@ -159,9 +159,7 @@ const save_device = async (req, res) => {
 }',
 redirection_flag='${
               value.redirect_flag == "Y" ? "Y" : "N"
-            }',gst_flag='${ 
-              value.gst_flag == "Y" ? "Y" : "N"
-            }',pay_mode_flag='${ 
+            }',gst_flag='Y',pay_mode_flag='${ 
               value.pay_mode_flag == "Y" ? "Y" : "N"}',qr_code_flag='${ 
               value.qr_code_flag == "Y" ? "Y" : "N"}',modified_by='${user_name}',updated_at='${datetime}'`
           : "(app_id,customer_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,gst_flag,pay_mode_flag,qr_code_flag,created_by,created_at)",
@@ -175,9 +173,7 @@ redirection_flag='${
         value.grace_value != "" ? `00:${value.grace_value}:00` : 0
       }','${
         value.redirect_flag == "Y" ? "Y" : "N"
-      }','${
-        value.gst_flag && value.gst_flag == "Y" ? "Y" : "N"
-      }','${
+      }','Y','${
         value.pay_mode_flag && value.pay_mode_flag == "Y" ? "Y" : "N"
       }','${
         value.qr_code_flag && value.qr_code_flag == "Y" ? "Y" : "N"

@@ -57,7 +57,8 @@
                                     <th scope="col">Advance Amount</th>
                                     <th scope="col">CGST</th>
                                     <th scope="col">SGST</th>
-                                    <th scope="col">Paid Amount</th>
+                                    <!-- <th scope="col">Paid Amount</th> -->
+                                    <th scope="col">MIS Charges</th>
                                     <th scope="col">Net Amount</th>
                                 </tr>
                             </thead>
@@ -70,7 +71,8 @@
                                     <td scope="col" id="advance_amt"><b>0</b></td>
                                     <td scope="col" id="tot_cgst"><b>0</b></td>
                                     <td scope="col" id="tot_sgst"><b>0</b></td>
-                                    <td scope="col" id="paid_amt"><b>0</b></td>
+                                    <!-- <td scope="col" id="paid_amt"><b>0</b></td> -->
+                                     <td scope="col" id="tot_other_charges"><b>0</b></td>
                                     <td scope="col" id="tot_amt"><b>0</b></td>
                                 </tr>
                             </tfoot>
@@ -276,6 +278,7 @@ $('#btnSubmit').on('click', function () {
                 var cgst_amt_tot = 0;
                 var sgst_amt_tot = 0;
                 var total_amt_tot = 0;
+                var tot_other_charges = 0;
                 var tot_amt_tot = 0;
 
                 // $('#resultDiv').show();
@@ -290,14 +293,17 @@ $('#btnSubmit').on('click', function () {
                             let advance_amt = parseFloat(dt.advance_amt);
                             let cgst = parseFloat(dt.cgst);
                             let sgst = parseFloat(dt.sgst);
-                            let paid_amt = parseFloat(dt.paid_amt);
-                            let total_amt = paid_amt + advance_amt;
+                            // let paid_amt = parseFloat(dt.paid_amt);
+                            let other_charge_amt = parseFloat(dt.other_charges) || 0;
+                            // let total_amt = paid_amt + advance_amt;
+                            let total_amt = base_amt + advance_amt + cgst + sgst + other_charge_amt;
 
                             base_amt_tot += base_amt;
                             advance_amt_tot += advance_amt;
                             cgst_amt_tot += cgst;
                             sgst_amt_tot += sgst;
-                            paid_amt_tot += paid_amt;
+                            // paid_amt_tot += paid_amt;
+                            tot_other_charges += other_charge_amt;
                             tot_amt_tot += total_amt;
 
                             $('#resultDiv table tbody').append(`
@@ -311,7 +317,7 @@ $('#btnSubmit').on('click', function () {
                                     <td class=text-dark>${advance_amt.toFixed(2)}</td>
                                     <td class=text-dark>${cgst.toFixed(2)}</td>
                                     <td class=text-dark>${sgst.toFixed(2)}</td>
-                                    <td class=text-dark>${paid_amt.toFixed(2)}</td>
+                                    <td class=text-dark>${other_charge_amt.toFixed(2)}</td>
                                     <td class=text-dark>${total_amt.toFixed(2)}</td>
                                 </tr>
                             `);
@@ -322,7 +328,8 @@ $('#btnSubmit').on('click', function () {
                         $('#advance_amt').text(advance_amt_tot.toFixed(2));
                         $('#tot_cgst').text(cgst_amt_tot.toFixed(2));
                         $('#tot_sgst').text(sgst_amt_tot.toFixed(2));
-                        $('#paid_amt').text(paid_amt_tot.toFixed(2));
+                        // $('#paid_amt').text(paid_amt_tot.toFixed(2));
+                        $('#tot_other_charges').text(tot_other_charges.toFixed(2));
                         $('#tot_amt').text(tot_amt_tot.toFixed(2));
                     } else {
                         $('#resultDiv table tbody').append('<tr><td colspan="11" class="text-center text-danger">No Data Found</td></tr>');

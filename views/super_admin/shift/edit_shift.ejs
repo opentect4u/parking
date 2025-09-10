@@ -1,14 +1,19 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="card col-12">
-            <div class="card-body">
-                <div class="titleSec">
-                    <h2 class="text-dark"><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back"
-                            style="cursor: pointer;">&nbsp;Shift Edit Details</i></h2>
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa, #e3e8ff); min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 form-card">
+
+                <div class="card-header gradient-header text-white py-3">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="fa fa-arrow-circle-left" aria-hidden="true" id="back"
+                            style="cursor: pointer;">&nbsp;Shift Edit Details</i>
+                        </h4>
                 </div>
-                <form action="/superadmin/save_shift" id="myForm" method="post">
-                    <div class="row mt-4">
-                        <div class="form-group col-6">
+
+                <form action="/superadmin/save_shift" id="myForm" method="post" class="p-4">
+
+                    <div class="row">
+                        <div class="form-group col-md-6  mb-4">
                             <label for="cust_id" class="text-dark"><b>Customer Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Customer Name</option>
@@ -18,34 +23,38 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="form-group col-md-6 mb-4">
                             <div class="form-group">
                               <label for="shift_name" class="text-dark"><b>Shift Name</b></label>
                               <input type="text" class="form-control" id="shift_name" name="shift_name" placeholder="Enter Shift Name...."
                                 value="<%= data[0].shift_name %>">
                             </div>
                           </div>
-                          <div class="col-md-6">
+
+                          <div class="form-group col-md-6 mb-4">
                             <div class="form-group">
                               <label for="frm_time" class="text-dark"><b>From Time</b></label>
                               <input type="time" name="frm_time" id="frm_time" class="form-control" value="<%= data[0].f_time %>">
                             </div>
                           </div>
-                          <div class="col-md-6">
+
+                          <div class="form-group col-md-6 mb-4">
                             <div class="form-group">
                               <label for="to_time" class="text-dark"><b>To Time</b></label>
                               <input type="time" name="to_time" id="to_time" class="form-control" value="<%= data[0].t_time %>">
                             </div>
                           </div>
-
-                        <div class="row mt-2">
-                            <input type="hidden" name="id" value="<%= id %>">
-                            <input type="hidden" name="cust_id" value="<%= customer_id %>">
-                            <div class="form-group col-md-6">
-                                <input type="submit" value="SUBMIT" class="btn btn-primary btn-block text-center"
-                                    style="margin-left: 25vw;border-radius: 5px;" />
-                            </div>
                         </div>
+
+
+                          <input type="hidden" name="id" value="<%= id %>">
+                            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+                        <div class="text-center mt-1">
+                            
+                            <!-- <div class="form-group col-md-6"> -->
+                                <input type="submit" value="SUBMIT"  class="btn-gradient-pill">
+                            <!-- </div> -->
                         </div>
                 </form>
             </div>
@@ -60,3 +69,64 @@
                     });
     });
 </script>
+
+<style>
+/* Card */
+.form-card {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.form-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+/* Header gradient */
+.gradient-header {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  border: none;
+}
+
+/* Inputs */
+.rounded-input {
+  border-radius: 12px;
+  height: 45px;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db;
+  transition: all 0.3s ease;
+}
+.rounded-input:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 0.2rem rgba(106,17,203,0.25);
+}
+.readonly-field {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Gradient Button */
+.btn-gradient-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.btn-gradient-pill:hover {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+</style>

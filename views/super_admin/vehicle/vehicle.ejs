@@ -7,7 +7,7 @@
 <div class="container-fluid py-4">
     <div class="row justify-content-center">
       <div class="col-lg-10">
-        <div class="card shadow-lg rounded-4 border-0 p-0 custom-card" style="background: linear-gradient(to right, #c5cedf, #bb9f9f00);">
+        <div class="card shadow-lg border-0 custom-card" style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f2f7);">
           <!-- <div class="card-body"> -->
             <!-- <button type="button" class="btn btn-primary" id="myBtn"
               style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button> -->
@@ -24,7 +24,7 @@
 
            <!-- Filter Form -->
         <form action="/superadmin/vehicle" method="post" class="p-3">
-          <div class="row g-3 align-items-end">
+          <div class="row g-3 align-items-end justify-content-center">
             <div class="col-md-5">
               <label for="cust_name" class="form-label fw-semibold text-dark"><b>Location Name:</b></label>
               <select name="cust_name" class="form-control custom-select" id="cust_name" required>
@@ -127,7 +127,7 @@
                 <div class="form-group col-md-5"></div>
                <div class="row">
             <div class="col-12 text-center">
-            <input type="submit" value="SUBMIT" class="btn btn-gradient px-5 py-2 rounded-pill">
+            <input type="submit" value="SUBMIT"  id="submitBtn" class="btn btn-gradient px-5 py-2 rounded-pill">
              </div>
             </div>
             </div>
@@ -136,6 +136,7 @@
       </div>
     </div>
   </div>
+
 
 <style>
 /* Gradient Button */

@@ -13,7 +13,8 @@
         <!-- Form -->
         <form action="/superadmin/gst_save" id="myForm" method="post" class="p-4">
           <!-- Customer -->
-          <div class="form-group mb-4">
+           <div class="row">
+          <div class="form-group col-md-4  mb-4">
             <label for="cust_id" class="form-label text-dark"><b>Customer Name:</b></label>
             <select name="cust_id" class="form-control rounded-input" id="cust_id" disabled>
               <option value="">Select Customer Name</option>
@@ -25,14 +26,13 @@
             </select>
           </div>
 
-          <!-- GST fields -->
-          <div class="row">
-            <div class="form-group col-md-3 mb-3">
-              <label for="gst_num" class="form-label text-dark"><b>GST Number:</b></label>
-              <input type="text" class="form-control rounded-input" name="gst_num" id="gst_num" value="<%=data[0].gst_number %>" placeholder="Enter GST Number">
-            </div>
+           <div class="form-group col-md-4 mb-4">
+           <label for="gst_num" class="form-label text-dark"><b>GST Number:</b></label>
+           <input type="text" class="form-control rounded-input" name="gst_num" id="gst_num"
+           value="<%= data[0].gst_number %>" placeholder="Enter GST Number">
+           </div>
 
-            <div class="form-group col-md-3 mb-3">
+            <div class="form-group col-md-4 mb-3">
               <label for="total_gst" class="form-label text-dark"><b>Total GST:</b></label>
               <select name="total_gst" class="form-control rounded-input" id="total_gst">
                 <option value="0" <%= data[0].total_gst==0 ? 'selected' : '' %>>0%</option>
@@ -43,14 +43,28 @@
               </select>
             </div>
 
-            <div class="form-group col-md-3 mb-3">
+          </div>
+
+          <!-- GST fields -->
+          <div class="row">
+            <!-- <div class="form-group col-md-3 mb-3">
+              <label for="gst_num" class="form-label text-dark"><b>GST Number:</b></label>
+              <input type="text" class="form-control rounded-input" name="gst_num" id="gst_num" value="<%=data[0].gst_number %>" placeholder="Enter GST Number">
+            </div> -->
+
+            <div class="form-group col-md-4 mb-3">
               <label for="cgst" class="form-label text-dark"><b>CGST:</b></label>
               <input type="text" class="form-control rounded-input readonly-field" name="cgst" id="cgst" value="<%=data[0].cgst %>" readonly>
             </div>
 
-            <div class="form-group col-md-3 mb-3">
+            <div class="form-group col-md-4 mb-3">
               <label for="sgst" class="form-label text-dark"><b>SGST:</b></label>
               <input type="text" class="form-control rounded-input readonly-field" name="sgst" id="sgst" value="<%=data[0].sgst %>" readonly>
+            </div>
+
+            <div class="form-group col-md-4 mb-3">
+              <label for="other_charges" class="form-label text-dark"><b>Miscellaneous Charges:</b></label>
+              <input type="text" class="form-control rounded-input" name="other_charges" id="other_charges" value="<%=data[0].other_charges %>">
             </div>
           </div>
 

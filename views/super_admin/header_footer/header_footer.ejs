@@ -61,10 +61,10 @@
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
   <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-lg-custom">
+      <div class="modal-content rounded-4 shadow-lg border-0 glass-bgt">
         <!-- Modal Header -->
-        <div class="modal-header">
+        <div class="modal-header border-0">
           <h3 class="modal-title text-dark"><i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Add Header Footer</b>
           </h3>
           <button type="button" class="close" data-dismiss="modal">
@@ -316,6 +316,11 @@
     border-radius: 18px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   }
+
+  .modal-lg-custom {
+  max-width: 75% !important; /* 90% of the screen */
+}
+
 </style>
 
 

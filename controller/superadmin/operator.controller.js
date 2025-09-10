@@ -151,6 +151,66 @@ const show_operator_dtls = (cust_id) => {
       res.redirect("/superadmin/operator");
     }
   };
-  
 
-module.exports = {operator,show_operator_dtls,operator_edit,save_add_operator}
+// const check_mobile_no = async (req, res) => {
+//   try {
+//     const { mobile } = req.body;
+//     console.log("Checking mobile:", mobile);
+
+//     if (!mobile) {
+//       return res.json({ exists: false, error: "Mobile number is required" });
+//     }
+
+//     // check in md_user
+//     let userResult = await db_Select('*', 'md_user', `user_id='${mobile}'`, null);
+//     console.log(userResult,'userrrr');
+    
+
+//     // check in md_operator
+//     let operatorResult = await db_Select('*', 'md_operator', `user_id='${mobile}'`, null);
+//     console.log(operatorResult,'uytr');
+    
+
+//     if ((userResult.msg && userResult.msg.length > 0) ||
+//         (operatorResult.msg && operatorResult.msg.length > 0)) {
+//       return res.json({ exists: true });
+//     } else {
+//       return res.json({ exists: false });
+//     }
+
+//   } catch (err) {
+//     console.error("Error checking mobile:", err);
+//     res.json({ exists: false, error: "Server error" });
+//   }
+// };
+
+const check_mobile_no = async (req, res) => {
+  try {
+    const { mobile, customer_id } = req.body;
+
+    if (!mobile || !customer_id) {
+      return res.json({ exists: false, error: "Mobile number and customer_id are required" });
+    }
+
+    // Example: check in md_operator for same customer_id + mobile
+    let operatorResult = await db_Select(
+      '*',
+      'md_operator',
+      `user_id='${mobile}' AND customer_id='${customer_id}'`,
+      null
+    );
+
+    if (operatorResult.msg && operatorResult.msg.length > 0) {
+      return res.json({ exists: true });
+    } else {
+      return res.json({ exists: false });
+    }
+
+  } catch (err) {
+    console.error("Error checking mobile:", err);
+    res.json({ exists: false, error: "Server error" });
+  }
+};
+
+
+module.exports = {operator,show_operator_dtls,operator_edit,save_add_operator, check_mobile_no}

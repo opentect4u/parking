@@ -3,6 +3,51 @@ const { db_Select } = require("../../../model/Master.model");
 const { sendOkResponce, sendErrorResponce } = require("response-json-format");
 const dateFormat = require('dateformat');
 
+// const vehicle_wise = async (req, res) => {
+//     try {
+//         const schema = Joi.object({
+//             customerUserName: Joi.optional(),
+//             from_date: Joi.string().required(),
+//             to_date: Joi.string().required()
+//         });
+//         const { error, value } = schema.validate(req.body, { abortEarly: false });
+//         if (error) {
+//             const errors = {};
+//             error.details.forEach(detail => {
+//                 errors[detail.context.key] = detail.message;
+//             });
+//             return res.json(sendErrorResponce(null, errors));
+//         }
+
+
+//         const userData = req.user;
+//         // const tablename = `td_vehicle_in a,td_receipt b,md_vehicle c`,
+//         //     where = `b.vehicle_in_id=a.vehicle_in_id AND c.vehicle_id=a.vehicle_id AND a.customer_id=${userData.customer_id} AND a.device_id='${userData.device_id}' AND a.user_id_in=${userData.id}  AND date(a.created_at) BETWEEN '${value.from_date}' AND '${value.to_date}' `,
+//         //     orderby = `GROUP BY a.vehicle_id`;
+//         // var data = await db_Select('a.*,SUM(b.paid_amt) AS paid_amt,c.*', tablename, where, orderby)
+//         // console.log(data)
+
+
+
+
+
+//         var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt, c.pay_mode`,
+//             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d',
+//             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
+//             // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+//             order = 'GROUP BY a.vehicle_id, d.vehicle_name';
+//         var res_dt = await db_Select(select, table_name, whr, order)
+
+
+
+
+//         res.json(sendOkResponce(data, null));
+//     } catch (err) {
+//         res.json(sendErrorResponce(err));
+//     }
+// }
+
+
 const vehicle_wise = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -21,25 +66,21 @@ const vehicle_wise = async (req, res) => {
 
 
         const userData = req.user;
-        // const tablename = `td_vehicle_in a,td_receipt b,md_vehicle c`,
-        //     where = `b.vehicle_in_id=a.vehicle_in_id AND c.vehicle_id=a.vehicle_id AND a.customer_id=${userData.customer_id} AND a.device_id='${userData.device_id}' AND a.user_id_in=${userData.id}  AND date(a.created_at) BETWEEN '${value.from_date}' AND '${value.to_date}' `,
-        //     orderby = `GROUP BY a.vehicle_id`;
-        // var data = await db_Select('a.*,SUM(b.paid_amt) AS paid_amt,c.*', tablename, where, orderby)
-        // console.log(data)
 
-
-
-
-
-        var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt, c.pay_mode`,
+        var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.base_amt) base_amt, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, SUM(c.other_charges) other_charges, c.pay_mode`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d',
             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
-            // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
-            order = 'GROUP BY a.vehicle_id, d.vehicle_name';
-        var res_dt = await db_Select(select, table_name, whr, order)
+            order = 'GROUP BY a.vehicle_id, d.vehicle_name, c.pay_mode';
+        var data = await db_Select(select, table_name, whr, order)
 
-
-
+         data.suc > 0 ? data.msg.length > 0 ? data.msg.filter(dt => { 
+            dt['base_amt'] = +dt['base_amt']; 
+            dt['cgst'] = +dt['cgst']; 
+            dt['sgst'] = +dt['sgst'];
+            dt['tot_amt'] = +dt['tot_amt']; 
+            dt['other_charges'] = +dt['other_charges'];
+            dt['advance_amt'] = +dt['advance_amt'];
+        }) : '' : ''
 
         res.json(sendOkResponce(data, null));
     } catch (err) {
@@ -145,6 +186,47 @@ const  dashboard = async (req, res) => {
 }
 
 
+// const detail_report = async (req, res) => {
+//     try {
+//         const schema = Joi.object({
+//             customerUserName: Joi.optional(),
+//             from_date: Joi.string().required(),
+//             to_date: Joi.string().required()
+//         });
+//         const { error, value } = schema.validate(req.body, { abortEarly: false });
+//         console.log(value,'tytyt');
+        
+//         if (error) {
+//             const errors = {};
+//             error.details.forEach(detail => {
+//                 errors[detail.context.key] = detail.message;
+//             });
+//             return res.json(sendErrorResponce(null, errors));
+//         }
+
+
+//         const userData = req.user;
+//         // const tablename = `td_vehicle_in a,td_receipt b`,
+//         //     where = `b.vehicle_in_id=a.vehicle_in_id AND a.customer_id=${userData.customer_id} AND a.device_id='${userData.device_id}' AND a.user_id_in=${userData.id}  AND date(a.created_at) BETWEEN '${value.from_date}' AND '${value.to_date}'`;
+//         // var data = await db_Select('a.*,b.*', tablename, where, null)
+//         // console.log(data)
+
+
+//         var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, c.pay_mode, f.operator_name`,
+//             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
+//             // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+//             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
+//             order = 'ORDER BY a.receipt_no';
+//         var data = await db_Select(select, table_name, whr, order)
+
+
+//         res.json(sendOkResponce(data, null));
+//     } catch (err) {
+//         res.json(sendErrorResponce(err));
+//     }
+// }
+
+
 const detail_report = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -153,7 +235,7 @@ const detail_report = async (req, res) => {
             to_date: Joi.string().required()
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
-        console.log(value,'tytyt');
+        // console.log(value,'tytyt');
         
         if (error) {
             const errors = {};
@@ -165,20 +247,28 @@ const detail_report = async (req, res) => {
 
 
         const userData = req.user;
-        // const tablename = `td_vehicle_in a,td_receipt b`,
-        //     where = `b.vehicle_in_id=a.vehicle_in_id AND a.customer_id=${userData.customer_id} AND a.device_id='${userData.device_id}' AND a.user_id_in=${userData.id}  AND date(a.created_at) BETWEEN '${value.from_date}' AND '${value.to_date}'`;
-        // var data = await db_Select('a.*,b.*', tablename, where, null)
-        // console.log(data)
 
 
-        var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no, b.date_time_out, b.device_id device_id_out, c.base_amt, c.cgst, c.sgst, c.paid_amt, c.advance_amt, c.pay_mode, f.operator_name`,
+        var select = `a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no,  
+        CASE 
+        WHEN a.date_time_in = b.date_time_out THEN '' 
+        ELSE b.date_time_out 
+        END AS date_time_out,
+        b.device_id device_id_out, 
+        c.base_amt, c.cgst, c.sgst, c.paid_amt, c.other_charges, c.advance_amt, c.pay_mode, f.operator_name`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
-            // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
             order = 'ORDER BY a.receipt_no';
         var data = await db_Select(select, table_name, whr, order)
-
-
+        
+        data.suc > 0 ? data.msg.length > 0 ? data.msg.filter(dt => { 
+            dt['base_amt'] = +dt['base_amt']; 
+            dt['cgst'] = +dt['cgst']; 
+            dt['sgst'] = +dt['sgst'];
+            dt['paid_amt'] = +dt['paid_amt']; 
+            dt['other_charges'] = +dt['other_charges'];
+            dt['advance_amt'] = +dt['advance_amt'];
+        }) : '' : ''
         res.json(sendOkResponce(data, null));
     } catch (err) {
         res.json(sendErrorResponce(err));
@@ -218,6 +308,49 @@ const shift_wise = async (req, res) => {
 }
 
 
+// const operator_wise = async (req, res) => {
+//     try {
+//         const schema = Joi.object({
+//             customerUserName: Joi.optional(),
+//             from_date: Joi.string().required(),
+//             to_date: Joi.string().required()
+//         });
+//         const { error, value } = schema.validate(req.body, { abortEarly: false });
+//         if (error) {
+//             const errors = {};
+//             error.details.forEach(detail => {
+//                 errors[detail.context.key] = detail.message;
+//             });
+//             return res.json(sendErrorResponce(null, errors));
+//         }
+
+
+//         const userData = req.user;
+
+//         var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) as adv_amt, c.pay_mode, f.operator_name opratorName`,
+//             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
+//             // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+//             // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${dateFormat(new Date(value.from_date), "yyyy-mm-dd HH:MM:ss")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd HH:MM:ss")}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
+//             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
+//             order = 'GROUP BY b.user_id, d.vehicle_name';
+//         var data = await db_Select(select, table_name, whr, order)
+
+//         // select adv_amt
+
+
+
+//         // const tablename=`td_vehicle_in a,td_receipt b,md_vehicle c, md_user d, md_operator e `,
+//         // where=`b.vehicle_in_id=a.vehicle_in_id AND c.vehicle_id=a.vehicle_id AND d.id=a.user_id_in AND e.user_id=d.user_id AND a.customer_id=${userData.customer_id} AND date(a.created_at) BETWEEN '${value.from_date}' AND '${value.to_date}' `,
+//         // orderby=`GROUP BY e.user_id_in`;
+//         // var data=await db_Select('a.*,SUM(b.paid_amt) AS paid_amt,c.*,e.*',tablename,where,orderby)
+//         // console.log(data)
+//         res.json(sendOkResponce(data, null));
+//     } catch (err) {
+//         res.json(sendErrorResponce(err));
+//     }
+// }
+
+
 const operator_wise = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -237,23 +370,20 @@ const operator_wise = async (req, res) => {
 
         const userData = req.user;
 
-        var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) as adv_amt, c.pay_mode, f.operator_name opratorName`,
+        var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.base_amt) base_amt, SUM(c.advance_amt) as adv_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, SUM(c.other_charges) other_charges, c.pay_mode, f.operator_name opratorName`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
-            // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
-            // whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${dateFormat(new Date(value.from_date), "yyyy-mm-dd HH:MM:ss")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd HH:MM:ss")}' AND a.customer_id = '${userData.customer_id}' AND a.user_id_in = '${value.customerUserName}'`,
             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${value.from_date}' AND '${value.to_date}' AND a.customer_id = '${userData.customer_id}' AND b.user_id = '${value.customerUserName}'`,
-            order = 'GROUP BY b.user_id, d.vehicle_name';
+            order = 'GROUP BY b.device_id,b.user_id, d.vehicle_name,c.pay_mode,f.operator_name';
         var data = await db_Select(select, table_name, whr, order)
 
-        // select adv_amt
-
-
-
-        // const tablename=`td_vehicle_in a,td_receipt b,md_vehicle c, md_user d, md_operator e `,
-        // where=`b.vehicle_in_id=a.vehicle_in_id AND c.vehicle_id=a.vehicle_id AND d.id=a.user_id_in AND e.user_id=d.user_id AND a.customer_id=${userData.customer_id} AND date(a.created_at) BETWEEN '${value.from_date}' AND '${value.to_date}' `,
-        // orderby=`GROUP BY e.user_id_in`;
-        // var data=await db_Select('a.*,SUM(b.paid_amt) AS paid_amt,c.*,e.*',tablename,where,orderby)
-        // console.log(data)
+        data.suc > 0 ? data.msg.length > 0 ? data.msg.filter(dt => { 
+            dt['base_amt'] = +dt['base_amt']; 
+            dt['cgst'] = +dt['cgst']; 
+            dt['sgst'] = +dt['sgst'];
+            dt['tot_amt'] = +dt['tot_amt']; 
+            dt['other_charges'] = +dt['other_charges'];
+            dt['adv_amt'] = +dt['adv_amt'];
+        }) : '' : ''
         res.json(sendOkResponce(data, null));
     } catch (err) {
         res.json(sendErrorResponce(err));
@@ -289,6 +419,33 @@ const unbilled_report = async (req, res) => {
 }
 
 
+// const shift_wise_report = async (req, res) => {
+//     try {
+
+//         var custId = req.user.customer_id,
+//             userType = req.user.user_type;
+
+//         var data = req.body;
+
+
+//         let shift_time = await db_Select('f_time, t_time', 'md_shift', `shift_id=${data.shift_id}`, null)
+//         let ftime = shift_time.msg[0].f_time;
+//         let ttime = shift_time.msg[0].t_time;
+
+//         var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt, c.pay_mode, f.operator_name opratorName`,
+//             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
+//             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND TIME(b.date_time_out) BETWEEN '${ftime}' AND '${ttime}' AND a.customer_id = '${custId}'`,
+//             order = 'GROUP BY a.user_id_in';
+//         var res_dt = await db_Select(select, table_name, whr, order)
+//         // res.send(res_dt)
+
+//         res.json(sendOkResponce(res_dt, null));
+//     } catch (e) {
+//         res.json(sendErrorResponce(e));
+//     }
+
+// }
+
 const shift_wise_report = async (req, res) => {
     try {
 
@@ -302,14 +459,23 @@ const shift_wise_report = async (req, res) => {
         let ftime = shift_time.msg[0].f_time;
         let ttime = shift_time.msg[0].t_time;
 
-        var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.advance_amt) advance_amt, c.pay_mode, f.operator_name opratorName`,
+        var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) tot_amt, SUM(c.base_amt) base_amt, SUM(c.advance_amt) advance_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, SUM(c.other_charges) other_charges, c.pay_mode, f.operator_name opratorName`,
             table_name = 'td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f',
             whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND DATE(b.date_time_out) BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND TIME(b.date_time_out) BETWEEN '${ftime}' AND '${ttime}' AND a.customer_id = '${custId}'`,
-            order = 'GROUP BY a.user_id_in';
-        var res_dt = await db_Select(select, table_name, whr, order)
+            order = 'GROUP BY a.user_id_in,b.device_id,d.vehicle_name,c.pay_mode, f.operator_name';
+        var data = await db_Select(select, table_name, whr, order)
         // res.send(res_dt)
 
-        res.json(sendOkResponce(res_dt, null));
+        data.suc > 0 ? data.msg.length > 0 ? data.msg.filter(dt => { 
+            dt['base_amt'] = +dt['base_amt']; 
+            dt['cgst'] = +dt['cgst']; 
+            dt['sgst'] = +dt['sgst'];
+            dt['tot_amt'] = +dt['tot_amt']; 
+            dt['other_charges'] = +dt['other_charges'];
+            dt['advance_amt'] = +dt['advance_amt'];
+        }) : '' : ''
+
+        res.json(sendOkResponce(data, null));
     } catch (e) {
         res.json(sendErrorResponce(e));
     }

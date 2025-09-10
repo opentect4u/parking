@@ -58,7 +58,8 @@
                                     <th scope="col">Advance Amount</th>
                                     <th scope="col">CGST</th>
                                     <th scope="col">SGST</th>
-                                    <th scope="col">Paid Amount</th>
+                                    <!-- <th scope="col">Paid Amount</th> -->
+                                    <th scope="col">MIS Charges</th>
                                     <th scope="col">Net Amount</th>
                                 </tr>
                             </thead>
@@ -72,7 +73,8 @@
                                     <td scope="col" id="tot_advance"><b>0</b></td>
                                     <td scope="col" id="tot_cgst"><b>0</b></td>
                                     <td scope="col" id="tot_sgst"><b>0</b></td>
-                                    <td scope="col" id="tot_paid"><b>0</b></td>
+                                    <!-- <td scope="col" id="tot_paid"><b>0</b></td> -->
+                                    <td scope="col" id="tot_other_charges"><b>0</b></td>
                                     <td scope="col" id="tot_amt"><b>0</b></td>
                                 </tr>   
                             </tfoot>
@@ -283,8 +285,8 @@
                 // tbody.empty();
 
                 var net_amt_tot = 0, base_amt_tot = 0, advance_amt_tot = 0;
-                var cgst_amt_tot = 0, sgst_amt_tot = 0, paid_amt_tot = 0, cnt_tot = 0;
-                var tot_amt_tot = 0;
+                var cgst_amt_tot = 0, sgst_amt_tot = 0, paid_amt_tot = 0, tot_other_charges = 0, cnt_tot = 0;
+                var tot_amt_tot = 0; 
 
                 if(res.suc > 0 && res.msg.length > 0){
                     // $('#searchCred').html(`<b>Vehicle Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
@@ -294,15 +296,18 @@
                         let advance_amt = parseFloat(dt.advance_amt) || 0;
                         let cgst_amt = parseFloat(dt.cgst) || 0;
                         let sgst_amt = parseFloat(dt.sgst) || 0;
-                        let paid_amt = parseFloat(dt.paid_amt) || 0;
+                        // let paid_amt = parseFloat(dt.paid_amt) || 0;
+                        let other_charge_amt = parseFloat(dt.other_charges) || 0;
                         let cnt = parseInt(dt.tot_vehi) || 0;
-                        let net_amt = advance_amt + paid_amt;
+                        // let net_amt = advance_amt + paid_amt;
+                        let net_amt = base_amt + advance_amt + cgst_amt + sgst_amt + other_charge_amt;
 
                         base_amt_tot += base_amt;
                         advance_amt_tot += advance_amt;
                         cgst_amt_tot += cgst_amt;
                         sgst_amt_tot += sgst_amt;
-                        paid_amt_tot += paid_amt;
+                        // paid_amt_tot += paid_amt;
+                        tot_other_charges += other_charge_amt;
                         tot_amt_tot += net_amt;
                         cnt_tot += cnt;
 
@@ -315,7 +320,7 @@
                                 <td class=text-dark>${advance_amt.toFixed(2)}</td>
                                 <td class=text-dark>${cgst_amt.toFixed(2)}</td>
                                 <td class=text-dark>${sgst_amt.toFixed(2)}</td>
-                                <td class=text-dark>${paid_amt.toFixed(2)}</td>
+                                <td class=text-dark>${other_charge_amt.toFixed(2)}</td>
                                 <td class=text-dark>${net_amt.toFixed(2)}</td>
                             </tr>
                         `);
@@ -329,7 +334,8 @@
                 $('#tot_advance').text(advance_amt_tot.toFixed(2));
                 $('#tot_cgst').text(cgst_amt_tot.toFixed(2));
                 $('#tot_sgst').text(sgst_amt_tot.toFixed(2));
-                $('#tot_paid').text(paid_amt_tot.toFixed(2));
+                // $('#tot_paid').text(paid_amt_tot.toFixed(2));
+                $('#tot_other_charges').text(tot_other_charges.toFixed(2));
                 $('#tot_amt').text(tot_amt_tot.toFixed(2));
                 $('#tot_cnt').text(cnt_tot);
 

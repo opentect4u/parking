@@ -14,25 +14,33 @@
 
           <div class="row g-2">
             <!-- Location Name -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="cust_name" class="form-label"><b>Location Name</b></label>
                 <input type="text" class="form-control shadow-sm rounded-pill" id="cust_name" name="cust_name" value="<%= data[0].customer_name %>">
              
             </div>
 
             <!-- Phone -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group">
                 <label for="phone" class="form-label"><b>Phone No</b></label>
-                <input type="text" class="form-control shadow-sm rounded-pill" id="phone" name="phone" value="<%= data[0].mobile_no%>">
+                <input type="text" class="form-control shadow-sm rounded-pill" id="phone" name="phone" maxlength="10" value="<%= data[0].mobile_no%>">
               </div>
             </div>
 
             <!-- No. of Device -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group">
                 <label for="no_device" class="form-label"><b>No. of Operator</b></label>
                 <input type="text" class="form-control shadow-sm rounded-pill" id="no_device" name="no_device" value="<%= data[0].no_device%>">
+              </div>
+            </div>
+
+            <!-- Receipt no-->
+              <div class="col-md-3">
+              <div class="form-group">
+                <label for="rec_no" class="form-label"><b>Receipt No</b></label>
+                <input type="text" class="form-control shadow-sm rounded-pill" id="rec_no" name="rec_no" value="<%= data[0].receipt_no%>">
               </div>
             </div>
 

@@ -98,8 +98,8 @@
                 <label for="dev_mode" class="form-label">Mode</label>
                 <select name="dev_mode" class="form-control" id="dev_mode" disabled>
                   <!-- <option value="">Select Mode</option> -->
-                  <option value="D" <% if (data[0].dev_mod === 'D') { %>selected<% } %>>Dual</option>
-                  <!-- <option value="F" <% if (data[0].dev_mod === 'F') { %>selected<% } %>>Fixed</option> -->
+                  <option value="F" <% if (data[0].dev_mod === 'F') { %>selected<% } %>>Fixed</option>
+                  <!-- <option value="D" <% if (data[0].dev_mod === 'D') { %>selected<% } %>>Fixed</option> -->
                 </select>
               </div>
 
@@ -113,7 +113,7 @@
                 <label for="gst_flag" class="form-label">GST Flag</label><br>
                 <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle"
                   data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="gst_flag" <%=(data[0].gst_flag=='Y' )?'checked':''%>>
+                  name="gst_flag" disabled <%=(data[0].gst_flag=='Y' )?'checked':''%>>
               </div>
 
               <div class="col-md-3">
@@ -204,6 +204,37 @@
 </div>
 <script>
   $(document).ready(function () {
+     // On page load - check if grace_flag is checked
+    toggleGraceValue();
+    toggleAdvanceValue();
+    
+
+    // When grace_flag toggle changes
+    $('#grace_flag').change(function () {
+      toggleGraceValue();
+    });
+
+       // When advance_flag toggle changes
+    $('#adv_pay_flag').change(function () {
+      toggleAdvanceValue();
+    });
+
+    function toggleGraceValue() {
+      if ($('#grace_flag').prop('checked')) {
+        $('#hide_grace').show();
+      } else {
+        $('#hide_grace').hide();
+      }
+    }
+
+    function toggleAdvanceValue() {
+      if ($('#adv_pay_flag').prop('checked')) {
+        $('#hide_adv').show();
+      } else {
+        $('#hide_adv').hide();
+      }
+    }
+
     $("#back").click(function () {
       window.location.href = "/superadmin/device_setting";
     });

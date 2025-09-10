@@ -99,12 +99,12 @@ reportRouter.post(
   async (req, res) => {
     try {
       const data = req.body;
-      console.log(data, "kk");
+      // console.log(data, "kk");
 
       let select = `
         a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no,
         b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt,
-        c.cgst, c.sgst, c.paid_amt, c.pay_mode, f.operator_name
+        c.cgst, c.sgst, c.paid_amt, c.other_charges, c.pay_mode, f.operator_name
       `;
 
       let table_name = `
@@ -212,7 +212,7 @@ reportRouter.get("/veh_wise_repo", AuthCheckedMW, async (req, res) => {
 reportRouter.get("/veh_wise_repo_new", AuthCheckedMW, async (req, res) => {
   var customer = await getcustomerlist()
   var data = {
-    title: "Veichle Wise Report",
+    title: "Vehicle Wise Report",
     page_path: "reports/veh_wise_repo_new",
     dtFormat: dateFormat,
     data: customer
@@ -238,13 +238,13 @@ reportRouter.post(
     //   userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, SUM(c.base_amt) base_amt,SUM(c.cgst) cgst, SUM(c.sgst) sgst`,
+    var select = `d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt, SUM(c.base_amt) base_amt,SUM(c.cgst) cgst, SUM(c.sgst) sgst, SUM(c.other_charges) other_charges`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`,
       order = "GROUP BY a.vehicle_id";
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
+    // console.log(res_dt);
     res.send(res_dt);
   }
 );
@@ -287,7 +287,7 @@ reportRouter.post(
     //   userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `b.device_id mc_srl_no_out,COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst`,
+    var select = `b.device_id mc_srl_no_out,COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, SUM(c.other_charges) other_charges`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`,
@@ -317,7 +317,7 @@ reportRouter.post(
     //   userType = req.session.user.user_data.user_type;
 
     var data = req.body;
-    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) as advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, f.operator_name opratorName`,
+    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt, SUM(c.advance_amt) as advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst, SUM(c.other_charges) other_charges, f.operator_name opratorName`,
       table_name =
         "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`;
@@ -441,23 +441,42 @@ reportRouter.post(
 );
 
 reportRouter.get("/shift_wise_repo", AuthCheckedMW, async (req, res) => {
-  var custId = req.session.user.user_data.customer_id,
-    shiftData = await db_Select(
-      "shift_id, shift_name, f_time, t_time",
-      "md_shift",
-      `customer_id=${custId}`,
-      "ORDER BY f_time"
-    );
-  // console.log(shiftData)
-
+  // var custId = req.session.user.user_data.customer_id;
+  // var shiftData = await db_Select(
+  //     "shift_id, shift_name, f_time, t_time",
+  //     "md_shift",
+  //     `customer_id=${custId}`,
+  //     "ORDER BY f_time"
+  //   );
+  var customer = await getcustomerlist();  
   var data = {
     title: "Shiftwise Report",
     page_path: "reports/shift_report_new",
     dtFormat: dateFormat,
-    shiftData: shiftData,
+    data: customer,
+    // shiftData: shiftData,
   };
   res.render("common/layouts/main", data);
 });
+
+reportRouter.post(
+  "/get_shift_wise_repo_new",
+  AuthCheckedMW,
+  async (req, res) => {
+
+    var data = req.body;
+    var select = `b.device_id mc_srl_no_out, d.vehicle_name vehicleType, COUNT(b.receipt_no) tot_vehi, SUM(c.paid_amt) paid_amt,SUM(c.advance_amt) AS advance_amt,SUM(c.base_amt) base_amt, SUM(c.cgst) cgst, SUM(c.sgst) sgst,SUM(c.other_charges) other_charges, f.operator_name opratorName, g.shift_name, g.f_time, g.t_time`,
+      table_name =
+        "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f, md_shift g",
+      whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.customer_id = g.customer_id AND TIME(b.date_time_out) BETWEEN g.f_time AND g.t_time AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`;
+    order = `GROUP BY a.user_id_in,b.device_id,d.vehicle_name,f.operator_name,g.shift_name, g.f_time, g.t_time
+    ORDER BY g.f_time`;
+    var res_dt = await db_Select(select, table_name, whr, order);
+    // console.log(res_dt);
+    res.send(res_dt);
+  }
+);
+
 
 reportRouter.post("/shift_wise_repo", AuthCheckedMW, async (req, res) => {
   var custId = req.session.user.user_data.customer_id,
