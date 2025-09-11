@@ -400,7 +400,7 @@ export default function DetailedReportScreen({ navigation }) {
       `[C]--------------------------------` +
       // `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} NET: ${totalCashAmount}</font>\n` : ""}` +
       `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-      `${generalSettings.pay_mode_flag == "N" ? `[L]<font size='normal'>CASH: ${totalAmount} NET: ${totalCashAmount}</font>\n` : ""}` +
+      `${generalSettings.pay_mode_flag == "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
       `[C]--------------------------------` +
 
       // `${GST_Yes_No}` +    // GST OFF on Print 

@@ -386,7 +386,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         // `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
         // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount}   NET: ${totalAmount}</font>\n` : ""}` +
         `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-        `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` : ""}` +
+        `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
         `[C]--------------------------------\n` +
         // `${GST_Yes_No}` +   // GST OFF on Print
         // `[L]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +
