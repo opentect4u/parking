@@ -106,7 +106,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     
 
     let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
-    console.log('>>>>>>>', resdata?.data?.msg, 'hhhhhhhhhhhhhhhhhhhhhhh');
+    // console.log('>>>>>>>', resdata?.data?.msg, 'hhhhhhhhhhhhhhhhhhhhhhh');
     setVehicleWiseReports(resdata?.data?.msg);
 
   };
@@ -316,7 +316,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
       
       // payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>` : `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>` : `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
     
     });
   
@@ -385,7 +385,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         `[C]--------------------------------\n` +
         // `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` +
         // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount}   NET: ${totalAmount}</font>\n` : ""}` +
-        `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount}</font>\n` : ""}` +
+        `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
         `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` : ""}` +
         `[C]--------------------------------\n` +
         // `${GST_Yes_No}` +   // GST OFF on Print
@@ -564,10 +564,12 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                         <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         )}
                         
-                        <Text style={[styles.cell]}>{Math.round(item?.base_amt) +
-                        Math.round(item?.cgst) +
-                        Math.round(item?.sgst) +
-                        (item?.other_charges || 0)}</Text>
+                        <Text style={[styles.cell]}>{item?.tot_amt + item?.other_charges}
+                        {/* Math.round(item?.cgst) +
+                       Math.round(item?.sgst) +
+                        (item?.other_charges || 0) */}
+                        
+                        </Text>
                         {/* <Text style={[styles.cell]}>{gstAmount?.CGST} {gstAmount?.SGST} {item?.other_charges}</Text> */}
                       </View>
                     );

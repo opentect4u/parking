@@ -398,7 +398,8 @@ export default function DetailedReportScreen({ navigation }) {
       `[C]--------------------------------` +
       `[C]${payloadBody}\n` +
       `[C]--------------------------------` +
-      `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} NET: ${totalCashAmount}</font>\n` : ""}` +
+      // `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} CASH: ${totalCashAmount} NET: ${totalCashAmount}</font>\n` : ""}` +
+      `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
       `${generalSettings.pay_mode_flag == "N" ? `[L]<font size='normal'>CASH: ${totalAmount} NET: ${totalCashAmount}</font>\n` : ""}` +
       `[C]--------------------------------` +
 
@@ -538,7 +539,7 @@ export default function DetailedReportScreen({ navigation }) {
                 <>
                 {getDetailedReport.forEach(item => {
                 if (item?.pay_mode === "U") {
-                totalUPIAmount += item.paid_amt;
+                totalUPIAmount += item.paid_amt + item.other_charges;
                 }
 
                 if (item?.pay_mode === "C") {
@@ -550,7 +551,7 @@ export default function DetailedReportScreen({ navigation }) {
                 )}
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
-                    totalAmount += item.base_amt;
+                    totalAmount += item.paid_amt;
                     other_charges += item.other_charges;
                     
                     // totalAdvanceAmount += item.advance_amt;
@@ -656,7 +657,7 @@ export default function DetailedReportScreen({ navigation }) {
                       Net Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                    {totalAmount + gstAmount.CGST + gstAmount.SGST + other_charges}
+                    {totalAmount + other_charges}
 
                   {/* {totalAmount < totalAdvanceAmount ? (
                   totalAdvanceAmount + totalAmount
@@ -667,7 +668,7 @@ export default function DetailedReportScreen({ navigation }) {
 
                   </View>
 
-                {generalSettings.pay_mode_flag == "Y" && (
+                {/* {generalSettings.pay_mode_flag == "Y" && (
                     <>
                 <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                 <Text style={[styles.cell, styles.hcell]}>
@@ -689,7 +690,7 @@ export default function DetailedReportScreen({ navigation }) {
 
                 </View>
                 </>
-                )}
+                )} */}
 
                   </>
                 }
