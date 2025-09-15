@@ -8,21 +8,17 @@
       <div class="col-lg-12">
         <div class="card shadow-lg border-0 custom-card" 
            style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f2f7);">
-          <!-- <div class="titleSec">
-            <button type="button" class="btn btn-primary" id="myBtn"
-              style="float: inline-end;border-radius: 6px;width: 6vw;cursor: pointer;">Add</button>
-          </div> -->
           <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h4 class="mb-0 text-gradient fw-bold">
-              <i data-feather="corner-up-right" class="feather-icon text-dark"></i>&nbsp;<b>Manage Shift</b>
+              <i data-feather="corner-up-right" class="feather-icon text-dark"></i>&nbsp;<b>Manage Admin</b>
             </h4>
               <button type="button" class="btn btn-gradient px-4 rounded-pill" id="myBtn">
             <i class="fa fa-plus"></i> Add
           </button>
           </div>
 
-          <% if(user.userData.user_type == 'S'){ %>
-          <form action="/superadmin/shift" method="post" class="p-4">
+          
+          <form action="/superadmin/admin" method="post" class="p-4">
             <div class="row g-3 align-items-end justify-content-center">
 
               <div class="col-md-6">
@@ -43,10 +39,8 @@
               </div>
             </div>
           </form>
-          <% } %>
 
-          <%# if(selected.cust_id > 0){ %>
-            <% if((user.userData.user_type == "S" && selected.cust_id > 0) || user.userData.user_type == "A"){ %>
+          <% if(selected.cust_id > 0){ %>
             <div class="p-3">
               <!-- <div class="col-md-12"> -->
                 <div class="table-responsive">
@@ -54,9 +48,9 @@
                       <thead>
                           <tr>
                               <th class="text-center text-dark">Sl No.</th>
-                              <th class="text-center text-dark">Shift Name</th>
-                              <th class="text-center text-dark">From Time</th>
-                              <th class="text-center text-dark">To Time</th>
+                              <th class="text-center text-dark">User ID</th>
+                              <th class="text-center text-dark">User Name</th>
+                              <!-- <th class="text-center text-dark">Device ID</th> -->
                               <th class="text-center text-dark">Action</th>
                           </tr>
                       </thead>
@@ -66,15 +60,15 @@
                             data.forEach(dt => { %>
                               <tr>
                                 <td class="text-center text-dark"><%= i %></td>
-                                <td class="text-center text-dark"><%= dt.shift_name %></td>
-                                <td class="text-center text-dark"><%= dt.f_time %></td>
-                                <td class="text-center text-dark"><%= dt.t_time %></td>
-                                <td class="text-center text-dark"><a href='/superadmin/edit_shift?customer_id=<%= selected.cust_id %>&id=<%= dt.shift_id %>' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
+                                <td class="text-center text-dark"><%= dt.user_id %></td>
+                                <td class="text-center text-dark"><%= dt.user_name %></td>
+                                <!-- <td class="text-center text-dark"><%= dt.device_id %></td> -->
+                                <td class="text-center text-dark"><a href='/superadmin/edit_admin?customer_id=<%= selected.cust_id %>&id=<%= dt.sl_no %>' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
                               </tr>
                           <% i++; })
                           }else{ %>
                             <tr>
-                              <td class="text-center text-danger" colspan="5">No data found</td>
+                              <td class="text-center text-danger" colspan="4">No data found</td>
                             </tr>
                           <% } %>
                       </tbody>
@@ -95,7 +89,7 @@
         <!-- Modal Header -->
         <div class="modal-header border-0">
           <h3 class="modal-title fw-bold text-dark">
-            <i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Add Shift</b>
+            <i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Add Admin</b>
           </h3>
           <!-- <button type="button" class="close" data-dismiss="modal">
             &times;
@@ -104,47 +98,55 @@
   
         <!-- Modal body -->
         <div class="modal-body">
-          <form action="/superadmin/save_shift" method="post" id="myForm">
+          <form action="/superadmin/save_admin" method="post" id="myForm">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
                     <label for="cust_id" class="text-dark"><b>Location Name</b></label>
-                    <% if(user.userData.user_type === 'S'){ %>
                     <select name="cust_id" class="form-control" id="cust_id">
                         <option value="">Select Location Name</option>
                         <% customer.forEach(dt => { %>
                           <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
                           <% }) %>
                     </select>
-                    <% } else { %>
-                  <!-- Auto-select & show location name for others (e.g. A) -->
-                <% 
-                  let selectedCust = customer.find(c => c.customer_id == user.userData.customer_id);
-                %>
-                <input type="hidden" name="cust_id" value="<%= user.userData.customer_id %>">
-                <input type="text" class="form-control" value="<%= selectedCust ? selectedCust.customer_name : '' %>" disabled>
-              <% } %>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                  <label for="shift_name" class="text-dark"><b>Shift Name</b></label>
-                  <input type="text" class="form-control" id="shift_name" name="shift_name" placeholder="Enter Shift Name...."
+                  <label for="user_id" class="text-dark"><b>User Login ID</b></label>
+                  <input type="text" class="form-control" id="user_id" maxlength="10" name="user_id" placeholder="Enter User Login ID...."
                     value="">
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="frm_time" class="text-dark"><b>From Time</b></label>
-                  <input type="time" name="frm_time" id="frm_time" class="form-control" value="">
-                </div>
+             <div class="col-md-6">
+            <div class="form-group position-relative">
+              <label for="pass" class="text-dark"><b>Password</b></label>
+              <input type="password" name="pass" id="pass" class="form-control" placeholder="Enter Password....">
+            
+              <!-- Eye icon -->
+              <i class="fa fa-eye toggle-password" id="togglePass"
+                 style="position:absolute; top:44px; right:15px; cursor:pointer;"></i>
               </div>
+              </div>
+
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="to_time" class="text-dark"><b>To Time</b></label>
-                  <input type="time" name="to_time" id="to_time" class="form-control" value="">
+                  <label for="user_name" class="text-dark"><b>User Name</b></label>
+                  <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Enter User Name...." value="">
                 </div>
-              </div>           
+              </div>   
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="user_mobile_no" class="text-dark"><b>User Mobile No</b></label>
+                  <input type="text" name="user_mobile_no" maxlength="10" id="user_mobile_no" class="form-control" placeholder="Enter User Mobile No...." value="">
+                </div>
+              </div>   
+              <!-- <div class="col-md-6">
+                <div class="form-group">
+                  <label for="device_id" class="text-dark"><b>Device ID</b></label>
+                  <input type="text" name="device_id" id="device_id" class="form-control" placeholder="Enter Device ID" value="">
+                </div>
+              </div>            -->
             </div>
             <div class="row">
                 <input type="hidden" name="id" value="0">
@@ -160,7 +162,21 @@
     </div>
   </div>
 
-<script>
+  <script>
+  $(document).ready(function () {
+    $("#togglePass").click(function () {
+      const input = $("#pass");
+      const type = input.attr("type") === "password" ? "text" : "password";
+      input.attr("type", type);
+
+      // toggle icon
+      $(this).toggleClass("fa-eye fa-eye-slash");
+    });
+  });
+</script>
+
+
+  <script>
     $(document).ready(function () {
       $("#myBtn").click(function () {
         $("#myModal").modal();

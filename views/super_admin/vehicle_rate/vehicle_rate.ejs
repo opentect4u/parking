@@ -20,14 +20,22 @@
   <div class="row g-3 align-items-end">
  <div class="col-md-4">
   <label for="cust_name_sel"><b style="color: black;">Location Name:</b></label>
+<% if (user.userData.user_type === 'S') { %>
+  <!-- Superadmin: Show dropdown -->
   <select name="cust_name" class="gorgeous-select" id="cust_name_sel" required>
     <option value="">Select Location Name</option>
-    <% customer.forEach(dt=> {
-      var _selected = ''
-      if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
-      <option value="<%= dt.customer_id %>" <%=_selected %>><%= dt.customer_name %></option>
+    <% customer.forEach(dt => { 
+      var _selected = '';
+      if (selected.cust_id == dt.customer_id) _selected = 'selected';
+    %>
+      <option value="<%= dt.customer_id %>" <%= _selected %>><%= dt.customer_name %></option>
     <% }) %>
   </select>
+<% } else if (user.userData.user_type === 'A') { %>
+  <!-- Admin: Show fixed location name -->
+  <input type="hidden" name="cust_name" value="<%= user.userData.customer_id %>">
+  <input type="text" class="form-control" value="<%= user.userData.customer_name %>" readonly>
+<% } %>
 </div>
 
 <div class="col-md-4">
@@ -131,14 +139,35 @@ $(document).ready(function(){
     changeProcess(cust_id)
   })
 
-  $(document).ready(function () {
-    var sel_cust_id = '<%= selected.cust_id %>'
-    if (sel_cust_id > 0) {
-      // console.log(sel_cust_id, 'dsasda');
-      changeProcess(sel_cust_id)
-      // $('#cust_name_sel').change()
-    }
-  })
+    $(document).ready(function () {
+    // Superadmin: change event triggers on dropdown change
+    $('#cust_name_sel').on('change', function () {
+      var cust_id = $(this).val();
+      changeProcess(cust_id);
+    });
+
+    // Admin: automatically fetch vehicles based on user.userData.customer_id
+    <% if (user.userData.user_type === 'A') { %>
+      var admin_cust_id = '<%= user.userData.customer_id %>';
+      changeProcess(admin_cust_id);
+    <% } else { %>
+      // Superadmin: trigger change if already selected
+      var sel_cust_id = '<%= selected.cust_id %>';
+      if (sel_cust_id > 0) changeProcess(sel_cust_id);
+    <% } %>
+
+    // Modal button
+    $("#myBtn").click(function () {
+      $("#myModal").modal();
+    });
+  });
+
+  // $(document).ready(function () {
+  //   var sel_cust_id = '<%= selected.cust_id %>'
+  //   if (sel_cust_id > 0) {
+  //     changeProcess(sel_cust_id)
+  //   }
+  // })
 
   function changeProcess(cust_id) {
     var cust_dtls = cust_list.filter(dt => dt.customer_id == cust_id);

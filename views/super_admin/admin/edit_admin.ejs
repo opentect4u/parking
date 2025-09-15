@@ -1,4 +1,4 @@
-<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa, #e3e8ff); min-height: 100vh;">
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #f5f7fa, #e3e8ff); min-height: 100vh;">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-4 form-card">
@@ -6,11 +6,11 @@
                 <div class="card-header gradient-header text-white py-3">
                     <h4 class="mb-0 d-flex align-items-center">
                         <i class="fa fa-arrow-circle-left" aria-hidden="true" id="back"
-                            style="cursor: pointer;">&nbsp;Shift Edit Details</i>
+                            style="cursor: pointer;">&nbsp;Admin Edit Details</i>
                         </h4>
                 </div>
 
-                <form action="/superadmin/save_shift" id="myForm" method="post" class="p-4">
+                <form action="/superadmin/save_admin" id="myForm" method="post" class="p-4">
 
                     <div class="row">
                         <div class="form-group col-md-6  mb-4">
@@ -18,32 +18,49 @@
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Location Name</option>
                                 <% customer.forEach(dt => { %>
-                                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+                                    <option value="<%= dt.customer_id %>" 
+                                    <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
                                     <% }) %>
                             </select>
                         </div>
 
                         <div class="form-group col-md-6 mb-4">
                             <div class="form-group">
-                              <label for="shift_name" class="text-dark"><b>Shift Name</b></label>
-                              <input type="text" class="form-control" id="shift_name" name="shift_name" placeholder="Enter Shift Name...."
-                                value="<%= data[0].shift_name %>">
+                              <label for="user_id" class="text-dark"><b>User Login ID</b></label>
+                              <input type="text" class="form-control" maxlength="10" id="user_id" name="user_id" placeholder="Enter User Login ID...."
+                                value="<%= data[0].user_id %>">
                             </div>
                           </div>
 
                           <div class="form-group col-md-6 mb-4">
                             <div class="form-group">
-                              <label for="frm_time" class="text-dark"><b>From Time</b></label>
-                              <input type="time" name="frm_time" id="frm_time" class="form-control" value="<%= data[0].f_time %>">
+                              <label for="pass" class="text-dark"><b>Password</b></label>
+                              <input type="password" name="pass" id="pass" class="form-control" value="">
+                              <i class="fa fa-eye toggle-password" id="togglePass"
+                               style="position:absolute; top:44px; right:25px; cursor:pointer;"></i>
+                             </div>
+                            </div>
+
+                          <div class="form-group col-md-6 mb-4">
+                            <div class="form-group">
+                              <label for="user_name" class="text-dark"><b>User Name</b></label>
+                              <input type="text" name="user_name" id="user_name" class="form-control" value="<%= data[0].user_name %>">
                             </div>
                           </div>
 
                           <div class="form-group col-md-6 mb-4">
                             <div class="form-group">
-                              <label for="to_time" class="text-dark"><b>To Time</b></label>
-                              <input type="time" name="to_time" id="to_time" class="form-control" value="<%= data[0].t_time %>">
+                              <label for="user_mobile_no" class="text-dark"><b>User Mobile No</b></label>
+                              <input type="text" name="user_mobile_no" maxlength="10" id="user_mobile_no" class="form-control" value="<%= data[0].user_mobile_no %>">
                             </div>
                           </div>
+
+                          <!-- <div class="form-group col-md-6 mb-4">
+                            <div class="form-group">
+                              <label for="device_id" class="text-dark"><b>Device ID</b></label>
+                              <input type="text" name="device_id" id="device_id" class="form-control" value="<%= data[0].device_id %>">
+                            </div>
+                          </div> -->
                         </div>
 
 
@@ -61,6 +78,19 @@
         </div>
     </div>
 </div>
+
+<script>
+  $(document).ready(function () {
+    $("#togglePass").click(function () {
+      const input = $("#pass");
+      const type = input.attr("type") === "password" ? "text" : "password";
+      input.attr("type", type);
+
+      // toggle icon
+      $(this).toggleClass("fa-eye fa-eye-slash");
+    });
+  });
+</script>
 
 <script>
     $(document).ready(function () {

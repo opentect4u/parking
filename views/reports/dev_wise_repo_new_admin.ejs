@@ -1,0 +1,395 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg rounded-4 border-0 p-4" style= "background: linear-gradient(to right, #c5cedf, #bb9f9f00);">
+                <h3 class="card-title mb-4 text-center text-primary">
+                    <%= title %>
+                </h3>
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-2"></div>
+                   <div class="col-md-4">
+                     <label for="frm_dt" class="form-label fw-bold text-dark"><b>From Date</b></label>
+                     <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
+                    </div>
+
+
+                   <!-- To Date -->
+                    <div class="col-md-4">
+                      <label for="to_dt" class="form-label fw-bold text-dark"><b>To Date</b></label>
+                      <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
+                    </div>
+
+                    <div class="col-md-2"></div>
+
+                    <div class="col-12 d-flex justify-content-center mt-3">
+                  <button type="button" class="btn btn-gradient btn-sm px-4 shadow-sm" id="btnSubmit">
+                     <i class="fa fa-search me-1"></i> Search
+                  </button>
+                   </div>
+                </div>
+                <!-- <div class="card-body" id="resultDiv"> -->
+                    <div class="dateWiseDataTable mt-4" id="resultDiv" style="display: none;">
+                    <h5 class="text-center text-secondary mb-3">
+                        <span id="searchCred"></span>
+                    </h5>
+                    <div class="table-responsive shadow-sm rounded-3" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-fixed-header">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Machine No</th>
+                                    <th scope="col">Count</th>
+                                    <th scope="col">Base Amount</th>
+                                    <th scope="col">Advance Amount</th>
+                                    <th scope="col">CGST</th>
+                                    <th scope="col">SGST</th>
+                                    <!-- <th scope="col">Paid Amount</th> -->
+                                    <!-- <th scope="col">MIS Charges</th> -->
+                                    <th scope="col">Net Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td scope="col" colspan="2">Total</td>
+                                    <td scope="col" id="tot_cnt"><b>0</b></td>
+                                    <td scope="col" id="tot_base"><b>0</b></td>
+                                    <td scope="col" id="tot_advance"><b>0</b></td>
+                                    <td scope="col" id="tot_cgst"><b>0</b></td>
+                                    <td scope="col" id="tot_sgst"><b>0</b></td>
+                                    <!-- <td scope="col" id="tot_paid"><b>0</b></td> -->
+                                    <!-- <td scope="col" id="tot_other_charges"><b>0</b></td> -->
+                                    <td scope="col" id="tot_amt"><b>0</b></td>
+                                </tr>   
+                            </tfoot>
+                        </table>
+
+                         <!-- <div class="text-end mt-3">
+                          <button class="btn btn-gradient-print btn-sm px-4 shadow-sm" onclick="printDiv()">
+                            <i class="fa fa-print me-2"></i> Print
+                          </button>
+                        </div> -->
+                        
+      <div class="text-end mt-3">
+  <button class="btn btn-gradient-print btn-sm px-4 shadow-sm me-2 no-print" onclick="printDiv()">
+    <i class="fa fa-print me-2"></i> Print
+  </button>
+  <button class="btn btn-success btn-sm px-4 shadow-sm no-print" onclick="downloadExcel()">
+    <i class="fa fa-file-excel me-2"></i> Excel
+  </button>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-success {
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: white;
+  border-radius: 50px;
+  border: none;
+}
+    .table-fixed-header th {
+  background-color: #1c2d41; /* Your fixed color */
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* Optional: keep footer visible too */
+.table tfoot tr {
+  background-color: #c0b9b9;
+  font-weight: 700;
+}
+    .btn-gradient-print {
+  background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Warm gradient */
+  color: rgb(20, 14, 14);
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.btn-gradient-print:hover {
+  /* background: linear-gradient(90deg, #feb47b, #ff7e5f); */
+  /* transform: scale(1.05); */
+  /* box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4); */
+}
+.input-custom, .select-custom {
+  transition: all 0.3s;
+  border: 1px solid #ced4da;
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+.input-custom:focus, .select-custom:focus {
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+  border-color: #0d6efd;
+}
+.btn-gradient {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+</style>
+
+    <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/dateFormat.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#resultDiv').hide()
+        })
+    </script>
+    <!-- <script>
+        $('#btnSubmit').on('click', function(){
+            var frm_dt = $('#frm_dt').val()
+            var to_dt = $('#to_dt').val()
+            var custId = $('#custId').val()
+            
+            if(frm_dt != '' && to_dt != '' && custId != ''){
+                $.ajax({
+                    method: "POST",
+                    url: "/report/get_dev_wise_report_new",
+                    data: { frm_dt, to_dt, custId },
+                    dataType: "html",
+                    beforeSend: function () {
+                        $(".preloader").fadeIn();
+                    },
+                    success: function (result) {
+                        var res = JSON.parse(result);
+                        var net_amt_tot = 0;
+                        var base_amt_tot = 0;
+                        var advance_amt_tot = 0;
+                        var cgst_amt_tot = 0;
+                        var sgst_amt_tot = 0;
+                        var paid_amt_tot = 0;
+                        var cnt_tot = 0;
+                        var tot_amt_tot = 0;
+                        $('#resultDiv').show()
+                        $('#resultDiv table tbody').empty()
+                        // console.log(res)
+                        if(res.suc > 0){
+                            if(res.msg.length > 0){
+                                $('#searchCred').html(`<b>Device Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`)
+                                let i = 1;
+                                for(let dt of res.msg){
+                                    base_amt_tot += dt.base_amt
+                                    advance_amt_tot += dt.advance_amt
+                                    cgst_amt_tot += dt.cgst
+                                    sgst_amt_tot += dt.sgst
+                                    paid_amt_tot += dt.paid_amt
+                                    net_amt_tot = (dt.advance_amt + dt.paid_amt)
+                                    tot_amt_tot += net_amt_tot
+                                    cnt_tot += dt.tot_vehi
+                                    $('#resultDiv table tbody').append(`
+                                    <tr>
+                                        <td class=text-dark>${i}</td>
+                                        <td class=text-dark>${dt.mc_srl_no_out}</td>
+                                        <td class=text-dark>${dt.tot_vehi}</td>
+                                        <td class=text-dark>${dt.base_amt.toFixed(2)}</td>
+                                        <td class=text-dark>${dt.advance_amt}</td>
+                                        <td class=text-dark>${dt.cgst.toFixed(2)}</td>
+                                        <td class=text-dark>${dt.sgst.toFixed(2)}</td>
+                                        <td class=text-dark>${dt.paid_amt}</td>
+                                        <td class=text-dark>${net_amt_tot}</td>
+                                    </tr>
+                                    `)
+                                    i++
+                                }
+                                $('#tot_base').text(base_amt_tot.toFixed(2))
+                                $('#tot_advance').text(advance_amt_tot)
+                                $('#tot_cgst').text(cgst_amt_tot.toFixed(2))
+                                $('#tot_sgst').text(sgst_amt_tot.toFixed(2))
+                                $('#tot_paid').text(paid_amt_tot)
+                                $('#tot_amt').text(tot_amt_tot)
+                                $('#tot_cnt').text(cnt_tot)
+                            }else{
+                                $('#resultDiv table tbody').append('<tr><td colspan="6" class="text-center text-danger">No Data Found</td></tr>')
+								
+                                $('#tot_base').text(base_amt_tot.toFixed(2))
+                                $('#tot_advance').text(advance_amt_tot)
+                                $('#tot_cgst').text(cgst_amt_tot.toFixed(2))
+                                $('#tot_sgst').text(sgst_amt_tot.toFixed(2))
+                                $('#tot_paid').text(paid_amt_tot)
+                                $('#tot_amt').text(tot_amt_tot)
+                                $('#tot_cnt').text(cnt_tot)
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(".preloader").fadeOut();
+                    }
+                })
+            }
+        })
+    </script> -->
+
+
+    <script>
+        var cust = <%= user.userData.customer_id %>;
+        var custName = "<%= user.userData.customer_name %>";
+
+        $('#btnSubmit').on('click', function(){
+    var frm_dt = $('#frm_dt').val()
+    var to_dt = $('#to_dt').val()
+    var custId = cust
+    // var custName = $("#custId option:selected").text(); // Get selected location name
+    
+    if(frm_dt && to_dt && custId){
+      $('#resultDiv').show();
+      $('#resultDiv table tbody').empty();
+
+      $('#searchCred').html(`<b>Device Wise Report of ${custName} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+
+
+        $.ajax({
+            method: "POST",
+            url: "/report/get_dev_wise_report_new",
+            data: { frm_dt, to_dt, custId },
+            dataType: "html",
+            beforeSend: function () {
+                $(".preloader").fadeIn();
+            },
+            success: function (result) {
+                var res = JSON.parse(result);
+                var net_amt_tot = 0, base_amt_tot = 0, advance_amt_tot = 0,
+                    cgst_amt_tot = 0, sgst_amt_tot = 0, paid_amt_tot = 0, tot_other_charges = 0, cnt_tot = 0, tot_amt_tot = 0;
+
+                // $('#resultDiv').show();
+                // $('#resultDiv table tbody').empty();
+
+                if(res.suc > 0 && res.msg.length > 0){
+                    // $('#searchCred').html(`<b>Device Wise Report from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
+
+                    let i = 1;
+                    for(let dt of res.msg){
+                        let base_amt = parseFloat(dt.base_amt);
+                        let advance_amt = parseFloat(dt.advance_amt);
+                        let cgst_amt = parseFloat(dt.cgst);
+                        let sgst_amt = parseFloat(dt.sgst);
+                        // let paid_amt = parseFloat(dt.paid_amt);
+                        let other_charge_amt = parseFloat(dt.other_charges) || 0;
+                        let paid_amt = parseFloat(dt.paid_amt);
+                        let tot_vehi = parseInt(dt.tot_vehi);
+
+                        // net_amt_tot = paid_amt + advance_amt;
+                        net_amt_tot = base_amt + advance_amt + cgst_amt + sgst_amt + other_charge_amt;
+
+                        base_amt_tot += base_amt;
+                        advance_amt_tot += advance_amt;
+                        cgst_amt_tot += cgst_amt;
+                        sgst_amt_tot += sgst_amt;
+                        // paid_amt_tot += paid_amt;
+                        tot_other_charges += other_charge_amt;
+                        tot_amt_tot += net_amt_tot;
+                        cnt_tot += tot_vehi;
+
+                        $('#resultDiv table tbody').append(`
+                            <tr>
+                                <td class=text-dark>${i}</td>
+                                <td class=text-dark>${dt.mc_srl_no_out}</td>
+                                <td class=text-dark>${tot_vehi}</td>
+                                <td class=text-dark>${base_amt.toFixed(2)}</td>
+                                <td class=text-dark>${advance_amt.toFixed(2)}</td>
+                                <td class=text-dark>${cgst_amt.toFixed(2)}</td>
+                                <td class=text-dark>${sgst_amt.toFixed(2)}</td>
+                                <!--- <td class=text-dark>${paid_amt.toFixed(2)}</td> -->
+                                <!-- <td class=text-dark>${other_charge_amt.toFixed(2)}</td> -->
+                                <td class=text-dark>${net_amt_tot.toFixed(2)}</td>
+                            </tr>
+                        `);
+                        i++;
+                    }
+
+                    $('#tot_base').text(base_amt_tot.toFixed(2));
+                    $('#tot_advance').text(advance_amt_tot.toFixed(2));
+                    $('#tot_cgst').text(cgst_amt_tot.toFixed(2));
+                    $('#tot_sgst').text(sgst_amt_tot.toFixed(2));
+                    // $('#tot_paid').text(paid_amt_tot.toFixed(2));
+                    // $('#tot_other_charges').text(tot_other_charges.toFixed(2));
+                    $('#tot_amt').text(tot_amt_tot.toFixed(2));
+                    $('#tot_cnt').text(cnt_tot);
+                } else {
+                    $('#resultDiv table tbody').append('<tr><td colspan="8" class="text-center text-danger">No Data Found</td></tr>');
+                }
+            },
+            complete: function () {
+                $(".preloader").fadeOut();
+            }
+        })
+    }
+});
+
+        </script>
+
+<script>
+function downloadExcel() {
+    // Get the table element
+    var table = document.querySelector("#resultDiv table");
+
+    if (!table) {
+        alert("No data available to export!");
+        return;
+    }
+
+    // Convert table to worksheet
+    var workbook = XLSX.utils.book_new();
+    var worksheet = XLSX.utils.table_to_sheet(table);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Device Report");
+
+    // Download Excel file
+    XLSX.writeFile(workbook, "Device_Report.xlsx");
+}
+</script>
+
+
+<script>
+    function printDiv() {
+
+        var divToPrint = document.getElementById('resultDiv');
+
+        var WindowObject = window.open('', 'Print-Window');
+        WindowObject.document.open();
+        WindowObject.document.writeln('<!DOCTYPE html>');
+        WindowObject.document.writeln('<html><head><title></title><style type="text/css">');
+
+
+        WindowObject.document.writeln('@media print { .center { text-align: center;}' +
+            '                                         .inline { display: inline; }' +
+            '                                         .underline { text-decoration: underline; }' +
+            '                                         .left { margin-left: 315px;} ' +
+            '                                         .right { margin-right: 375px; display: inline; }' +
+            '                                          table { border-collapse: collapse; font-size: 10px;}' +
+            '                                          th, td { border: 1px solid black; border-collapse: collapse; padding: 6px; font-family: Arial, Helvetica, sans-serif;}' +
+            '                                           th, td {text-align: left;}' +
+            '.table .thead-dark th {color: #fff; background-color: #1c2d41;}'+
+            ' tfoot{font-weight: 700; color: #000;}'+
+            ' .printBtnDate{display: none;}'+ '.no-print{ display: none !important;}'+
+            '                                         .border { border: 1px solid black; } ' +
+            '                                         .bottom { bottom: 5px; width: 100%; position: fixed ' +
+            '                                       ' +
+            '                                   } } </style>');
+        WindowObject.document.writeln('</head><body onload="window.print()">');
+        WindowObject.document.writeln(divToPrint.innerHTML);
+        WindowObject.document.writeln('</body></html>');
+        WindowObject.document.close();
+
+        setTimeout(function () {
+            WindowObject.close();
+        }, 10);
+
+    }
+</script>

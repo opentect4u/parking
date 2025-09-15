@@ -22,13 +22,16 @@ const getAllVehicleRateList = (id = 0,cust_id) => {
 const vehicle_rate = async (req, res) => {
   try {
     var method = req.method;
+    var user = req.session.user;
+
     var selected = {
       cust_id: method == "POST" ? req.body.cust_name : "",
       veh_name: method == "POST" ? req.body.veh_id : "",
       rate_type: method == "POST" ? req.body.rate_type : "",
       veh_id: method == "POST" ? req.body.veh_id : "",
     };
-    console.log(selected, "pp");
+    // console.log(selected, "pp");
+
     var cust = await getAllCustomerList();
     var seller_name = await getAllSellerList();
     var vehicle = await getAllVehicleList();
@@ -69,6 +72,62 @@ const vehicle_rate = async (req, res) => {
 //     resolve(vehicle_dt);
 //   });
 // };
+
+// const vehicle_rate = async (req, res) => {
+//   try {
+//     var method = req.method;
+//     var user = req.session.user;
+
+//     var selected = {
+//       cust_id: "",
+//       veh_name: method == "POST" ? req.body.veh_id : "",
+//       rate_type: method == "POST" ? req.body.rate_type : "",
+//       veh_id: method == "POST" ? req.body.veh_id : "",
+//     };
+//     // console.log(selected, "pp");
+
+//      if (user.user_type === "A") {
+//       // For Admin → fixed location
+//       selected.cust_id = user.userData.customer_id;
+//     } else if (user.user_type === "S") {
+//        // For Superadmin → dropdown selection
+//       selected.cust_id = method == "POST" ? req.body.cust_name : "";
+//     }
+    
+//     var cust = await getAllCustomerList();
+//     var seller_name = await getAllSellerList();
+//     var vehicle = await getAllVehicleList();
+
+//     veh_rate_list = [];
+//     if (selected.cust_id) {
+//       veh_rate_list = await show_vehicle_rate_dtls(
+//         selected.cust_id,
+//         selected.veh_name
+//       );
+//       veh_rate_list = veh_rate_list.suc > 0 ? veh_rate_list.msg : [];
+//     }
+
+//     const page_data = {
+//       title: "Vehicle Rate details",
+//       page_path: "super_admin/vehicle_rate/vehicle_rate",
+//       data: veh_rate_list,
+//       customer: cust.suc > 0 ? cust.msg : null,
+//       seller: seller_name.suc > 0 ? seller_name.msg : null,
+//       vehicle: vehicle.suc > 0 ? vehicle.msg : null,
+//       selected,
+//     };
+//     // console.log(data, "999");
+//     res.render("common/layouts/main", page_data);
+//     // console.log(page_data, "...");
+//   } catch (error) {
+//     // console.log(error);
+//     logger.error(err); // Log the error
+//     res.redirect("/superadmin_login");
+//   }
+// };
+
+
+
 
 const show_vehicle_rate_dtls = (cust_id, veh_name) => {
   return new Promise(async (resolve, reject) => {
@@ -151,7 +210,7 @@ const save_add_vehicle_rate = async (req, res) => {
         value.id > 0
           ? `vehicle_rate='${value.park_fee}',updated_by='${user_name}',updated_at='${datetime}'`
           : "(seller_id,customer_id,rate_type,vehicle_id,from_hour,to_hour,vehicle_rate,rate_flag,night_day_flag,created_by,created_at)",
-      values = `('0','${value.cust_name}','H','${value.veh_id}','0','24','${value.park_fee}','F','O','${user_name}','${datetime}')`;
+      values = `('0','${value.cust_name}','F','${value.veh_id}','0','24','${value.park_fee}','F','O','${user_name}','${datetime}')`;
     let res_dt = await db_Insert(
       "md_rate_dtls",
       fields,

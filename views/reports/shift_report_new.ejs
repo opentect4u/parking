@@ -74,7 +74,7 @@
                                     <th scope="col">Advance Amount</th>
                                     <th scope="col">CGST</th>
                                     <th scope="col">SGST</th>
-                                    <th scope="col">MIS Charges</th>
+                                    <!-- <th scope="col">MIS Charges</th> -->
                                     <th scope="col">Net Amount</th>
 
                                     <!-- <th scope="col">Operator Name</th> -->
@@ -109,7 +109,7 @@
                                     <td scope="col" id="tot_cgst"><b>0</b></td>
                                     <td scope="col" id="tot_sgst"><b>0</b></td>
                                     <!-- <td scope="col" id="paid_amt"><b>0</b></td> -->
-                                     <td scope="col" id="tot_other_charges"><b>0</b></td>
+                                     <!-- <td scope="col" id="tot_other_charges"><b>0</b></td> -->
                                     <td scope="col" id="tot_amt"><b>0</b></td>
                                 </tr>
                                 <!-- </tr>    -->
@@ -277,7 +277,7 @@
                                     <td class=text-dark>${advance_amt.toFixed(2)}</td>
                                     <td class=text-dark>${cgst.toFixed(2)}</td>
                                     <td class=text-dark>${sgst.toFixed(2)}</td>
-                                    <td class=text-dark>${other_charge_amt.toFixed(2)}</td>
+                                    <!-- <td class=text-dark>${other_charge_amt.toFixed(2)}</td> -->
                                     <td class=text-dark>${total_amt.toFixed(2)}</td>
                                 </tr>
                             `);
@@ -289,10 +289,10 @@
                         $('#tot_cgst').text(cgst_amt_tot.toFixed(2));
                         $('#tot_sgst').text(sgst_amt_tot.toFixed(2));
                         // $('#paid_amt').text(paid_amt_tot.toFixed(2));
-                        $('#tot_other_charges').text(tot_other_charges.toFixed(2));
+                        // $('#tot_other_charges').text(tot_other_charges.toFixed(2));
                         $('#tot_amt').text(tot_amt_tot.toFixed(2));
                     } else {
-                        $('#resultDiv table tbody').append('<tr><td colspan="12" class="text-center text-danger">No Data Found</td></tr>');
+                        $('#resultDiv table tbody').append('<tr><td colspan="11" class="text-center text-danger">No Data Found</td></tr>');
                     }
                 }
             },

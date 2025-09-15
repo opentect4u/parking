@@ -1,0 +1,358 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-12">
+      <!-- Card -->
+      <div class="card shadow-lg border-0 custom-card" 
+           style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f2f7);">
+        
+        <!-- Card Header -->
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+          <h4 class="mb-0 text-gradient fw-bold">
+            <i class="fa fa-flag me-2"></i> Report Permission
+          </h4>
+          <button type="button" class="btn btn-gradient px-4 rounded-pill" id="myBtn">
+            <i class="fa fa-plus"></i> Add
+          </button>
+        </div>
+
+        <!-- Search Form -->
+        <form action="/superadmin/report_permission" method="post" class="p-4">
+          <div class="row g-3 align-items-end justify-content-center">
+            <!-- Dropdown -->
+            <div class="col-md-6">
+              <label for="cust_name" class="form-label fw-semibold text-dark"><b>Location Name:</b></label>
+              <select name="cust_name" class="form-control custom-select shadow-sm" id="cust_name" required>
+                <option value="">Select Location Name</option>
+                <% customer.forEach(dt => {
+                  var _selected = ''
+                  if(selected.cust_id == dt.customer_id) _selected = 'selected' %>
+                  <option value="<%= dt.customer_id %>" <%= _selected %>>
+                    <%= dt.customer_name %>
+                  </option>
+                <% })%>
+              </select>
+            </div>
+            <!-- Submit -->
+            <div class="col-md-3 text-center">
+              <button type="submit" class="btn btn-gradient w-100 rounded-pill" id="submitBtn">
+                <i class="fa fa-search"></i> Submit
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Table -->
+        <% if(selected.cust_id > 0){ %>
+        <div class="p-3">
+          <div class="table-responsive">
+            <table id="dataTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
+              <thead>
+                <tr>
+                  <th class="text-center text-dark">Sl No.</th>
+                  <th class="text-center text-dark">Detail Report</th>
+                  <th class="text-center text-dark">VehicleWise Report</th>
+                  <th class="text-center text-dark">DeviceWise Report</th>
+                  <th class="text-center text-dark">OperatorWise Report</th>
+                  <th class="text-center text-dark">ShiftWise Report</th>
+                  <th class="text-center text-dark">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if(data.length > 0){
+                  var i = 1
+                  data.forEach(dt => { %>
+                  <tr>
+                    <td class="text-center text-dark"><%= i %></td>
+                     <td class="text-center text-dark">
+                        <div class="form-check form-switch d-inline-block">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="reportSwitch_<%= dt.sl_no %>" 
+                            name="report_on_off" 
+                            <%= dt.detail_report == 'Y' ? "checked" : "" %>
+                            disabled>
+                          <label 
+                            class="form-check-label fw-bold <%= dt.detail_report == 'Y' ? 'text-success' : 'text-danger' %>" 
+                            for="reportSwitch_<%= dt.sl_no %>">
+                            <%= dt.detail_report == 'Y' ? "ON" : "OFF" %>
+                          </label>
+                        </div>
+                    </td>
+                     <td class="text-center text-dark">
+                        <div class="form-check form-switch d-inline-block">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="reportSwitch_<%= dt.sl_no %>" 
+                            name="report_on_off" 
+                            <%= dt.veh_wise_report == 'Y' ? "checked" : "" %>
+                            disabled>
+                          <label 
+                            class="form-check-label fw-bold <%= dt.veh_wise_report == 'Y' ? 'text-success' : 'text-danger' %>" 
+                            for="reportSwitch_<%= dt.sl_no %>">
+                            <%= dt.veh_wise_report == 'Y' ? "ON" : "OFF" %>
+                          </label>
+                        </div>
+                    </td>
+                    <td class="text-center text-dark">
+                        <div class="form-check form-switch d-inline-block">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="reportSwitch_<%= dt.sl_no %>" 
+                            name="report_on_off" 
+                            <%= dt.dev_wise_report == 'Y' ? "checked" : "" %>
+                            disabled>
+                          <label 
+                            class="form-check-label fw-bold <%= dt.dev_wise_report == 'Y' ? 'text-success' : 'text-danger' %>" 
+                            for="reportSwitch_<%= dt.sl_no %>">
+                            <%= dt.dev_wise_report == 'Y' ? "ON" : "OFF" %>
+                          </label>
+                        </div>
+                    </td>
+                    <td class="text-center text-dark">
+                        <div class="form-check form-switch d-inline-block">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="reportSwitch_<%= dt.sl_no %>" 
+                            name="report_on_off" 
+                            <%= dt.operate_wise_report == 'Y' ? "checked" : "" %>
+                            disabled>
+                          <label 
+                            class="form-check-label fw-bold <%= dt.operate_wise_report == 'Y' ? 'text-success' : 'text-danger' %>" 
+                            for="reportSwitch_<%= dt.sl_no %>">
+                            <%= dt.operate_wise_report == 'Y' ? "ON" : "OFF" %>
+                          </label>
+                        </div>
+                    </td>
+                    <td class="text-center text-dark">
+                        <div class="form-check form-switch d-inline-block">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="reportSwitch_<%= dt.sl_no %>" 
+                            name="report_on_off" 
+                            <%= dt.shift_wise_report == 'Y' ? "checked" : "" %>
+                            disabled>
+                          <label 
+                            class="form-check-label fw-bold <%= dt.shift_wise_report == 'Y' ? 'text-success' : 'text-danger' %>" 
+                            for="reportSwitch_<%= dt.sl_no %>">
+                            <%= dt.shift_wise_report == 'Y' ? "ON" : "OFF" %>
+                          </label>
+                        </div>
+                    </td>
+                    <td class="text-center text-dark">
+                      <a href='/superadmin/edit_report_permission?customer_id=<%= selected.cust_id %>&id=<%= dt.sl_no %>' 
+                         class='btn btn-info btn-sm rounded-pill'>
+                         <i class='fa fa-edit'></i>
+                      </a>
+                    </td>
+                  </tr>
+                <% i++; })
+                }else{ %>
+                <tr>
+                  <td class="text-center text-danger" colspan="7">No data found</td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap Toggle CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+<!-- Bootstrap Toggle JS -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
+
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg-custom">
+      <div class="modal-content rounded-4 shadow-lg border-0 glass-bgt">
+        <!-- Modal Header -->
+        <div class="modal-header border-0">
+          <h3 class="modal-title fw-bold text-dark">
+            <i data-feather="plus-circle" class="feather-icon"></i>&nbsp;<b>Manage Report Permission</b>
+          </h3>
+          <!-- <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button> -->
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form action="/superadmin/save_report_permit" method="post" id="myForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label for="cust_id" class="text-dark"><b>Location Name</b></label>
+                    <select name="cust_id" class="form-control" id="cust_id">
+                        <option value="">Select Location Name</option>
+                        <% customer.forEach(dt => { %>
+                          <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
+                          <% }) %>
+                    </select>
+                </div>
+            </div>
+           
+            <div class="col-md-6 cust-toggle1">
+              <label for="detail_flag" class="text-dark"><b>Detail Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="detail_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="detail_flag">
+            </div>
+
+            <div class="col-md-6 cust-toggle1">
+              <label for="vehicle_flag" class="text-dark"><b>VehicleWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="vehicle_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="vehicle_flag">
+            </div>
+
+             <div class="col-md-6 cust-toggle1">
+              <label for="device_flag" class="text-dark"><b>DeviceWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="device_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="device_flag">
+            </div>
+
+            <div class="col-md-6 cust-toggle1 mt-3">
+              <label for="operator_flag" class="text-dark"><b>OperatorWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="operator_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="operator_flag">
+            </div>
+
+            <div class="col-md-6 cust-toggle1 mt-3">
+              <label for="shift_flag" class="text-dark"><b>ShiftWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="shift_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="shift_flag">
+            </div>
+                        
+            </div>
+            <div class="row">
+                <input type="hidden" name="id" value="0">
+                <div class="form-group col-md-5"></div>
+                <div class="form-group col-md-0">
+                        <input type="submit" value="SUBMIT" class="btn btn-primary"
+                          style="border-radius: 6px;" />
+                      </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    $(document).ready(function () {
+      $("#myBtn").click(function () {
+        $("#myModal").modal();
+      });
+    });
+  </script>
+
+  <style>
+/* Gradient Button */
+.btn-gradient {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: rgb(7, 5, 5);
+  font-weight: 600;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  transition: 0.3s;
+}
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+  color: #fff;
+}
+
+/* Gradient Text */
+.text-gradient {
+  background: linear-gradient(to right, #b983b8, #4355a7);;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Table */
+#dataTable thead th {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: #fff;
+  font-weight: 600;
+}
+#dataTable tbody tr:hover {
+  background-color: rgba(106, 17, 203, 0.08) !important;
+  transition: 0.3s;
+}
+
+/* Glassmorphism Modal */
+.glass-bg {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+/* Form Controls */
+.form-control {
+  border-radius: 12px;
+  /* padding: 12px; */
+}
+.custom-select option {
+  background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  color: #0e0a0a;
+}
+.modal-lg-custom {
+  max-width: 50%;
+}
+.gradient-select {
+  background: linear-gradient(90deg, #8e2de2, #4a00e0); /* Purple gradient */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
+  appearance: none; /* removes default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.gradient-select option {
+  background: #fff; /* Dropdown list background */
+  color: #333;      /* Dropdown list text */
+}
+
+.gradient-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(142, 45, 226, 0.5);
+}
+.custom-card {
+  border-radius: 20px; /* Rounded corners for whole card */
+  overflow: hidden; /* Ensure inner elements respect the border-radius */
+}
+.card.p-0 {
+  padding: 0 !important;
+}
+#cust_name,
+#cust_name_modal {
+  color: #000 !important; /* Dark text */
+}
+
+/* Optional: keep placeholder lighter */
+#cust_name option:first-child,
+#cust_name_modal option:first-child {
+  color: #6c757d; /* light gray for placeholder */
+}
+</style>
+

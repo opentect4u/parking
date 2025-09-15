@@ -1,3 +1,5 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 <style>
 .left-sidebar {
   position: fixed;
@@ -95,9 +97,11 @@
 } */
 </style>
 
+
 <aside class="left-sidebar">
   <div class="scroll-sidebar">
     <nav class="sidebar-nav">
+      <% if (user.userData.user_type === 'S') { %>
       <ul id="sidebarnav">
         <!-- Example items -->
         <li class="sidebar-item">
@@ -107,7 +111,68 @@
           </a>
         </li>
 
+          <!-- <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin/location">
+            <i data-feather="map-pin"></i>
+            <span class="hide-menu">Locations</span>
+          </a>
+        </li> -->
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin/customer">
+            <i class="fas fa-users"></i>
+            <span class="hide-menu">Location</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin/admin">
+            <i class="fas fa-user-shield"></i> 
+            <span class="hide-menu">Admin Create</span>
+          </a>
+        </li>
+
+         <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/operator"
+              ><i data-feather="user-check"></i
+              ><span class="hide-menu">Operator</span></a
+            >
+          </li>
+
           <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/vehicle"><i class='fas fa-car'></i><span class="hide-menu">Vehicle</span></a
+            >
+          </li>
+
+          
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/vehicle_rate"><i class="fas fa-ellipsis-h"></i
+              ><span class="hide-menu">Vehicle Rate</span></a
+            >
+          </li>
+
+           <li class="sidebar-item">
+            <a class="sidebar-link"
+            href="/superadmin/gst"><i data-feather="tag" class="feather-icon"></i
+                ><span class="hide-menu">Manage GST</span></a>
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/shift"
+              ><i data-feather="corner-up-right" class="feather-icon"></i
+              ><span class="hide-menu">Manage Shift</span></a
+            >
+          </li>
+
+           <li class="sidebar-item">
           <!-- <a
             class="sidebar-link has-arrow"
             href="javascript:void(0)"
@@ -169,6 +234,74 @@
           </ul>
         </li>
 
+
+     <li class="sidebar-item">
+  <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+    <i data-feather="settings"></i>
+    <span class="hide-menu">Settings</span>
+  </a>
+  <ul aria-expanded="false" class="collapse first-level base-level-line">
+    <li class="sidebar-item">
+      <a href="/superadmin/device_setting" class="sidebar-link">
+        <i data-feather="slack"></i>
+        <span class="hide-menu">Device Setting</span>
+      </a>
+    </li>
+    <li class="sidebar-item">
+      <a href="/superadmin/report_pass" class="sidebar-link">
+        <i data-feather="key"></i>
+        <span class="hide-menu">Report Password</span>
+      </a>
+    </li>
+    <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/header_footer"
+              aria-expanded="false"
+              ><i data-feather="activity" class="feather-icon"></i
+              ><span class="hide-menu">Header & Footer</span></a
+            >
+          </li>
+     <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/report_permission"
+              aria-expanded="false"
+              ><i data-feather="send" class="feather-icon"></i
+              ><span class="hide-menu">Report Permission</span></a
+            >
+          </li>      
+  </ul>
+</li>
+      <!-- <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/superadmin/view_trans"
+              aria-expanded="false"
+              ><i class="fas fa-eye"></i
+              ><span class="hide-menu">View Transactions</span></a
+            >
+          </li> -->
+
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin_logout">
+            <i data-feather="log-out"></i>
+            <span class="hide-menu">Logout</span>
+          </a>
+        </li>
+      </ul>
+       <% } %>
+
+       <% if (user.userData.user_type === 'A') { %>
+        <ul id="sidebarnav">
+          <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin/dashboard">
+            <i data-feather="home"></i>
+            <span class="hide-menu">Dashboard</span>
+          </a>
+        </li>
+
           <!-- <li class="sidebar-item">
           <a class="sidebar-link" href="/superadmin/location">
             <i data-feather="map-pin"></i>
@@ -176,12 +309,19 @@
           </a>
         </li> -->
 
-        <li class="sidebar-item">
+        <!-- <li class="sidebar-item">
           <a class="sidebar-link" href="/superadmin/customer">
             <i class="fas fa-users"></i>
             <span class="hide-menu">Location</span>
           </a>
-        </li>
+        </li> -->
+
+        <!-- <li class="sidebar-item">
+          <a class="sidebar-link" href="/superadmin/admin">
+            <i class="fas fa-user-shield"></i> 
+            <span class="hide-menu">Admin</span>
+          </a>
+        </li> -->
 
          <li class="sidebar-item">
             <a
@@ -223,8 +363,69 @@
             >
           </li>
 
+          <% if (
+  user &&
+  user.reportPermission &&
+  (
+    user.reportPermission.detail_report === 'Y' ||
+    user.reportPermission.veh_wise_report === 'Y' ||
+    user.reportPermission.dev_wise_report === 'Y' ||
+    user.reportPermission.operate_wise_report === 'Y' ||
+    user.reportPermission.shift_wise_report === 'Y'
+  )
+) { %>
+  <li class="sidebar-item">
+    <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+      <i data-feather="file-text" class="feather-icon"></i>
+      <span class="hide-menu">Reports</span>
+    </a>
+    <ul aria-expanded="false" class="collapse first-level base-level-line">
 
-     <li class="sidebar-item">
+      <% if (user.reportPermission.detail_report === 'Y') { %>
+        <li class="sidebar-item">
+          <a href="/report/details_report_new_admin" class="sidebar-link">
+            <span class="hide-menu">Detail Report</span>
+          </a>
+        </li>
+      <% } %>
+
+      <% if (user.reportPermission.veh_wise_report === 'Y') { %>
+        <li class="sidebar-item">
+          <a href="/report/veh_wise_repo_new_admin" class="sidebar-link">
+            <span class="hide-menu">Vehicle Wise</span>
+          </a>
+        </li>
+      <% } %>
+
+      <% if (user.reportPermission.dev_wise_report === 'Y') { %>
+        <li class="sidebar-item">
+          <a href="/report/dev_wise_repo_new_admin" class="sidebar-link">
+            <span class="hide-menu">Device Wise</span>
+          </a>
+        </li>
+      <% } %>
+
+      <% if (user.reportPermission.operate_wise_report === 'Y') { %>
+        <li class="sidebar-item">
+          <a href="/report/operator_wise_repo_new_admin" class="sidebar-link">
+            <span class="hide-menu">Operator Wise</span>
+          </a>
+        </li>
+      <% } %>
+
+      <% if (user.reportPermission.shift_wise_report === 'Y') { %>
+        <li class="sidebar-item">
+          <a href="/report/shift_wise_repo_admin" class="sidebar-link">
+            <span class="hide-menu">Shiftwise</span>
+          </a>
+        </li>
+      <% } %>
+
+    </ul>
+  </li>
+<% } %>
+
+     <!-- <li class="sidebar-item">
   <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
     <i data-feather="settings"></i>
     <span class="hide-menu">Settings</span>
@@ -252,7 +453,7 @@
             >
           </li>
   </ul>
-</li>
+</li> -->
       <!-- <li class="sidebar-item">
             <a
               class="sidebar-link"
@@ -270,14 +471,18 @@
             <span class="hide-menu">Logout</span>
           </a>
         </li>
-      </ul>
+        </ul>
+       <% } %> 
     </nav>
   </div>
 </aside>
 
+
 <script>
   // Get current path
   const currentPath = window.location.pathname;
+  console.log(currentPath,'current');
+  
 
   // Get all sidebar links
   const links = document.querySelectorAll('.sidebar-link');
@@ -287,7 +492,7 @@
 
     // Match link href with current path
     if (link.getAttribute('href') === currentPath) {
-      parentLi.classList.add('active'); // highlight this item
+      parentLi.classList.add('selected'); // highlight this item
 
       // If inside a submenu, open the parent
       const collapse = link.closest('.collapse');
@@ -297,7 +502,7 @@
         if (parentArrow) parentArrow.classList.add('open', 'active');
       }
     } else {
-      parentLi.classList.remove('active');
+      parentLi.classList.remove('selected');
     }
   });
 </script>

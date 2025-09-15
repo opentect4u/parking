@@ -83,3 +83,7 @@
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:82:21) 
 ----------------------------------------------
+2025-09-12 16:58:10 error: TypeError: Cannot read properties of undefined (reading 'id')
+    at save_add_operator (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\operator.controller.js:176:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------

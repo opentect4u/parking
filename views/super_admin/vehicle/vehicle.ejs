@@ -23,6 +23,7 @@
 
 
            <!-- Filter Form -->
+        <% if(user.userData.user_type == "S"){ %>
         <form action="/superadmin/vehicle" method="post" class="p-3">
           <div class="row g-3 align-items-end justify-content-center">
             <div class="col-md-5">
@@ -45,9 +46,11 @@
             </div>
           </div>
         </form>
+        <% } %>
 
 
-          <% if(selected.cust_id > 0){ %>
+          <%# if(selected.cust_id > 0){ %>
+            <% if((user.userData.user_type == "S" && selected.cust_id > 0) || user.userData.user_type == "A"){ %>
             <!-- <div class="row"> -->
               <!-- <div class="col-md-12"> -->
                 <div class="table-responsive p-3">
@@ -56,6 +59,7 @@
                           <tr>
                               <th class="text-center text-dark">Sl No.</th>
                               <th class="text-center text-dark">Vehicle Name</th>
+                              <th class="text-center text-dark">Vehicle ON/OFF</th>
                               <th class="text-center text-dark">Action</th>
                           </tr>
                       </thead>
@@ -66,12 +70,29 @@
                             <tr>
                               <td class="text-center text-dark"><%= i %></td>
                               <td class="text-center text-dark"><%= dt.vehicle_name %></td>
-                              <td class="text-center text-dark"><a href='/superadmin/edit_vehicle?customer_id=<%= selected.cust_id %>&id=<%= dt.vehicle_id %>' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
+                              <td class="text-center text-dark">
+                           <div class="form-check form-switch d-inline-block">
+                               <input 
+                                 class="form-check-input" 
+                                 type="checkbox" 
+                                 id="vehSwitch_<%= dt.vehicle_id %>" 
+                                 name="vehicle_on_off" 
+                                 <%= dt.vehicle_on_off == 'Y' ? "checked" : "" %> 
+                                 disabled>
+
+                               <label 
+                                 class="form-check-label fw-bold <%= dt.vehicle_on_off == 'Y' ? 'text-success' : 'text-danger' %>" 
+                                 for="vehSwitch_<%= dt.vehicle_id %>">
+                                 <%= dt.vehicle_on_off == 'Y' ? "ON" : "OFF" %>
+                               </label>
+                              </div>
+                              </td>
+                              <td class="text-center text-dark"><a href='/superadmin/edit_vehicle?customer_id=<%= (user.userData.user_type == "A" ? user.userData.customer_id : selected.cust_id) %>&id=<%= dt.vehicle_id %>' class='btn btn-info' style='border-radius:5px'><i class='fa fa-edit'></i></a></td>
                             </tr>
                         <% i++; })
                         }else{ %>
                           <tr>
-                            <td class="text-center text-danger" colspan="3">No data found</td>
+                            <td class="text-center text-danger" colspan="4">No data found</td>
                           </tr>
                         <% } %>
                       </tbody>
@@ -107,12 +128,22 @@
               <div class="col-md-6">
                 <div class="form-group">
                     <label for="cust_name_modal" class="form-label fw-semibold text-dark"><b>Location Name</b></label>
-                    <select name="cust_name" class="form-control" id="cust_name_modal">
-                        <option value="">Select Location Name</option>
-                        <% customer.forEach(dt => { %>
-                          <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
-                          <% }) %>
-                    </select>
+                    <% if (user.userData.user_type === 'S') { %>
+                      <!-- Show dropdown if user_type is S -->
+                  <select name="cust_name" class="form-control" id="cust_name_modal">
+                    <option value="">Select Location Name</option>
+                    <% customer.forEach(dt => { %>
+                      <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
+                    <% }) %>
+                  </select>
+                <% } else { %>
+                  <!-- Auto-select & show location name for others (e.g. A) -->
+                <% 
+                  let selectedCust = customer.find(c => c.customer_id == user.userData.customer_id);
+                %>
+                <input type="hidden" name="cust_name" value="<%= user.userData.customer_id %>">
+                <input type="text" class="form-control" value="<%= selectedCust ? selectedCust.customer_name : '' %>" disabled>
+              <% } %>
                 </div>
             </div>
                 <div class="col-md-6">
@@ -139,6 +170,19 @@
 
 
 <style>
+  /* Bootstrap override */
+.form-check-input:checked {
+  background-color: #28a745; /* Green when ON */
+  border-color: #28a745;
+}
+.form-check-input:not(:checked) {
+  background-color: #dc3545; /* Red when OFF */
+  border-color: #dc3545;
+}
+
+     .cust-toggle1 {
+    margin-top: 32px;
+  }
 /* Gradient Button */
 .btn-gradient {
   background: linear-gradient(45deg, #dbbcda, #6d83e2);

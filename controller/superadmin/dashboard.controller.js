@@ -61,6 +61,50 @@ const dashboard_data = async (req, res) => {
   }
 };
 
+// const dashboard_page = async (req, res) => {
+//   try {
+//     const locationId = req.query.location_id;
+
+//     const operator = await db_Select(
+//       "COUNT(*) as op_cnt",
+//       "md_user",
+//       `customer_id='${locationId}' AND user_type = 'O'`
+//     );
+
+//     const receipt = await db_Select(
+//       "COUNT(*) as rec_cnt",
+//       "td_vehicle_in",
+//       `customer_id='${locationId}'`
+//     );
+
+//     const device = await db_Select(
+//       "COUNT(*) as dev_cnt",
+//       "md_customer",
+//       `customer_id='${locationId}'`
+//     );
+
+//     // 👉 If you want totalAmount, calculate it here
+//     const amount = await db_Select(
+//       "SUM(paid_amt) total_amt",
+//       `td_receipt a LEFT JOIN td_vehicle_in b ON a.user_id = b.user_id_in AND a.receipt_no = b.receipt_no`,
+//       `customer_id='${locationId}'`
+//     );
+
+//     res.json({
+//       receipts: receipt.msg[0].rec_cnt || 0,
+//       operators: operator.msg[0].op_cnt || 0,
+//       devices: device.msg[0].dev_cnt || 0,
+//       totalAmount: amount.msg[0].total_amt || 0
+//     });
+
+//     // console.log("Dashboard data:", { receipt, operator, device });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.json({ error: "Server error" });
+//   }
+// };
+
 const dashboard_page = async (req, res) => {
   try {
     const locationId = req.query.location_id;
@@ -85,16 +129,32 @@ const dashboard_page = async (req, res) => {
 
     // 👉 If you want totalAmount, calculate it here
     const amount = await db_Select(
-      "SUM(paid_amt) total_amt",
+      "SUM(paid_amt)+Sum(Other_charges) total_amt",
       `td_receipt a LEFT JOIN td_vehicle_in b ON a.user_id = b.user_id_in AND a.receipt_no = b.receipt_no`,
       `customer_id='${locationId}'`
+    );
+
+    // ✅ Daily receipts
+    const dailyReceipts = await db_Select(
+      "DATE(created_at) as date, COUNT(*) as count",
+      "td_vehicle_in",
+      `customer_id='${locationId}' GROUP BY DATE(created_at) ORDER BY DATE(created_at) ASC`
+    );
+
+    // ✅ Monthly receipts
+    const monthlyReceipts = await db_Select(
+      "MONTH(created_at) as month, COUNT(*) as count",
+      "td_vehicle_in",
+      `customer_id='${locationId}' GROUP BY MONTH(created_at) ORDER BY MONTH(created_at) ASC`
     );
 
     res.json({
       receipts: receipt.msg[0].rec_cnt || 0,
       operators: operator.msg[0].op_cnt || 0,
       devices: device.msg[0].dev_cnt || 0,
-      totalAmount: amount.msg[0].total_amt || 0
+      totalAmount: amount.msg[0].total_amt || 0,
+      dailyReceipts: dailyReceipts.msg || [],
+      monthlyReceipts: monthlyReceipts.msg || []
     });
 
     // console.log("Dashboard data:", { receipt, operator, device });
@@ -104,6 +164,5 @@ const dashboard_page = async (req, res) => {
     res.json({ error: "Server error" });
   }
 };
-
 
 module.exports = {dashboard_data, dashboard_page}

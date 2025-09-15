@@ -6,24 +6,36 @@ const logger = require('../../model/LoggerModel');
 
 const getAllVehicleList = (id = 0) => {
     return new Promise(async (resolve, reject) => {
-        var vehicle = await db_Select('vehicle_id,customer_id,vehicle_name,vehicle_icon','md_vehicle', id > 0 ? `vehicle_id = ${id}` : null, null);
+        var vehicle = await db_Select('vehicle_id,customer_id,vehicle_name,vehicle_icon,vehicle_on_off','md_vehicle', id > 0 ? `vehicle_id = ${id}` : null, null);
         resolve(vehicle)
     })
 };
 
 const vehicle = async(req,res) =>{
     try {
-      var method = req.method
+      var method = req.method;
+      var user = req.session.user;
+
       var selected = {
-        cust_id: method == 'POST' ? req.body.cust_name : ''
+        // cust_id: method == 'POST' ? req.body.cust_name : ''
+        cust_id: ""
       }
+
       var cust = await getAllCustomerList(),
         veh_list = [];
-      if(method == 'POST'){
+
+      if (user.userData.user_type === "S") {  
+      selected.cust_id = method == "POST" ? req.body.cust_name : "";  
+      if(method == 'POST' && selected.cust_id){
         veh_list = await show_vehicle_dtls(selected.cust_id)
         veh_list = veh_list.suc > 0 ? veh_list.msg : []
       }
-
+     } else if (user.userData.user_type === "A") {
+      // Admin → auto load operators for their customer_id
+      selected.cust_id = user.userData.customer_id;
+      veh_list = await show_vehicle_dtls(selected.cust_id)
+      veh_list = veh_list.suc > 0 ? veh_list.msg : []
+    }
         // var veh = await getAllVehicleList()
         const page_data = {
           title: "Vehicle details",
@@ -81,6 +93,7 @@ const save_add_vehicle = async (req, res) => {
       cust_name: Joi.optional(),
       cust_id: Joi.optional(),
       veh_name: Joi.required(),
+      toggleActive: Joi.optional(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
     // console.log(value);
@@ -94,7 +107,9 @@ const save_add_vehicle = async (req, res) => {
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-    let fields = value.id > 0 ? `vehicle_name='${value.veh_name}',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,vehicle_name,created_by,created_at)",
+    let fields = value.id > 0 ? `vehicle_name='${value.veh_name}',vehicle_on_off='${
+              value.toggleActive == "Y" ? "Y" : "N"
+            }',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,vehicle_name,created_by,created_at)",
       values = `('${value.cust_name}','${value.veh_name}','${user_name}','${datetime}')`;
     let res_dt = await db_Insert("md_vehicle", fields, values, value.id > 0 ? `vehicle_id=${value.id} AND customer_id = ${value.cust_id}` : null, value.id > 0 ? 1 : 0);
     // console.log("========vehicle==========", res_dt);

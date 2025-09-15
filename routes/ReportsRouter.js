@@ -36,6 +36,27 @@ reportRouter.get("/details_report_new", AuthCheckedMW, async (req, res) => {
   res.render("common/layouts/main", data);
 });
 
+
+
+reportRouter.get("/details_report_new_admin", AuthCheckedMW, async (req, res) => {
+  var customer = await getcustomerlist();
+  var custId = req.session.user.userData.customer_id;
+  
+  var operator = [];
+    if (custId) {
+      operator = await getoperatorlist(custId);  // ✅ pass customer id
+    }
+
+  var data = {
+    title: "Detail Report",
+    page_path: "reports/detail_report_new_admin.ejs",
+    dtFormat: dateFormat,
+    data: customer,
+    operators: operator
+  };
+  res.render("common/layouts/main", data);
+});
+
 reportRouter.post("/get_operators_by_location", AuthCheckedMW, async (req, res) => {
   try {
     const { custId } = req.body;
@@ -164,7 +185,7 @@ const getcustomerlist = () => {
        where = `customer_id = '${custId}'`,
        order=null;
        var operator_data = await db_Select(select,table_name,where,order);
-       console.log(operator_data);
+      //  console.log(operator_data);
         resolve(operator_data)
     })
   };
@@ -220,6 +241,17 @@ reportRouter.get("/veh_wise_repo_new", AuthCheckedMW, async (req, res) => {
   res.render("common/layouts/main", data);
 });
 
+reportRouter.get("/veh_wise_repo_new_admin", AuthCheckedMW, async (req, res) => {
+  var customer = await getcustomerlist()
+  var data = {
+    title: "Vehicle Wise Report",
+    page_path: "reports/veh_wise_repo_new_admin",
+    dtFormat: dateFormat,
+    data: customer
+  };
+  res.render("common/layouts/main", data);
+});
+
 reportRouter.post("/get_veh_wise_report", AuthCheckedMW, async (req, res) => {
   var data = req.body;
   var select = `mc_srl_no_out, vehicleType, COUNT(receiptNo) tot_vehi, SUM(paid_amt) tot_amt`,
@@ -269,6 +301,17 @@ reportRouter.get("/dev_wise_repo_new", AuthCheckedMW, async (req, res) => {
   res.render("common/layouts/main", data);
 });
 
+reportRouter.get("/dev_wise_repo_new_admin", AuthCheckedMW, async (req, res) => {
+  var customer = await getcustomerlist()
+  var data = {
+    title: "Device Wise Report",
+    page_path: "reports/dev_wise_repo_new_admin",
+    dtFormat: dateFormat,
+    data: customer
+  };
+  res.render("common/layouts/main", data);
+});
+
 reportRouter.post("/get_dev_wise_report", AuthCheckedMW, async (req, res) => {
   var data = req.body;
   var select = `vehicleType, COUNT(receiptNo) tot_vehi, SUM(paid_amt) tot_amt`,
@@ -303,6 +346,17 @@ reportRouter.get("/operator_wise_repo_new", AuthCheckedMW, async (req, res) => {
   var data = {
     title: "Operator Wise Report",
     page_path: "reports/operator_wise_repo_new",
+    dtFormat: dateFormat,
+    data: customer
+  };
+  res.render("common/layouts/main", data);
+});
+
+reportRouter.get("/operator_wise_repo_new_admin", AuthCheckedMW, async (req, res) => {
+  var customer = await getcustomerlist()
+  var data = {
+    title: "Operator Wise Report",
+    page_path: "reports/operator_wise_repo_new_admin",
     dtFormat: dateFormat,
     data: customer
   };
@@ -455,6 +509,17 @@ reportRouter.get("/shift_wise_repo", AuthCheckedMW, async (req, res) => {
     dtFormat: dateFormat,
     data: customer,
     // shiftData: shiftData,
+  };
+  res.render("common/layouts/main", data);
+});
+
+reportRouter.get("/shift_wise_repo_admin", AuthCheckedMW, async (req, res) => {
+  var customer = await getcustomerlist();  
+  var data = {
+    title: "Shiftwise Report",
+    page_path: "reports/shift_report_new_admin",
+    dtFormat: dateFormat,
+    data: customer,
   };
   res.render("common/layouts/main", data);
 });

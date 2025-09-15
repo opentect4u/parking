@@ -16,36 +16,36 @@ Dashboard Section
 
 </div> -->
 <div class="location-banner d-flex justify-content-between align-items-center px-4 py-3 rounded-4 shadow-sm">
-  <h4 class="text-light fw-bold mb-0">🌍 <b>Select Your Location</b></h4>
+  <% if (user.userData.user_type === 'S') { %>
+    <h4 class="text-light fw-bold mb-0">🌍 <b>Select Your Location</b></h4>
 
- <!-- Current Date & Time -->
-  <div class="text-light fw-bold d-flex gap-3 align-items-center" style="font-weight: 500;">
-    <span>🗓️ <span id="currentDate"></span></span>&nbsp; |  &nbsp;
-    <span>⏰ <span id="currentTime"></span></span>
-  </div>
-
-  <div class="dropdown">
-    <!-- Button -->
-    <button class="dropdown-btn" id="dropdownBtn">🌍 Choose location...</button>
-
-    <!-- Dropdown Menu -->
-    <div class="dropdown-menu" id="dropdownMenu">
-      <!---- Deafault option-->
-       <div class="dropdown-item" data-value="0">
-    📍 Choose Location
-       </div>
-
-      <% if (data && data.msg && data.msg.length > 0) { %>
-        <% data.msg.forEach(dt => { %>
-          <div class="dropdown-item" data-value="<%= dt.location_id %>">
-            📍 <%= dt.loction %>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <div class="dropdown-item disabled">No locations available</div>
-      <% } %>
+    <div class="text-light fw-bold d-flex gap-3 align-items-center" style="font-weight: 500;">
+      <span>🗓️ <span id="currentDate"></span></span>&nbsp; | &nbsp;
+      <span>⏰ <span id="currentTime"></span></span>
     </div>
-  </div>
+
+    <div class="dropdown">
+      <button class="dropdown-btn" id="dropdownBtn">🌍 Choose location...</button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="dropdown-item" data-value="0">📍 Choose Location</div>
+        <% if (data && data.msg && data.msg.length > 0) { %>
+          <% data.msg.forEach(dt => { %>
+            <div class="dropdown-item" data-value="<%= dt.location_id %>">
+              📍 <%= dt.loction %>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="dropdown-item disabled">No locations available</div>
+        <% } %>
+      </div>
+    </div>
+  <% } else if (user.userData.user_type === 'A') { %>
+    <h4 class="text-light fw-bold mb-0">🌍 <b><%= user.userData.customer_name %></b></h4>
+    <div class="text-light fw-bold d-flex gap-3 align-items-center" style="font-weight: 500;">
+      <span>🗓️ <span id="currentDate"></span></span>&nbsp; | &nbsp;
+      <span>⏰ <span id="currentTime"></span></span>
+    </div>
+  <% } %>
 </div>
 
   <div class="card shadow-lg rounded-4 border-0 p-4">
@@ -55,9 +55,11 @@ Dashboard Section
     <h3 id="greeting" class="page-title text-gradient fw-bold mb-1"></h3>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-transparent p-0 mb-0">
+        <% if (user.userData.user_type === 'S') { %>
         <li class="breadcrumb-item">
           <span id="locationDetails" class="location-box">Details of ...</span>
         </li>
+         <% } %>
       </ol>
     </nav>
   </div>
@@ -186,6 +188,8 @@ document.querySelectorAll(".dropdown-item").forEach(item => {
         document.getElementById("totalOperatorEl").innerText = data.operators;
         document.getElementById("totalDeviceEl").innerText = data.devices;
         document.getElementById("totalAmounttEl").innerText = data.totalAmount;
+
+        renderCharts(data);
     })
     .catch(err => console.error("Error fetching dashboard data:", err));
 
@@ -271,15 +275,57 @@ document.addEventListener("click", (e) => {
       </div>
     </div>
   </div>
+
+  <!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card p-4 chart-card gradient-card-blue">
+      <h2 class="text-dark">Receipts Collected Per Day</h2>
+      <canvas id="dailyReceiptsChart"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card p-4 chart-card gradient-card-purple">
+      <h2 class="text-dark">Receipts Collected Per Month</h2>
+      <canvas id="monthlyReceiptsChart"></canvas>
+    </div>
+  </div>
 </div>
+
+
+</div>
+
+
+
 
 <!-- =======================
 Custom CSS
 ======================= -->
 <style>
+  .chart-card {
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.gradient-card-blue {
+  background: linear-gradient(135deg, #d4e0e0, #5b86e5);
+}
+
+.gradient-card-purple {
+  background: linear-gradient(135deg, #e6e2eb, #ad9613);
+}
+
+.chart-card h5 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
   .text-dark {
     color: #15171a !important;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
 }
   .location-box {
@@ -304,7 +350,7 @@ Custom CSS
   background: linear-gradient(135deg, #b596d6, #a7bcd8);
   border-radius: 8px;
   padding: 20px;
-  color: #fff; /* banner text white */
+  color: #fff; 
 }
 .text-light {
     color: #193d62 !important;
@@ -447,4 +493,230 @@ Custom CSS
   });
 });
 
+</script>
+
+<!-- <script>
+document.addEventListener("DOMContentLoaded", () => {
+    <% if(user.userData.user_type === 'A') { %>
+        const locationId = "<%= user.userData.customer_id %>"; // Or location_id if available
+
+        fetch(`/superadmin/dashboard_page?location_id=${locationId}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("totalReceiptEl").innerText = data.receipts;
+            document.getElementById("totalOperatorEl").innerText = data.operators;
+            document.getElementById("totalDeviceEl").innerText = data.devices;
+            document.getElementById("totalAmounttEl").innerText = data.totalAmount;
+        })
+        .catch(err => console.error("Error fetching dashboard data for admin:", err));
+    <% } %>
+});
+</script> -->
+
+<script>
+// function renderCharts(data) {
+//   // ===== Daily Receipts Chart =====
+//   const dailyCtx = document.getElementById('dailyReceiptsChart').getContext('2d');
+
+//   // Gradient for daily bars
+//   const dailyGradient = dailyCtx.createLinearGradient(0, 0, 0, 400);
+//   dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)'); // Orange top
+//   dailyGradient.addColorStop(1, 'rgba(255, 200, 0, 0.3)'); // Yellow bottom
+
+//   new Chart(dailyCtx, {
+//     type: 'bar',
+//     data: {
+//       labels: data.dailyReceipts.map(d => {
+//         const dt = new Date(d.date);
+//         return dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+//       }),
+//       datasets: [{
+//         label: 'Receipts per Day',
+//         data: data.dailyReceipts.map(d => d.count),
+//         backgroundColor: dailyGradient,
+//         borderRadius: 5,
+//         maxBarThickness: 100,
+//         hoverBackgroundColor: 'rgba(255, 123, 0, 1)',
+//         barPercentage: 0.9
+//       }]
+//     },
+//     options: {
+//       responsive: true,
+//       plugins: {
+//         legend: { display: false },
+//         tooltip: {
+//           backgroundColor: '#333',
+//           titleColor: '#fff',
+//           bodyColor: '#fff',
+//           displayColors: true
+//         }
+//       },
+//       scales: {
+//         x: {
+//           grid: { display: true },
+//           ticks: { font: { size: 13, weight: 'bold' , color: '#000'} }
+//         },
+//         y: {
+//           grid: { color: '#e0e0e0' },
+//           ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' }, color: '#000' }
+//         }
+//       }
+//     }
+//   });
+
+//   // ===== Monthly Receipts Chart =====
+//   const monthlyCtx = document.getElementById('monthlyReceiptsChart').getContext('2d');
+
+//   const monthlyGradient = monthlyCtx.createLinearGradient(0, 0, 0, 400);
+//   monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)'); // Purple-blue
+//   monthlyGradient.addColorStop(1, 'rgba(118, 75, 162, 0.3)');
+
+//   new Chart(monthlyCtx, {
+//     type: 'bar',
+//     data: {
+//       labels: data.monthlyReceipts.map(d => {
+//         const dt = new Date(d.month + '-01'); // "YYYY-MM"
+//         return dt.toLocaleString('en-US', { month: 'short' }); // "Sep"
+//       }),
+//       datasets: [{
+//         label: 'Receipts per Month',
+//         data: data.monthlyReceipts.map(d => d.count),
+//         backgroundColor: monthlyGradient,
+//         borderRadius: 5,
+//         maxBarThickness: 50,
+//         hoverBackgroundColor: 'rgba(102, 126, 234, 1)',
+//         barPercentage: 0.9
+//       }]
+//     },
+//     options: {
+//       responsive: true,
+//       plugins: {
+//         legend: { display: false },
+//         tooltip: {
+//           backgroundColor: '#333',
+//           titleColor: '#fff',
+//           bodyColor: '#fff',
+//           displayColors: true
+//         }
+//       },
+//       scales: {
+//         x: { grid: { display: true }, ticks: { font: { size: 13, weight: 'bold' }, color: '#000' } },
+//         y: { grid: { color: '#e0e0e0' }, ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' },color: '#000' } }
+//       }
+//     }
+//   });
+// }
+
+let dailyChartInstance = null;
+let monthlyChartInstance = null;
+
+function renderCharts(data) {
+  // ===== Destroy old charts if exist =====
+  if (dailyChartInstance) dailyChartInstance.destroy();
+  if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+  // ===== Daily Receipts Chart =====
+  const dailyCtx = document.getElementById('dailyReceiptsChart').getContext('2d');
+  const dailyGradient = dailyCtx.createLinearGradient(0, 0, 0, 400);
+  dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)');
+  dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)');
+
+  dailyChartInstance = new Chart(dailyCtx, {
+    type: 'bar',
+    data: {
+      labels: data.dailyReceipts.map(d => {
+        const dt = new Date(d.date);
+        return dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+      }),
+      datasets: [{
+        label: 'Receipts per Day',
+        data: data.dailyReceipts.map(d => d.count),
+        backgroundColor: dailyGradient,
+        borderRadius: 5,
+        maxBarThickness: 60,
+        hoverBackgroundColor: 'rgba(255, 123, 0, 1)',
+        barPercentage: 0.8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#333',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          displayColors: true
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: true },
+          ticks: { font: { size: 13, weight: 'bold' , color: '#000'} }
+        },
+        y: {
+          grid: { color: '#e0e0e0' },
+          ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' }, color: '#000' }
+        }
+      }
+    }
+  });
+
+
+  // ===== Monthly Receipts Chart =====
+  const monthlyCtx = document.getElementById('monthlyReceiptsChart').getContext('2d');
+  const monthlyGradient = monthlyCtx.createLinearGradient(0, 0, 0, 400);
+  monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)');
+  monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)');
+
+  monthlyChartInstance = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+      labels: data.monthlyReceipts.map(d => {
+        const dt = new Date(d.month + '-01'); // "YYYY-MM"
+        return dt.toLocaleString('en-US', { month: 'short' });
+      }),
+      datasets: [{
+        label: 'Receipts per Month',
+        data: data.monthlyReceipts.map(d => d.count),
+        backgroundColor: monthlyGradient,
+        borderRadius: 5,
+        maxBarThickness: 50,
+        hoverBackgroundColor: 'rgba(102, 126, 234, 1)'
+      }]
+    },
+   options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#333',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          displayColors: true
+        }
+      },
+      scales: {
+        x: { grid: { display: true }, ticks: { font: { size: 13, weight: 'bold' }, color: '#000' } },
+        y: { grid: { color: '#e0e0e0' }, ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' },color: '#000' } }
+      }
+    }
+  });
+
+}
+
+
+// Example fetch for admin or superadmin
+const locationId = "<%= user.userData.customer_id || '' %>"; // admin location
+fetch(`/superadmin/dashboard_page?location_id=${locationId}`)
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("totalReceiptEl").innerText = data.receipts;
+    document.getElementById("totalOperatorEl").innerText = data.operators;
+    document.getElementById("totalDeviceEl").innerText = data.devices;
+    document.getElementById("totalAmounttEl").innerText = data.totalAmount;
+
+    // Render charts
+    renderCharts(data);
+  });
 </script>

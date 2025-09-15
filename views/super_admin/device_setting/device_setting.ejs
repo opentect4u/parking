@@ -34,6 +34,11 @@
   </select>
 </div>
 
+ <!-- If Admin: send hidden customer_id to backend -->
+    <% if (user.userData.user_type === 'A') { %>
+      <input type="hidden" name="cust_name" value="<%= user.userData.customer_id %>">
+    <% } %>
+
 <div class="col-md-4">
   <label for="dev_id_sel"><b style="color: black;">Device ID:</b></label>
   <select name="dev_id" class="form-control custom-dropdown" id="dev_id_sel" required>
@@ -120,7 +125,7 @@
       <div class="modal-body">
         <form action="/superadmin/save_device_setting" method="post" id="myForm">
           <div class="row">
-            <div class="form-group col-3">
+            <!-- <div class="form-group col-3">
               <label for="cust_id" class="text-dark"><b>Location Name:</b></label>
               <select name="cust_id" class="form-control" id="cust_id" required>
                 <option value="">Select Location Name</option>
@@ -129,14 +134,33 @@
                     <%= dt.customer_name %>
                   </option>
                   <% }) %>
+                  <input type="hidden" name="cust_id" value="<%= user.userData.customer_id %>">
               </select>
-            </div>
+            </div> -->
+            <div class="form-group col-3">
+  <label for="cust_id" class="text-dark"><b>Location Name:</b></label>
+
+  <% if (user.userData.user_type === 'A') { %>
+    <!-- Admin: fixed value -->
+    <input type="hidden" name="cust_id" value="<%= user.userData.customer_id %>">
+    <input type="text" class="form-control" value="<%= user.userData.customer_name %>" disabled>
+  <% } else { %>
+    <!-- Superadmin: dropdown selection -->
+    <select name="cust_id" class="form-control" id="cust_id" required>
+      <option value="">Select Location Name</option>
+      <% customer.forEach(dt=> { %>
+        <option value="<%= dt.customer_id %>" <%= selected.cust_id == dt.customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+      <% }) %>
+    </select>
+  <% } %>
+</div>
             <div class="col-md-3">
               <div class="form-group">
                 <label for="dev_mode" class="text-dark"><b>Mode</b></label>
                 <select name="dev_mode" class="form-control" id="dev_mode" readonly>
                   <option value="">Select Mode</option>
                 </select>
+                <input type="hidden" name="dev_mode" value="F">
               </div>
             </div>
             <div class="col-md-3">
@@ -323,7 +347,7 @@
   });
 </script>
 
-<script>
+<!-- <script>
   $(document).ready(function () {
     var flag = <%= selected.dev_name != '' ? true : false %>;
     console.log(flag, 'CHange flag');
@@ -367,11 +391,59 @@
     });
   }
 
+</script> -->
+
+<script>
+  $(document).ready(function () {
+    var user_type = "<%= user.userData.user_type %>";
+    var sel_dev_id = "<%= selected.dev_name != '' ? selected.dev_name : 0 %>";
+
+    if (user_type === "A") {
+      // Admin: get fixed customer_id from user data
+      var cust_name = "<%= user.userData.customer_id %>";
+      $('#cust_name').val(cust_name).prop('disabled', true); // fix dropdown
+      change_cust(cust_name); // auto-load devices
+    } else if (user_type === "S") {
+      // Superadmin: work as before
+      var flag = <%= selected.dev_name != '' ? true : false %>;
+      if (flag) {
+        var cust_name = "<%= selected.cust_id != '' ? selected.cust_id : '' %>";
+        change_cust(cust_name);
+      }
+    }
+
+    // Only allow change for superadmin
+    $('#cust_name').on('change', function () {
+      if (user_type === "S") {
+        var cust_name = $(this).val();
+        change_cust(cust_name);
+      }
+    });
+
+    function change_cust(cust_name) {
+      $.ajax({
+        type: "POST",
+        url: "/superadmin/device_dt",
+        data: { cust_name: cust_name },
+        success: function (response) {
+          $('#dev_id_sel').empty().append(`<option value="">Select Device ID</option>`);
+          response.SUCCESS.dev_id.msg.forEach(function (resData) {
+            var _selected = sel_dev_id == resData.app_id;
+            $('#dev_id_sel').append(
+              $('<option>', { value: resData.app_id, text: resData.app_id, selected: _selected })
+            );
+          });
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
 </script>
 
 
-
-<script>
+<!-- <script>
   $(document).ready(function () {
     var mod = <%= selected.dev_mod!= '' ? true : false %>;
     console.log(mod, 'CHange mod');
@@ -380,6 +452,7 @@
       change_mod(cust_id)
     }
   })
+
   $('#cust_id').change(function () {
     var cust_id = $(this).val();
     change_mod(cust_id)
@@ -412,7 +485,147 @@
   }
 
 
+</script> -->
+
+<!-- <script>
+  $(document).ready(function () {
+    var user_type = "<%= user.userData.user_type %>";
+    var sel_dev_mod = "<%= selected.dev_mod != '' ? selected.dev_mod : 0 %>";
+
+    if (user_type === 'A') {
+      // ADMIN → location fixed
+      var cust_id = "<%= user.userData.customer_id %>";
+      $('#cust_id').val(cust_id).prop('disabled', true);
+
+      // auto-fetch & lock mode
+      change_mod(cust_id, true);
+    } else {
+      // SUPERADMIN → user chooses location
+      $('#cust_id').on('change', function () {
+        var cust_id = $(this).val();
+        if (cust_id) {
+          change_mod(cust_id, false);
+        } else {
+          $('#dev_mode').empty().append('<option value="">Select Mode</option>');
+        }
+      });
+
+      // if edit case (already selected location)
+      var sel_cust_id = "<%= selected.cust_id != '' ? selected.cust_id : '' %>";
+      if (sel_cust_id) {
+        $('#cust_id').val(sel_cust_id);
+        change_mod(sel_cust_id, false);
+      }
+    }
+  });
+
+  function change_mod(cust_id, isAdmin = false) {
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/dev_dt",
+      data: { cust_id: cust_id },
+      success: function (response) {
+        console.log("dev_dt response:", response);
+
+        $('#dev_mode').empty().append('<option value="">Select Mode</option>');
+        var sel_dev_mod = "<%= selected.dev_mod != '' ? selected.dev_mod : 0 %>";
+
+        if (response.SUCCESS && response.SUCCESS.dev_mod && response.SUCCESS.dev_mod.msg) {
+          response.SUCCESS.dev_mod.msg.forEach(function (resData) {
+            var text = resData.dev_mod === 'D' ? 'Dual' : 'Fixed';
+            var isSelected = (sel_dev_mod == resData.dev_mod) || isAdmin;
+
+            $('#dev_mode').append(
+              $('<option>', {
+                value: resData.dev_mod,
+                text: text,
+                selected: isSelected
+              })
+            );
+          });
+        }
+
+        // If admin, lock the mode
+        $('#dev_mode').prop('disabled', isAdmin);
+      },
+      error: function (error) {
+        console.log("Error in fetching dev_mode:", error);
+      }
+    });
+  }
+</script> -->
+
+<script>
+  $(document).ready(function () {
+    var user_type = "<%= user.userData.user_type %>";
+    var sel_cust_id = "<%= selected.cust_id ? selected.cust_id : '' %>";
+    var sel_dev_mod = "<%= selected.dev_mod ? selected.dev_mod : '' %>";
+
+    if (user_type === 'A') {
+      // ADMIN → location fixed
+      var cust_id = "<%= user.userData.customer_id %>";
+      $('#cust_id').val(cust_id).prop('disabled', true);
+
+      // auto-fetch & lock mode
+      setDevMode(cust_id, true, sel_dev_mod);
+    } else {
+      // SUPERADMIN → selects location, mode auto-set and locked
+      if (sel_cust_id) {
+        // Edit case → set location and fetch mode
+        $('#cust_id').val(sel_cust_id);
+        setDevMode(sel_cust_id, true, sel_dev_mod);
+      }
+
+      $('#cust_id').on('change', function () {
+        var cust_id = $(this).val();
+        if (cust_id) {
+          setDevMode(cust_id, true, ''); // auto-set and lock, no preselection
+        } else {
+          $('#dev_mode').empty().append('<option value="">Select Mode</option>');
+        }
+      });
+    }
+  });
+
+  function setDevMode(cust_id, lockDropdown = false, preselectedDevMod = '') {
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/dev_dt",
+      data: { cust_id: cust_id },
+      success: function (response) {
+        console.log("dev_dt response:", response);
+
+        $('#dev_mode').empty();
+
+        if (response.SUCCESS && response.SUCCESS.dev_mod && response.SUCCESS.dev_mod.msg) {
+          // Assuming only one mode comes per customer
+          var resData = response.SUCCESS.dev_mod.msg[0];
+          var text = resData.dev_mod === 'D' ? 'Dual' : 'Fixed';
+          var value = resData.dev_mod;
+
+          // If preselectedDevMod exists (edit case), use it instead
+          if (preselectedDevMod) value = preselectedDevMod;
+
+          $('#dev_mode').append(
+            $('<option>', {
+              value: value,
+              text: text,
+              selected: true
+            })
+          );
+        }
+
+        // Lock dropdown if needed
+        $('#dev_mode').prop('disabled', lockDropdown);
+      },
+      error: function (error) {
+        console.log("Error fetching dev_mode:", error);
+      }
+    });
+  }
 </script>
+
+
 
 <style>
   .modal-lg-custom {

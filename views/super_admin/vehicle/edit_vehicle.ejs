@@ -1,3 +1,11 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap Toggle CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+<!-- Bootstrap Toggle JS -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
+
 <div class="container-fluid py-5">
   <div class="row justify-content-center">
     <div class="col-lg-10 col-md-8">
@@ -18,7 +26,7 @@
             <div class="row gx-2 gy-3 align-items-end"> <!-- reduced gap -->
               
               <!-- Location Name -->
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="cust_name" class="form-label fw-bold">Location Name</label>
                 <select name="cust_name" id="cust_name" class="form-select custom-input" disabled>
                   <option value="">Select Location Name</option>
@@ -31,11 +39,16 @@
               </div>
 
               <!-- Vehicle Name -->
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="veh_name" class="form-label fw-bold">Vehicle Name</label>
                 <input type="text" class="form-control custom-input" id="veh_name" name="veh_name" 
                        value="<%= data[0].vehicle_name %>" placeholder="Enter vehicle name">
               </div>
+
+               <div class="col-md-4 cust-toggle1">
+                    <input type="checkbox" value="Y" id="toggleActive" data-toggle="toggle" data-onstyle="success"
+                    data-offstyle="danger" data-on="Active" data-off="Deactive" name="toggleActive" <%=(data[0].vehicle_on_off=='Y' )?'checked':''%>>
+                  </div>
 
             </div>
 
@@ -58,6 +71,10 @@
 </div>
 
 <style>
+
+     .cust-toggle1 {
+    margin-top: 32px;
+  }
   /* Compact Input & Select */
   .custom-input {
     border-radius: 10px;

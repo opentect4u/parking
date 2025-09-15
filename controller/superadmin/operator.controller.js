@@ -19,19 +19,67 @@ const getAllOperatorList = (id = 0,cust_id) => {
   })
 };
 
+// const operator = async(req,res)=>{
+//  try{
+//     var method = req.method;
+//     var user = req.session.user;
+
+//     var selected = {
+//       cust_id: method == 'POST' ? req.body.cust_name : ''
+//     }
+
+//     var cust = await getAllCustomerList(),
+//     loca = await getAllLocationList(),
+//     seller = await getAllSellerList(),
+//       operator_list = [];
+
+//     if(method == 'POST'){
+//       operator_list = await show_operator_dtls(selected.cust_id)
+//       operator_list = operator_list.suc > 0 ? operator_list.msg : []
+//     }
+//     const page_data = {
+//         title: "Operator details",
+//         page_path: "super_admin/operator/operator",
+//         data: operator_list,
+//         customer: cust.suc > 0 ? cust.msg : null,
+//         location: loca.suc > 0 ? loca.msg : null,
+//         seller: seller.suc > 0 ? seller.msg : null,
+//         selected
+//       };
+//       // console.log(page_data,'lolo');
+//       res.render("common/layouts/main",page_data);
+//  } catch(error) {
+//   //  console.log(error);
+//   logger.error(err); // Log the error
+//    res.redirect("/superadmin_login");
+//  }
+// };
+
 const operator = async(req,res)=>{
  try{
-    var method = req.method
+    var method = req.method;
+    var user = req.session.user;
+
     var selected = {
-      cust_id: method == 'POST' ? req.body.cust_name : ''
-    }
+      cust_id: ""
+    };
+
     var cust = await getAllCustomerList(),
     loca = await getAllLocationList(),
     seller = await getAllSellerList(),
       operator_list = [];
-    if(method == 'POST'){
+     
+    if (user.userData.user_type === "S") {  
+      selected.cust_id = method == "POST" ? req.body.cust_name : "";
+    if(method == 'POST' && selected.cust_id){
       operator_list = await show_operator_dtls(selected.cust_id)
       operator_list = operator_list.suc > 0 ? operator_list.msg : []
+    }
+     } else if (user.userData.user_type === "A") {
+      // Admin → auto load operators for their customer_id
+      selected.cust_id = user.userData.customer_id;
+      operator_list = await show_operator_dtls(selected.cust_id);
+      operator_list = operator_list.suc > 0 ? operator_list.msg : [];
     }
     const page_data = {
         title: "Operator details",
@@ -45,8 +93,8 @@ const operator = async(req,res)=>{
       // console.log(page_data,'lolo');
       res.render("common/layouts/main",page_data);
  } catch(error) {
-  //  console.log(error);
-  logger.error(err); // Log the error
+   console.log(error);
+  // logger.error(err); // Log the error
    res.redirect("/superadmin_login");
  }
 };
@@ -111,6 +159,8 @@ const show_operator_dtls = (cust_id) => {
         });
         return res.json({ error: errors });
       }
+
+      var user_type = req.session.user.userData.user_type;
       var user_name = req.session.user.userData.user_name;
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var password = bcrypt.hashSync(value.pwd.toString(), 10);
@@ -183,6 +233,112 @@ const show_operator_dtls = (cust_id) => {
 //     res.json({ exists: false, error: "Server error" });
 //   }
 // };
+
+
+// const save_add_operator = async (req, res) => {
+//   try {
+//     const schema = Joi.object({
+//       id: Joi.required(),
+//       cust_id: Joi.optional(),
+//       cust_name: Joi.optional(),
+//       op_name: Joi.optional(),
+//       mobile: Joi.optional(),
+//       dev_id: Joi.optional(),
+//       pwd: Joi.optional(),
+//     });
+//     const { error, value } = schema.validate(req.body, { abortEarly: false });
+//     if (error) {
+//       const errors = {};
+//       error.details.forEach((detail) => {
+//         errors[detail.context.key] = detail.message;
+//       });
+//       return res.json({ error: errors });
+//     }
+
+//     var user_type = req.session.user.userData.user_type;
+//     var user_name = req.session.user.userData.user_name;
+//     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var password = bcrypt.hashSync(value.pwd.toString(), 10);
+
+//     // ✅ Only check duplicate mobile if superadmin can update it
+//     if (user_type === "S") {
+//       let mobileWhere = `user_id = '${value.mobile}'`;
+//       if (value.id > 0) {
+//         mobileWhere += ` AND customer_id != '${value.cust_id}'`;
+//       }
+//       const user = await db_Select("user_id", "md_user", mobileWhere, null);
+//       if (user.msg.length > 0) {
+//         req.flash("error", "Mobile number already exists");
+//         return res.redirect("/superadmin/operator");
+//       }
+//     }
+
+//     // ==========================
+//     // Insert / Update md_operator
+//     // ==========================
+//     let fields =
+//         value.id > 0
+//           ? `operator_name='${value.op_name}',updated_by='${user_name}',updated_at='${datetime}'`
+//           : "(operator_name,user_id,customer_id,location_id,created_by,created_at)",
+//       values = `('${value.op_name}','${value.mobile}','${value.cust_name}','${value.cust_name}','${user_name}','${datetime}')`,
+//       where =
+//         value.id > 0
+//           ? `customer_id='${value.cust_id}' AND operator_id='${value.id}'`
+//           : null,
+//       flag = value.id > 0 ? 1 : 0;
+
+//     var res_dt = await db_Insert("md_operator", fields, values, where, flag);
+
+//     if (res_dt.suc > 0) {
+//       // ==========================
+//       // Insert / Update md_user
+//       // ==========================
+//       let fields_1,
+//         values_1,
+//         where1,
+//         flag;
+
+//       if (value.id > 0) {
+//         // 🔑 UPDATE CASE
+//         if (user_type === "S") {
+//           // Superadmin can update mobile also
+//           fields_1 = `user_id='${value.mobile}',password='${password}',device_id='${value.dev_id}',updated_by='${user_name}',updated_at='${datetime}'`;
+//         } else {
+//           // Other users cannot update mobile
+//           fields_1 = `password='${password}',device_id='${value.dev_id}',updated_by='${user_name}',updated_at='${datetime}'`;
+//         }
+
+//         where1 = `customer_id='${value.cust_id}' AND user_id='${value.mobile}'`;
+//         flag = 1;
+//       } else {
+//         // INSERT CASE
+//         fields_1 =
+//           "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_by,created_at)";
+//         values_1 = `('${value.cust_name}','0','O','${password}','${value.dev_id}','${value.mobile}','Y','${user_name}','${datetime}')`;
+//         where1 = null;
+//         flag = 0;
+//       }
+
+//       var res_dt_2 = await db_Insert("md_user", fields_1, values_1, where1, flag);
+//     }
+
+//     req.flash(
+//       "success",
+//       value.id > 0 ? "Updated successfully" : "Saved successfully"
+//     );
+//     res.redirect("/superadmin/operator");
+//   } catch (err) {
+//     console.error(err);
+//     req.flash(
+//       "error",
+//       value.id > 0
+//         ? "Data not updated Successfully"
+//         : "Data not saved Successfully"
+//     );
+//     res.redirect("/superadmin/operator");
+//   }
+// };
+
 
 const check_mobile_no = async (req, res) => {
   try {

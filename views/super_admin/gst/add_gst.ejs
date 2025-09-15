@@ -39,6 +39,7 @@
                   <tbody>
                     <% if(data.msg && data.msg.length> 0) { %>
                       <% data.msg.forEach(function(item,index) { %>
+                        <% if (user.userData.user_type === 'S' || (user.userData.user_type === 'A' && item.customer_id == user.userData.customer_id)) { %>
                         <tr>
                           <td class="text-center text-dark">
                             <%=(index+1)%>
@@ -59,10 +60,11 @@
                             </span>
                           </td>
                           <td class="text-center text-dark">
-                            <a href="edit_gst?id=<%= item.gst_id %>&customer_id=<%= item.customer_id %>"
+                            <a href='edit_gst?id=<%= item.gst_id %>&customer_id=<%= (user.userData.user_type == "A" ? user.userData.customer_id : item.customer_id) %>'
                               class="btn btn-info" style="border-radius: 5px;"><i class="fa fa-edit"></i></a>
                           </td>
                         </tr>
+                        <% } %>
                         <% }); %>
                           <% } else { %>
                             <tr>
@@ -109,12 +111,21 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="cust_name" class="text-dark"><b>Location Name</b></label>
+                        <% if (user.userData.user_type === 'S') { %>
                         <select name="cust_name" class="form-control" id="cust_name">
                             <option value="">Select Location Name</option>
                             <% customer.forEach(dt => { %>
                               <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
                               <% }) %>
-                        </select>
+                              </select>
+                        <% } else { %>
+                  <!-- Auto-select & show location name for others (e.g. A) -->
+                <% 
+                  let selectedCust = customer.find(c => c.customer_id == user.userData.customer_id);
+                %>
+                <input type="hidden" name="cust_name" value="<%= user.userData.customer_id %>">
+                <input type="text" class="form-control" value="<%= selectedCust ? selectedCust.customer_name : '' %>" disabled>
+              <% } %>
                     </div>
                 </div>
             <!-- </div> -->

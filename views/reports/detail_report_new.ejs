@@ -49,6 +49,7 @@
     <label for="operator_id" class="form-label fw-bold text-dark"><b>Operator Name</b></label>
     <select name="operator_id" class="form-select rounded-pill shadow-sm select-custom" id="operator_id">
       <option value="">Select Operator Name</option>
+      <option value="A" selected>All Operators</option>
       <!-- <option value="A" selected>All Operators</option> -->
       <!-- <% if (operators.msg && operators.msg.length > 0) { %>
         <% operators.msg.forEach(operator => { %>
@@ -433,7 +434,7 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                         $('#resultDiv table tbody').append(`
                             <tr>
                                 <td class=text-dark>${i}</td>
-                                <td class=text-dark>${dt.receipt_no}</td>
+                                <td class="text-dark">${dt.receipt_no == null ? '' : String(dt.receipt_no).slice(-5)}</td>
                                 <td class=text-dark>${createDateTime(dt.date_time_in)}</td>
                                 <td class=text-dark>${dt.device_id}</td>
                                 <td class=text-dark>${dt.vehicle_name}</td>
@@ -553,7 +554,7 @@ console.log(cgst_tot,sgst_tot,'oiuy');
     }
 </script> -->
 
-<script>
+<!-- <script>
   $('#custId').on('change', function () {
     var custId = $(this).val();
 
@@ -568,11 +569,13 @@ console.log(cgst_tot,sgst_tot,'oiuy');
             },
             success: function (res) {
     if (res.msg && res.msg.suc > 0 && res.msg.msg.length > 0) {
-        let options = '<option value="">Select Operator Name</option><option value="A">All Operators</option>';
+        let options = '<option value="">Select Operator Name</option>';
+        options += '<option value="A">All Operators</option>'; // keep All Operators
         res.msg.msg.forEach(op => {
             options += `<option value="${op.operator_id}">${op.operator_name}</option>`;
         });
         $("#operator_id").html(options);
+         $("#operator_id").val("A");
     } else {
         $("#operator_id").html('<option value="">No Operator Found</option>');
     }
@@ -586,8 +589,52 @@ console.log(cgst_tot,sgst_tot,'oiuy');
     }
 });
 
-</script>
+</script> -->
 
+<script>
+$(document).ready(function() {
+    // Get user_type from server-side
+
+    if(user.userData.user_type === 'S') {
+        // Hide From Date, To Date, Pay Mode, Operator
+        $('#filtersRow').find('.col-md-3').hide();
+        $('#operatorRow').find('.col-md-4').hide();
+    }
+
+    // Operator load on Location change
+    $('#custId').on('change', function () {
+        var custId = $(this).val();
+        if (custId) {
+            $.ajax({
+                method: "POST",
+                url: "/report/get_operators_by_location",
+                data: { custId },
+                dataType: "json",
+                beforeSend: function () {
+                    $("#operator_id").html('<option value="">Loading...</option>');
+                },
+                success: function (res) {
+                    if (res.msg && res.msg.suc > 0 && res.msg.msg.length > 0) {
+                        let options = '<option value="">Select Operator Name</option>';
+                        options += '<option value="A">All Operators</option>';
+                        res.msg.msg.forEach(op => {
+                            options += `<option value="${op.operator_id}">${op.operator_name}</option>`;
+                        });
+                        $("#operator_id").html(options).val("A");
+                    } else {
+                        $("#operator_id").html('<option value="">No Operator Found</option>');
+                    }
+                },
+                error: function () {
+                    $("#operator_id").html('<option value="">Error loading operators</option>');
+                }
+            });
+        } else {
+            $("#operator_id").html('<option value="">Select Operator Name</option>');
+        }
+    });
+});
+</script>
 
 <script>
 function printDiv() {

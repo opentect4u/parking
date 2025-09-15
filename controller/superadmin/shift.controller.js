@@ -16,16 +16,29 @@ const getAllShiftList = (id = 0,cust_id) => {
 
 const shift = async(req,res)=>{
     try{
-       var method = req.method
+       var method = req.method;
+       var user = req.session.user;
+
        var selected = {
-         cust_id: method == 'POST' ? req.body.cust_name : ''
+        //  cust_id: method == 'POST' ? req.body.cust_name : ''
+         cust_id: ""
        }
+
        var cust = await getAllCustomerList(),
          shift_list = [];
-       if(method == 'POST'){
+
+      if (user.userData.user_type === "S") {  
+      selected.cust_id = method == "POST" ? req.body.cust_name : "";
+       if(method == 'POST' && selected.cust_id){
          shift_list = await show_shift_dtls(selected.cust_id)
          shift_list = shift_list.suc > 0 ? shift_list.msg : []
        }
+       } else if (user.userData.user_type === "A") {
+             // Admin → auto load operators for their customer_id
+             selected.cust_id = user.userData.customer_id;
+              shift_list = await show_shift_dtls(selected.cust_id)
+             shift_list = shift_list.suc > 0 ? shift_list.msg : []
+           }
        const page_data = {
            title: "Shift details",
            page_path: "super_admin/shift/shift",

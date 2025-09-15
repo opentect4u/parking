@@ -21,6 +21,7 @@
         </div>
 
         <!-- Search Form -->
+         <% if(user.userData.user_type == "S"){ %>
         <form action="/superadmin/operator" method="post" class="p-4">
           <div class="row g-3 align-items-end justify-content-center">
             <!-- Dropdown -->
@@ -45,9 +46,11 @@
             </div>
           </div>
         </form>
+        <% } %>
 
         <!-- Table -->
-        <% if(selected.cust_id > 0){ %>
+        <%# if(selected.cust_id > 0){ %>
+         <% if((user.userData.user_type == "S" && selected.cust_id > 0) || user.userData.user_type == "A"){ %>
         <div class="p-3">
           <div class="table-responsive">
             <table id="dataTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
@@ -70,7 +73,7 @@
                     <td class="text-center text-dark"><%= dt.user_id %></td>
                     <td class="text-center text-dark"><%= dt.device_id %></td>
                     <td class="text-center text-dark">
-                      <a href='/superadmin/edit_operator?customer_id=<%= selected.cust_id %>&id=<%= dt.operator_id %>' 
+                      <a href='/superadmin/edit_operator?customer_id=<%= (user.userData.user_type == "A" ? user.userData.customer_id : selected.cust_id) %>&id=<%= dt.operator_id %>' 
                          class='btn btn-info btn-sm rounded-pill'>
                          <i class='fa fa-edit'></i>
                       </a>
@@ -114,12 +117,22 @@
               <div class="col-md-6">
                 <div class="form-group">
                     <label for="cust_name" class="text-dark"><b>Location Name</b></label>
-                    <select name="cust_name" class="form-control" id="cust_name_modal">
-                        <option value="">Select Location Name</option>
-                        <% customer.forEach(dt => { %>
-                          <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
-                          <% }) %>
-                    </select>
+                    <% if (user.userData.user_type === 'S') { %>
+                  <!-- Show dropdown if user_type is S -->
+                  <select name="cust_name" class="form-control" id="cust_name_modal">
+                    <option value="">Select Location Name</option>
+                    <% customer.forEach(dt => { %>
+                      <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
+                    <% }) %>
+                  </select>
+                <% } else { %>
+                <!-- Auto-select & show location name for others (e.g. A) -->
+                <% 
+                  let selectedCust = customer.find(c => c.customer_id == user.userData.customer_id);
+                %>
+                <input type="hidden" name="cust_name" value="<%= user.userData.customer_id %>">
+                <input type="text" class="form-control" value="<%= selectedCust ? selectedCust.customer_name : '' %>" disabled>
+              <% } %>
                 </div>
             </div>
                 <div class="col-md-6">
@@ -330,9 +343,17 @@
   $(document).ready(function () {
   $('#mobile').on('change', function () {
     let mobile = $(this).val().trim();
-    let customer_id = $('#cust_name_modal').val() || $('#cust_name').val(); // 👈 check modal OR form dropdown
+    // let customer_id = $('#cust_name_modal').val() || $('#cust_name').val(); // 👈 check modal OR form dropdown
+    let customer_id = "";
 
-    console.log("Input changed:", mobile, "Customer ID:", customer_id);
+     <% if (user.userData.user_type === 'S') { %>
+        // For SuperAdmin → from dropdown
+        customer_id = $('#cust_name_modal').val();
+      <% } else { %>
+        // For Admin → from hidden input
+        customer_id = "<%= user.userData.customer_id %>";
+      <% } %>
+    // console.log("Input changed:", mobile, "Customer ID:", customer_id);
 
     // Check only if mobile is 10 digits & customer is selected
     if (mobile.length === 10 && customer_id) {

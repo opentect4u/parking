@@ -1,0 +1,177 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap Toggle CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+<!-- Bootstrap Toggle JS -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
+
+<div class="container-fluid py-4" style="background: #f5f7fa;">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm border-0 rounded-card">
+        <div class="card-header bg-gradient text-white py-2">
+          <h4 class="mb-0">
+            <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor: pointer;"></i>
+            Report Permission Edit Details
+          </h4>
+        </div>
+        <div class="card-body p-3">
+          <form action="/superadmin/save_report_permit" id="myForm" method="post">
+            <div class="row g-2">
+
+              <!-- Customer Name -->
+<div class="col-md-6">
+  <label for="cust_name" class="form-label"><b>Location Name:</b></label>
+  <div class="position-relative">
+    <select name="cust_name" class="form-select shadow-sm rounded-pill custom-select" id="cust_name" disabled>
+      <option value="">Select Location Name</option>
+      <% customer.forEach(dt =>{ %>
+        <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+      <% }) %>
+    </select>
+  </div>
+</div>
+
+<div class="col-md-6 cust-toggle1">
+              <label for="detail_flag" class="text-dark"><b>Detail Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="detail_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="detail_flag" <%=(data[0].detail_report=='Y' )?'checked':''%>>
+            </div>
+
+            <div class="col-md-6 cust-toggle1 mt-3">
+              <label for="vehicle_flag" class="text-dark"><b>VehicleWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="vehicle_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="vehicle_flag" <%=(data[0].veh_wise_report=='Y' )?'checked':''%>>
+            </div>
+
+             <div class="col-md-6 cust-toggle1 mt-3">
+              <label for="device_flag" class="text-dark"><b>DeviceWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="device_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="device_flag" <%=(data[0].dev_wise_report=='Y' )?'checked':''%>>
+            </div>
+
+            <div class="col-md-6 cust-toggle1 mt-3">
+              <label for="operator_flag" class="text-dark"><b>OperatorWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="operator_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="operator_flag" <%=(data[0].operate_wise_report=='Y' )?'checked':''%>>
+            </div>
+
+            <div class="col-md-6 cust-toggle1 mt-3">
+              <label for="shift_flag" class="text-dark"><b>ShiftWise Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="shift_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="shift_flag" <%=(data[0].shift_wise_report=='Y' )?'checked':''%>>
+            </div>
+
+
+
+             
+
+            <!-- Hidden Fields -->
+            <input type="hidden" name="id" value="<%= id %>">
+            <input type="hidden" name="cust_id" value="<%= customer_id %>">
+
+            <!-- Submit Button -->
+            <div class="row mt-3">
+            <div class="col-12 d-flex justify-content-center">
+           <button type="submit" class="btn btn-gradient shadow-sm rounded-pill px-4 py-2" style="margin-left: 20vw;">
+           SUBMIT
+          </button>
+       </div>
+       </div>
+
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+.rounded-card {
+  border-radius: 25px; /* Full card rounding */
+  overflow: hidden;    /* Ensures header & body respect border radius */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rounded-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+
+/* Optional: make the header rounded top corners consistent */
+.card-header.bg-gradient {
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+  .btn-gradient {
+    background: linear-gradient(45deg, #dbbcda, #5568c0);
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s ease;
+  }
+  /* .btn-gradient:hover {
+    background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  } */
+  .form-control:focus, .form-select:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 0.15rem rgba(106,17,203,0.25);
+  }
+  .card-header.bg-gradient {
+    background: linear-gradient(45deg, #dbbcda, #6d83e2);
+  }
+  .custom-select {
+  transition: all 0.3s ease;
+  border: 2px solid #ccc;
+  padding-right: 2.5rem; /* space for icon */
+  background-color: #fff;
+  appearance: none; /* remove default arrow */
+}
+
+.custom-select:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 0.15rem rgba(106,17,203,0.25);
+  background: linear-gradient(90deg, #f0f4ff, #ffffff);
+}
+
+.custom-select:hover {
+  border-color: #2575fc;
+}
+
+.position-relative select {
+  padding-left: 1rem; /* optional, for symmetry */
+}
+
+.position-relative i {
+  pointer-events: none; /* icon won't block clicking */
+  font-size: 0.9rem;
+}
+.card.rounded-5 {
+  border-radius: 1.5rem; /* bigger round corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card.rounded-5:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+</style>
+
+<script>
+  $(document).ready(function () {
+    $("#back").click(function () {
+      window.location.href = "/superadmin/report_permission";
+    });
+  });
+</script>

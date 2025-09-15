@@ -184,7 +184,12 @@
         <li class="nav-item dropdown">
           <a class="nav-link d-flex align-items-center dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <img src="/template/assets/images/users/profile-pic.png" class="rounded-circle profile-pic" alt="user"/>
+            <% if (user.userData.user_type == 'S') { %>
           <span class="ml-2 d-none d-lg-inline-block">Discover, <%= user.userData.user_name %></span>
+          <% } else { %>
+           <span id="greeting" class="ml-2 d-none d-lg-inline-block"></span>
+          <% } %>
+
          </a>
        <div class="dropdown-menu dropdown-menu-right animated fadeIn user-menu" aria-labelledby="userDropdown">
     <a class="dropdown-item" data-toggle="modal" data-target="#myAccount"><i data-feather="user"></i> My Profile</a>
@@ -220,3 +225,22 @@
     </div>
   </nav>
 </header>
+
+<script>
+  const hours = new Date().getHours();
+  let greeting;
+
+  if (hours < 12) {
+    greeting = "Good Morning";
+  } else if (hours < 17) {
+    greeting = "Good Afternoon";
+  } else if (hours < 20) {
+    greeting = "Good Evening";
+  } else {
+    greeting = "Good Night";
+  }
+
+  // insert greeting + username into the span
+  document.getElementById("greeting").innerText = `${greeting}, <%= user.userData.user_name %>`;
+</script>
+

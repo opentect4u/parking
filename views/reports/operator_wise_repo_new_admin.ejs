@@ -7,6 +7,7 @@
                 </h3>
                 <div class="row g-3 align-items-end">
 
+                    <div class="col-md-2"></div>
                     <div class="col-md-4">
                      <label for="frm_dt" class="form-label fw-bold text-dark"><b>From Date</b></label>
                      <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
@@ -19,25 +20,14 @@
                       <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-lg rounded-pill shadow-sm input-custom" required>
                     </div>
 
-                     <!-- Customer Select -->
-                    <div class="col-md-4">
-                      <label for="custId" class="form-label fw-bold text-dark"><b>Location Name</label>
-                      <select name="custId" class="form-select form-select-lg rounded-pill shadow-sm select-custom" id="custId">
-                        <option value="">Select Location Name</option>
-                        <% if (data.msg && data.msg.length > 0) { %>
-                          <% data.msg.forEach(customer => { %>
-                            <option value="<%= customer.customer_id %>"><%= customer.customer_name %></option>
-                          <% }) %>
-                        <% } %>
-                      </select>
-                    </div>
+                    <div class="col-md-2"></div>
 
                     <!-- Small Search Button -->
-                    <div class="col-12 text-center mt-3">
-    <button type="button" class="btn btn-gradient btn-sm px-4 shadow-sm" id="btnSubmit">
-        <i class="fa fa-search me-1"></i> Search
-    </button>
-</div>
+                    <div class="col-12 d-flex mt-3">
+                  <button type="button" class="btn btn-gradient btn-sm px-4 shadow-sm" id="btnSubmit">
+                     <i class="fa fa-search me-1"></i> Search
+                  </button>
+                   </div>
                 </div>
                 <!-- <div class="card-body" id="resultDiv"> -->
                 <div class="dateWiseDataTable mt-4" id="resultDiv" style="display: none;">
@@ -249,11 +239,14 @@
 </script> -->
 
 <script>
+    var cust = <%= user.userData.customer_id %>;
+    var custName = "<%= user.userData.customer_name %>";
+
 $('#btnSubmit').on('click', function () {
     var frm_dt = $('#frm_dt').val();
     var to_dt = $('#to_dt').val();
-    var custId = $('#custId').val();
-    var custName = $("#custId option:selected").text(); // Get selected location name
+    var custId = cust
+    // var custName = $("#custId option:selected").text(); // Get selected location name
 
     if (frm_dt != '' && to_dt != '' && custId != '') {
         $('#resultDiv').show();
