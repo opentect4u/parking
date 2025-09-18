@@ -1,3 +1,7 @@
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
 <div class="container-fluid py-5">
   <div class="row justify-content-center">
     <div class="col-lg-10 col-md-8">
@@ -20,7 +24,7 @@
               
               <!-- Customer Name -->
               <div class="col-md-6">
-                <label for="cust_name" class="form-label fw-semibold text-dark">Location Name</label>
+                <label for="cust_name" class="form-label fw-semibold text-dark"><b>Location Name</b></label>
                 <select name="cust_name" class="form-select custom-input" id="cust_name" disabled>
                   <option value="">Select Location Name</option>
                   <% customer.forEach(dt =>{ %>
@@ -33,33 +37,48 @@
 
               <!-- Operator Name -->
               <div class="col-md-6">
-                <label for="op_name" class="form-label fw-semibold text-dark">Operator Name</label>
+                <label for="op_name" class="form-label fw-semibold text-dark"><b>Operator Name</b></label>
                 <input type="text" class="form-control custom-input" id="op_name" name="op_name" value="<%= data[0].operator_name %>" readonly>
               </div>
 
               <!-- Mobile No -->
               <div class="col-md-6 mt-3">
-                <label for="mobile" class="form-label fw-semibold text-dark">Mobile No</label>
+                <label for="mobile" class="form-label fw-semibold text-dark"><b>Mobile No</b></label>
                 <input type="text" class="form-control custom-input" id="mobile" name="mobile" value="<%= data[0].user_id %>" readonly>
               </div>
 
               <!-- Device ID -->
               <div class="col-md-6 mt-3">
-                <label for="dev_id" class="form-label fw-semibold text-dark">Device ID</label>
+                <label for="dev_id" class="form-label fw-semibold text-dark"><b>Device ID</b></label>
                 <input type="text" class="form-control custom-input" id="dev_id" name="dev_id" value="<%= data[0].device_id %>" readonly>
               </div>
 
               <!-- Password -->
               <div class="col-md-6 mt-3">
-  <label for="pwd" class="form-label fw-semibold text-dark">Password</label>
-  <div class="input-group">
-    <input type="password" class="form-control custom-input" name="pwd" id="pwd" placeholder="Enter Password">
-    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-      <i class="fa fa-eye-slash"></i>
-    </button>
-  </div>
-</div>
+              <label for="pwd" class="form-label fw-semibold text-dark"><b>Password</b></label>
+              <div class="input-group">
+                <input type="password" class="form-control custom-input" name="pwd" id="pwd" placeholder="Enter Password">
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="fa fa-eye-slash"></i>
+                </button>
+              </div>
+              </div>
 
+               <% if (user.userData.user_type === 'S') { %>
+                <div class="col-md-6 cust-toggle1">
+                  <!-- Label on top -->
+                  <label for="allow_flag" class="form-label fw-semibold text-dark d-block mb-2">
+                    <b>Status</b>
+                  </label>
+
+                  <!-- Toggle under the label -->
+                  <input type="checkbox" value="Y" id="allow_flag"
+                         data-toggle="toggle" data-onstyle="success"
+                         data-offstyle="danger" data-on="Active" data-off="Deactive"
+                         name="allow_flag"
+                         <%= data[0].allow_flag == 'Y' ? 'checked' : '' %>>
+                </div>
+                <% } %>
             </div>
 
             <!-- Hidden Fields -->
@@ -82,6 +101,11 @@
 
 <!-- Styles -->
 <style>
+   .cust-toggle1 .toggle {
+    /* width: 82% !important; */
+    border-radius: 13px;
+    height: 56% !important;
+  }
 /* Card */
 .card {
   border-radius: 16px;

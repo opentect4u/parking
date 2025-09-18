@@ -3,9 +3,13 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
 <div class="container-fluid py-4">
   <div class="row justify-content-center">
-    <div class="col-lg-10">
+    <div class="col-lg-12">
       <!-- Card -->
       <div class="card shadow-lg border-0 custom-card" 
            style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f2f7);">
@@ -60,6 +64,7 @@
                   <th class="text-center text-dark">Operator Name</th>
                   <th class="text-center text-dark">User ID</th>
                   <th class="text-center text-dark">Device ID</th>
+                  <th class="text-center text-dark">Status</th>
                   <th class="text-center text-dark">Action</th>
                 </tr>
               </thead>
@@ -72,6 +77,11 @@
                     <td class="text-center text-dark"><%= dt.operator_name %></td>
                     <td class="text-center text-dark"><%= dt.user_id %></td>
                     <td class="text-center text-dark"><%= dt.device_id %></td>
+                    <td class="text-center text-dark">
+                    <span class="badge <%= dt.allow_flag === 'Y' ? 'bg-success' : 'bg-danger' %>">
+                      <%= dt.allow_flag === 'Y' ? 'Active' : 'Deactive' %>
+                    </span>
+                    </td>
                     <td class="text-center text-dark">
                       <a href='/superadmin/edit_operator?customer_id=<%= (user.userData.user_type == "A" ? user.userData.customer_id : selected.cust_id) %>&id=<%= dt.operator_id %>' 
                          class='btn btn-info btn-sm rounded-pill'>
@@ -164,7 +174,14 @@
                                     </button>
                                   </div>
                                 </div>
-                              </div>           
+                              </div> 
+                              <% if (user.userData.user_type === 'S') { %>
+                            <div class="form-group col-6 cust-toggle1">
+                              <label for="allow_flag" class="text-dark d-block mb-2"><b>Status:</b></label>
+                              <input type="checkbox" value="Y" id="allow_flag" data-toggle="toggle" data-onstyle="success"
+                            data-offstyle="danger" data-on="Active" data-off="Deactive" name="allow_flag" checked disabled>
+                            </div> 
+                            <% } %>           
             </div>
             <div class="row">
                 <input type="hidden" name="id" value="0">
@@ -217,6 +234,12 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.25);
   color: #fff;
 }
+
+  .cust-toggle1 .toggle {
+    /* width: 82% !important; */
+    border-radius: 13px;
+    height: 56% !important;
+  }
 
 /* Gradient Text */
 .text-gradient {

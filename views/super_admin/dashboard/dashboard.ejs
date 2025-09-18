@@ -177,8 +177,10 @@ document.querySelectorAll(".dropdown-item").forEach(item => {
       locationBox.textContent = "Details of " + selectedText.replace("📍", "").trim();
     }
 
+    const today = new Date().toISOString().split("T")[0]; // e.g. "2025-09-16"
+
     try{
-        fetch(`/superadmin/dashboard_page?location_id=${locationId}`)
+        fetch(`/superadmin/dashboard_page?location_id=${locationId}&date=${today}`)
         .then(res => res.json())
          .then(data => {
           console.log("API Response:", data);
@@ -607,108 +609,243 @@ document.addEventListener("DOMContentLoaded", () => {
 //   });
 // }
 
+// let dailyChartInstance = null;
+// let monthlyChartInstance = null;
+
+// function renderCharts(data) {
+//   // ===== Destroy old charts if exist =====
+//   if (dailyChartInstance) dailyChartInstance.destroy();
+//   if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+//   // ===== Daily Receipts Chart =====
+//   const dailyCtx = document.getElementById('dailyReceiptsChart').getContext('2d');
+//   const dailyGradient = dailyCtx.createLinearGradient(0, 0, 0, 400);
+//   dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)');
+//   dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)');
+
+//   dailyChartInstance = new Chart(dailyCtx, {
+//     type: 'bar',
+//     data: {
+//       labels: data.dailyReceipts.map(d => {
+//         const dt = new Date(d.date);
+//         return dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+//       }),
+//       datasets: [{
+//         label: 'Receipts per Day',
+//         data: data.dailyReceipts.map(d => d.count),
+//         backgroundColor: dailyGradient,
+//         borderRadius: 5,
+//         maxBarThickness: 60,
+//         hoverBackgroundColor: 'rgba(255, 123, 0, 1)',
+//         barPercentage: 0.8
+//       }]
+//     },
+//     options: {
+//       responsive: true,
+//       plugins: {
+//         legend: { display: false },
+//         tooltip: {
+//           backgroundColor: '#333',
+//           titleColor: '#fff',
+//           bodyColor: '#fff',
+//           displayColors: true
+//         }
+//       },
+//       scales: {
+//         x: {
+//           grid: { display: true },
+//           ticks: { font: { size: 13, weight: 'bold' , color: '#000'} }
+//         },
+//         y: {
+//           grid: { color: '#e0e0e0' },
+//           ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' }, color: '#000' }
+//         }
+//       }
+//     }
+//   });
+
+
+//   // ===== Monthly Receipts Chart =====
+//   const monthlyCtx = document.getElementById('monthlyReceiptsChart').getContext('2d');
+//   const monthlyGradient = monthlyCtx.createLinearGradient(0, 0, 0, 400);
+//   monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)');
+//   monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)');
+
+//   monthlyChartInstance = new Chart(monthlyCtx, {
+//     type: 'bar',
+//     data: {
+//       labels: data.monthlyReceipts.map(d => {
+//         const dt = new Date(d.month + '-01'); // "YYYY-MM"
+//         return dt.toLocaleString('en-US', { month: 'short' });
+//       }),
+//       datasets: [{
+//         label: 'Receipts per Month',
+//         data: data.monthlyReceipts.map(d => d.count),
+//         backgroundColor: monthlyGradient,
+//         borderRadius: 5,
+//         maxBarThickness: 50,
+//         hoverBackgroundColor: 'rgba(102, 126, 234, 1)'
+//       }]
+//     },
+//    options: {
+//       responsive: true,
+//       plugins: {
+//         legend: { display: false },
+//         tooltip: {
+//           backgroundColor: '#333',
+//           titleColor: '#fff',
+//           bodyColor: '#fff',
+//           displayColors: true
+//         }
+//       },
+//       scales: {
+//         x: { grid: { display: true }, ticks: { font: { size: 13, weight: 'bold' }, color: '#000' } },
+//         y: { grid: { color: '#e0e0e0' }, ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' },color: '#000' } }
+//       }
+//     }
+//   });
+
+// }
+
 let dailyChartInstance = null;
 let monthlyChartInstance = null;
 
+// Function to initialize empty charts
+function initEmptyCharts() {
+  const dailyCtx = document.getElementById("dailyReceiptsChart").getContext("2d");
+  dailyChartInstance = new Chart(dailyCtx, {
+    type: "bar",
+    data: { labels: [], datasets: [] },
+    options: { responsive: true }
+  });
+
+  const monthlyCtx = document.getElementById("monthlyReceiptsChart").getContext("2d");
+  monthlyChartInstance = new Chart(monthlyCtx, {
+    type: "bar",
+    data: { labels: [], datasets: [] },
+    options: { responsive: true }
+  });
+}
+
+// Call this on page load
+initEmptyCharts();
+
 function renderCharts(data) {
-  // ===== Destroy old charts if exist =====
   if (dailyChartInstance) dailyChartInstance.destroy();
   if (monthlyChartInstance) monthlyChartInstance.destroy();
 
-  // ===== Daily Receipts Chart =====
-  const dailyCtx = document.getElementById('dailyReceiptsChart').getContext('2d');
-  const dailyGradient = dailyCtx.createLinearGradient(0, 0, 0, 400);
-  dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)');
-  dailyGradient.addColorStop(1, 'rgba(255, 123, 0, 1)');
-
+  // ========== Daily Chart ==========
+  const dailyCtx = document.getElementById("dailyReceiptsChart").getContext("2d");
   dailyChartInstance = new Chart(dailyCtx, {
-    type: 'bar',
+    type: "bar",
     data: {
       labels: data.dailyReceipts.map(d => {
         const dt = new Date(d.date);
-        return dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+        return dt.toLocaleDateString("en-US", { day: "numeric", month: "short" });
       }),
       datasets: [{
-        label: 'Receipts per Day',
-        data: data.dailyReceipts.map(d => d.count),
-        backgroundColor: dailyGradient,
-        borderRadius: 5,
-        maxBarThickness: 60,
-        hoverBackgroundColor: 'rgba(255, 123, 0, 1)',
-        barPercentage: 0.8
+        label: "Amount Collected (₹)",
+        data: data.dailyReceipts.map(d => d.amount),
+        backgroundColor: "rgba(255, 165, 0, 0.7)"
       }]
     },
     options: {
       responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#333',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          displayColors: true
+      scales: {
+        y: {
+          min: 5000,
+          max: 125000,
+          beginAtZero: false,
+          title: { display: true, text: "Amount (₹)" },
+          ticks: {
+            callback: (value) => "₹" + value.toLocaleString()
+          },
+          afterBuildTicks: (axis) => {
+          const ticks = [];
+          for (let v = 5000; v <= 125000; v += 15000) { // increment by 10000
+            ticks.push({ value: v });
+          }
+          return ticks;
+}
         }
       },
-      scales: {
-        x: {
-          grid: { display: true },
-          ticks: { font: { size: 13, weight: 'bold' , color: '#000'} }
-        },
-        y: {
-          grid: { color: '#e0e0e0' },
-          ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' }, color: '#000' }
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const idx = context.dataIndex;
+              const amount = context.dataset.data[idx];
+              const count = data.dailyReceipts[idx].count;
+              return [
+                `Amount: ₹${amount.toLocaleString()}`,
+                `Receipts: ${count}`
+              ];
+            }
+          }
         }
       }
     }
   });
 
-
-  // ===== Monthly Receipts Chart =====
-  const monthlyCtx = document.getElementById('monthlyReceiptsChart').getContext('2d');
-  const monthlyGradient = monthlyCtx.createLinearGradient(0, 0, 0, 400);
-  monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)');
-  monthlyGradient.addColorStop(1, 'rgba(102, 126, 234, 1)');
-
+  // ========== Monthly Chart ==========
+  const monthlyCtx = document.getElementById("monthlyReceiptsChart").getContext("2d");
   monthlyChartInstance = new Chart(monthlyCtx, {
-    type: 'bar',
+    type: "bar",
     data: {
       labels: data.monthlyReceipts.map(d => {
-        const dt = new Date(d.month + '-01'); // "YYYY-MM"
-        return dt.toLocaleString('en-US', { month: 'short' });
+        const dt = new Date(d.month + "-01");
+        return dt.toLocaleString("en-US", { month: "short", year: "numeric" });
       }),
       datasets: [{
-        label: 'Receipts per Month',
-        data: data.monthlyReceipts.map(d => d.count),
-        backgroundColor: monthlyGradient,
-        borderRadius: 5,
-        maxBarThickness: 50,
-        hoverBackgroundColor: 'rgba(102, 126, 234, 1)'
+        label: "Amount Collected (₹)",
+        data: data.monthlyReceipts.map(d => d.amount),
+        backgroundColor: "rgba(244, 63, 94, 0.8)"
       }]
     },
-   options: {
+    options: {
       responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#333',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          displayColors: true
+      scales: {
+        y: {
+          min: 5000,
+          max: 125000,
+          beginAtZero: false,
+          title: { display: true, text: "Amount (₹)" },
+          ticks: {
+            callback: (value) => "₹" + value.toLocaleString()
+          },
+        afterBuildTicks: (axis) => {
+        const ticks = [];
+        for (let v = 5000; v <= 125000; v += 15000) { // increment by 10000
+          ticks.push({ value: v });
+        }
+        return ticks;
+}
         }
       },
-      scales: {
-        x: { grid: { display: true }, ticks: { font: { size: 13, weight: 'bold' }, color: '#000' } },
-        y: { grid: { color: '#e0e0e0' }, ticks: { beginAtZero: true, font: { size: 13, weight: 'bold' },color: '#000' } }
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const idx = context.dataIndex;
+              const amount = context.dataset.data[idx];
+              const count = data.monthlyReceipts[idx].count;
+              return [
+                `Amount: ₹${amount.toLocaleString()}`,
+                `Receipts: ${count}`
+              ];
+            }
+          }
+        }
       }
     }
   });
-
 }
 
+const today = new Date().toISOString().split("T")[0]; // e.g. "2025-09-16"
 
 // Example fetch for admin or superadmin
 const locationId = "<%= user.userData.customer_id || '' %>"; // admin location
-fetch(`/superadmin/dashboard_page?location_id=${locationId}`)
+fetch(`/superadmin/dashboard_page?location_id=${locationId}&date=${today}`)
   .then(res => res.json())
   .then(data => {
     document.getElementById("totalReceiptEl").innerText = data.receipts;
@@ -720,3 +857,36 @@ fetch(`/superadmin/dashboard_page?location_id=${locationId}`)
     renderCharts(data);
   });
 </script>
+
+<script>
+function updateGreeting() {
+  const now = new Date();
+  const hours = now.getHours();
+  let greeting = "Hello";
+
+  if (hours >= 5 && hours < 12) {
+    greeting = "Good Morning";
+  } else if (hours >= 12 && hours < 18) {
+    greeting = "Good Afternoon";
+  } else if (hours >= 18 && hours < 22) {
+    greeting = "Good Evening";
+  } else {
+    greeting = "Good Night";
+  }
+
+  // Show greeting with name
+  document.getElementById("greeting").textContent = `${greeting}, ${user.userData.customer_name || "User"} 👋`;
+
+  // Format date as: Aug 30, 2025
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formattedDate = now.toLocaleDateString('en-US', options);
+  document.getElementById("currentDate").textContent = formattedDate;
+}
+
+// Call once on load
+updateGreeting();
+
+// Update every minute
+setInterval(updateGreeting, 60000);
+</script>
+

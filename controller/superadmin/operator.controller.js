@@ -149,9 +149,10 @@ const show_operator_dtls = (cust_id) => {
         // loc_name: Joi.optional(),
         dev_id: Joi.optional(),
         pwd: Joi.optional(),
+        allow_flag: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-      console.log(value);
+      console.log(value,'value');
       if (error) {
         const errors = {};
         error.details.forEach((detail) => {
@@ -184,7 +185,7 @@ const show_operator_dtls = (cust_id) => {
       var res_dt = await db_Insert("md_operator", fields, values, where, flag);
       // console.log(res_dt,'222');
       if(res_dt.suc > 0){
-        let fields_1 = value.id > 0 ? `password='${password}',device_id='${value.dev_id}',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_by,created_at)",
+        let fields_1 = value.id > 0 ? `password='${password}',device_id='${value.dev_id}' ${user_type == 'S' ? `,allow_flag='${value.allow_flag == 'Y' ? 'Y' : 'N'}'` : ''},updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,seller_id,user_type,password,device_id,user_id,allow_flag,created_by,created_at)",
         values_1 = `('${value.cust_name}','0','O','${password}','${value.dev_id}','${value.mobile}','Y','${user_name}','${datetime}')`;
         where1 = value.id > 0 ? `customer_id='${value.cust_id}' AND user_id='${value.mobile}'` : null;
         flag = value.id > 0 ? 1 : 0 ;
