@@ -195,7 +195,7 @@ const save_add_vehicle_rate = async (req, res) => {
       park_fee: Joi.optional(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    console.log(value,'+++');
+    // console.log(value,'+++');
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -205,6 +205,17 @@ const save_add_vehicle_rate = async (req, res) => {
     }
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+     // ===== old data (for logging if update) =====
+        let oldData = null;
+        if (value.id > 0) {
+          const existing_data = await db_Select(
+            "*",
+            "md_rate_dtls",
+            `customer_id='${value.cust_id}' AND sl_no='${value.id}'`
+          );
+          oldData = existing_data.msg[0] || null;
+        }
 
     let fields =
         value.id > 0
@@ -221,17 +232,40 @@ const save_add_vehicle_rate = async (req, res) => {
       value.id > 0 ? 1 : 0
     );
     // console.log("========vehicle==========", res_dt);
+
+    // ===== Logging (common) =====
+    if(oldData){
+      // ---- Update log ----
+      const changes = [];
+       if (oldData.vehicle_rate !== value.park_fee)
+        changes.push(`vehicle_rate: '${oldData.vehicle_rate}' → '${value.park_fee}'`);
+
+      logger.info(
+        `${user_name} Updated Vehicle [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
+      );
     req.flash(
-      "success",
-      value.id > 0 ? "Updated successfully" : "Saved successfully"
-    );
+      "success", "Updated successfully");
+       } else {
+        // ---- Create log with fields ----
+        const createdFields = [
+        `customer_id: '${value.cust_name}'`,
+        `vehicle_id: '${value.veh_id}'`,
+        `vehicle_rate: '${value.park_fee}'`,
+      ];
+      logger.info(
+        `${user_name} Created Vehicle [CustID: ${value.cust_name}] Fields: ${createdFields.join(", ")}`
+      );
+      req.flash("success", "Saved successfully");
+    }
     res.redirect("/superadmin/vehicle_rate");
     //   res.send(res_dt)
   } catch (error) {
     // console.log(error,'ERRR');
+    logger.error(error); // Log the error
+    const isUpdate = req.body && req.body.id > 0;
     req.flash(
       "error",
-      value.id > 0
+      isUpdate
         ? "Data not updated Successfully"
         : "Data not saved Successfully"
     );

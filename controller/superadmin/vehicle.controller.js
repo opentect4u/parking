@@ -107,19 +107,58 @@ const save_add_vehicle = async (req, res) => {
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    // ===== old data (for logging if update) =====
+        let oldData = null;
+        if (value.id > 0) {
+          const existing_data = await db_Select(
+            "*",
+            "md_vehicle",
+            `customer_id='${value.cust_id}' AND vehicle_id='${value.id}'`
+          );
+          oldData = existing_data.msg[0] || null;
+        }
+
     let fields = value.id > 0 ? `vehicle_name='${value.veh_name}',vehicle_on_off='${
               value.toggleActive == "Y" ? "Y" : "N"
             }',updated_by='${user_name}',updated_at='${datetime}'` : "(customer_id,vehicle_name,created_by,created_at)",
       values = `('${value.cust_name}','${value.veh_name}','${user_name}','${datetime}')`;
     let res_dt = await db_Insert("md_vehicle", fields, values, value.id > 0 ? `vehicle_id=${value.id} AND customer_id = ${value.cust_id}` : null, value.id > 0 ? 1 : 0);
     // console.log("========vehicle==========", res_dt);
-    req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
+
+     // ===== Logging (common) =====
+    if(oldData){
+      // ---- Update log ----
+      const changes = [];
+       if (oldData.vehicle_name !== value.veh_name)
+        changes.push(`vehicle_name: '${oldData.vehicle_name}' → '${value.veh_name}'`);
+      if (oldData.vehicle_on_off !== (value.toggleActive == "Y" ? "Y" : "N"))
+        changes.push(
+          `vehicle_on_off: '${oldData.vehicle_on_off}' → '${value.toggleActive == "Y" ? "Y" : "N"}'`
+        );
+
+      logger.info(
+        `${user_name} Updated Vehicle [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
+      );
+    req.flash("success", "Updated successfully");
+     } else {
+      // ---- Create log with fields ----
+      const createdFields = [
+        `customer_id: '${value.cust_name}'`,
+        `vehicle_name: '${value.veh_name}'`,
+        // `vehicle_on_off: '${value.toggleActive == "Y" ? "Y" : "N"}'`,
+      ];
+      logger.info(
+        `${user_name} Created Vehicle [CustID: ${value.cust_name}] Fields: ${createdFields.join(", ")}`
+      );
+      req.flash("success", "Saved successfully");
+    }
     res.redirect("/superadmin/vehicle");
   //   res.send(res_dt)
   } catch (error) {
     // console.log(error);
-    logger.error(err); // Log the error
-    req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
+    logger.error(error); // Log the error
+    const isUpdate = req.body && req.body.id > 0;
+    req.flash("error", isUpdate ? "Data not updated Successfully" : "Data not saved Successfully");
     res.redirect("/superadmin/vehicle");
   }
 };

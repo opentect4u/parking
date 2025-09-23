@@ -207,7 +207,7 @@ const super_admin_login_post = async (req, res) => {
 
         let whr = `a.user_id='${value.user_id}' AND a.user_type IN ('S', 'A') AND a.allow_flag = 'Y'`
         var userData = await db_Select("a.sl_no,a.customer_id,a.user_type,a.user_id,a.password,a.user_name,a.user_mobile_no,a.allow_flag,a.login_status,a.last_login,a.created_by,a.created_at,b.customer_name", 'md_super_admin a LEFT JOIN md_customer b ON a.customer_id = b.customer_id', whr, null)
-        console.log(userData,'userdata');
+        // console.log(userData,'userdata');
         
         if ((userData.msg).length == 1) {
             if (await bcrypt.compare(value.password, userData.msg[0].password)) {
@@ -225,13 +225,17 @@ const super_admin_login_post = async (req, res) => {
 
                 let reportPermission = {};
                  if (reportPermissionRes.msg.length > 0) {
-            reportPermission = reportPermissionRes.msg[0];
-          }
+                   reportPermission = reportPermissionRes.msg[0];
+                 }
 
                     // console.log(userData,'data');
                     req.session['user'] = { userData, datetime, reportPermission }
                     req.flash('success', "Login successful");
                     // res.redirect('/superadmin_dashboard');
+
+                     // ✅ Activity log (successful login)
+                    logger.info(`LOGIN SUCCESSFULLY - User: ${userData.user_id}, Name: ${userData.user_name}, Customer: ${userData.customer_name}, Time: ${datetime}`);
+
                     res.redirect('/superadmin/dashboard');
                 }catch(err){
                 //    console.log(err);

@@ -715,8 +715,28 @@ function initEmptyCharts() {
   const dailyCtx = document.getElementById("dailyReceiptsChart").getContext("2d");
   dailyChartInstance = new Chart(dailyCtx, {
     type: "bar",
-    data: { labels: [], datasets: [] },
-    options: { responsive: true }
+    data: { labels: ["No Data"], 
+    datasets: [{
+      label: "Daily Receipts",
+        data: [0],
+        backgroundColor: "rgba(91, 133, 189, 0.5)",
+        borderColor: "rgba(91, 133, 189, 1)",
+        borderWidth: 1
+    }] },
+    options: { responsive: true,
+          plugins: {
+        title: {
+          display: true,
+          text: "Daily Receipts (No Data Available)"
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
+        }
+      }
+    }
   });
 
   const monthlyCtx = document.getElementById("monthlyReceiptsChart").getContext("2d");
@@ -753,20 +773,23 @@ function renderCharts(data) {
       responsive: true,
       scales: {
         y: {
-          min: 5000,
-          max: 125000,
+          min: 0,
+          max: 30000,
           beginAtZero: false,
           title: { display: true, text: "Amount (₹)" },
           ticks: {
-            callback: (value) => "₹" + value.toLocaleString()
+            stepSize: 3000,   // 👈 Force step of 3000
+            autoSkip: false,       // 👈 prevent skipping
+            callback: (value) => "₹" + value.toLocaleString(),
+            padding: 10, 
           },
-          afterBuildTicks: (axis) => {
-          const ticks = [];
-          for (let v = 5000; v <= 125000; v += 15000) { // increment by 10000
-            ticks.push({ value: v });
-          }
-          return ticks;
-}
+//           afterBuildTicks: (axis) => {
+//           const ticks = [];
+//           for (let v = 0; v <= 125000; v += 3000) { // increment by 3000
+//             ticks.push({ value: v });
+//           }
+//           return ticks;
+// }
         }
       },
       plugins: {
@@ -806,20 +829,23 @@ function renderCharts(data) {
       responsive: true,
       scales: {
         y: {
-          min: 5000,
-          max: 125000,
-          beginAtZero: false,
+          min: 0,
+          max: 120000,
+          beginAtZero: true,
           title: { display: true, text: "Amount (₹)" },
           ticks: {
-            callback: (value) => "₹" + value.toLocaleString()
+            stepSize: 15000,   // 👈 Force step of 3000
+            autoSkip: false, 
+            callback: (value) => "₹" + value.toLocaleString(),
+            padding: 10,
           },
-        afterBuildTicks: (axis) => {
-        const ticks = [];
-        for (let v = 5000; v <= 125000; v += 15000) { // increment by 10000
-          ticks.push({ value: v });
-        }
-        return ticks;
-}
+//         afterBuildTicks: (axis) => {
+//         const ticks = [];
+//         for (let v = 0; v <= 125000; v += 5000) { // increment by 5000
+//           ticks.push({ value: v });
+//         }
+//         return ticks;
+// }
         }
       },
       plugins: {
@@ -845,6 +871,8 @@ const today = new Date().toISOString().split("T")[0]; // e.g. "2025-09-16"
 
 // Example fetch for admin or superadmin
 const locationId = "<%= user.userData.customer_id || '' %>"; // admin location
+
+// Auto-load only for Admin
 fetch(`/superadmin/dashboard_page?location_id=${locationId}&date=${today}`)
   .then(res => res.json())
   .then(data => {
@@ -856,9 +884,12 @@ fetch(`/superadmin/dashboard_page?location_id=${locationId}&date=${today}`)
     // Render charts
     renderCharts(data);
   });
+ 
 </script>
 
 <script>
+
+
 function updateGreeting() {
   const now = new Date();
   const hours = now.getHours();

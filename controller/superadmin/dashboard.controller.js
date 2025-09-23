@@ -109,14 +109,21 @@ const dashboard_page = async (req, res) => {
   try {
     const locationId = req.query.location_id;
     const today = req.query.date;
+    
     // const date = req.query.today;
     // console.log(locationId,today,'hy');
     
 
-    const operator = await db_Select(
-      "COUNT(*) as op_cnt",
-      "md_user",
-      `customer_id='${locationId}' AND user_type = 'O' AND DATE(created_at) = '${today}'`
+    // const operator = await db_Select(
+    //   "COUNT(*) as op_cnt",
+    //   "md_user",
+    //   `customer_id='${locationId}' AND user_type = 'O' AND DATE(created_at) = '${today}'`
+    // );
+
+      const operator = await db_Select(
+      "COUNT(DISTINCT user_id_in) as op_cnt",
+      "td_vehicle_in",
+      `customer_id='${locationId}' AND DATE(created_at) = '${today}'`
     );
 
     const receipt = await db_Select(
@@ -125,9 +132,15 @@ const dashboard_page = async (req, res) => {
       `customer_id='${locationId}' AND DATE(date_time_in) = '${today}'`
     );
 
-    const device = await db_Select(
-      "COUNT(*) as dev_cnt",
-      "md_customer",
+    // const device = await db_Select(
+    //   "COUNT(*) as dev_cnt",
+    //   "md_customer",
+    //   `customer_id='${locationId}' AND DATE(created_at) = '${today}'`
+    // );
+
+     const device = await db_Select(
+      "COUNT(DISTINCT device_id) AS dev_cnt",
+      "td_vehicle_in",
       `customer_id='${locationId}' AND DATE(created_at) = '${today}'`
     );
 

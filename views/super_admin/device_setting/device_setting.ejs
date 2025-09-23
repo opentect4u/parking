@@ -174,12 +174,13 @@
               <label for="gst_flag" class="text-dark"><b>GST Flag</b></label><br>
               <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="gst_flag" checked disabled>
+                <input type="hidden" name="gst_flag" value="Y">
             </div>
 
             <div class="col-md-3">
               <div class="form-group">
                 <label for="dev_type" class="text-dark"><b>Device Type</b></label>
-                <select name="dev_type" class="form-control" id="dev_type" disabled>
+                <select name="dev_type" class="form-control" id="dev_type" readonly>
                   <!-- <option value="">Select Device Type</option> -->
                   <option value="H">Handheld Device</option>
                   <!-- <option value="M">Mobile Device</option> -->

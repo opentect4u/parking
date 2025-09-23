@@ -111,17 +111,55 @@ const shift = async(req,res)=>{
       }
       var user_name = req.session.user.userData.user_name;
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+      // ===== old data (for logging if update) =====
+        let oldData = null;
+        if (value.id > 0) {
+          const existing = await db_Select(
+            "*",
+            "md_shift",
+            `customer_id='${value.cust_id}' AND shift_id='${value.id}'`
+          );
+          oldData = existing.msg[0] || null;
+        }
   
       let fields = value.id > 0 ? `shift_name='${value.shift_name}',f_time='${value.frm_time}',t_time='${value.to_time}',modified_by='${user_name}',updated_at='${datetime}'` : "(customer_id,shift_name,f_time,t_time,created_by,created_at)",
         values = `('${value.cust_id}','${value.shift_name}','${value.frm_time}','${value.to_time}','${user_name}','${datetime}')`;
       let res_dt = await db_Insert("md_shift", fields, values, value.id > 0 ? `shift_id=${value.id} AND customer_id = ${value.cust_id}` : null, value.id > 0 ? 1 : 0);
       // console.log("========shift==========", res_dt);
-      req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
+
+      // ==== Logging ====
+      if (oldData) {
+      const changes = [];
+      if (oldData.shift_name !== value.shift_name)
+        changes.push(`shift_name: '${oldData.shift_name}' → '${value.shift_name}'`);
+      if (oldData.f_time !== value.frm_time)
+        changes.push(`f_time: '${oldData.f_time}' → '${value.frm_time}'`);
+      if (oldData.t_time !== value.to_time)
+        changes.push(`t_time: '${oldData.t_time}' → '${value.to_time}'`);
+      logger.info(
+        `${user_name} Updated Operator [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
+      );
+      req.flash("success", "Updated successfully");
+        } else {
+      const createdFields = [
+        `customer_id: '${value.cust_id}'`,
+        `shift_name: '${value.shift_name}'`,
+        `f_time: '${value.frm_time}'`,
+        `t_time: '${value.to_time}'`,
+      ];
+      logger.info(
+        `${user_name} Created Operator [CustID: ${value.cust_id}] Fields: ${createdFields.join(", ")}`
+      );
+      req.flash("success", "Saved successfully");
+    }
+      // req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
       res.redirect("/superadmin/shift");
     //   res.send(res_dt)
     } catch (error) {
       // console.log(error);
-      logger.error(err); // Log the error
+      logger.error(error); // Log the error
+      const isUpdate = req.body && req.body.id > 0;
       req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
       res.redirect("/superadmin/shift");
     }

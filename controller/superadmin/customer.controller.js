@@ -388,21 +388,99 @@ const customer_edit = async (req, res) => {
 // };
 
 
+// const save_add_customer = async (req, res) => {
+//   try {
+//     const schema = Joi.object({
+//       id: Joi.required(),
+//       // sell_name: Joi.required(),
+//       cust_name: Joi.required(),
+//       // loc_name: Joi.required(),
+//       phone: Joi.required(),
+//       // email: Joi.required(),
+//       // dev_mode: Joi.required(),
+//       no_device: Joi.required(),
+//       rec_no: Joi.required(),
+//       // cust_type: Joi.required(),
+//       // dev_type: Joi.optional(),
+//       // password: Joi.optional(),
+//       cust_add: Joi.required(),
+//     });
+//     const { error, value } = schema.validate(req.body, { abortEarly: false });
+//     // console.log(value);
+//     if (error) {
+//       const errors = {};
+//       error.details.forEach((detail) => {
+//         errors[detail.context.key] = detail.message;
+//       });
+//       return res.json({ error: errors });
+//     }
+//     var user_name = req.session.user.userData.user_name;
+//     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     // var pwd = bcrypt.hashSync(value.password, 10);
+
+//     let fields =
+//         // value.id > 0
+//         //   ? 
+//           `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',receipt_no='${value.rec_no}',updated_by='${user_name}',updated_at='${datetime}'`
+//           // : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,device_type,created_by,created_at)",
+//       // values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','H','${user_name}','${datetime}')`;
+//     let res_dt = await db_Insert(
+//       "md_customer",
+//       fields,
+//       null,
+//       `customer_id=${value.id}`,
+//       1
+//     );
+//     // res_dt['customer_id']=
+//     // console.log(res_dt,'ressss');
+//   //     var cust_id = value.id > 0 ? value.id : res_dt.lastId.insertId
+//   //   if(res_dt.suc > 0){
+//   //     let fields1 =
+//   //     value.id > 0
+//   //       ? `seller_id='${value.sell_name}',password='${pwd}',user_id='${value.phone}',updated_by='${user_name}',updated_at='${datetime}'`
+//   //       : "(seller_id,customer_id,user_type,password,user_id,allow_flag,created_by,created_at)",
+//   //   values1 = `('${value.sell_name}','${cust_id}','C','${pwd}','${value.phone}','Y','${user_name}','${datetime}')`;
+//   //   let user_dt = await db_Insert(
+//   //   "md_user",
+//   //   fields1,
+//   //   values1,
+//   //   value.id > 0 ? `id=${value.id}` : null,
+//   //   value.id > 0 ? 1 : 0
+//   // );
+//   //   }
+
+//     // console.log("========customer==========", res_dt);
+//     req.flash(
+//       "success",
+//       value.id > 0 ? "Updated successfully" : "Saved successfully"
+//     );
+
+//     //activity log
+//     const action = value.id > 0 ? "Updated" : "Created";
+//     logger.info(`${user_name} ${action} customer [ID: ${value.id}] [Name: ${value.cust_name}]`)
+//     res.redirect("/superadmin/customer");
+//       // res.send(res_dt,'resssss')
+//   } catch (error) {
+//     // console.log(error);
+//     logger.error(error); // Log the error
+//     req.flash(
+//       "error",
+//       value.id > 0
+//         ? "Data not updated Successfully"
+//         : "Data not saved Successfully"
+//     );
+//     res.redirect("/superadmin/customer");
+//   }
+// };
+
 const save_add_customer = async (req, res) => {
   try {
     const schema = Joi.object({
       id: Joi.required(),
-      // sell_name: Joi.required(),
       cust_name: Joi.required(),
-      // loc_name: Joi.required(),
       phone: Joi.required(),
-      // email: Joi.required(),
-      // dev_mode: Joi.required(),
       no_device: Joi.required(),
       rec_no: Joi.required(),
-      // cust_type: Joi.required(),
-      // dev_type: Joi.optional(),
-      // password: Joi.optional(),
       cust_add: Joi.required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -416,21 +494,54 @@ const save_add_customer = async (req, res) => {
     }
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    // var pwd = bcrypt.hashSync(value.password, 10);
 
-    let fields =
-        // value.id > 0
-        //   ? 
-          `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',receipt_no='${value.rec_no}',updated_by='${user_name}',updated_at='${datetime}'`
-          // : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,device_type,created_by,created_at)",
-      // values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','H','${user_name}','${datetime}')`;
-    let res_dt = await db_Insert(
-      "md_customer",
-      fields,
-      null,
-      `customer_id=${value.id}`,
-      1
-    );
+     if (value.id > 0) {
+       // Get existing customer data
+      const existingCustomer = await db_Select("*", "md_customer", `customer_id=${value.id}`);
+      const oldData = existingCustomer.msg;
+      // console.log(oldData,'old');
+      
+
+// Determine which fields changed
+      const changes = [];
+      if (oldData[0].customer_name !== value.cust_name) changes.push(`customer_name: '${oldData[0].customer_name}' → '${value.cust_name}'`);
+      if (oldData[0].mobile_no !== value.phone) changes.push(`mobile_no: '${oldData[0].mobile_no}' → '${value.phone}'`);
+      if (oldData[0].cust_addr !== value.cust_add) changes.push(`cust_addr: '${oldData[0].cust_addr}' → '${value.cust_add}'`);
+      if (oldData[0].no_device != value.no_device) changes.push(`no_device: '${oldData[0].no_device}' → '${value.no_device}'`);
+      if (oldData[0].receipt_no != value.rec_no) changes.push(`receipt_no: '${oldData[0].receipt_no}' → '${value.rec_no}'`);
+
+      // Update the customer
+      var fields = `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',receipt_no='${value.rec_no}',updated_by='${user_name}',updated_at='${datetime}'`;
+      await db_Insert("md_customer", fields, null, `customer_id=${value.id}`, 1);
+
+      // Update the location
+      var fields = `location='${value.cust_name}',updated_by='${user_name}',updated_at='${datetime}'`;
+      await db_Insert("md_locations", fields, null, `location_id=${value.id}`, 1);
+
+      // Log update with field-level changes
+      logger.info(`${user_name} Updated customer [ID: ${value.id}] [Name: ${value.cust_name}] Fields changed: ${changes.join(", ")}`);
+
+    } else {
+      // New customer
+      let fields = `(customer_name, mobile_no, cust_addr, no_device, receipt_no, updated_by, updated_at) VALUES ('${value.cust_name}', '${value.phone}', '${value.cust_add}', '${value.no_device}', '${value.rec_no}', '${user_name}', '${datetime}')`;
+      await db_Insert("md_customer", null, fields, null, 0);
+
+      logger.info(`${user_name} Created customer [Name: ${value.cust_name}]`);
+    }
+
+    // let fields =
+    //     // value.id > 0
+    //     //   ? 
+    //       `customer_name='${value.cust_name}',mobile_no='${value.phone}',cust_addr='${value.cust_add}',no_device='${value.no_device}',receipt_no='${value.rec_no}',updated_by='${user_name}',updated_at='${datetime}'`
+    //       // : "(seller_id,customer_name,location_id,mobile_no,email,cust_addr,dev_mod,no_device,customer_type,device_type,created_by,created_at)",
+    //   // values = `('${value.sell_name}','${value.cust_name}','${value.loc_name}','${value.phone}','${value.email}','${value.cust_add}','${value.dev_mode}','${value.no_device}','${value.cust_type}','H','${user_name}','${datetime}')`;
+    // let res_dt = await db_Insert(
+    //   "md_customer",
+    //   fields,
+    //   null,
+    //   `customer_id=${value.id}`,
+    //   1
+    // );
     // res_dt['customer_id']=
     // console.log(res_dt,'ressss');
   //     var cust_id = value.id > 0 ? value.id : res_dt.lastId.insertId
@@ -455,13 +566,17 @@ const save_add_customer = async (req, res) => {
       value.id > 0 ? "Updated successfully" : "Saved successfully"
     );
     res.redirect("/superadmin/customer");
+    //activity log
+    // const action = value.id > 0 ? "Updated" : "Created";
+    // logger.info(`${user_name} ${action} customer [ID: ${value.id}] [Name: ${value.cust_name}]`)
       // res.send(res_dt,'resssss')
   } catch (error) {
     // console.log(error);
-    logger.error(err); // Log the error
+    logger.error(error); // Log the error
+      const isUpdate = req.body && req.body.id > 0;
     req.flash(
       "error",
-      value.id > 0
+      isUpdate
         ? "Data not updated Successfully"
         : "Data not saved Successfully"
     );

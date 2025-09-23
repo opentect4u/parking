@@ -87,3 +87,63 @@
     at save_add_operator (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\operator.controller.js:176:35)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
 ----------------------------------------------
+2025-09-15 19:08:15 error: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1118:18)
+    at afterConnectMultiple (node:net:1685:7) 
+----------------------------------------------
+2025-09-18 18:58:54 error: TypeError: Cannot read properties of undefined (reading 'customer_name')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:506:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-18 18:59:55 error: TypeError: Cannot read properties of undefined (reading 'customer_name')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:506:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-18 19:05:40 error: TypeError: Cannot read properties of undefined (reading 'customer_name')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:513:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-18 19:07:39 error: TypeError: Cannot read properties of undefined (reading 'customer_name')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:513:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-18 19:08:43 error: TypeError: Cannot read properties of undefined (reading 'customer_name')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:513:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-18 19:10:49 error: TypeError: Cannot read properties of undefined (reading 'customer_id')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:513:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-18 19:11:30 error: TypeError: Cannot read properties of undefined (reading 'customer_id')
+    at save_add_customer (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\customer.controller.js:515:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-19 16:17:11 error: ReferenceError: mobileWhere is not defined
+    at save_add_operator (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\operator.controller.js:377:60)
+    at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
+    at next (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\route.js:149:13)
+    at AuthSuperCheckedMW (D:\Sayantika\parking_hertz\hertz_parking\middleware\AuthChecked.middleware.js:20:13)
+    at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
+    at next (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\layer.js:95:5)
+    at D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (D:\Sayantika\parking_hertz\hertz_parking\node_modules\express\lib\router\index.js:346:12) 
+----------------------------------------------
+2025-09-21 23:15:23 error: TypeError: value.cgst is not a function
+    at save_add_gst (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\gst.controller.js:140:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-21 23:16:49 error: TypeError: value.cgst is not a function
+    at save_add_gst (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\gst.controller.js:140:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-22 00:07:57 error: TypeError: value.cgst is not a function
+    at save_add_gst (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\gst.controller.js:140:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------
+2025-09-22 00:11:44 error: ReferenceError: user_name is not defined
+    at save_add_gst (D:\Sayantika\parking_hertz\hertz_parking\controller\superadmin\gst.controller.js:144:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+----------------------------------------------

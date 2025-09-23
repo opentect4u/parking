@@ -80,7 +80,7 @@ const report_password = async (req, res) => {
         pwd: Joi.optional(),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-      // console.log(value);
+      console.log(value);
       if (error) {
         const errors = {};
         error.details.forEach((detail) => {
@@ -92,13 +92,43 @@ const report_password = async (req, res) => {
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var password = bcrypt.hashSync(value.pwd, 10);
 
-      var chk_sett = await db_Select('setting_id', 'md_setting', `customer_id = ${value.cust_id}`, null)
+      var chk_sett = await db_Select('*', 'md_setting', `customer_id = ${value.cust_id}`, null)
+
+         // ===== old data for activity log =====
+      let oldData = null;
+      if (chk_sett.suc > 0 && chk_sett.msg.length > 0) {
+      oldData = chk_sett.msg[0] || null;
+      }
+      console.log(oldData);
+      
   
       let fields = chk_sett.suc > 0 && chk_sett.msg.length > 0 ? `report_password_flag='${value.report_pwd == 'Y' ? 'Y' : 'N'}',password='${value.report_pwd == 'Y' ? password : ''}',modified_by='${user_name}',updated_at='${datetime}'` : "(customer_id,report_password_flag,password,created_by,created_at)",
         values = `('${value.cust_id}','${value.report_pwd == 'Y' ? 'Y' : 'N'}','${value.report_pwd == 'Y' ? password : ''}','${user_name}','${datetime}')`;
       let res_dt = await db_Insert("md_setting", fields, values, chk_sett.suc > 0 && chk_sett.msg.length > 0 ? `customer_id = ${value.cust_id}` : null, chk_sett.suc > 0 && chk_sett.msg.length > 0 ? 1 : 0);
       // console.log("========shift==========", res_dt);
-      req.flash("success", chk_sett.suc > 0 && chk_sett.msg.length > 0 ? "Updated successfully" : "Saved successfully");
+      
+      if (oldData) {
+      const changes = [];
+      if (oldData.report_password_flag !== (value.report_pwd == "Y" ? "Y" : "N"))
+        changes.push(`report_password_flag: '${oldData.report_password_flag}' → '${value.report_pwd == "Y" ? "Y" : "N"}'`);
+      if (value.pwd) changes.push("password: [updated]");
+      logger.info(
+        `${user_name} Updated Operator [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
+      );
+    req.flash(
+      "success", "Updated successfully");
+      } else {
+      const createdFields = [
+        `customer_id: '${value.cust_id}'`,
+        `report_password_flag: '${value.report_pwd == "Y" ? "Y" : "N"}'`,
+        "pwd: [created]",
+      ];
+      logger.info(
+        `${user_name} Created Operator [CustID: ${value.cust_id}] Fields: ${createdFields.join(", ")}`
+      );
+      req.flash("success", "Saved successfully");
+    }
+      // req.flash("success", chk_sett.suc > 0 && chk_sett.msg.length > 0 ? "Updated successfully" : "Saved successfully");
       res.redirect("/superadmin/report_pass");
     //   res.send(res_dt)
     } catch (error) {

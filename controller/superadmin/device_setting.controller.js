@@ -129,7 +129,7 @@ const save_device = async (req, res) => {
       qr_code_flag: Joi.optional(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    console.log(value, "+++");
+    // console.log(value, "+++");
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -139,6 +139,17 @@ const save_device = async (req, res) => {
     }
     var user_name = req.session.user.userData.user_name;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    // ===== old data (for logging if update) =====
+        let oldData = null;
+        if (value.id > 0) {
+          const existing = await db_Select(
+            "*",
+            "md_setting",
+            `customer_id='${value.cust_id}' AND setting_id='${value.id}'`
+          );
+          oldData = existing.msg[0] || null;
+        }
 
     let fields =
         value.id > 0
@@ -191,17 +202,71 @@ redirection_flag='${
       value.id > 0 ? 1 : 0
     );
     // console.log("========vehicle==========", res_dt);
+
+    if (oldData) {
+      const changes = [];
+      if (oldData.report_flag !== (value.report_flag == "Y" ? "Y" : "N"))
+        changes.push(`report_flag: '${oldData.report_flag}' → '${value.report_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.total_collection !== (value.tot_col == "Y" ? "Y" : "N"))
+        changes.push(`total_collection: '${oldData.total_collection}' → '${value.tot_col == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.redirection_flag !== (value.redirect_flag == "Y" ? "Y" : "N"))
+        changes.push(`redirection_flag: '${oldData.redirection_flag}' → '${value.redirect_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.grace_period_flag !== (value.grace_flag == "Y" ? "Y" : "N"))
+        changes.push(`grace_period_flag: '${oldData.grace_period_flag}' → '${value.grace_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.grace_value !== value.grace_value)
+        changes.push(`grace_value: '${oldData.grace_value}' → '${value.grace_value}'`);
+
+      if (oldData.adv_pay !== (value.adv_pay_flag == "Y" ? "Y" : "N"))
+        changes.push(`adv_pay: '${oldData.adv_pay}' → '${value.adv_pay_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.adv_value !== value.adv_value)
+        changes.push(`adv_value: '${oldData.adv_value}' → '${value.adv_value}'`);
+
+      if (oldData.pay_mode_flag !== (value.pay_mode_flag == "Y" ? "Y" : "N"))
+        changes.push(`pay_mode_flag: '${oldData.pay_mode_flag}' → '${value.pay_mode_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.qr_code_flag !== (value.qr_code_flag == "Y" ? "Y" : "N"))
+        changes.push(`qr_code_flag: '${oldData.qr_code_flag}' → '${value.qr_code_flag == "Y" ? "Y" : "N"}'`);
+
+      logger.info(
+        `${user_name} Updated Operator [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
+      );
     req.flash(
-      "success",
-      value.id > 0 ? "Updated successfully" : "Saved successfully"
-    );
+      "success", "Updated successfully");
+      } else {
+      const createdFields = [
+        `customer_id: '${value.cust_id}'`,
+        `dev_mode: '${value.dev_mode}'`,
+        `app_id: '${value.app_id}'`,
+        `gst_flag: '${value.gst_flag == "Y" ? "Y" : "N"}'`,
+        `device_type: '${value.dev_type}'`,
+        `report_flag: '${value.report_flag == "Y" ? "Y" : "N"}'`,
+        `total_collection: '${value.tot_col == "Y" ? "Y" : "N"}'`,
+        `redirection_flag: '${value.redirect_flag == "Y" ? "Y" : "N"}'`,
+        `grace_period_flag: '${value.grace_flag == "Y" ? "Y" : "N"}'`,
+        `grace_value: '${value.grace_value}'`,
+        `adv_pay: '${value.adv_pay_flag == "Y" ? "Y" : "N"}'`,
+        `adv_value: '${value.adv_value}'`,
+        `pay_mode_flag: '${value.pay_mode_flag == "Y" ? "Y" : "N"}'`,
+        `qr_code_flag: '${value.qr_code_flag == "Y" ? "Y" : "N"}'`,
+      ];
+      logger.info(
+        `${user_name} Created Operator [CustID: ${value.cust_id}] Fields: ${createdFields.join(", ")}`
+      );
+      req.flash("success", "Saved successfully");
+    }
     res.redirect("/superadmin/device_setting");
     //   res.send(res_dt)
   } catch (error) {
     // console.log(error,'ERRR');
+      const isUpdate = req.body && req.body.id > 0;
     req.flash(
       "error",
-      value.id > 0
+      isUpdate
         ? "Data not updated Successfully"
         : "Data not saved Successfully"
     );

@@ -72,11 +72,11 @@ rel="stylesheet">
                   </label>
 
                   <!-- Toggle under the label -->
-                  <input type="checkbox" value="Y" id="allow_flag"
+                  <input type="checkbox" id="allow_flag"
                          data-toggle="toggle" data-onstyle="success"
                          data-offstyle="danger" data-on="Active" data-off="Deactive"
-                         name="allow_flag"
                          <%= data[0].allow_flag == 'Y' ? 'checked' : '' %>>
+                  <input type="hidden" id="allow_flag_hidden" name="allow_flag" value="<%= data[0].allow_flag == 'Y' ? 'Y' : 'N' %>">
                 </div>
                 <% } %>
             </div>
@@ -183,6 +183,16 @@ rel="stylesheet">
 
 
 </style>
+
+<script>
+$("#myForm").submit(function () {
+  if ($("#allow_flag").prop("checked")) {
+    $("#allow_flag_hidden").val("Y");
+  } else {
+    $("#allow_flag_hidden").val("N");
+  }
+});
+</script>  
 
 <script>
   $(document).ready(function () {
