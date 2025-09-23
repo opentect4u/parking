@@ -102,6 +102,17 @@ const header_footer = async (req, res) => {
       }
       var user_name = req.session.user.userData.user_name;
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+      // ===== old data (for logging if update) =====
+        let oldData = null;
+        if (value.id > 0) {
+          const existing = await db_Select(
+            "*",
+            "md_receipt_setting",
+            `customer_id='${value.cust_id}' AND receipt_setting_id='${value.id}'`
+          );
+          oldData = existing.msg[0] || null;
+        }
   
       let fields = value.id > 0 ? `header1='${value.header_1}',header1_flag='${
         value.header_1_flag == 1 ? 1 : 0
@@ -143,13 +154,106 @@ const header_footer = async (req, res) => {
         }','${user_name}','${datetime}')`;
       let res_dt = await db_Insert("md_receipt_setting", fields, values, value.id > 0 ? `customer_id='${value.cust_id}' AND receipt_setting_id='${value.id}'` : null, value.id > 0 ? 1 : 0);
       // console.log("========location==========", res_dt);
-      req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
+      // req.flash("success", value.id > 0 ? "Updated successfully" : "Saved successfully");
+
+      if (oldData) {
+      const changes = [];
+      if (oldData.header1 !== value.header_1)
+        changes.push(`header1: '${oldData.header1}' → '${value.header_1}'`);
+
+      if (oldData.header2 !== value.header_2)
+        changes.push(`header2: '${oldData.header2}' → '${value.header_2}'`);
+
+      if (oldData.header3 !== value.header_3)
+        changes.push(`header3: '${oldData.header3}' → '${value.header_3}'`);
+
+      if (oldData.header4 !== value.header_4)
+        changes.push(`header4: '${oldData.header4}' → '${value.header_4}'`);
+
+      if (oldData.footer1 !== value.footer_1)
+        changes.push(`footer1: '${oldData.footer1}' → '${value.footer_1}'`);
+
+      if (oldData.footer2 !== value.footer_2)
+        changes.push(`footer2: '${oldData.footer2}' → '${value.footer_2}'`);
+
+      if (oldData.footer3 !== value.footer_3)
+        changes.push(`footer3: '${oldData.footer3}' → '${value.footer_3}'`);
+
+      if (oldData.footer4 !== value.footer_4)
+        changes.push(`footer4: '${oldData.footer4}' → '${value.footer_4}'`);
+
+      if (oldData.IN_on_off !== (value.in_on_off_flag == "Y" ? "Y" : "N"))
+        changes.push(`IN_on_off: '${oldData.IN_on_off}' → '${value.in_on_off_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.OUT_on_off !== (value.out_on_off_flag == "Y" ? "Y" : "N"))
+        changes.push(`OUT_on_off: '${oldData.OUT_on_off}' → '${value.out_on_off_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.report_flag !== (value.report_flag == "Y" ? "Y" : "N"))
+        changes.push(`report_flag: '${oldData.report_flag}' → '${value.report_flag == "Y" ? "Y" : "N"}'`);
+
+      if (oldData.header1_flag !== (value.header_1_flag == 1 ? 1 : 0))
+        changes.push(`header1_flag: '${oldData.header1_flag}' → '${value.header_1_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.header2_flag !== (value.header_2_flag == 1 ? 1 : 0))
+        changes.push(`header2_flag: '${oldData.header2_flag}' → '${value.header_2_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.header3_flag !== (value.header_3_flag == 1 ? 1 : 0))
+        changes.push(`header3_flag: '${oldData.header3_flag}' → '${value.header_3_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.header4_flag !== (value.header_4_flag == 1 ? 1 : 0))
+        changes.push(`header4_flag: '${oldData.header4_flag}' → '${value.header_4_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.footer1_flag !== (value.footer_1_flag == 1 ? 1 : 0))
+        changes.push(`footer1_flag: '${oldData.footer1_flag}' → '${value.footer_1_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.footer2_flag !== (value.footer_2_flag == 1 ? 1 : 0))
+        changes.push(`footer2_flag: '${oldData.footer2_flag}' → '${value.footer_2_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.footer3_flag !== (value.footer_3_flag == 1 ? 1 : 0))
+        changes.push(`footer3_flag: '${oldData.footer3_flag}' → '${value.footer_3_flag == 1 ? 1 : 0}'`);
+
+      if (oldData.footer4_flag !== (value.footer_4_flag == 1 ? 1 : 0))
+        changes.push(`footer4_flag: '${oldData.footer4_flag}' → '${value.footer_4_flag == 1 ? 1 : 0}'`);
+
+      logger.info(
+        `${user_name} Updated Operator [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
+      );
+      req.flash("success", "Updated successfully");
+        } else {
+      const createdFields = [
+        `customer_id: '${value.cust_id}'`,
+        `header1: '${value.header_1}'`,
+        `header2: '${value.header_2}'`,
+        `header3: '${value.header_3}'`,
+        `header4: '${value.header_4}'`,
+        `footer1: '${value.footer_1}'`,
+        `footer2: '${value.footer_2}'`,
+        `footer3: '${value.footer_3}'`,
+        `footer4: '${value.footer_4}'`,
+        `in_on_off: '${value.in_on_off_flag == "Y" ? "Y" : "N"}'`,
+        `out_on_off: '${value.out_on_off_flag == "Y" ? "Y" : "N"}'`,
+        `report_flag: '${value.report_flag == "Y" ? "Y" : "N"}'`,
+        `header1_flag: '${value.header_1_flag == 1 ? 1 : 0}'`,
+        `header2_flag: '${value.header_2_flag == 1 ? 1 : 0}'`,
+        `header3_flag: '${value.header_3_flag == 1 ? 1 : 0}'`,
+        `header4_flag: '${value.header_4_flag == 1 ? 1 : 0}'`,
+        `footer1_flag: '${value.footer_1_flag == 1 ? 1 : 0}'`,
+        `footer2_flag: '${value.footer_2_flag == 1 ? 1 : 0}'`,
+        `footer3_flag: '${value.footer_3_flag == 1 ? 1 : 0}'`,
+        `footer4_flag: '${value.footer_4_flag == 1 ? 1 : 0}'`,
+      ];
+      logger.info(
+        `${user_name} Created Operator [CustID: ${value.cust_id}] Fields: ${createdFields.join(", ")}`
+      );
+      req.flash("success", "Saved successfully");
+    }
       res.redirect("/superadmin/header_footer");
     //   res.send(res_dt)
     } catch (error) {
       // console.log(error);
-      logger.error(err); // Log the error
-      req.flash("error", value.id > 0 ? "Data not updated Successfully" : "Data not saved Successfully");
+      logger.error(error); // Log the error
+      const isUpdate = req.body && req.body.id > 0;
+      req.flash("error", isUpdate ? "Data not updated Successfully" : "Data not saved Successfully");
       res.redirect("/superadmin/header_footer");
     }
   };

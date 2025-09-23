@@ -404,3 +404,85 @@
 ----------------------------------------------
 2025-09-23 13:08:10 info: LOGIN SUCCESSFULLY - User: 1234567890, Name: Sayantika, Customer: Howrah Station, Time: 2025-09-23 13:08:10 
 ----------------------------------------------
+2025-09-23 17:55:30 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 17:55:29 
+----------------------------------------------
+2025-09-23 18:15:35 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 18:15:35 
+----------------------------------------------
+2025-09-23 18:19:25 info: Yatri Sathi Updated Operator [CustID: 3, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:20:38 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:21:37 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed:  
+----------------------------------------------
+2025-09-23 18:22:24 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 18:22:24 
+----------------------------------------------
+2025-09-23 18:23:06 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed:  
+----------------------------------------------
+2025-09-23 18:26:52 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: report_password_flag: 'Y' → 'N' 
+----------------------------------------------
+2025-09-23 18:27:39 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:36:41 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:43:45 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:46:07 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:48:33 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:50:49 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 18:50:49 
+----------------------------------------------
+2025-09-23 18:51:24 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 18:59:49 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 18:59:49 
+----------------------------------------------
+2025-09-23 19:00:03 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: password: [updated] 
+----------------------------------------------
+2025-09-23 19:02:14 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: report_password_flag: 'N' → 'Y', password: [updated] 
+----------------------------------------------
+2025-09-23 19:02:37 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: report_password_flag: 'Y' → 'N' 
+----------------------------------------------
+2025-09-23 19:03:02 info: Yatri Sathi Updated Operator [CustID: 1, ID: ] Fields changed: report_password_flag: 'N' → 'Y', password: [updated] 
+----------------------------------------------
+2025-09-23 19:06:53 info: Yatri Sathi Updated Operator [CustID: 5, ID: ] Fields changed: report_password_flag: 'N' → 'Y', password: [updated] 
+----------------------------------------------
+2025-09-23 19:07:09 info: Yatri Sathi Updated Operator [CustID: 4, ID: ] Fields changed: report_password_flag: 'N' → 'Y', password: [updated] 
+----------------------------------------------
+2025-09-23 19:07:15 info: Yatri Sathi Updated Operator [CustID: 3, ID: ] Fields changed: report_password_flag: 'N' → 'Y', password: [updated] 
+----------------------------------------------
+2025-09-23 19:16:24 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 19:16:24 
+----------------------------------------------
+2025-09-23 19:34:13 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 19:34:13 
+----------------------------------------------
+2025-09-23 19:40:18 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 19:40:18 
+----------------------------------------------
+2025-09-23 19:42:08 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 19:42:07 
+----------------------------------------------
+2025-09-23 19:43:48 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 19:43:48 
+----------------------------------------------
+2025-09-23 19:43:59 info: Yatri Sathi Created Operator [CustID: 2] Fields: customer_id: '2', detail_report: 'Y', veh_wise_report: 'Y', dev_wise_report: 'Y', operate_wise_report: 'Y', shift_wise_report: 'Y' 
+----------------------------------------------
+2025-09-23 19:44:27 info: Yatri Sathi Created Operator [CustID: 2] Fields: customer_id: '2', detail_report: 'Y', veh_wise_report: 'Y', dev_wise_report: 'Y', operate_wise_report: 'Y', shift_wise_report: 'Y' 
+----------------------------------------------
+2025-09-23 19:45:00 info: Yatri Sathi Updated Operator [CustID: 2, ID: 5] Fields changed: detail_report: 'Y' → 'N', veh_wise_report: 'Y' → 'N', dev_wise_report: 'Y' → 'N', operate_wise_report: 'Y' → 'N', shift_wise_report: 'Y' → 'N' 
+----------------------------------------------
+2025-09-23 19:45:15 info: Yatri Sathi Updated Operator [CustID: 2, ID: 5] Fields changed: detail_report: 'N' → 'Y', shift_wise_report: 'N' → 'Y' 
+----------------------------------------------
+2025-09-23 19:57:49 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 19:57:49 
+----------------------------------------------
+2025-09-23 21:16:43 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 21:16:42 
+----------------------------------------------
+2025-09-23 21:19:38 info: Yatri Sathi Created Operator [CustID: 3] Fields: customer_id: '3', header1: 'TEST1', header2: 'TEST2', header3: 'TEST3', header4: 'TEST4', footer1: 'TEST5', footer2: 'TEST6', footer3: 'TEST7', footer4: 'TEST8', in_on_off: 'Y', out_on_off: 'Y', report_flag: 'Y', header1_flag: '1', header2_flag: '1', header3_flag: '1', header4_flag: '1', footer1_flag: '1', footer2_flag: '1', footer3_flag: '1', footer4_flag: '1' 
+----------------------------------------------
+2025-09-23 22:20:58 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2025-09-23 22:20:58 
+----------------------------------------------
+2025-09-23 22:21:29 info: Yatri Sathi Updated Operator [CustID: 3, ID: 5] Fields changed: header1: 'TEST1' → 'TEST11', header2: 'TEST2' → 'TEST21', header3: 'TEST3' → 'TEST31', header4: 'TEST4' → 'TEST41', footer1: 'TEST5' → 'TEST51', footer2: 'TEST6' → 'TEST61', footer3: 'TEST7' → 'TEST71', footer4: 'TEST8' → 'TEST81', IN_on_off: 'Y' → 'N', OUT_on_off: 'Y' → 'N', report_flag: 'Y' → 'N', header1_flag: '1' → '0', header2_flag: '1' → '0', header3_flag: '1' → '0', header4_flag: '1' → '0', footer1_flag: '1' → '0', footer2_flag: '1' → '0', footer3_flag: '1' → '0', footer4_flag: '1' → '0' 
+----------------------------------------------
+2025-09-23 22:22:02 info: Yatri Sathi Updated Operator [CustID: 3, ID: 5] Fields changed: IN_on_off: 'N' → 'Y', OUT_on_off: 'N' → 'Y', header1_flag: '0' → '0', header2_flag: '0' → '0', header3_flag: '0' → '0', header4_flag: '0' → '0', footer1_flag: '0' → '0', footer2_flag: '0' → '0', footer3_flag: '0' → '0', footer4_flag: '0' → '0' 
+----------------------------------------------
+2025-09-23 22:22:17 info: Yatri Sathi Updated Operator [CustID: 3, ID: 5] Fields changed: report_flag: 'N' → 'Y', header1_flag: '0' → '0', header2_flag: '0' → '0', header3_flag: '0' → '0', header4_flag: '0' → '0', footer1_flag: '0' → '0', footer2_flag: '0' → '0', footer3_flag: '0' → '0', footer4_flag: '0' → '0' 
+----------------------------------------------
+2025-09-23 22:22:33 info: Yatri Sathi Updated Operator [CustID: 3, ID: 5] Fields changed: header1_flag: '0' → '1', header2_flag: '0' → '1', header3_flag: '0' → '1', header4_flag: '0' → '1', footer1_flag: '0' → '0', footer2_flag: '0' → '0', footer3_flag: '0' → '0', footer4_flag: '0' → '0' 
+----------------------------------------------
+2025-09-23 22:22:48 info: Yatri Sathi Updated Operator [CustID: 3, ID: 5] Fields changed: header1_flag: '1' → '1', header2_flag: '1' → '1', header3_flag: '1' → '1', header4_flag: '1' → '1', footer1_flag: '0' → '1', footer2_flag: '0' → '1', footer3_flag: '0' → '1', footer4_flag: '0' → '1' 
+----------------------------------------------
