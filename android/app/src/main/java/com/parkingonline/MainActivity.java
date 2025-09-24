@@ -30,3 +30,24 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
   }
 }
+
+// private IPrinterService printerService;
+
+// private ServiceConnection serviceConnection = new ServiceConnection() {
+//     @Override
+//     public void onServiceConnected(ComponentName name, IBinder service) {
+//         printerService = IPrinterService.Stub.asInterface(service);
+//     }
+
+//     @Override
+//     public void onServiceDisconnected(ComponentName name) {
+//         printerService = null;
+//     }
+// };
+
+// private void bindPrinterService() {
+//     Intent intent = new Intent();
+//     intent.setClassName("recieptservice.com.recieptservice", "recieptservice.com.recieptservice.service.PrinterService");
+//     bindService(intent, serviceConnection, Service.BIND_AUTO_CREATE);
+// }
+

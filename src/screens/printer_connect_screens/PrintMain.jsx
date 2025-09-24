@@ -270,6 +270,8 @@ const PrintMain = () => {
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       ])
 
+      // console.log(RESULTS.GRANTED, '<<<<<<<<<<<<<<<<<<<<<');
+      
       if (
         request["android.permission.ACCESS_FINE_LOCATION"] === RESULTS.GRANTED
       ) {
@@ -277,7 +279,6 @@ const PrintMain = () => {
         setLoading(false)
       } else {
         setLoading(false)
-        console.log('lockkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
       }
     } catch (err) {
       setLoading(false)

@@ -36,6 +36,7 @@ function useOutpass() {
                     },
                 },).then(res => {
                     // resolve(res.data.data.msg);
+                    console.log('getVehicleRatesByVehicleId>>>>', res?.data?.data?.rates?.msg, 'getVehicleRatesByVehicleId');
                     resolve(res?.data?.data);
                 }).catch(err => {
                     console.log(err);

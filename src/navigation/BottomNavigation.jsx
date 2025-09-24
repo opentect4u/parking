@@ -104,7 +104,7 @@ function BottomNavigation() {
       />
 
       {/*Setting Screen */}
-      {device_Type_Check == "M" && (
+      {/* {device_Type_Check == "M" && ( */}
       <Tab.Screen
         name={printScreen}
         options={{
@@ -113,7 +113,7 @@ function BottomNavigation() {
         }}
         component={PrintNavigation}
       />
-       )} 
+       {/* )}  */}
 
 
     </Tab.Navigator>

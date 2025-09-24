@@ -22,7 +22,8 @@ const width = Dimensions.get("screen").width;
 
 const device_name = [
   { label: "Mobile", value: "M" },
-  { label: "Handheld", value: "H" }
+  { label: "Handheld", value: "H" },
+  { label: "Amigo Blue H.", value: "H" }
 ];
 
 const language = [
@@ -121,7 +122,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
   // };
 
   useEffect(() => {
-    console.log(generalSettings, "GeneralSettingsScreen___", getGeneralSettings );
+    
     const generalSettings = getGeneralSettings();
     return () => clearInterval(generalSettings);
   }, []);
@@ -168,6 +169,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
   } = gstList;
 
   console.log(qr_code_flag, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', generalSettings.day_wise_rate);
+
+  console.log(loginData.user.userdata.msg[0].device_type, "GeneralSettingsScreen___", getGeneralSettings );
 
   return (
     <View style={{ flex: 1 }}>
@@ -216,6 +219,18 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 text={"Device Name"}>
                 <CustomInputComponent.InputComponentWithText
                   value={device_name[0].label}
+                  show
+                />
+              </SettingComponent>
+            )}
+
+            {loginData.user.userdata.msg[0].device_type == "A" && (
+              <SettingComponent
+              
+                icon={icons.deviceMode}
+                text={"Device Name"}>
+                <CustomInputComponent.InputComponentWithText
+                  value={device_name[2].label}
                   show
                 />
               </SettingComponent>

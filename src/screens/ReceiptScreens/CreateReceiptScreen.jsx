@@ -67,6 +67,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [getdevice_type, setdevice_type] = useState();
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
+
   // const [radioState, setRadioState] = useState(false);
   // const [getPayMode, setPayMode] = useState('C');
   // const radioOptions = [
@@ -460,6 +461,37 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // navigation.navigate("ReceiptScreen");
 
         // navigation.navigate("ReceiptScreen");
+        } else if (device_Type_Check == "A") {
+          
+          //  try {
+          
+          await BluetoothEscposPrinter.printText("testttttttt start\n", { align: "center" });
+          // await BluetoothEscposPrinter.printText("testttttttt\n", { align: "center" });
+          // await BluetoothEscposPrinter.printText("testttttttt end\n", { align: "center" });
+
+          setLoading(false);
+          // } catch (e) {
+          // // alert(e.message || "ERROR")
+          // alert("Printer is not connected.")
+          // console.log(e.message);
+          // }
+      //   try {
+      //     ToastAndroid.showWithGravityAndOffset(
+      //     "Receipt Created Successfully",
+      //     ToastAndroid.LONG,
+      //     ToastAndroid.BOTTOM,
+      //     25,
+      //     50,
+      //     );
+      //     await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
+      //   } catch (e) {
+      //   // alert(e.message || "ERROR")
+      //   alert("Printer is not connected.")
+      //   console.log(e.message);
+      // }
+        // navigation.navigate("ReceiptScreen");
+
+        // navigation.navigate("ReceiptScreen");
         } else if (device_Type_Check == "H") {
         ToastAndroid.showWithGravityAndOffset(
         "Receipt Created Successfully",
@@ -670,6 +702,25 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   };
 
+    const handleChangeText = (text) => {
+    // const filtered = text.replace(
+    //   /[^\p{L}\p{N}\s.,!?@#$_-]/gu, 
+    //   "" // remove disallowed characters like emoji
+    // );
+
+    const filtered = text.replace(/[^a-zA-Z0-9]/g, "");
+    // const filtered = text.replace(/[^a-zA-Z0-9-_]/g, "");
+    
+
+    // console.log(filtered, 'filteredfilteredfiltered');
+
+    if (text !== filtered) {
+      Alert.alert("Invalid Input", "Please Use Alphanumeric Value ");
+    }
+    
+    setVehicleNumber(filtered);
+  };
+
   return (
     <View>
       {/* if loading state is true render loading */}
@@ -763,7 +814,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             <RoundedInputComponent
               placeholder={"Enter Vechicle Number"}
               value={vehicleNumber}
-              onChangeText={setVehicleNumber}
+              // onChangeText={setVehicleNumber}
+              onChangeText={handleChangeText}
             />
           </View>
 
