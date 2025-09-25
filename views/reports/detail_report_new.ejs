@@ -50,12 +50,11 @@
     <select name="operator_id" class="form-select rounded-pill shadow-sm select-custom" id="operator_id">
       <option value="">Select Operator Name</option>
       <option value="A" selected>All Operators</option>
-      <!-- <option value="A" selected>All Operators</option> -->
-      <!-- <% if (operators.msg && operators.msg.length > 0) { %>
+      <% if (operators.msg && operators.msg.length > 0) { %>
         <% operators.msg.forEach(operator => { %>
           <option value="<%= operator.operator_id %>"><%= operator.operator_name %></option>
         <% }) %>
-      <% } %> -->
+      <% } %>
     </select>
   </div>
 
@@ -99,6 +98,7 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Receipt No.</th>
+                                    <th scope="col">Receipt No.(short)</th>
                                     <th scope="col">Date Time In</th>
                                     <th scope="col">Machine Sl. No. In</th>
                                     <th scope="col">Vehicle Type</th>
@@ -120,7 +120,7 @@
                             
                             <tfoot>
     <tr>
-        <td colspan="8">Total</td>
+        <td colspan="9">Total</td>
         <td scope="col" id="base_amt"><b>0</b></td>
         <td scope="col" id="advance_amt"><b>0</b></td>
         <td scope="col" id="cgst"><b>0</b></td>
@@ -131,11 +131,11 @@
         <td></td>
     </tr>
     <tr style="display: none;">
-        <td scope="col" colspan="2">Total UPI</td>
+        <td scope="col" colspan="3">Total UPI</td>
         <td scope="col" class="text-left" id="tot_upi" colspan="14"></td>
     </tr>
     <tr style="display: none;">
-        <td scope="col" colspan="2">Total Cash</td>
+        <td scope="col" colspan="3">Total Cash</td>
         <td scope="col" class="text-left" id="tot_cash" colspan="14"></td>
     </tr> 
 </tfoot>
@@ -656,6 +656,7 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                         let rowHtml = `
                             <tr>
                                 <td class=text-dark>${i}</td>
+                                <td class="text-dark">${dt.receipt_no}</td>
                                 <td class="text-dark">${dt.receipt_no == null ? '' : String(dt.receipt_no).slice(-5)}</td>
                                 <td class=text-dark>${createDateTime(dt.date_time_in)}</td>
                                 <td class=text-dark>${dt.device_id}</td>
@@ -685,7 +686,7 @@ console.log(cgst_tot,sgst_tot,'oiuy');
                     });
                 } else {
                     $('#vehicleSearchSection').hide();
-                    $('#resultDiv table tbody').html('<tr><td colspan="16" class="text-center text-danger">No Data Found</td></tr>');
+                    $('#resultDiv table tbody').html('<tr><td colspan="17" class="text-center text-danger">No Data Found</td></tr>');
                 }
 
                 // Update footer totals
@@ -862,14 +863,24 @@ function updateTotals(base, advance, cgst, sgst, other, total_amt, tot_upi, tot_
 </script> -->
 
 <script>
-$(document).ready(function() {
-    // Get user_type from server-side
-
-    if(user.userData.user_type === 'S') {
+     if(user.userData.user_type == 'S') {
+        
         // Hide From Date, To Date, Pay Mode, Operator
         $('#filtersRow').find('.col-md-3').hide();
         $('#operatorRow').find('.col-md-4').hide();
     }
+</script>
+
+<script>
+$(document).ready(function() {
+    // Get user_type from server-side
+
+    // if(user_type == 'S') {
+        
+    //     // Hide From Date, To Date, Pay Mode, Operator
+    //     $('#filtersRow').find('.col-md-3').hide();
+    //     $('#operatorRow').find('.col-md-4').hide();
+    // }
 
     // Operator load on Location change
     $('#custId').on('change', function () {
@@ -878,13 +889,17 @@ $(document).ready(function() {
             $.ajax({
                 method: "POST",
                 url: "/report/get_operators_by_location",
-                data: { custId },
+                contentType: "application/json",
+                // data: { custId },
+                data: JSON.stringify({ custId }),
                 dataType: "json",
                 beforeSend: function () {
                     $("#operator_id").html('<option value="">Loading...</option>');
                 },
                 success: function (res) {
-                    if (res.msg && res.msg.suc > 0 && res.msg.msg.length > 0) {
+                    console.log(res); // 👈 check actual response in browser console
+                    if (res.msg && res.msg.suc > 0 && res.msg.msg && res.msg.msg.length > 0) {
+                    //  if (res.suc > 0 && res.msg.msg.length > 0) {
                         let options = '<option value="">Select Operator Name</option>';
                         options += '<option value="A">All Operators</option>';
                         res.msg.msg.forEach(op => {

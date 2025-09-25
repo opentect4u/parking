@@ -84,6 +84,7 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Receipt No.</th>
+                                    <th scope="col">Receipt No.(short)</th>
                                     <th scope="col">Date Time In</th>
                                     <th scope="col">Machine Sl. No. In</th>
                                     <th scope="col">Vehicle Type</th>
@@ -105,7 +106,7 @@
                             
                             <tfoot>
     <tr>
-        <td colspan="8">Total</td>
+        <td colspan="9">Total</td>
         <td scope="col" id="base_amt"><b>0</b></td>
         <td scope="col" id="advance_amt"><b>0</b></td>
         <td scope="col" id="cgst"><b>0</b></td>
@@ -116,11 +117,11 @@
         <td></td>
     </tr>
     <tr style="display: none;">
-        <td scope="col" colspan="2">Total UPI</td>
+        <td scope="col" colspan="3">Total UPI</td>
         <td scope="col" class="text-left" id="tot_upi" colspan="14"></td>
     </tr>
     <tr style="display: none;">
-        <td scope="col" colspan="2">Total Cash</td>
+        <td scope="col" colspan="3">Total Cash</td>
         <td scope="col" class="text-left" id="tot_cash" colspan="14"></td>
     </tr> 
 </tfoot>
@@ -333,6 +334,7 @@ function downloadExcel() {
                               let rowHtml = `
                                 <tr>
                                     <td class=text-dark>${i}</td>
+                                    <td class="text-dark">${dt.receipt_no}</td>
                                     <td class="text-dark">${dt.receipt_no ? String(dt.receipt_no).slice(-5) : ''}</td>
                                     <td class=text-dark>${createDateTime(dt.date_time_in)}</td>
                                     <td class=text-dark>${dt.device_id}</td>
@@ -396,7 +398,7 @@ function downloadExcel() {
                         });
                 } else {
                    $('#vehicleSearchSection').hide();
-                    $('#resultDiv table tbody').html('<tr><td colspan="16" class="text-center text-danger">No Data Found</td></tr>');
+                    $('#resultDiv table tbody').html('<tr><td colspan="17" class="text-center text-danger">No Data Found</td></tr>');
                    updateTotals(0,0,0,0,0,0,0,0, pay_mode);
                   }
 
