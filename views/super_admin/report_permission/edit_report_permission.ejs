@@ -38,37 +38,55 @@
   </div>
 </div>
 
-<div class="col-md-6 cust-toggle1">
+<div class="col-md-6">
+  <label for="adminId" class="form-label"><b>Admin Name:</b></label>
+  <div class="position-relative">
+    <!-- <select name="adminId" class="form-select shadow-sm rounded-pill custom-select" id="adminId" disabled>
+      <option value="">Select Admin Name</option>
+      <% customer.forEach(dt =>{ %>
+        <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>><%= dt.customer_name %></option>
+      <% }) %>
+    </select> -->
+    <input type="text" class="form-select shadow-sm rounded-pill custom-select" id="adminId" name="adminId"
+                  placeholder="Enter Admin Name...." value="<%= data[0].user_name + ' - (' + data[0].user_id + ')' %>" disabled>
+  </div>
+</div>
+
+<div class="col-md-4 cust-toggle1 mt-3">
               <label for="detail_flag" class="text-dark"><b>Detail Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="detail_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="detail_flag" <%=(data[0].detail_report=='Y' )?'checked':''%>>
             </div>
 
-            <div class="col-md-6 cust-toggle1 mt-3">
+            <div class="col-md-4 cust-toggle1 mt-3">
               <label for="vehicle_flag" class="text-dark"><b>VehicleWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="vehicle_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="vehicle_flag" <%=(data[0].veh_wise_report=='Y' )?'checked':''%>>
             </div>
 
-             <div class="col-md-6 cust-toggle1 mt-3">
+             <div class="col-md-4 cust-toggle1 mt-3">
               <label for="device_flag" class="text-dark"><b>DeviceWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="device_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="device_flag" <%=(data[0].dev_wise_report=='Y' )?'checked':''%>>
             </div>
 
-            <div class="col-md-6 cust-toggle1 mt-3">
+            <div class="col-md-4 cust-toggle1 mt-3">
               <label for="operator_flag" class="text-dark"><b>OperatorWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="operator_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="operator_flag" <%=(data[0].operate_wise_report=='Y' )?'checked':''%>>
             </div>
 
-            <div class="col-md-6 cust-toggle1 mt-3">
+            <div class="col-md-4 cust-toggle1 mt-3">
               <label for="shift_flag" class="text-dark"><b>ShiftWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="shift_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="shift_flag" <%=(data[0].shift_wise_report=='Y' )?'checked':''%>>
             </div>
 
-
+             <div class="col-md-4 cust-toggle1 mt-3">
+              <label for="summary_flag" class="text-dark"><b>Summary Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="summary_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="summary_flag" <%=(data[0].summary_report=='Y' )?'checked':''%>>
+            </div>
 
              
 
@@ -77,9 +95,9 @@
             <input type="hidden" name="cust_id" value="<%= customer_id %>">
 
             <!-- Submit Button -->
-            <div class="row mt-3">
+            <div class="row mt-4">
             <div class="col-12 d-flex justify-content-center">
-           <button type="submit" class="btn btn-gradient shadow-sm rounded-pill px-4 py-2" style="margin-left: 20vw;">
+           <button type="submit" class="btn btn-gradient shadow-sm rounded-pill px-4 py-2" style="margin-left: 25vw;">
            SUBMIT
           </button>
        </div>

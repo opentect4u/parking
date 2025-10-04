@@ -156,7 +156,7 @@ reportRouter.post(
       let order = "ORDER BY a.receipt_no";
 
       let res_dt = await db_Select(select, table_name, whr, order);
-      console.log(res_dt);
+      // console.log(res_dt);
       res.send(res_dt);
 
     } catch (err) {
@@ -173,7 +173,7 @@ const getcustomerlist = () => {
        where = null,
        order=null;
        var customer_data = await db_Select(select,table_name,where,order);
-       console.log(customer_data);
+      //  console.log(customer_data);
         resolve(customer_data)
     })
   };
@@ -198,7 +198,7 @@ reportRouter.get("/unbilled_report", AuthCheckedMW, async (req, res) => {
     dtFormat: dateFormat,
     data: customer
   };
-  console.log(data);
+  // console.log(data);
   
   res.render("common/layouts/main", data);
 });
@@ -206,7 +206,7 @@ reportRouter.get("/unbilled_report", AuthCheckedMW, async (req, res) => {
 reportRouter.post("/get_unbilled_report", AuthCheckedMW, async (req, res) => {
   // var custId = req.session.user.user_data.customer_id,
   //   userType = req.session.user.user_data.user_type;
-    console.log(req.session.user.user_data);
+    // console.log(req.session.user.user_data);
     
 
   var data = req.body;
@@ -336,7 +336,7 @@ reportRouter.post(
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`,
       order = "GROUP BY b.device_id";
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt,'res-st');
+    // console.log(res_dt,'res-st');
     res.send(res_dt);
   }
 );
@@ -377,7 +377,7 @@ reportRouter.post(
       whr = `a.receipt_no=b.receipt_no AND a.receipt_no=c.receipt_no AND a.vehicle_id=d.vehicle_id AND a.user_id_in=e.id AND e.user_id=f.user_id AND a.car_out_flag = 'Y' AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}' AND a.customer_id = '${data.custId}'`;
     order = "GROUP BY a.user_id_in,b.device_id,d.vehicle_name";
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
+    // console.log(res_dt);
     res.send(res_dt);
   }
 );
@@ -408,7 +408,7 @@ reportRouter.post("/get_combine_repo_new",  AuthCheckedMW,async (req, res) => {
         and   a.vehicle_id = '${data.vehicle_id}' and d.date_time_out between '${data.frm_dt}' and '${data.to_dt}'`
         order = "Group BY f.operator_name,a.device_id";
       var res_dt = await db_Select(select, table_name, whr, order);
-      console.log(res_dt);
+      // console.log(res_dt);
       res.send(res_dt);
     }
   );
@@ -575,6 +575,24 @@ reportRouter.post("/shift_wise_repo", AuthCheckedMW, async (req, res) => {
   var res_dt = await db_Select(select, table_name, whr, order);
   res.send(res_dt);
   }
+});
+
+reportRouter.get("/summary_report", AuthCheckedMW, async (req, res) => {
+  var customer = await getcustomerlist();
+  var custId = customer.length > 0 ? customer[0].cust_id : null;
+  var operator = [];
+    if (custId) {
+      operator = await getoperatorlist(custId);  // ✅ pass customer id
+    }
+
+  var data = {
+    title: "Summary Report",
+    page_path: "reports/summary_report.ejs",
+    dtFormat: dateFormat,
+    data: customer,
+    operators: operator
+  };
+  res.render("common/layouts/main", data);
 });
 
 module.exports = { reportRouter };

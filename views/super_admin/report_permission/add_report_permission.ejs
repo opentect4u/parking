@@ -24,7 +24,7 @@
         <form action="/superadmin/report_permission" method="post" class="p-4">
           <div class="row g-3 align-items-end justify-content-center">
             <!-- Dropdown -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label for="cust_name" class="form-label fw-semibold text-dark"><b>Location Name:</b></label>
               <select name="cust_name" class="form-control custom-select shadow-sm" id="cust_name" required>
                 <option value="">Select Location Name</option>
@@ -36,6 +36,13 @@
                   </option>
                 <% })%>
               </select>
+            </div>
+
+            <div class="col-md-4">
+            <label for="admin_id"><b style="color: black;">Admin:</b></label>
+            <select name="admin" class="form-control custom-dropdown" id="admin_id" required>
+              <option value="">Select Admin</option>
+            </select>
             </div>
             <!-- Submit -->
             <div class="col-md-3 text-center">
@@ -59,6 +66,7 @@
                   <th class="text-center text-dark">DeviceWise Report</th>
                   <th class="text-center text-dark">OperatorWise Report</th>
                   <th class="text-center text-dark">ShiftWise Report</th>
+                  <th class="text-center text-dark">Summary Report</th>
                   <th class="text-center text-dark">Action</th>
                 </tr>
               </thead>
@@ -149,7 +157,23 @@
                         </div>
                     </td>
                     <td class="text-center text-dark">
-                      <a href='/superadmin/edit_report_permission?customer_id=<%= selected.cust_id %>&id=<%= dt.sl_no %>' 
+                        <div class="form-check form-switch d-inline-block">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="reportSwitch_<%= dt.sl_no %>" 
+                            name="report_on_off" 
+                            <%= dt.summary_report == 'Y' ? "checked" : "" %>
+                            disabled>
+                          <label 
+                            class="form-check-label fw-bold <%= dt.summary_report == 'Y' ? 'text-success' : 'text-danger' %>" 
+                            for="reportSwitch_<%= dt.sl_no %>">
+                            <%= dt.summary_report == 'Y' ? "ON" : "OFF" %>
+                          </label>
+                        </div>
+                    </td>
+                    <td class="text-center text-dark">
+                      <a href='/superadmin/edit_report_permission?customer_id=<%= selected.cust_id %>&id=<%= dt.sl_no %>&user_id=<%= dt.user_id %>' 
                          class='btn btn-info btn-sm rounded-pill'>
                          <i class='fa fa-edit'></i>
                       </a>
@@ -158,7 +182,7 @@
                 <% i++; })
                 }else{ %>
                 <tr>
-                  <td class="text-center text-danger" colspan="7">No data found</td>
+                  <td class="text-center text-danger" colspan="8">No data found</td>
                 </tr>
                 <% } %>
               </tbody>
@@ -199,7 +223,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                     <label for="cust_id" class="text-dark"><b>Location Name</b></label>
-                    <select name="cust_id" class="form-control" id="cust_id">
+                    <select name="cust_id" class="form-control custom-dropdowns" id="cust_id">
                         <option value="">Select Location Name</option>
                         <% customer.forEach(dt => { %>
                           <option value="<%= dt.customer_id %>"><%= dt.customer_name %></option>
@@ -207,35 +231,48 @@
                     </select>
                 </div>
             </div>
+
+             <div class="col-md-6">
+            <label for="adminId"><b style="color: black;">Admin:</b></label>
+            <select name="admin_ids" class="form-control custom-dropdowns" id="adminId" required>
+              <option value="">Select Admin</option>
+            </select>
+            </div>
            
-            <div class="col-md-6 cust-toggle1">
+            <div class="col-md-4 cust-toggle1">
               <label for="detail_flag" class="text-dark"><b>Detail Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="detail_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="detail_flag">
             </div>
 
-            <div class="col-md-6 cust-toggle1">
+            <div class="col-md-4 cust-toggle1">
               <label for="vehicle_flag" class="text-dark"><b>VehicleWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="vehicle_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="vehicle_flag">
             </div>
 
-             <div class="col-md-6 cust-toggle1">
+             <div class="col-md-4 cust-toggle1">
               <label for="device_flag" class="text-dark"><b>DeviceWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="device_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="device_flag">
             </div>
 
-            <div class="col-md-6 cust-toggle1 mt-3">
+            <div class="col-md-4 cust-toggle1 mt-3">
               <label for="operator_flag" class="text-dark"><b>OperatorWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="operator_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="operator_flag">
             </div>
 
-            <div class="col-md-6 cust-toggle1 mt-3">
+            <div class="col-md-4 cust-toggle1 mt-3">
               <label for="shift_flag" class="text-dark"><b>ShiftWise Report Flag</b></label><br>
               <input type="checkbox" value="Y" id="shift_flag" data-toggle="toggle" data-onstyle="success"
                 data-offstyle="danger" data-on="Active" data-off="Deactive" name="shift_flag">
+            </div>
+
+             <div class="col-md-4 cust-toggle1 mt-3">
+              <label for="summary_flag" class="text-dark"><b>Summary Report Flag</b></label><br>
+              <input type="checkbox" value="Y" id="summary_flag" data-toggle="toggle" data-onstyle="success"
+                data-offstyle="danger" data-on="Active" data-off="Deactive" name="summary_flag">
             </div>
                         
             </div>
@@ -260,6 +297,142 @@
       });
     });
   </script>
+
+  <!-- <script>
+  $(document).ready(function () {
+    // console.log(flag, 'CHange flag');
+    var cust_name = "<%= selected.cust_id || '' %>";
+    var sel_admin_id = "<%= selected.user_id || '' %>"; // move sel_admin_id here
+    if (cust_name) {
+      // var sel_admin_id = "<%= selected.user_id || '' %>";
+      change_cust(cust_name, sel_admin_id)
+    }
+  });
+
+  $('#cust_name').on('change', function () {
+    var cust_name = $(this).val();
+    change_cust(cust_name, '');
+    // change_cust(cust_name)
+  });
+
+  function change_cust(cust_name, selectedAdmin='') {
+    // var sel_admin_id = "<%= selected.user_id || '' %>"; 
+    $.ajax({
+      type: "POST",
+      url: "/superadmin/admin_dt",
+      data: { cust_name: cust_name },
+      success: function (response) {
+        $('#admin_id').empty().append(`<option value="">Select Admin</option>`);
+        response.SUCCESS.admin_id.msg.forEach(function (resData) {
+          var _selected = selectedAdmin == resData.user_id ? true : false;
+          // if (sel_dev_id == resData.app_id) _selected = true
+          $('#admin_id').append($('<option>', { value: resData.user_id, text: resData.user_name + ' - ('+ resData.user_id + ')', selected: _selected }))
+            //  $('#admin_id').append(
+            //         `<option value="${resData.user_id}" ${_selected}>${resData.user_name} - (${resData.user_id})</option>`
+            //     );
+        });
+
+      },
+      error: function (error) {
+        console.log(error);
+        //   tbody.empty();
+      },
+    });
+  }
+
+</script> -->
+
+<script>
+$(document).ready(function () {
+    // Selected values from server
+    var cust_name = "<%= selected.cust_id || '' %>";
+    var sel_admin_id = "<%= selected.admin_name || '' %>";
+
+    // If location is selected, populate admin dropdown
+    if(cust_name) {
+        change_cust(cust_name, sel_admin_id);
+    }
+
+    // On location change
+    $('#cust_name').on('change', function () {
+        var cust_name = $(this).val();
+        change_cust(cust_name, ''); // reset admin selection
+    });
+});
+
+// Updated change_cust
+function change_cust(cust_name, selectedAdmin='') {
+    $.ajax({
+        type: "POST",
+        url: "/superadmin/admin_dt",
+        data: { cust_name: cust_name },
+        success: function (response) {
+            $('#admin_id').empty().append(`<option value="">Select Admin</option>`);
+            response.SUCCESS.admin_id.msg.forEach(function (resData) {
+                // selectedAdmin is compared here to mark the option
+                var option = $('<option>', {
+                    value: resData.user_id,
+                    text: resData.user_name + ' - (' + resData.user_id + ')'
+                });
+                if(resData.user_id == selectedAdmin){
+                    option.prop('selected', true); // mark as selected
+                }
+                $('#admin_id').append(option);
+            });
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+</script>
+
+<script>
+$(document).ready(function () {
+    // Selected values from server
+    var cust_name = "<%= selected.cust_id || '' %>";
+    var sel_admin_ids = "<%= selected.admin_name || '' %>";
+
+    // If location is selected, populate admin dropdown
+    if(cust_name) {
+        change_custs(cust_name, sel_admin_ids);
+    }
+
+    // On location change
+    $('#cust_id').on('change', function () {
+        var cust_name = $(this).val();
+        change_custs(cust_name, ''); // reset admin selection
+    });
+});
+
+// Updated change_cust
+function change_custs(cust_name, selectedAdmin='') {
+    $.ajax({
+        type: "POST",
+        url: "/superadmin/admin_dt",
+        data: { cust_name: cust_name },
+        success: function (response) {
+            $('#adminId').empty().append(`<option value="">Select Admin</option>`);
+            response.SUCCESS.admin_id.msg.forEach(function (resData) {
+                // selectedAdmin is compared here to mark the option
+                var option = $('<option>', {
+                    value: resData.user_id,
+                    text: resData.user_name + ' - (' + resData.user_id + ')'
+                });
+                if(resData.user_id == selectedAdmin){
+                    option.prop('selected', true); // mark as selected
+                }
+                $('#adminId').append(option);
+            });
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+</script>
+
+
 
   <style>
 /* Gradient Button */
@@ -312,7 +485,7 @@
   color: #0e0a0a;
 }
 .modal-lg-custom {
-  max-width: 50%;
+  max-width: 60%;
 }
 .gradient-select {
   background: linear-gradient(90deg, #8e2de2, #4a00e0); /* Purple gradient */
@@ -354,5 +527,16 @@
 #cust_name_modal option:first-child {
   color: #6c757d; /* light gray for placeholder */
 }
+.custom-dropdown {
+    border-radius: 12px !important; 
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+  }
+  .custom-dropdowns {
+    border-radius: 12px !important; 
+    padding: 0px 15px !important;
+    border: 1px solid #ccc !important;
+  }
+
 </style>
 
