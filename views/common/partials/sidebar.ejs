@@ -375,7 +375,8 @@
     user.reportPermission.veh_wise_report === 'Y' ||
     user.reportPermission.dev_wise_report === 'Y' ||
     user.reportPermission.operate_wise_report === 'Y' ||
-    user.reportPermission.shift_wise_report === 'Y'
+    user.reportPermission.shift_wise_report === 'Y' ||
+    user.reportPermission.summary_report === 'Y'
   )
 ) { %>
   <li class="sidebar-item">
@@ -421,6 +422,14 @@
         <li class="sidebar-item">
           <a href="/report/shift_wise_repo_admin" class="sidebar-link">
             <span class="hide-menu">Shiftwise</span>
+          </a>
+        </li>
+      <% } %>
+
+       <% if (user.reportPermission.summary_report === 'Y') { %>
+        <li class="sidebar-item">
+          <a href="/report/summary_report" class="sidebar-link">
+            <span class="hide-menu">Summary Report</span>
           </a>
         </li>
       <% } %>

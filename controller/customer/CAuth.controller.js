@@ -217,7 +217,7 @@ const super_admin_login_post = async (req, res) => {
 
                      // 🔑 Fetch report permission flags for this user/customer
               let reportPermissionRes = await db_Select(
-               "detail_report, veh_wise_report, dev_wise_report, operate_wise_report, shift_wise_report",
+               "*",
                 "md_admin_report_permit",
                 `customer_id='${userData.customer_id}'`,
                 null

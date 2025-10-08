@@ -20,7 +20,7 @@ const getReportPermission = (cust_id,admin_name) => {
 
       try{
       var report = await db_Select(select,table_name,whr,order);
-      // console.log(report);
+      console.log(report);
       resolve(report)
       }catch(error){
          reject(error);

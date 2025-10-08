@@ -753,15 +753,23 @@ initEmptyCharts();
 function renderCharts(data) {
   if (dailyChartInstance) dailyChartInstance.destroy();
   if (monthlyChartInstance) monthlyChartInstance.destroy();
+  // dailyChartInstance.update('active'); 
 
   // ========== Daily Chart ==========
   const dailyCtx = document.getElementById("dailyReceiptsChart").getContext("2d");
+  const maxDaily = Math.max(...data.dailyReceipts.map(d => d.amount), 0);
+
   dailyChartInstance = new Chart(dailyCtx, {
     type: "bar",
     data: {
       labels: data.dailyReceipts.map(d => {
         const dt = new Date(d.date);
         return dt.toLocaleDateString("en-US", { day: "numeric", month: "short" });
+//         backgroundColor: data.dailyReceipts.map(d =>
+//   (new Date(d.date).toLocaleDateString("en-US", { day: "numeric", month: "short" }) === todayLabel)
+//   ? "rgba(34, 197, 94, 0.9)" // green for today
+//   : "rgba(255, 165, 0, 0.7)"
+// )
       }),
       datasets: [{
         label: "Amount Collected (₹)",
@@ -772,13 +780,25 @@ function renderCharts(data) {
     options: {
       responsive: true,
       scales: {
+        x: {
+        type: 'category',        // 👈 important!
+        ticks: {
+          autoSkip: false,       // do not skip any labels
+          maxRotation: 90,       // rotate to prevent overlap
+          minRotation: 45,
+          align: 'center' 
+        },
+        grid: { display: false }
+      },
         y: {
-          min: 0,
-          max: 30000,
-          beginAtZero: false,
+          // min: 0,
+          // max: 30000,
+          beginAtZero: true,
+          suggestedMax: maxDaily + 2000, // Add buffer
           title: { display: true, text: "Amount (₹)" },
           ticks: {
-            stepSize: 3000,   // 👈 Force step of 3000
+            // stepSize: 3000,   // 👈 Force step of 3000
+            stepSize: Math.ceil(maxDaily / 10 / 1000) * 1000, // nearest 1000
             autoSkip: false,       // 👈 prevent skipping
             callback: (value) => "₹" + value.toLocaleString(),
             padding: 10, 
@@ -812,6 +832,8 @@ function renderCharts(data) {
 
   // ========== Monthly Chart ==========
   const monthlyCtx = document.getElementById("monthlyReceiptsChart").getContext("2d");
+  const maxMonthly = Math.max(...data.monthlyReceipts.map(d => d.amount), 0);
+
   monthlyChartInstance = new Chart(monthlyCtx, {
     type: "bar",
     data: {
@@ -829,12 +851,14 @@ function renderCharts(data) {
       responsive: true,
       scales: {
         y: {
-          min: 0,
-          max: 120000,
+          // min: 0,
+          // max: 120000,
           beginAtZero: true,
+          suggestedMax: maxDaily + 150000, // Add buffer
           title: { display: true, text: "Amount (₹)" },
           ticks: {
-            stepSize: 15000,   // 👈 Force step of 3000
+            // stepSize: 15000,   // 👈 Force step of 3000
+            stepSize:  Math.ceil(maxMonthly / 10 / 1000) * 1000, // nearest 1000
             autoSkip: false, 
             callback: (value) => "₹" + value.toLocaleString(),
             padding: 10,
