@@ -163,7 +163,8 @@ useEffect(() => {
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         axios
           .post(
-            ADDRESSES.CAR_SERCH,
+            // ADDRESSES.CAR_SERCH, // Scane for outpass
+            ADDRESSES.CAR_SERCH_SCAN, // Scane for outpass
             {
               vehicle_number: carNumber,
             },
