@@ -57,6 +57,14 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   // const { getUserName } = useContext(AuthContext);
 
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentTime(new Date());
+  }, 1000);
+
+  return () => clearInterval(timer); // cleanup
+}, []);
+
   const userDetails = loginData.user.userdata.msg[0];
 
   // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", userDetails)
@@ -184,6 +192,8 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
           paddingTop: -20,
         }}>
         {currentTime.toLocaleDateString()} - {currentTime.toLocaleTimeString()}
+        {/* {new Date().toLocaleDateString()} - {new Date().toLocaleTimeString()} */}
+        
       </Text>
       {/* today collection table */}
       <View style={styles.today_collection}>

@@ -65,13 +65,16 @@ export const AuthProvider = ({ children }) => {
     // checkedAppUpdate();
   }, []);
 
-  const login = async (username, password, deviceId) => {
+  const login = async (username, password, deviceId, fcmToken) => {
     
     const credentials = {
       password: password,
       user_id: username,
       device_id: deviceId,
+      fcm_token: fcmToken
     };
+
+    console.log(credentials, 'xxxxxxxxxxxxxxxxx');
 
     try {
       setLoading(true);
@@ -83,7 +86,8 @@ export const AuthProvider = ({ children }) => {
         })
         .then(res => {
           if (res.data.status) {
-
+              
+              
               loginStorage.set("login-data-local", JSON.stringify(credentials));
               loginStorage.set("login-data", JSON.stringify(res.data.data));
               setIsLogin(!isLogin);
