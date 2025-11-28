@@ -27,17 +27,17 @@ const SignInScreen = ({ navigation }) => {
     setDeviceId(deviceId);
     // getFcmToken();
     requestUserPermission();
-    console.log('requestUserPermission', 'xxxxxxxxxxxxxxxxx');
+    // console.log('requestUserPermission', 'xxxxxxxxxxxxxxxxx');
   }, []);
 
 // ✅ FIXED PERMISSION CODE
   const requestUserPermission = async () => {
 
-    console.log('enabled', 'xxxxxxxxxxxxxxxxx');
+    // console.log('enabled', 'xxxxxxxxxxxxxxxxx');
     
     const authStatus = await messaging().requestPermission();
 
-    console.log('authStatus', 'xxxxxxxxxxxxxxxxx');
+    // console.log('authStatus', 'xxxxxxxxxxxxxxxxx', authStatus);
 
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||

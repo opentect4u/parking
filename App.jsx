@@ -4,6 +4,7 @@ import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from "./src/screens/SplashScreen";
 import MainNavigation from "./src/navigation/MainNavigation";
 import { AuthProvider } from "./src/context/AuthProvider";
+import messaging from '@react-native-firebase/messaging'
 // import { SocketProvider } from './src/context/Socket';
 
 

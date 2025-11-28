@@ -5,15 +5,25 @@ import { loginStorage } from "../../storage/appStorage";
 function userLogOut() {
     const logOut_hook = async () => {
         
+        
+        
         const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+        // const stored  = loginStorage.getString("login-data")
+        // const loginData = stored ? JSON.parse(stored) : null;
 
         return new Promise((resolve, reject) => {
             
+            console.log('api cal loggggggggggg', {
+                        device_id: loginData?.user?.userdata?.msg[0]?.device_id,
+                        user_id: loginData?.user?.userdata?.msg[0]?.user_id,
+                    } , '<<<');
+
              axios.post(
                     ADDRESSES.USERID_DEVICEID_SEND_LOGOUT,
                     {
-                        device_id: loginData.user.userdata.msg[0].device_id,
-                        user_id: loginData.user.userdata.msg[0].user_id,
+                        device_id: loginData?.user?.userdata?.msg[0]?.device_id,
+                        user_id: loginData?.user?.userdata?.msg[0]?.user_id,
                     },
                     {
                         headers: {

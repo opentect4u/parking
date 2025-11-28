@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 
 const ReceiptNavigation = () => {
 
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
