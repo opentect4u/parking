@@ -97,6 +97,7 @@ export const AuthProvider = ({ children }) => {
         })
         .then(res => {
           // console.log(credentials, 'xxxxxxxxxxxxxxxxx', res.data);
+          setLoading(false);
           if (res.data.status) {
               
               
@@ -137,107 +138,37 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-
-  const checkUserActiveInactive = async () => {
-        
-        const loginStore = JSON.parse(loginStorage.getString("login-data"))
-
-        console.log('xxxxxxxxxxxxxxxxx', loginStore, 'enddddddddddddd');
-
-          // await fetchUserStatus(
-          //   loginStore?.user_id,
-          // )
-          //   .then(res => {
-          //     // console.log('user________', 'then', res[0].active_flag);
-          //     if(res[0]?.active_flag == 'N'){
-          //       handleLogout()
-          //     }
-          //   })
-          //   .catch(err => {
-          //     console.log('user________', 'catch', err);
-          //     ToastAndroid.show(
-          //       "Error during fetching recent bills.",
-          //       ToastAndroid.SHORT,
-          //     )
-          //   })
-        }
-
-
-  // Firebase notification listeners 
-  // useEffect(() => {
-  //         // requestUserPermission();
-
-  //         // checkUserActiveInactive()
-  // console.log('remoteMessage uuuuuuu', 'remoteMessage____', messaging());
-
-
-  //         const unsubscribe = messaging().onMessage(async remoteMessage =>{
-  //           console.log('remoteMessage', 'unsubscribe');
-  //             // Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
-  //             console.log(remoteMessage, 'remoteMessage', 'unsubscribe');
-  //           if(remoteMessage.data?.action == 'force_logout'){
-  //           // logout()
-  //           } 
-
-  //         })
-
-  //         messaging().setBackgroundMessageHandler(async remoteMessage => {
-  //           console.log('remoteMessage', 'messaging');
-
-  //           console.log(messaging(), 'Notification opened from background state:', remoteMessage.data)
-  //           console.log(remoteMessage, 'remoteMessage', 'messaging');
-  //           if(remoteMessage.data?.action == 'force_logout'){
-  //             // logout()
-  //           }
-  //         });
-  
-  //         messaging().onNotificationOpenedApp(remoteMessage =>{
-  //           console.log('remoteMessage', 'messaging 2', remoteMessage);
-  //             console.log('Notification opened from background state:', remoteMessage.data)
-  //         });
-  
-  //         messaging().getInitialNotification().then(remoteMessage => {
-  //           console.log('remoteMessage', 'messaging 3', remoteMessage);
-  //             console.log('Notification caused app to open from quit state:', remoteMessage.data);
-  //         });
-          
-  
-  //         return unsubscribe;
-  
-  //     }, []);
-
     useEffect(() => {
-      // logout()
+      
       const unsubscribe = messaging().onMessage(async remoteMessage =>{
-              Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
-              console.log('STARTTTT>>>', remoteMessage, '<<< remoteMessage');
-            if(remoteMessage?.data?.title == 'force_logout'){
-            // setIsLogin(!isLogin)
-            // setIsLogin(false)
+        // setIsLogin(isLogin);
+        console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
+        setLoading(false);
 
-            // const timer = setTimeout(() => {
-            logout_FireBase();
-            // }, 5000); // 5 seconds
+      Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
+      if(remoteMessage?.data?.title == 'force_logout'){
+      // if(isLogin == true){
+      logout_FireBase();
+      // }
+      }
 
-            // return () => clearTimeout(timer); // cleanup
-            
-            }
+      })
 
-          })
+      // messaging().setBackgroundMessageHandler(async remoteMessage => {
+      //   console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
+      //   setLoading(false);
 
-          messaging().setBackgroundMessageHandler(async remoteMessage => {
+      // if(remoteMessage?.data?.title == 'force_logout'){
+      
+      // logout_FireBase()
+      // }
+      // });
 
-            // console.log(messaging(), 'Notification opened from background state:', remoteMessage.data)
-            if(remoteMessage?.data?.title == 'force_logout'){
-              logout_FireBase()
-              }
-            });
-
-          return unsubscribe;
-
+      return unsubscribe;
 
 
-  }, []);
+
+    }, []);
 
 
   const isLoggedIn = () => {
@@ -596,10 +527,10 @@ export const AuthProvider = ({ children }) => {
       [],
       );
 
-      console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);
+      // console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);
 
       setIsLogin(isLogin);
-      console.log("LOGGING OUT...");
+      // console.log("LOGGING OUT...");
       loginStorage.clearAll();
       appStorage.clearAll();
       setLoading(false);

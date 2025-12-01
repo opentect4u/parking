@@ -14,10 +14,10 @@ function userLogOut() {
 
         return new Promise((resolve, reject) => {
             
-            console.log('api cal loggggggggggg', {
-                        device_id: loginData?.user?.userdata?.msg[0]?.device_id,
-                        user_id: loginData?.user?.userdata?.msg[0]?.user_id,
-                    } , '<<<');
+            // console.log('api cal loggggggggggg', {
+            //             device_id: loginData?.user?.userdata?.msg[0]?.device_id,
+            //             user_id: loginData?.user?.userdata?.msg[0]?.user_id,
+            //         } , '<<<');
 
              axios.post(
                     ADDRESSES.USERID_DEVICEID_SEND_LOGOUT,
