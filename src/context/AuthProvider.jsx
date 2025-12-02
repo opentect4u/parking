@@ -139,11 +139,12 @@ export const AuthProvider = ({ children }) => {
 
 
     useEffect(() => {
+      // console.log(isLogin, 'checkkkkkkkkkkkkkkkkkkkkkkkk______');
       
       const unsubscribe = messaging().onMessage(async remoteMessage =>{
         // setIsLogin(isLogin);
-        console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
-        setLoading(false);
+        // console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
+        // setLoading(false);
 
       Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
       if(remoteMessage?.data?.title == 'force_logout'){
@@ -154,15 +155,15 @@ export const AuthProvider = ({ children }) => {
 
       })
 
-      // messaging().setBackgroundMessageHandler(async remoteMessage => {
-      //   console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
-      //   setLoading(false);
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+        // console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
+        // setLoading(false);
 
-      // if(remoteMessage?.data?.title == 'force_logout'){
+      if(remoteMessage?.data?.title == 'force_logout'){
       
-      // logout_FireBase()
-      // }
-      // });
+      logout_FireBase()
+      }
+      });
 
       return unsubscribe;
 
@@ -507,7 +508,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout_FireBase = async () => {  
 
-    setLoading(true);
+    // setLoading(true);
+    setLoading(false);
 
     let logOut_data = await logOut_hook();
 
@@ -536,7 +538,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       // navigationRoutes("receipt_settings")
     } else {
-      setLoading(true);
+      // setLoading(true);
     }
     
     
