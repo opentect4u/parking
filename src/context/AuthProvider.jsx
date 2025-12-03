@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Alert, Linking, PermissionsAndroid, ToastAndroid } from "react-native";
 import axios from "axios";
 import { ADDRESSES } from "../routes/addresses";
-import { appStorage, loginStorage } from "../storage/appStorage";
+import { appStorage, loginStorage, logout_Storage } from "../storage/appStorage";
 import { clearStates } from "../utils/clearStates";
 import { InternetStatusContext } from "../../App";
 import useAppUpdate from "../hooks/api/useAppUpdate";
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [isUpdate, setUpdate] = useState(() => false);
   const [loading, setLoading] = useState(() => false);
 
-  
+
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(() => false);
   const [generalSettings, setGeneralSettings] = useState({
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   const [vehicleWiseReports, setVehicleWiseReports] = useState(() => []);
   const [operatorwiseReports, setOperatorwiseReports] = useState(() => []);
   // const { fetchUserStatus } = useCheckStatus()
-  const {appUpdate}=useAppUpdate();
+  const { appUpdate } = useAppUpdate();
   const { logOut_hook } = userLogOut();
   // const navigation = useNavigation();
 
@@ -67,16 +67,16 @@ export const AuthProvider = ({ children }) => {
 
     // navigation("ReceiptScreen");
     // isLogin ? <BottomNavigation/> : <Sign_In_Screen/>
-    
+
     isPermitted();
     checkedAppUpdate();
     isLoggedIn();
-    
+
     // checkedAppUpdate();
   }, []);
 
   const login = async (username, password, deviceId, fcmToken) => {
-    
+
     const credentials = {
       password: password,
       user_id: username,
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       await axios
-        .post(ADDRESSES.LOGIN,credentials, {
+        .post(ADDRESSES.LOGIN, credentials, {
           headers: {
             Accept: "application/json",
           },
@@ -99,22 +99,23 @@ export const AuthProvider = ({ children }) => {
           // console.log(credentials, 'xxxxxxxxxxxxxxxxx', res.data);
           setLoading(false);
           if (res.data.status) {
-              
-              
-            // console.log('sss first>>', res.data, '<<sss end');
-            
-              loginStorage.set("login-data-local", JSON.stringify(credentials));
-              loginStorage.set("login-data", JSON.stringify(res.data.data));
-              setIsLogin(!isLogin);
 
-            
+
+            // console.log('sss first>>', res.data, '<<sss end');
+
+            loginStorage.set("login-data-local", JSON.stringify(credentials));
+            loginStorage.set("login-data", JSON.stringify(res.data.data));
+            logout_Storage.clearAll();
+            setIsLogin(!isLogin);
+
+
           } else {
 
-            if(typeof(res.data.message) === 'string'){
+            if (typeof (res.data.message) === 'string') {
               alert("Invalid Credentials");
             }
 
-            if(typeof(res.data.message) === 'object'){
+            if (typeof (res.data.message) === 'object') {
               // alert(res.data.message.msg + 'Total Limit '+ res.data.message.tot_limit + 'Current User '+ res.data.message.tot_act_user);
               Alert(res.data.message.msg);
             }
@@ -124,7 +125,7 @@ export const AuthProvider = ({ children }) => {
             //   ToastAndroid.SHORT,
             //   ToastAndroid.CENTER,
             // );
-            
+
             // console.log("Error login Axios", res.data.message);
           }
         })
@@ -138,38 +139,33 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-    useEffect(() => {
-      // console.log(isLogin, 'checkkkkkkkkkkkkkkkkkkkkkkkk______');
-      
-      const unsubscribe = messaging().onMessage(async remoteMessage =>{
-        // setIsLogin(isLogin);
-        // console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
-        // setLoading(false);
+  useEffect(() => {
 
-      Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
-      if(remoteMessage?.data?.title == 'force_logout'){
-      // if(isLogin == true){
-      logout_FireBase();
-      // }
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+
+      if (logout_Storage.getString("logoutSet-data") != 'logged_out') {
+        Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
       }
 
-      })
-
-      messaging().setBackgroundMessageHandler(async remoteMessage => {
-        // console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
-        // setLoading(false);
-
-      if(remoteMessage?.data?.title == 'force_logout'){
-      
-      logout_FireBase()
+      if (remoteMessage?.data?.title == 'force_logout') {
+        logout_FireBase();
       }
-      });
 
-      return unsubscribe;
+    })
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+
+      if (remoteMessage?.data?.title == 'force_logout') {
+
+        logout_FireBase()
+      }
+    });
+
+    return unsubscribe;
 
 
 
-    }, []);
+  }, []);
 
 
   const isLoggedIn = () => {
@@ -198,12 +194,12 @@ export const AuthProvider = ({ children }) => {
         // setGeneralSettings(res.data.data.msg[0]);
         setGeneralSettings(res.data.data.msg[0]);
 
-        
-        if(res.data.data.msg[0].gst_flag == "Y"){
+
+        if (res.data.data.msg[0].gst_flag == "Y") {
           getGstList();
         }
 
-        
+
         // appStorage.set("general-settings", JSON.stringify(res.data.data.msg[0]))
       })
       .catch(err => {
@@ -234,7 +230,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-    
+
 
   // const getRateDetailsList = async () => {
   //   const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -271,7 +267,7 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGstList(res.data.data.msg[0]);
-        
+
       })
       .catch(err => {
         console.log("ERR - getGstList - AuthProvider", err);
@@ -292,7 +288,7 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         // console.log('>>>>', res?.data?.data?.msg[0], 'RES - getReceiptSettings', loginData.token);
-        
+
         setReceiptSettings(res?.data?.data?.msg[0]);
       })
       .catch(err => {
@@ -450,10 +446,10 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
 
-         
-        if(res.data.status == false){
 
-        alert(res.data.message)
+        if (res.data.status == false) {
+
+          alert(res.data.message)
           // return res;
 
           // ToastAndroid.showWithGravityAndOffset(
@@ -464,31 +460,31 @@ export const AuthProvider = ({ children }) => {
 
         }
 
-        console.log("Password changed successfully.",res.data.message);
+        console.log("Password changed successfully.", res.data.message);
       });
   };
 
   // const logout = () => {
-  const logout = async () => {  
+  const logout = async () => {
 
     setLoading(true);
 
     let logOut_data = await logOut_hook();
 
-    
-    
-    if(logOut_data.status){
-      
+
+
+    if (logOut_data.status) {
+
       clearStates([setGeneralSettings, setReceiptSettings], {});
       clearStates(
-      [
-      setGstList,
-      setDetailedReports,
-      setShiftwiseReports,
-      setVehicleWiseReports,
-      setOperatorwiseReports,
-      ],
-      [],
+        [
+          setGstList,
+          setDetailedReports,
+          setShiftwiseReports,
+          setVehicleWiseReports,
+          setOperatorwiseReports,
+        ],
+        [],
       );
 
       // console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);
@@ -502,78 +498,81 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(true);
     }
-    
-    
+
+
   };
 
-  const logout_FireBase = async () => {  
+  const logout_FireBase = async () => {
 
     // setLoading(true);
     setLoading(false);
 
     let logOut_data = await logOut_hook();
 
-    
-    
-    if(logOut_data.status){
-      
+
+
+    if (logOut_data.status) {
+
       clearStates([setGeneralSettings, setReceiptSettings], {});
       clearStates(
-      [
-      setGstList,
-      setDetailedReports,
-      setShiftwiseReports,
-      setVehicleWiseReports,
-      setOperatorwiseReports,
-      ],
-      [],
+        [
+          setGstList,
+          setDetailedReports,
+          setShiftwiseReports,
+          setVehicleWiseReports,
+          setOperatorwiseReports,
+        ],
+        [],
       );
 
       // console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);
 
       setIsLogin(isLogin);
       // console.log("LOGGING OUT...");
+      // logout_Storage.set("logoutSet-data", JSON.stringify(credentials));
+
       loginStorage.clearAll();
       appStorage.clearAll();
+      logout_Storage.set("logoutSet-data", 'logged_out');
       setLoading(false);
       // navigationRoutes("receipt_settings")
     } else {
       // setLoading(true);
     }
-    
-    
 
-    
+
+
+
   };
 
- 
-  const checkedAppUpdate=async()=>{
-      let updateData=await appUpdate();
 
-      let version = DeviceInfo.getVersion()
-      if(updateData.data?.msg[0]?.version > version && updateData.data?.msg[0]?.download_flag == 'Y'){
-        Alert.alert(
-          'Found Update!',
-          'Please update your app.',
-          [
-            {
-              text: 'Cancel',
-              onPress: () => {
-                BackHandler.exitApp();
-              },
-              style: 'cancel',
+  const checkedAppUpdate = async () => {
+    let updateData = await appUpdate();
+
+    let version = DeviceInfo.getVersion()
+    if (updateData.data?.msg[0]?.version > version && updateData.data?.msg[0]?.download_flag == 'Y') {
+      Alert.alert(
+        'Found Update!',
+        'Please update your app.',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {
+              BackHandler.exitApp();
             },
-            {
-              text: 'Download',
-              onPress: () => {
-                Linking.openURL(updateData.data?.msg[0]?.app_download_link);
-                BackHandler.exitApp();
-              },
+            style: 'cancel',
+          },
+          {
+            text: 'Download',
+            onPress: () => {
+              Linking.openURL(updateData.data?.msg[0]?.app_download_link);
+              BackHandler.exitApp();
             },
-          ],
-          { cancelable: false }
-        )
-      }
+          },
+        ],
+        { cancelable: false }
+      )
+    }
   }
 
   return (

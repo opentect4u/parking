@@ -58,7 +58,7 @@ const SignInScreen = ({ navigation }) => {
       const token = await messaging().getToken();
 
       if (token) {
-        console.log("FCM Token:", token);
+        // console.log("FCM Token:", token);
         setFcmToken(token);
       } else {
         console.log("Failed to get FCM token");

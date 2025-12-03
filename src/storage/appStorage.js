@@ -7,3 +7,7 @@ export const loginStorage = new MMKV({
 export const appStorage = new MMKV({
   id: "app-storage",
 });
+
+export const logout_Storage = new MMKV({
+  id: "logout-store",
+});
