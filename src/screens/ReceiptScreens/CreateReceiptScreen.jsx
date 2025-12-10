@@ -32,6 +32,7 @@ import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
 import RadioButton from "../../components/RadioButton";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import QRCode from "react-native-qrcode-svg";
+import 'fast-text-encoding';
 
 
 // import React, { useState, useEffect, useContext } from "react";

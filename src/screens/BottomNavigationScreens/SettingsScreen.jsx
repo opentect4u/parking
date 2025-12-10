@@ -14,6 +14,7 @@ import ActionBox from "../../components/ActionBox";
 import icons from "../../resources/icons/icons";
 import colors from "../../resources/colors/colors";
 import { AuthContext } from "../../context/AuthProvider";
+import { version } from '../../../package.json';
 
 const height = Dimensions.get("window").height;
 
@@ -79,6 +80,11 @@ export default function SettingsScreen({ navigation }) {
             LOG OUT
           </Text>
         </TouchableOpacity>
+
+        <Text style={{ marginTop: 20, fontSize: 12, color: '#333', textAlign:'center', fontWeight:700 }}>
+          App Version: {version}
+          </Text>
+
       </ScrollView>
     </MainView>
   );
