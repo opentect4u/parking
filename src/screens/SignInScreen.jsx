@@ -10,11 +10,16 @@ import icons from "../resources/icons/icons";
 import styles from "../styles/styles";
 import { AuthContext } from "../context/AuthProvider";
 import strings from "../resources/strings/strings";
+import { version } from '../../package.json';
+
+// ✅ Correct Firebase import
+// import messaging from '@react-native-firebase/messaging'
 
 const SignInScreen = ({ navigation }) => {
   const [username, setUsername] = useState(() => "");
   const [password, setPassword] = useState(() => "");
   const [deviceId, setDeviceId] = useState(() => "");
+  const [fcmToken, setFcmToken] = useState(() => "");
   const { login } = useContext(AuthContext);
 
   // const {loginUser_GetData, loginUser_SetData} = useContext(AuthContext);
@@ -22,12 +27,54 @@ const SignInScreen = ({ navigation }) => {
   useEffect(() => {
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
+    // requestUserPermission();
   }, []);
+
+  // ✅ FIXED PERMISSION CODE
+  // const requestUserPermission = async () => {
+
+  //   console.log('enabled', 'xxxxxxxxxxxxxxxxx');
+    
+  //   const authStatus = await messaging().requestPermission();
+
+  //   // console.log('authStatus', 'xxxxxxxxxxxxxxxxx', authStatus);
+
+  //   const enabled =
+  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+
+  //   if (enabled) {
+  //     console.log("Notification permission status:", authStatus);
+  //     getFcmToken();
+  //   } else {
+  //     Alert.alert("Push Notification permission denied");
+  //   }
+  // };
+
+  // ✅ FIXED FCM TOKEN FUNCTION
+  // const getFcmToken = async () => {
+  //   try {
+  //     const token = await messaging().getToken();
+
+  //     // console.log(token, 'tokentokentokentokentoken');
+      
+
+  //     if (token) {
+  //       // console.log("FCM Token:", token);
+  //       setFcmToken(token);
+  //     } else {
+  //       console.log("Failed to get FCM token");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching FCM token:", error);
+  //   }
+  // };
 
   return (
     <MainView>
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <SignInHeaderLogo />
+      <ScrollView keyboardShouldPersistTaps="handled" style={{paddingTop:80}}>
+        {/* <SignInHeaderLogo /> */}
 
         {/* .............gretting msg............... */}
         <Text style={styles.grettingText}>WELCOME TO</Text>
@@ -80,6 +127,11 @@ const SignInScreen = ({ navigation }) => {
             }}>
             {icons.arrowRight}
           </TouchableOpacity>
+
+          <Text style={{ marginTop: 20, fontSize: 12, color: '#888', textAlign:'center', fontWeight:700 }}>
+        App Version: {version}
+      </Text>
+
         </View>
         <ContactBottom />
       </ScrollView>
