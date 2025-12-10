@@ -31,6 +31,7 @@ import { dateTimefixedString } from "../../utils/dateTime";
 import useGstPriceCalculator from "../../hooks/useGstPriceCalculator";
 import RadioButton from "../../components/RadioButton";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import QRCode from "react-native-qrcode-svg";
 
 
 // import React, { useState, useEffect, useContext } from "react";
@@ -76,6 +77,14 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     route.params;
 
   const [fixedVehicleRateObject, setFixedVehicleRateObject] = useState({});
+
+  const upiId = loginData?.user?.userdata?.msg[0]?.upi_id;
+  const payName = "Utsab Roy";
+  const amount = fixedVehicleRateObject.vehicle_rate;
+
+  // const upiString_ = `upi://pay?pa=${upiId}&am=${amount}&cu=INR`;
+  const upiString =  `upi://pay?pa=${upiId}&am=${amount}&cu=INR&tn=${encodeURIComponent(loginData?.user?.userdata?.msg[0]?.customer_name + "(Parking Fees)")}`
+
 
   const [getBlePermission, setBlePermission] = useState();
   // const [getdevice_type, setdevice_type] = useState();
@@ -837,6 +846,22 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         ))}
         </View>
          )} 
+
+         {getPayMode && getPayMode == "U" && loginData?.user?.userdata?.msg[0]?.upi_id.length > 0 &&(
+          <View style={{ paddingHorizontal: 20, paddingBottom: 12, alignSelf: "center" }}>
+            {/* <Text> {JSON.stringify(loginData?.user?.userdata?.msg[0]?.customer_name, null, 2)} //////////</Text>
+            <Text> {JSON.stringify(generalSettings?.default_pay_mode, null, 2)} </Text> */}
+            
+          <QRCode
+          value={upiString}
+          // value={`upi://pay?pa=${upiId}&am=${amount}&cu=INR`}
+          size={200}
+          color="black"
+          backgroundColor="white"
+          />
+
+          </View>
+          )}
 
           {/* {generalSettings.adv_pay == "Y" && (
             <View style={{ marginTop: normalize(20) }}>

@@ -255,6 +255,19 @@ const GeneralSettingsScreen = ({ navigation }) => {
               </SettingComponent>
              )}
 
+             {pay_mode_flag && (
+              <SettingComponent
+                // icon={icons.report(colors["primary-color"], 25)}
+                icon={icons.totalCollection}
+                text={"Default Payment Mode"}>
+                {/* <CustomSwitch
+                  isEnabled={pay_mode_flag == "Y" ? true : false}
+                  handleChange={() => {}}
+                /> */}
+                <Text style={styles.value_text}> {generalSettings?.default_pay_mode === 'U' ? 'UPI' : 'Cash'} </Text>
+              </SettingComponent>
+             )}
+
             {/* <Text>{getUserDetails.customer_type_id}</Text> */}
 
             {/* Customer Type */}
