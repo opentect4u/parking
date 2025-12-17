@@ -149,6 +149,7 @@ export const AuthProvider = ({ children }) => {
 
       if (remoteMessage?.data?.title == 'force_logout') {
         logout_FireBase();
+          // navigationRoutes.navigate("ReceiptScreen")
       }
 
     })
@@ -156,7 +157,6 @@ export const AuthProvider = ({ children }) => {
     messaging().setBackgroundMessageHandler(async remoteMessage => {
 
       if (remoteMessage?.data?.title == 'force_logout') {
-
         logout_FireBase()
       }
     });
@@ -523,6 +523,7 @@ export const AuthProvider = ({ children }) => {
           setOperatorwiseReports,
         ],
         [],
+        
       );
 
       // console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);

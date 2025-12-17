@@ -20,6 +20,7 @@ import RadioButton from '../../components/RadioButton';
 
 // For Scanner
 import QRCode from 'react-native-qrcode-svg';
+import 'fast-text-encoding';
 
 
 
@@ -47,6 +48,13 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
   // For Scanner
   const receiptNoObj = data.find(item => item.label === "RECEIPT NO");
+
+  const upiId = "9007507220@ybl";
+  const payName = "Utsab Roy";
+  const amount = data.find(item => item.label === "PARKING FEES")?.value;
+
+  // const upiString = `upi://pay?pa=${upiId}&pn=${payName}&am=${amount}&cu=INR`;
+  const upiString = `upi://pay?pa=${upiId}&am=${amount}&cu=INR`;
 
 
 
@@ -499,6 +507,22 @@ const CreateOutpassScreen = ({ route, navigation }) => {
               ))}
             </View>
           )}
+{/* 9007507220@ybl */}
+          {/* {getPayMode && getPayMode == "U" &&(
+          <View style={{ paddingHorizontal: 20, paddingBottom: 12, alignSelf: "center" }}>
+            <Text> {JSON.stringify(data, null, 2)} </Text>
+          <QRCode
+          value={upiString}
+          size={200}
+          color="black"
+          backgroundColor="white"
+          />
+
+          </View>
+          )} */}
+  
+
+          
 
           {/* render action buttons */}
           <View

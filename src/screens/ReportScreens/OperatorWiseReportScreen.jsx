@@ -157,7 +157,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }, [])
 
   const handlePrint = async () => {
-
+    
+    
     let GST_Yes_No = "";
     let GST_Header = "";
 
@@ -168,15 +169,18 @@ export default function OperatorWiseReportScreen({ navigation }) {
     let payloadBody = "";
     let payloadFooter = "";
 
+    
+
     operatorwiseReports.map((item, index) => {
       // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString(item?.advance_amt?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
       // payloadBody += `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `${fixedString(item.opratorName.toString(), 4)}       ${fixedString(item.tot_vehi.toString(), 4)}        ${fixedString(item.tot_amt.toString(), 4)}\n` : `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`}`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `${fixedString(item.vehicleType.toString(), 4)}       ${fixedString(item.tot_vehi.toString(), 4)}        ${fixedString(item.tot_amt.toString(), 4)}\n` : `${fixedString(item.vehicleType.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.adv_amt) ? 0 : item?.adv_amt)?.toString(), 4)}   ${fixedString(item.tot_amt.toString(), 4)}\n`}`
     });
 
     // console.log("///////////////////////////////////////////////////", operatorwiseReports);
 
     if(receiptSettings?.report_flag == "Y"){
+      
 
       if(receiptSettings.header1_flag==1){
         payloadHeader +=
@@ -258,11 +262,11 @@ export default function OperatorWiseReportScreen({ navigation }) {
     
 
     if (generalSettings.gst_flag === "Y") {
-      await BluetoothEscposPrinter.printText("Name.      Count      Paid\n", { align: "center" });
+      await BluetoothEscposPrinter.printText("Veh       Count         Paid\n", { align: "center" });
       }
 
     if (generalSettings.gst_flag === "N") {
-      await BluetoothEscposPrinter.printText("Name.   Count   Advance   Paid\n", { align: "center" });
+      await BluetoothEscposPrinter.printText("Veh   Count   Advance   Paid\n", { align: "center" });
     }
 
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
@@ -296,7 +300,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     await BluetoothEscposPrinter.printText("\r\n", {})
     } catch (e) {
     // alert(e.message || "ERROR")
-    alert("Printer is not connected.")
+    Alert("Printer is not connected.")
     }
 
 
@@ -308,7 +312,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     
 
     operatorwiseReports.map((item, index) => {
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString(item.tot_amt.toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.adv_amt) ? 0 : item?.adv_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
       // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
     });
 
@@ -370,7 +374,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Name.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Name.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
+          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Veh   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Veh   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
           // `[C]<font size='normal'>Name.   Count   Advance   Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
@@ -491,12 +495,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
                 <View style={[styles.row, styles.header]}>
                   {/* <Text style={[styles.headerText, styles.hcell]}>Sl. No.</Text> */}
                   <Text style={[styles.headerText, styles.hcell]}>
-                    Name
+                    DevID
                   </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Veh.</Text>
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
                   {generalSettings.gst_flag === "N" && (
                   <Text style={[styles.headerText, styles.hcell]}>Adv</Text>
-                  )}
+                  )} 
                   
                   <Text style={[styles.headerText, styles.hcell]}>Paid </Text>
 
@@ -526,7 +531,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.tot_amt;
                     // totalAdvanceAmount += item?.advance_amt;
-                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
+                    totalAdvanceAmount += isNaN(item?.adv_amt) ? 0 : item?.adv_amt;
                     // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
                     {generalSettings.gst_flag == "Y" && (
                       gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
@@ -542,10 +547,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
                         ]}
                         key={index}>
                         {/* <Text style={[styles.cell]}>{index}</Text> */}
-                        <Text style={[styles.cell]}>{item.opratorName}</Text>
+                        {/* <Text>{JSON.stringify(item , null, 2)}</Text>  */}
+                        <Text style={[styles.cell, { fontSize: 11 }]}>{item.mc_srl_no_out}</Text>
+                        <Text style={[styles.cell]}>{item.vehicleType}</Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
                         {generalSettings.gst_flag === "N" && (
-                        <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
+                        <Text style={[styles.cell]}>{isNaN(item?.adv_amt) ? 0 : item?.adv_amt}</Text>
                         )}
                         
                         <Text style={[styles.cell]}>{item.tot_amt}</Text>
@@ -585,6 +592,8 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
 
                   {generalSettings.gst_flag === "Y" && (
+                    <>
+                    
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Base Amount
@@ -599,6 +608,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                     </Text>
                    
                   </View>
+                  </>
                   )}
 
                   

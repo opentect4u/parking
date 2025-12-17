@@ -617,6 +617,8 @@ console.log(price, 'priceprice 2222');
       vDatainfo.sgst = SGST;
       vDatainfo.parking_fees = totalPrice;
 
+      console.log(gstSettings[0], price, generalSettings.gst_flag, 'pricepriceprice____', gstPrice);
+
       // vData.push(
         
       //   ...(generalSettings.gst_flag == "Y" 
@@ -911,6 +913,7 @@ console.log(price, 'priceprice 2222');
     justifyContent: "center",
   }}>
   <ScrollView>
+    {/* <Text>{JSON.stringify(serchData , null, 2)}</Text> */}
     {serchData &&
       serchData.map((props, index) => {
         const formatTime = new Date(props.date_time_in);
