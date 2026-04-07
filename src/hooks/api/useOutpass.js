@@ -48,7 +48,7 @@ function useOutpass() {
     
     
 
-    const useCarOutpass=async(device_id, date_time_out, receipt_no, base_amt, cgst, sgst, paid_amt, gst_flag, vehicle_id, vehicle_no, date_time_in, getPayMode)=>{
+    const useCarOutpass=async(device_id, date_time_out, receipt_no, base_amt, cgst, sgst, igst, paid_amt, gst_flag, vehicle_id, vehicle_no, date_time_in, getPayMode)=>{
 
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
@@ -60,6 +60,7 @@ function useOutpass() {
                     base_amt:base_amt,
                     cgst:cgst,
                     sgst:sgst,
+                    igst:igst,
                     paid_amt:paid_amt,
                     gst_flag:gst_flag,
                     vehicle_id:vehicle_id,
@@ -72,8 +73,11 @@ function useOutpass() {
                         Authorization: loginData.token,
                     },
                 },).then(res => {
+                    console.log(res.data, 'useCarOutpass', 'response');
+                    
                     resolve(res.data);
                 }).catch(err => {
+                    console.log(err, 'useCarOutpass', 'error');
                     console.log(err);
                     reject(err);
                 });

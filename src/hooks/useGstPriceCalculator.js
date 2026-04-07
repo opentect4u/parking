@@ -1,10 +1,14 @@
 // function useGstPriceCalculator(gstSettings, parkingFees, gst_flag, advance) {
 function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
 
+    console.log(parkingFees, 'gstSettingsgstSettingsgstSettings', gstSettings.igst,  'gst_flaggst_flaggst_flag', gst_flag);
+    
+
 
     let price = 0;
     let CGST = 0;
     let SGST = 0;
+    let IGST = 0;
     let totalPrice = 0;
     if (!gstSettings) {
         return price
@@ -43,35 +47,47 @@ function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
     // Inclusive GST
     if (gst_flag === "Y") {
 
-        // console.log(gstSettings, 'yyyyyyyyyyyyccccccccccyyyyyyyyyyyyyyy', parkingFees);   
-
-    // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
-    // cgstAmount = sgstAmount = ((parkingFees - price)) / 2;
-    // SGST = cgstAmount;
-    // SGST = cgstAmount;
-    
-    // Calculate Amount on Due Amount
-    // parkingFees = parkingFees - advance
-
-    // price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
+    if(gstSettings?.gst_mode == "CS") {
 
     price = parkingFees / (1 + (gstSettings.cgst + gstSettings.sgst) / 100)
     cgstAmount = sgstAmount = ((parkingFees - price)) / 2
     CGST = parseFloat(cgstAmount.toFixed(2));
     SGST = parseFloat(cgstAmount.toFixed(2));
-
-}
+    IGST = 0;
 
     totalPrice = price + CGST + SGST
     totalPrice = Math.round(totalPrice)
+
+    }
+
+
+    if (gstSettings?.gst_mode === "I") {
+
+        const gstPercent = gstSettings.igst;
+
+        price = parkingFees / (1 + gstPercent / 100);
+
+        const gstAmount = parkingFees - price;
+
+        CGST = 0;
+        SGST = 0;
+        IGST = parseFloat(gstAmount.toFixed(2));
+
+        totalPrice = price + IGST;
+        totalPrice = Math.round(totalPrice);
+        }
+
+    }
+
+    
     // totalPrice = Math.ceil(totalPrice)
 
-    // console.log('ll', price, 'yyyyyyyyyyyzzzzzzzzzzzzzyyyyyyyyyyyyyyy', cgstAmount, '>>>>', totalPrice);
+    // console.log('ll', price, 'yyyyyyyyyyyzzzzzzzzzzzzzyyyyyyyyyyyyyyy', IGST, '>>>>', CGST, SGST);
     // if (totalPrice > parkingFees && gstSettings.gst_type == "I") {
     //     totalPrice = parkingFees
     // }
 
-    return { price, CGST, SGST, totalPrice }
+    return { price, CGST, SGST, totalPrice, IGST }
 }
 
 

@@ -95,6 +95,10 @@ export default function DetailedReportScreen({ navigation }) {
   let totalAdvanceAmount = 0;
   let totalUPIAmount = 0;
   let totalCashAmount = 0;
+  let gstAmtApi_SGST = 0;
+  let gstAmtApi_CGST = 0;
+  let gstAmtApi_IGST = 0;
+
   let gstAmount = {};
 
   const submitDetails = async() => {
@@ -207,8 +211,6 @@ export default function DetailedReportScreen({ navigation }) {
 
     getDetailedReport.map((item, index) => {
     let datetume= dateTimefixedStringm(item.date_time_in.toString())
-    // payloadBody += `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  ${datetume}  ${item.advance_amt} [R]${item.paid_amt.toString()}</font>`
-    // payloadBody += `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt}  ${item.paid_amt.toString()}\n`
   payloadBody += `${generalSettings.gst_flag === "Y" ? `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${datetume}  ${item.paid_amt.toString()}\n` : `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt}  ${item.paid_amt.toString()}\n`}`
   
   });
@@ -266,11 +268,6 @@ export default function DetailedReportScreen({ navigation }) {
     }
 
 
-    // if (generalSettings.gst_flag == "Y") {
-    //   GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
-    // } else {
-    //   GST_Yes_No += "";
-    // }
 
 
       try {
@@ -322,13 +319,14 @@ export default function DetailedReportScreen({ navigation }) {
 
 
       if (generalSettings.gst_flag == "Y") {
+        if (gstList?.gst_mode == "CS") {
         await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
-        // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+        }
+
+        if (gstList?.gst_mode == "I") {
+        await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - gstAmtApi_IGST} \nIGST @${gstList.igst}%:${gstAmtApi_IGST}\n -------------------------------\n`, { align: "left" });
+        }
       }
-      
-      // await BluetoothEscposPrinter.printText(`CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
-      // await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
-      // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
       await BluetoothEscposPrinter.printText("\r\n", {})
@@ -400,7 +398,14 @@ export default function DetailedReportScreen({ navigation }) {
       }
 
       if (generalSettings.gst_flag == "Y") {
+        if (gstList?.gst_mode == "CS") {
         GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
+        }
+
+        if (gstList?.gst_mode == "I") {
+        GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - gstAmtApi_IGST}\nCGST @${gstList.igst}%: ${gstAmtApi_IGST}</font>\n`;
+        }
+      
       } else {
         GST_Yes_No += ``;
       }
@@ -584,6 +589,10 @@ export default function DetailedReportScreen({ navigation }) {
                     // totalAdvanceAmount += item.advance_amt;
                     totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
                     // gstAmount = reportGst(totalAmount, gstList.sgst, gstList.cgst);
+                    gstAmtApi_SGST += item?.cgst;
+                    gstAmtApi_CGST += item?.sgst;
+                    gstAmtApi_IGST += item?.igst;
+
                     {generalSettings.gst_flag == "Y" && (
                       gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
                     )}
@@ -641,13 +650,26 @@ export default function DetailedReportScreen({ navigation }) {
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Base Amount
+                      {/* {JSON.stringify(getDetailedReport, null, 2)} */}
+                      {/* {JSON.stringify(gstAmtApi_CGST, null, 2)} */}
+
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                       {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
-                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        {gstList?.gst_mode == "CS" ? (
+                        <>
+                        {/* {totalAmount - (gstAmount.CGST + gstAmount.SGST)} */}
+                        {totalAmount - (gstAmtApi_CGST + gstAmtApi_SGST)} 
+                        {/* {totalAmount} */}
                         </>
+                      ) : gstList?.gst_mode == "I" ? (
+                        <>
+                        {totalAmount - gstAmtApi_IGST} 
+                        </>
+                      ) : null}
+                      </>
                       )}
                     </Text>
                    
@@ -655,16 +677,27 @@ export default function DetailedReportScreen({ navigation }) {
                   )}
                   {generalSettings.gst_flag == "Y" && (
                     <>
+                  {gstList?.gst_mode == "CS" ? (
+                  <>
                     <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
-                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
+                    <Text style={[styles.cell, styles.hcell]}> {Number(gstAmtApi_CGST).toFixed(2)}</Text>
                   </View>
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
-                    <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
+                    <Text style={[styles.cell, styles.hcell]}> {Number(gstAmtApi_SGST).toFixed(2)} </Text>
                   </View>
                     </>
+                  ) : gstList?.gst_mode == "I" ? (
+                    <>
+                    <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <Text style={[styles.cell, styles.hcell]}> IGST <Text style={{ fontWeight: 'bold' }}>@{gstList.igst}%</Text></Text>
+                    <Text style={[styles.cell, styles.hcell]}> {Number(gstAmtApi_IGST).toFixed(2)}</Text>
+                  </View>
+                    </>
+                  ) : null}
+                  </>
                   )}
                   
 

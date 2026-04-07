@@ -132,7 +132,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
   //   return () => clearInterval(gstList);
   // }, []);
 
-  // console.log(generalSettings, 'generalSettings___UTSAB');
+  
 
   const {
     adv_pay,
@@ -165,12 +165,14 @@ const GeneralSettingsScreen = ({ navigation }) => {
   const {
     cgst, 
     gst_number,
-    sgst,
+    sgst, igst, gst_mode
   } = gstList;
 
-  console.log(qr_code_flag, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', generalSettings.day_wise_rate);
+  // console.log(qr_code_flag, 'flag___XXXXXXXXXX' , pay_mode_flag, 'flag___XXXXXXXXXX>>>>>>>>>>>>>>>>>>>>>', generalSettings.day_wise_rate);
 
-  console.log(loginData.user.userdata.msg[0].device_type, "GeneralSettingsScreen___", getGeneralSettings );
+  // console.log(loginData.user.userdata.msg[0].device_type, "GeneralSettingsScreen___", getGeneralSettings );
+
+  console.log(gst_flag, 'generalSettings___UTSAB', gstList, 'gstList___UTSAB');
 
   return (
     <View style={{ flex: 1 }}>
@@ -263,14 +265,49 @@ const GeneralSettingsScreen = ({ navigation }) => {
 
             {/* GST */}
             {gst_flag && (
-              <SettingComponent
-                icon={icons.gst(colors["primary-color"], 25)}
-                text={"GST"}>
-                <CustomSwitch
-                  isEnabled={gst_flag == "Y" ? true : false}
-                  handleChange={() => {}}
-                />
-              </SettingComponent>
+            <>
+            
+            {gst_mode == "I" ? (
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"IGST"}>
+            <CustomSwitch
+            isEnabled={gst_flag == "Y" ? true : false}
+            handleChange={() => {}}
+            />
+            </SettingComponent>
+            ) : gst_mode == "CS" ? (
+
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"GST"}>
+            <CustomSwitch
+            isEnabled={gst_flag == "Y" ? true : false}
+            handleChange={() => {}}
+            />
+            </SettingComponent>
+
+            ) : (
+            <SettingComponent
+            icon={icons.gst(colors["primary-color"], 25)}
+            text={"GST"}>
+            <CustomSwitch
+            isEnabled={gst_flag == "Y" ? true : false}
+            handleChange={() => {}}
+            />
+            </SettingComponent>
+            )
+            }
+            </>
+
+            // <SettingComponent
+            // icon={icons.gst(colors["primary-color"], 25)}
+            // text={"IGST"}>
+            // <CustomSwitch
+            // isEnabled={gst_flag == "Y" ? true : false}
+            // handleChange={() => {}}
+            // />
+            // </SettingComponent>
             )}
 
 
@@ -278,7 +315,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
             {gst_flag === "Y" && (
             <SettingComponent
             icon={icons.gst(colors["primary-color"], 25)}
-            text={"CGST + SGST"}>
+            text={gst_mode === "I" ? "IGST" : "CGST + SGST"}>
 
               <Text
               style={{
@@ -289,7 +326,16 @@ const GeneralSettingsScreen = ({ navigation }) => {
               >
               <>
               {/* {`${cgst}% ${sgst}%`} */}
-              ({`${cgst}% + ${sgst}%`})
+              {/* ({`${cgst}% + ${sgst}%`}) */}
+              {gst_mode == "I" ? (
+                <>
+                ({`${igst}%`})
+                </>
+               ) : gst_mode == "CS" ? (
+                <>
+                ({`${cgst}% + ${sgst}%`})
+                </>
+               ) : null}
               </>
               </Text>
             </SettingComponent>

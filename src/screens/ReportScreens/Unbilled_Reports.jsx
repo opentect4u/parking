@@ -174,9 +174,8 @@ export default function Unbilled_Reports({ navigation }) {
     let datetume= dateTimefixedStringm(item.date_time_in.toString())
     // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
     console.log("datetume",datetume)
-    // payloadBody += `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}    ${item.advance_amt}    ${datetume}\n`
-    payloadBody += `${generalSettings.gst_flag === "Y" ? `${(item.receipt_no).toString().slice(-5)}     ${item.vehicle_no.toString().slice(0,4)}     ${datetume}\n` : `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}   ${item.advance_amt}   ${datetume}\n`}`
-    
+    // payloadBody += `${generalSettings.gst_flag === "Y" ? `${(item.receipt_no).toString().slice(-5)}     ${item.vehicle_no.toString().slice(0,4)}     ${datetume}\n` : `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(0,4)}   ${item.advance_amt}   ${datetume}\n`}`
+    payloadBody += `${`${(item.receipt_no).toString().slice(-5)}     ${item.vehicle_no.toString().slice(0,4)}     ${datetume}\n`}`
   });
 
 
@@ -265,13 +264,14 @@ export default function Unbilled_Reports({ navigation }) {
 
       
 
-      if (generalSettings.gst_flag === "Y") {
-        await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   InTime\n", { align: "center" });
-      }
+      // if (generalSettings.gst_flag === "Y") {
+      //   await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   InTime\n", { align: "center" });
+      // }
 
-      if (generalSettings.gst_flag === "N") {
-        await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   Adv.   InTime\n", { align: "center" });
-      }
+      // if (generalSettings.gst_flag === "N") {
+        // await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   Adv.   InTime\n", { align: "center" });
+      // }
+      await BluetoothEscposPrinter.printText("Rec.No.   Veh.No.   InTime\n", { align: "center" });
 
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
       await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
@@ -346,7 +346,7 @@ export default function Unbilled_Reports({ navigation }) {
       // let datetume= dateTimefixedStringm(item.date_time_in.toString())+timefixedString123(item.date_time_in.toString())
       // console.log("datetume",datetume)
       // payloadBody += `\n[L]<font>${(item.receipt_no).toString().slice(-5)}[C]${item.vehicle_no.toString()} [R] ${item?.advance_amt}  [R] ${datetume}</font>`
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  [R] ${datetume}</font>` : `\n[L]<font>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()} [L] ${item?.advance_amt}  [R] ${datetume}</font>`}`
+      payloadBody += `${`\n[L]<font>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString()}  [R] ${datetume}</font>`}`
       });
   
   
@@ -410,13 +410,12 @@ export default function Unbilled_Reports({ navigation }) {
       `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
       `[C]--------------------------------\n` +
       `[C]--------------------------------\n` +
-      // `[C]<font size='normal'>Rec.No.  Veh.No.  Adv.  InTime</font>\n` +
-      `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Rec.No.  [L]Veh.No.  [R]InTime</font>\n` : "[L]<font size='normal'>Rec.No.  [L]Veh.No.  [L]Adv.  [R]InTime</font>\n"}` +
+      // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Rec.No.  [L]Veh.No.  [R]InTime</font>\n` : "[L]<font size='normal'>Rec.No.  [L]Veh.No.  [L]Adv.  [R]InTime</font>\n"}` +
+      `${`[L]<font size='normal'>Rec.No.  [L]Veh.No.  [R]InTime</font>\n`}` +
       `[C]--------------------------------` +
       `[C]${payloadBody}\n` +
-      `[C]--------------------------------\n` +
-      // `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   TOTAL: ${totalAmount}</font>\n` +
-      `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>TOTAL ADVANCE: ${totalAdvanceAmount} </font>\n` : ""}` +
+      // `[C]--------------------------------\n` +
+      // `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>TOTAL ADVANCE: ${totalAdvanceAmount} </font>\n` : ""}` +
       `` +
       `[C]--------------------------------\n` +
       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
@@ -580,7 +579,7 @@ export default function Unbilled_Reports({ navigation }) {
                 {
 
                   <>
-                  {generalSettings.gst_flag === "N" && (
+                  {/* {generalSettings.gst_flag === "N" && (
                     <>
                   <View
                   style={{
@@ -594,16 +593,9 @@ export default function Unbilled_Reports({ navigation }) {
                     {totalAdvanceAmount}
                   </Text>
                 </View>
-                {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                  <Text style={[styles.cell, styles.hcell]}>
-                    Paid Amount
-                  </Text>
-                  <Text style={[styles.cell, styles.hcell]}>
-                    {totalAmount}
-                  </Text>
-                </View> */}
+                
                 </>
-                  )}
+                  )} */}
 
                   </>
                   

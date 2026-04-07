@@ -3,7 +3,7 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
 function useCarIn() {
-    const carIn = async (vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst) => {
+    const carIn = async (vehicleId,vehicleNo, baseAmt, paidAmt, gstFlag, cgst, sgst, igst) => {
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {
              axios.post(
@@ -18,6 +18,7 @@ function useCarIn() {
                         gst_flag: gstFlag,
                         cgst: cgst,
                         sgst: sgst,
+                        igst: igst
                     },
                     {
                         headers: {
@@ -26,11 +27,11 @@ function useCarIn() {
                     },
                 )
                 .then(res => {
-                    console.log("res - carIn - useCarIn___then", res.data);
+                    console.log("useCarIn___", res.data, 'then', 'res - carIn');
                     resolve(res.data);
                 })
                 .catch(err => {
-                    console.log("res - carIn - useCarIn___catch", err);
+                    console.log("useCarIn___", err, 'error', 'res - carIn');
                     reject(err);
                 });
         });

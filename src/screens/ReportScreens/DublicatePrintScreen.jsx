@@ -225,14 +225,6 @@ export default function DublicatePrintScreen({ navigation }) {
     if(getin_outValue == "IN"){
       // Alert.alert('IN IN IN');
       if (getBlePermission && device_Type_Check == "M") {
-        
-
-        // await BluetoothEscposPrinter.printColumn(
-        //   [30],
-        //   [BluetoothEscposPrinter.ALIGN.LEFT],
-        //   ["Amount:" + 20 + "/="],
-        //   {},
-        // )
 
         let payloadHeader = "";
         let payloadFooter = "";
@@ -275,12 +267,7 @@ export default function DublicatePrintScreen({ navigation }) {
           payloadHeader += `${receiptSettings.header4}\n`;
           }
 
-          // if (generalSettings.gst_flag == "Y") {
-          //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-          //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
-          // } else {
-          //   GST_Header += ``;
-          // }
+          
   
           if (receiptSettings.footer1_flag == 1) {
           // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
@@ -321,7 +308,6 @@ export default function DublicatePrintScreen({ navigation }) {
 
           await BluetoothEscposPrinter.printText("DUPLICATE-RECEIPT\n", { align: "center" });
           await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
-          // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
           if (generalSettings.gst_flag == "Y") {
             await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
           }
@@ -373,7 +359,6 @@ export default function DublicatePrintScreen({ navigation }) {
           await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
-          // [`IN TIME : ${formatDateTime(currentTime)}`],
           [`IN TIME : ${new Date(item.date_time_in).toLocaleString("en-GB") }`],
           {}
           );
@@ -386,30 +371,6 @@ export default function DublicatePrintScreen({ navigation }) {
           console.log(e.message);
           }
 
-          // } catch (err) {
-          // ToastAndroid.show(
-          // "ThermalPrinterModule - ReceiptScreen",
-          // ToastAndroid.SHORT,
-          // );
-          // }
-
-        // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
-
-        //   navigation.navigate("ReceiptScreen_Bletooth");
-        // }
-
-        // if(generalSettings?.redirection_flag == "Y"){
-
-        // navigation.navigate("ReceiptScreen");
-        // }
-
-        // if(generalSettings?.redirection_flag == "N"){
-        // setLoading(false);
-
-        // setVehicleNumber("");
-        // setVehicleAdv(adv_value.toString() || "");
-        // }
-        // navigation.navigate("ReceiptScreen");
 
         // navigation.navigate("ReceiptScreen");
         } else if (device_Type_Check == "H") {
@@ -613,23 +574,44 @@ if (getBlePermission && device_Type_Check == "M") {
   const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
   // const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
 
-  const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+  const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
 
 
-  // console.log(gstPrice, 'fffffffffff');
+  
+
+  // useEffect(() => {
+  //   console.log(gstPrice, 'fffffffffff');
+  // }, [])
 
   // if (generalSettings.gst_flag == "Y") {
 
     let data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
       
     
-      ...(generalSettings.gst_flag == "Y" 
-        ? [
-            {label: "FARE", value: item.base_amt}, 
-            { label: "CGST @"+gstList.cgst+'%', value: CGST },
-            { label: "SGST @"+gstList.sgst+'%', value: SGST },
-            {label: "PARKING FEES", value: item.paid_amt}, 
-          ]
+      // ...(generalSettings.gst_flag == "Y" 
+      //   ? [
+      //       {label: "FARE", value: item.base_amt}, 
+      //       { label: "CGST @"+gstList.cgst+'%', value: CGST },
+      //       { label: "SGST @"+gstList.sgst+'%', value: SGST },
+      //       {label: "PARKING FEES", value: item.paid_amt}, 
+      //     ]
+      //   : []),
+
+        ...(generalSettings.gst_flag == "Y"
+        ? gstList?.gst_mode === "CS"
+          ? [
+              {label: "FARE", value: item.base_amt}, 
+              { label: "CGST @"+gstList.cgst+'%', value: CGST },
+              { label: "SGST @"+gstList.sgst+'%', value: SGST },
+              {label: "PARKING FEES", value: item.paid_amt},
+            ]
+          : gstList?.gst_mode === "I"
+          ? [
+              {label: "FARE", value: item.base_amt}, 
+              { label: "IGST @"+gstList.igst+'%', value: IGST },
+              {label: "PARKING FEES", value: item.paid_amt},
+            ]
+          : null
         : []),
 
         ...(generalSettings.gst_flag == "N" 
@@ -776,12 +758,9 @@ setLoading(false);
     if(generalSettings.gst_flag == "Y"){
 
       const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
-      const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
+      const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
 
-      // console.log(item, 'itemitemitemitemitemitemitemitemitemitemitemitemitemitemitem', baseAmount, CGST, SGST, totalPrice, 'oooooo', gstPrice);
-
-      // debugger
-      
+      if (gstList?.gst_mode == "CS") {
       data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
         // {label: "FARE", value: totalPrice - (CGST + SGST) }, 
         {label: "FARE", value: item.base_amt}, 
@@ -796,6 +775,24 @@ setLoading(false);
         {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
         {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
         {label: "DURATION", value: totalDuration}];
+    }
+
+    if (gstList?.gst_mode == "I") {
+      data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 
+        // {label: "FARE", value: totalPrice - (CGST + SGST) }, 
+        {label: "FARE", value: item.base_amt}, 
+        { label: "IGST @"+gstList.igst+'%', value: IGST },
+        // {label: "PARKING FEES", value: item.base_amt}, 
+        {label: "PARKING FEES", value: item.paid_amt}, 
+        // {label: "ADVANCE", value: item.advance_amt}, 
+        // {label: item.paid_amt < item.advance_amt ? "REFUND AMOUNT": "DUE AMOUNT", value: item.paid_amt < item.advance_amt ? item.advance_amt : item.paid_amt}, 
+        {label: "VEHICLE TYPE", value: item.vehicle_name}, 
+        {label: "VEHICLE NO", value: item.vehicle_no}, 
+        {label: "IN TIME", value:new Date(item.date_time_in).toLocaleString("en-GB")}, 
+        {label: "OUT TIME", value:new Date(item.date_time_out).toLocaleString("en-GB")}, 
+        {label: "DURATION", value: totalDuration}];
+    }
+
     }
 
     if(generalSettings.gst_flag == "N"){

@@ -75,6 +75,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   //   { label: 'UPI: ', value: 'U' },
   // ];
 
+  // console.log(gstList, 'gstListgstListgstListgstList');
+  
+
 
   
 
@@ -251,11 +254,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let carindata = "";
 
     if (generalSettings.gst_flag == "Y") {
-    carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
+    // carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst, 0);
+
+    if (gstList?.gst_mode == "CS") {
+    carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst, 0);
+    }
+
+    if (gstList?.gst_mode == "I") {
+    carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0, gstList?.igst); 
+    // var insert_car_outpass = await useCarOutpass(deviceId, totalRate.date, others.receipt_no, totalRate.base_amt, 0, 0, gstSettings?.igst, paid_amt, generalSettings.gst_flag, others.vehicle_id, others.vehicle_no, others.date_time_in, getPayMode);
+    }
+
     }
 
     if (generalSettings.gst_flag == "N") {
-      carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
+      carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0, 0);
       }
 
     // if (generalSettings.gst_flag == "N") {
