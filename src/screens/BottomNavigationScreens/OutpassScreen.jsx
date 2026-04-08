@@ -314,7 +314,7 @@ useEffect(() => {
 
       if (gstList?.gst_mode == "CS") {
       vData.push(
-      { label: "FARE", value: totalPrice - (CGST + SGST) },
+      { label: "BASE FARE", value: totalPrice - (CGST + SGST) },
       { label: "CGST @"+gstList.cgst+'%', value: CGST },
       { label: "SGST @"+gstList.sgst+'%', value: SGST },
       { label: "PARKING FEES", value: totalPrice }
@@ -323,7 +323,7 @@ useEffect(() => {
 
       if (gstList?.gst_mode == "I") {
       vData.push(
-      { label: "FARE", value: totalPrice - IGST },
+      { label: "BASE FARE", value: totalPrice - IGST },
       { label: "IGST @"+gstList.igst+'%', value: IGST },
       { label: "PARKING FEES", value: totalPrice }
       );
@@ -650,7 +650,7 @@ console.log(price, 'priceprice 2222');
 
       if (gstList?.gst_mode == "CS") {
       vData.push(
-      { label: "FARE", value: totalPrice - (CGST + SGST) },
+      { label: "BASE FARE", value: totalPrice - (CGST + SGST) },
       { label: "CGST @"+gstList.cgst+'%', value: CGST },
       { label: "SGST @"+gstList.sgst+'%', value: SGST },
       { label: "PARKING FEES", value: totalPrice }
@@ -659,7 +659,7 @@ console.log(price, 'priceprice 2222');
 
       if (gstList?.gst_mode == "I") {
       vData.push(
-      { label: "FARE", value: totalPrice - IGST },
+      { label: "BASE FARE", value: totalPrice - IGST },
       { label: "IGST @"+gstList.igst+'%', value: IGST },
       { label: "PARKING FEES", value: totalPrice }
       );

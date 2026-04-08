@@ -319,8 +319,11 @@ export default function DetailedReportScreen({ navigation }) {
 
 
       if (generalSettings.gst_flag == "Y") {
+
+        // await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+
         if (gstList?.gst_mode == "CS") {
-        await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+        await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmtApi_CGST + gstAmtApi_SGST)} \nCGST @${gstList.cgst}%:${gstAmtApi_CGST} \nSGST @${gstList.sgst}%:${gstAmtApi_SGST}\n -------------------------------\n`, { align: "left" });
         }
 
         if (gstList?.gst_mode == "I") {
@@ -398,8 +401,12 @@ export default function DetailedReportScreen({ navigation }) {
       }
 
       if (generalSettings.gst_flag == "Y") {
+
+        // GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
+
+
         if (gstList?.gst_mode == "CS") {
-        GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
+        GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmtApi_CGST + gstAmtApi_SGST)}\nCGST @${gstList.cgst}%: ${gstAmtApi_CGST}\nSGST @${gstList.sgst}%: ${gstAmtApi_SGST}</font>\n`;
         }
 
         if (gstList?.gst_mode == "I") {
