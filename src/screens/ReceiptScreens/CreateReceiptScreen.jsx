@@ -797,6 +797,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           {/* ......... vehicle type .......... */}
           <View style={{ marginTop: normalize(20) }}>
             <Text style={styles.vehicle_text}>Vechicle Type</Text>
+            {/* <Text>{JSON.stringify(gstList, null, 2)}</Text> */}
             <RoundedInputComponent placeholder={type} disable={true} />
           </View>
           {/* ..........receipt type ........... */}

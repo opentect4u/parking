@@ -587,7 +587,7 @@ useEffect(() => {
       currentDate.toISOString().slice(0, -5) + "Z",
       currentDate.getTime(),
     );
-console.log(price, 'priceprice 2222');
+// console.log(price, 'priceprice 2222');
 
   }
 

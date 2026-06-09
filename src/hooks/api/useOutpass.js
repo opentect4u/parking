@@ -10,10 +10,20 @@ function useOutpass() {
         
         
         const result = await getVehicleRatesByVehicleId(vehicle_id, daywise);
-        if (result?.rates?.msg[0]?.rate_type == 'H') {
-            const price = HourlyPriceCalculate(result?.rates?.msg, date_time_in, end_time, daywise, result?.night_rates?.msg.length > 0 ? result?.night_rates?.msg[0] : 0 );
+        
 
-            console.log(price, 'pricepricepriceprice');
+        // This i use for Flag that is it New Rate or Custome Rate.
+        var rateFlag = result?.night_rates?.msg.length > 0 ? 'newRate' : 'customeRate';
+
+        // console.log('price___START', result?.rates?.msg, 'price___END', result?.night_rates?.msg, 'price___END', result?.custom_rates?.msg[0], 'kkkkkk', rateFlag);
+
+        if (result?.rates?.msg[0]?.rate_type == 'H') {
+            // console.log(result?.rates?.msg, date_time_in, end_time, daywise, result?.night_rates?.msg.length > 0 ? result?.night_rates?.msg[0] : 0, 'pricepricepriceprice__________________');
+            const price = HourlyPriceCalculate(result?.rates?.msg, date_time_in, end_time, daywise, 
+                result?.night_rates?.msg.length > 0 ? result?.night_rates?.msg[0] : result?.custom_rates?.msg.length > 0 ? result?.custom_rates?.msg[0] : 0, rateFlag );
+            
+            // console.log(price, 'pricepricepriceprice__________________');
+            
             
             return price;
         }
@@ -36,7 +46,7 @@ function useOutpass() {
                     },
                 },).then(res => {
                     // resolve(res.data.data.msg);
-                    console.log('getVehicleRatesByVehicleId>>>>', res?.data?.data?.rates?.msg, 'getVehicleRatesByVehicleId');
+                    console.log('getVehicleRatesByVehicleId>>>>', res?.data?.data, 'getVehicleRatesByVehicleId');
                     resolve(res?.data?.data);
                 }).catch(err => {
                     console.log(err);

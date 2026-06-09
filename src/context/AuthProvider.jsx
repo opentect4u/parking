@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
       fcm_token: fcmToken
     };
 
-    // console.log(credentials, 'xxxxxxxxxxxxxxxxx');
+    console.log(credentials, 'xxxxxxxxxxxxxxxxx');
 
 
     try {
