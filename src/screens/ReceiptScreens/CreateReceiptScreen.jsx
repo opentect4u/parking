@@ -89,6 +89,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [currentShift, setCurrentShift] = useState("");
 
   const [gstSettings, setGstSettings] = useState([]);
+  const [printBtnActive, setPrintBtnActive] = useState(true);
 
 
   const getCurrentShift = (shifts) => {
@@ -233,6 +234,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }, [])
 
   const handleCreateReceipt = async () => {
+    setPrintBtnActive(false)
 
     let GST_Yes_No = "";
     let GST_Header = "";
@@ -241,19 +243,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     let qrcode = "";
     let gstAmount;
     let gstPrice = [];
-    
-    // const gstSettings = await handleGetGst();
-    
-    
-
-    // if (generalSettings.gst_flag == "Y") {
-      
-    // gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
-
-    // console.log(gstAmount, 'gstAmountgstAmountgstAmount', vehicleAdv, gstList.sgst, gstList.cgst);
-    
-
-    // }
     
     if (loading == true) {
       return;
@@ -273,17 +262,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       );
     }
 
-  //   if (generalSettings.adv_pay == "Y"){
-  //   if (!vehicleAdv) {
-  //     setLoading(false);
-  //     return ToastAndroid.showWithGravity(
-  //       "Please add Advance Amount to continue.",
-  //       ToastAndroid.SHORT,
-  //       ToastAndroid.CENTER,
-  //     );
-  //   }
-  // }
-
+  
 
 
     // let vehicleRate = parseInt(fixedVehicleRateObject.vehicle_rate);
@@ -342,9 +321,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
       }
 
-
-    if(carindata.status){
+      console.log(carindata, 'carindatacarindatacarindatacarindata');
       
+    if(carindata.status){
+      setPrintBtnActive(true)
+      /// Utsab M H
         if (getBlePermission && device_Type_Check == "M") {
 
         var payloadHeader = "";
@@ -888,8 +869,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
               style={{ flex: 1, marginRight: normalize(8) }}
             />
 
+
             {/* Print Receipt Action Button */}
             <CustomButton.GoButton
+            disabled={!printBtnActive}
               title={"Print Receipt"}
               onAction={() => handleCreateReceipt()}
               style={{ flex: 1, marginLeft: normalize(8) }}
