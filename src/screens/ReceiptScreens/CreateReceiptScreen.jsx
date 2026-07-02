@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   PermissionsAndroid,
   Alert,
+  DeviceEventEmitter,
 } from "react-native";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
@@ -29,7 +30,7 @@ import { ADDRESSES } from "../../routes/addresses";
 import useCarIn from "../../hooks/api/useCarIn";
 import useGstSettings from "../../hooks/api/useGstSettings";
 import { dateTimefixedString } from "../../utils/dateTime";
-import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import { BluetoothEscposPrinter, BluetoothManager } from "react-native-bluetooth-escpos-printer"
 import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
 // For Scanner
@@ -216,7 +217,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
   useEffect(() => {
 
-
+    /// Utsab M
     if(device_Type_Check == "M"){
     try {
     async function blueTooth() {
@@ -233,8 +234,54 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     }
   }, [])
 
+
+
   const handleCreateReceipt = async () => {
     setPrintBtnActive(false)
+    setLoading(true);
+
+    try {
+    const devices = await BluetoothManager.enableBluetooth();
+    // console.log("Paired devices:", devices);
+
+    if (!devices || devices.length === 0) {
+    setLoading(false);
+    setPrintBtnActive(true);
+    setVehicleNumber("");
+    alert("No paired printer found. Please pair a printer first.")
+    return ToastAndroid.showWithGravity(
+    "No paired printer found. Please pair a printer first.",
+    ToastAndroid.SHORT,
+    ToastAndroid.CENTER
+    );
+    }
+
+    // Convert string to object
+    const printer = typeof devices[0] === "string" ? JSON.parse(devices[0]) : devices[0];
+    console.log("Printer found:", printer.name, printer.address);
+
+    // Connect printer
+    // await BluetoothManager.connect(printer.address);
+    const connected = await BluetoothManager.connect(printer.address);
+
+    if(connected) {
+    // Alert("Printer is connected. aaaaaaa")
+    }
+
+    // console.log("Connected successfully:", printer.name, 'checkkkkkkkkkk', connected,  await BluetoothManager.connect(printer.address));
+
+    } catch (error) {
+    setLoading(false);
+    setPrintBtnActive(true)
+    // console.log("Printer connection error:", error, 'checkkkkkkkkkk');
+    setVehicleNumber("");
+    return alert("Please try again.");
+
+    // ToastAndroid.show(
+    //   "Printer connection failed",
+    //   ToastAndroid.SHORT
+    // );
+    }
 
     let GST_Yes_No = "";
     let GST_Header = "";
@@ -248,21 +295,18 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       return;
     }
 
-    setLoading(true);
-    // if vehicleNumber is blank then return from the below block
-
-    // console.log(vehicleNumber, 'vehicleNumber__UTSA');
+    
+    
 
     if (!vehicleNumber) {
       setLoading(false);
+      setPrintBtnActive(true)
       return ToastAndroid.showWithGravity(
         "Please add the vehicle number to continue.",
         ToastAndroid.SHORT,
         ToastAndroid.CENTER,
       );
     }
-
-  
 
 
     // let vehicleRate = parseInt(fixedVehicleRateObject.vehicle_rate);
@@ -324,7 +368,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       console.log(carindata, 'carindatacarindatacarindatacarindata');
       
     if(carindata.status){
-      setPrintBtnActive(true)
+      
+
       /// Utsab M H
         if (getBlePermission && device_Type_Check == "M") {
 
@@ -407,6 +452,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           25,
           50,
           );
+          setPrintBtnActive(true)
   
       await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
@@ -446,16 +492,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         {}
       );
 
-      // if (generalSettings.adv_pay == "Y") {
-
-      //   await BluetoothEscposPrinter.printColumn(
-      //     [30],
-      //     [BluetoothEscposPrinter.ALIGN.LEFT],
-      //     [`ADVANCE : ${advanceAmount}`],
-      //     {}
-      //   );
-      // }
-
       await BluetoothEscposPrinter.printColumn(
         [30],
         [BluetoothEscposPrinter.ALIGN.LEFT],
@@ -479,7 +515,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       await BluetoothEscposPrinter.printText("\r\n", {})
       } catch (e) {
         // alert(e.message || "ERROR")
-        alert("Printer is not connected.")
+        // alert("Printer is not connected.")
         console.log(e.message);
       }
 
@@ -673,25 +709,25 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // navigation.navigate("ReceiptScreen");
         } else {
 
-          if(device_Type_Check == "M"){
+        if(device_Type_Check == "M"){
 
-          setLoading(false);
-          setVehicleNumber("");
-          // setVehicleAdv(adv_value.toString() || "");
+        setLoading(false);
+        setVehicleNumber("");
+        // setVehicleAdv(adv_value.toString() || "");
 
-          ToastAndroid.showWithGravityAndOffset(
-          "Sorry, Receipt Creation Failed, Allow Nearby Devices",
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-          25,
-          50,
-          );
+        ToastAndroid.showWithGravityAndOffset(
+        "Sorry, Receipt Creation Failed, Allow Nearby Devices",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+        );
 
-          setLoading(true);
-          setVehicleNumber("");
-          // setVehicleAdv(adv_value.toString() || "");
+        setLoading(true);
+        setVehicleNumber("");
+        // setVehicleAdv(adv_value.toString() || "");
 
-          navigation.navigate("ReceiptScreen");
+        navigation.navigate("ReceiptScreen");
 
         }
 
@@ -860,14 +896,21 @@ const CreateReceiptScreen = ({ navigation, route }) => {
               marginTop: normalize(10),
               marginHorizontal: normalize(10),
             }}>
+              {/* <Text>{JSON.stringify(printBtnActive, 2)} /// {JSON.stringify(!printBtnActive, 2)}</Text> */}
             {/* GOBACK action button */}
             <CustomButton.CancelButton
               title={"Cancel"}
+              // disabled={!printBtnActive}
+              // disabled={true}
               onAction={() => {
+                if(printBtnActive){
                 navigation.goBack();
+                }
               }}
               style={{ flex: 1, marginRight: normalize(8) }}
             />
+            {/* {printBtnActive == true} */}
+            
 
 
             {/* Print Receipt Action Button */}
