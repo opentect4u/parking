@@ -75,7 +75,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   //   { label: 'UPI: ', value: 'U' },
   // ];
 
-  // console.log(gstList, 'gstListgstListgstListgstList');
+  console.log(generalSettings, 'gstListgstListgstListgstList');
   
 
 
@@ -199,15 +199,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
     if (generalSettings.gst_flag == "Y") {
     gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
-    // const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
-    // console.log(vehicleAdv, 'pppppppppppppppppppppppppppppppppppp', gstAmount.CGST, gstAmount.SGST);
-    
-
     }
     
-    if (loading == true) {
-      return;
-    }
+    // if (loading == true) {
+    //   return;
+    // }
 
     setLoading(true);
     // if vehicleNumber is blank then return from the below block
