@@ -240,48 +240,48 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     setPrintBtnActive(false)
     setLoading(true);
 
-    try {
-    const devices = await BluetoothManager.enableBluetooth();
-    // console.log("Paired devices:", devices);
+    // 10072026 Utsab Roy
+    // try {
+    // const devices = await BluetoothManager.enableBluetooth();
+    // // console.log("Paired devices:", devices);
 
-    if (!devices || devices.length === 0) {
-    setLoading(false);
-    setPrintBtnActive(true);
-    setVehicleNumber("");
-    alert("No paired printer found. Please pair a printer first.")
-    return ToastAndroid.showWithGravity(
-    "No paired printer found. Please pair a printer first.",
-    ToastAndroid.SHORT,
-    ToastAndroid.CENTER
-    );
-    }
-
-    // Convert string to object
-    const printer = typeof devices[0] === "string" ? JSON.parse(devices[0]) : devices[0];
-    console.log("Printer found:", printer.name, printer.address);
-
-    // Connect printer
-    // await BluetoothManager.connect(printer.address);
-    const connected = await BluetoothManager.connect(printer.address);
-
-    if(connected) {
-    // Alert("Printer is connected. aaaaaaa")
-    }
-
-    // console.log("Connected successfully:", printer.name, 'checkkkkkkkkkk', connected,  await BluetoothManager.connect(printer.address));
-
-    } catch (error) {
-    setLoading(false);
-    setPrintBtnActive(true)
-    // console.log("Printer connection error:", error, 'checkkkkkkkkkk');
-    setVehicleNumber("");
-    return alert("Please try again.");
-
-    // ToastAndroid.show(
-    //   "Printer connection failed",
-    //   ToastAndroid.SHORT
+    // if (!devices || devices.length === 0) {
+    // setLoading(false);
+    // setPrintBtnActive(true);
+    // setVehicleNumber("");
+    // alert("No paired printer found. Please pair a printer first.")
+    // return ToastAndroid.showWithGravity(
+    // "No paired printer found. Please pair a printer first.",
+    // ToastAndroid.SHORT,
+    // ToastAndroid.CENTER
     // );
-    }
+    // }
+
+    // // Convert string to object
+    // const printer = typeof devices[0] === "string" ? JSON.parse(devices[0]) : devices[0];
+    // console.log("Printer found:", printer.name, printer.address);
+
+    // // Connect printer
+    // const connected = await BluetoothManager.connect(printer.address);
+
+    // if(connected) {
+    // // Alert("Printer is connected. aaaaaaa")
+    // }
+
+    // // console.log("Connected successfully:", printer.name, 'checkkkkkkkkkk', connected,  await BluetoothManager.connect(printer.address));
+
+    // } catch (error) {
+    // setLoading(false);
+    // setPrintBtnActive(true)
+    // // console.log("Printer connection error:", error, 'checkkkkkkkkkk');
+    // setVehicleNumber("");
+    // return alert("Please try again.");
+
+    // // ToastAndroid.show(
+    // //   "Printer connection failed",
+    // //   ToastAndroid.SHORT
+    // // );
+    // }
 
     let GST_Yes_No = "";
     let GST_Header = "";
@@ -368,6 +368,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       console.log(carindata, 'carindatacarindatacarindatacarindata');
       
     if(carindata.status){
+
+      setLoading(false);
+      setPrintBtnActive(true)
+
+      
       
 
       /// Utsab M H
@@ -393,6 +398,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         dateoptions,
         )} ${dateTime.toLocaleTimeString(undefined, options)}`;
         };
+        
+        
 
         // Header Start 
         if (receiptSettings.header1_flag == 1) {
@@ -415,6 +422,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         payloadHeader += `${receiptSettings.header4}\n`;
         }
         // Header End 
+
+        // console.log('getBlePermission', payloadHeader, 'dddddddddddddddddddddddd');
 
 
         // Footte Start 
@@ -452,19 +461,24 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           25,
           50,
           );
-          setPrintBtnActive(true)
+          // setPrintBtnActive(true)
   
       await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
       await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
       if(receiptSettings?.IN_on_off == "Y"){
       await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
       }
-      // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
-      if (generalSettings.gst_flag == "Y") {
-        await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-      }
-      // {GST_Header}
-      // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
+        [`IN TIME : ${formatDateTime(currentTime)}`],
+        {}
+      );
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+      // if (generalSettings.gst_flag == "Y") {
+      //   await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+      // }
   
       await BluetoothEscposPrinter.printColumn(
         [30],
@@ -492,12 +506,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         {}
       );
 
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`IN TIME : ${formatDateTime(currentTime)}`],
-        {}
-      );
+      
 
 
       if (generalSettings?.qr_code_flag == "Y") {
@@ -509,6 +518,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     }
       
       await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+
+      await BluetoothEscposPrinter.printText(`PTU: SHIFT-${currentShift}:${loginData.user.userdata.msg[0].operator_name}\n`, { align: "center" });
+
       if(receiptSettings?.IN_on_off == "Y"){
       await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
       }
@@ -536,9 +548,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         // navigation.navigate("ReceiptScreen");
         } else if (device_Type_Check == "H") {
-
-
-          
 
         // if (generalSettings.gst_flag == "Y") {
         // gstPrice = useGstPriceCalculator(gstSettings[0], vehicleRate, generalSettings.gst_flag);
@@ -711,8 +720,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
 
         if(device_Type_Check == "M"){
 
-        setLoading(false);
-        setVehicleNumber("");
+        // setLoading(false);
+        // setVehicleNumber("");
         // setVehicleAdv(adv_value.toString() || "");
 
         ToastAndroid.showWithGravityAndOffset(
@@ -723,7 +732,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         50,
         );
 
-        setLoading(true);
+        setLoading(false);
+        setPrintBtnActive(true);
         setVehicleNumber("");
         // setVehicleAdv(adv_value.toString() || "");
 
@@ -732,8 +742,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         }
 
         if(device_Type_Check == "H"){
-        setLoading(false);
-        setVehicleNumber("");
         // setVehicleAdv(adv_value.toString() || "");
 
         ToastAndroid.showWithGravityAndOffset(
@@ -744,7 +752,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         50,
         );
 
-        setLoading(true);
+        setLoading(false);
+        setPrintBtnActive(true)
         setVehicleNumber("");
         // setVehicleAdv(adv_value.toString() || "");
 
