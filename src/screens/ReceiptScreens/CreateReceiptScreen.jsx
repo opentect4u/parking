@@ -502,7 +502,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       await BluetoothEscposPrinter.printColumn(
         [30],
         [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`YS Service Charges : ${vehicle_rate}`],
+        [`YS Service Charges : ${(Number(gstPrice?.totalPrice) + Number(gstList?.other_charges)).toFixed(2)}`],
         {}
       );
 

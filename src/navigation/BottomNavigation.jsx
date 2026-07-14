@@ -108,7 +108,7 @@ function BottomNavigation() {
       <Tab.Screen
         name={printScreen}
         options={{
-          title: "Connect Printer",
+          title: "Connects Printer",
           tabBarIcon: ({ color, size }) => icons.print2(color, 30),
         }}
         component={PrintNavigation}
