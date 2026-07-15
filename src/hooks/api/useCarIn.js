@@ -49,11 +49,11 @@ function useCarIn() {
                     },
                 )
                 .then(res => {
-                    console.log("res - carIn - useCarIn___then", res.data, 'baseAmt__UTSAB');
+                    console.log("res - carIn - useCarIn___then", res.data);
                     resolve(res.data);
                 })
                 .catch(err => {
-                    console.log("res - carIn - useCarIn___catch", err, 'baseAmt__UTSAB');
+                    console.log("res - carIn - useCarIn___catch", err);
                     reject(err);
                 });
         });

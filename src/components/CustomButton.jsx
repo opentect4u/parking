@@ -9,11 +9,12 @@ import {
 import colors from "../resources/colors/colors";
 import normalize from "react-native-normalize";
 
-const CancelButton = ({ title, onAction, style }) => {
+const CancelButton = ({ title, onAction, style, disabled = false  }) => {
   return (
     <TouchableOpacity
       style={[styles.button, styles.resetButton, style]}
-      onPress={onAction}>
+      onPress={onAction}
+      disabled={disabled}>
       <Text style={styles.textStyle}>{title}</Text>
     </TouchableOpacity>
   );

@@ -59,8 +59,6 @@ if (gst_flag === "Y") {
     price = parkingFees;
 
     let TotalGST = Math.round(price * (totalGstRate / 100));
-
-    console.log(price, 'ppppppppppppppppppppppppppppppppppppppppppppppppppppp', TotalGST);
     
 
     // GST split equally into CGST & SGST
