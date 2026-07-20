@@ -26,20 +26,24 @@ const width = Dimensions.get("screen").width;
 import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 import { fixedString } from "../../utils/fixedString";
-import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
+import useVehicleWiseReports from "../../hooks/api/useVehicleWiseReports";
 import { loginStorage } from "../../storage/appStorage";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
-export default function OperatorWiseReportScreen({ navigation }) {
-  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
-  const { operator_wise } = usegetOperatorwiseReport();
+export default function VehicleWiseFixedReportScreen({ navigation }) {
+  const {generalSettings, receiptSettings, gstList } = useContext(AuthContext);
+  
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
+
+  const { vehicleWiseReportsData } = useVehicleWiseReports();
+
+  // const [vehicleReport, setVehicleReport] = useState([])
+
   const [detailedReportData, setDetailedReportData] = useState([]);
-  const [operatorwiseReports, setOperatorwiseReports] = useState([]);
   // State for manage the  loading values
   const [loading, setLoading] = useState();
 
@@ -63,8 +67,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [mydateTo, setDateTo] = useState(new Date());
   const [displaymodeTo, setModeTo] = useState("date");
   const [isDisplayDateTo, setShowTo] = useState(false);
-  const [getBlePermission, setBlePermission] = useState();
-
+  const [vehicleWiseReports, setVehicleWiseReports] = useState();
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
     setShowTo(false);
@@ -75,13 +78,18 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
+  const [getBlePermission, setBlePermission] = useState();
 
   /**
-   * operator_id
-   * operator_name
+   * vehicle_id
    * vehicle_no
+   * date_time_in
    * paid_amt
    */
+
+  // useEffect(() => {
+  //   getVehicleWiseReport(mydateFrom, mydateTo);
+  // }, [mydateFrom, mydateTo]);
 
   let totalAmount = 0;
   let other_charges = 0;
@@ -90,21 +98,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
   let totalCashAmount = 0;
   let gstAmount = {};
 
-  // useEffect(() => {
-  //   getOperatorwiseReport(mydateFrom, mydateTo);
-  // }, [mydateFrom, mydateTo]);
-  // console.log(operatorwiseReports, '___operatorwiseReports');
-
-  const submitDetails = async () => {
+  const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
 
-console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id, 'sssssssssssssss');
 
-    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-// console.log('ooooooooooooooooooooooooooooooooooo', operator_wise_report?.data?.msg, 'ooooooooooooooooooooooooooooooooooo');
+    
 
-    setOperatorwiseReports(operator_wise_report?.data?.msg);
+    let resdata = await vehicleWiseReportsData(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id)
+    // console.log('>>>>>>>', resdata?.data?.msg, 'hhhhhhhhhhhhhhhhhhhhhhh');
+    setVehicleWiseReports(resdata?.data?.msg);
 
   };
 
@@ -141,6 +144,7 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
   }
 
   useEffect(() => {
+
     if(device_Type_Check == "M"){
     try {
     async function blueTooth() {
@@ -155,137 +159,169 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
     } catch (err) {
     }
   }
+  
   }, [])
 
   const handlePrint = async () => {
-
     let GST_Yes_No = "";
     let GST_Header = "";
 
     await checkLocationEnabled();
 
+  // Use for Mobile Device Start 
   if (getBlePermission  && device_Type_Check == "M") {
     
-    let payloadHeader = "";
-    let payloadBody = "";
-    let payloadFooter = "";
     
+    
+  let payloadHeader = "";
+  let payloadBody = "";
+  let payloadFooter = "";
 
-    operatorwiseReports.map((item, index) => {
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
-    });
+  vehicleWiseReports.map((item, index) => {
+  payloadBody += `${generalSettings.gst_flag === "Y" ? `${fixedString(item.vehicleType.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n` : `${fixedString(item.vehicleType.toString(), 5)} ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(),4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`}`
+  });
 
 
-    if(receiptSettings?.report_flag == "Y"){
+      if(receiptSettings?.report_flag == "Y"){
 
-    if(receiptSettings.header1_flag==1){
-      payloadHeader +=
-      `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+      if(receiptSettings.header1_flag==1){
+    payloadHeader +=
+    // `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+    payloadHeader += `${receiptSettings.header1}\n`;
     }
 
     if(receiptSettings.header2_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+    // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+    payloadHeader += `${receiptSettings.header2}\n`;
     }
 
     if(receiptSettings.header3_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    payloadHeader += `${receiptSettings.header3}\n`;
     }
 
     if(receiptSettings.header4_flag==1){
-      payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    // payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    payloadHeader += `${receiptSettings.header4}\n`;
     }
 
-    if (generalSettings.gst_flag == "Y") {
-      GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
-    } else {
-      GST_Header += ``;
-    }
+    // if (generalSettings.gst_flag == "Y") {
+    //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+    //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+    // } else {
+    //   GST_Header += ``;
+    // }
 
     if(receiptSettings.footer1_flag==1){
-      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    payloadFooter += `${receiptSettings.footer1}\n`;
     }
     if(receiptSettings.footer2_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    payloadFooter += `${receiptSettings.footer2}\n`;
     }
     if(receiptSettings.footer3_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+    // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+    payloadFooter += `${receiptSettings.footer3}\n`;
     }
     if(receiptSettings.footer4_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    payloadFooter += `${receiptSettings.footer4}\n`;
     }
 
-  }
+      }
 
-    try {
-    ToastAndroid.showWithGravityAndOffset(
-    "Receipt Created Successfully",
-    ToastAndroid.LONG,
-    ToastAndroid.BOTTOM,
-    25,
-    50,
-    );
-      await ThermalPrinterModule.printBluetooth({
-        payload:
-          `[C]${payloadHeader}` +
-          `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
-          `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-          `[C]--------------------------------\n` +
-          `[C]--------------------------------\n` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Name.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Name.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
-          `[C]--------------------------------` +
-          `[C]${payloadBody}\n` +
-          `[C]--------------------------------\n` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-          `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-          `[C]--------------------------------\n` +
-          `[C]${payloadFooter}\n`,
-            printerNbrCharactersPerLine: 30,
-            printerDpi: 120,
-            printerWidthMM: 58,
-            mmFeedPaper: 25,
-      });
-    } catch (err) {
-      ToastAndroid.show(
-        "ThermalPrinterModule - OperatorWiseReportScreen",
-        ToastAndroid.SHORT,
-      );
-      console.log(err.message);
-      alert("Printer is not connected.")
-    }
+      // if (generalSettings.gst_flag == "Y") {
+      //   GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+      // } else {
+      //   GST_Yes_No += "";
+      // }
 
+      try {
+        ToastAndroid.showWithGravityAndOffset(
+        "Receipt Created Successfully",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+        );
+  
+        await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+        if (generalSettings.gst_flag == "Y") {
+          await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+          }
+        await BluetoothEscposPrinter.printText("Vehiclewise Report\n", { align: "center" });
+        
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+  
+        await BluetoothEscposPrinter.printText(`From :${mydateFrom.toLocaleDateString("en-GB")} To :${mydateTo.toLocaleDateString("en-GB")}\n`, { align: "left" });
+        await BluetoothEscposPrinter.printText(`Report On :${new Date().toLocaleString("en-GB")}\n`, { align: "left" });
+  
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
+        if (generalSettings.gst_flag === "Y") {
+          await BluetoothEscposPrinter.printText("Veh.   Count   Paid\n", { align: "center" });
+          }
+  
+        if (generalSettings.gst_flag === "N") {
+          await BluetoothEscposPrinter.printText("Veh.   Count   Advance   Paid\n", { align: "center" });
+        }
+  
+        
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+        await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+        if (generalSettings.gst_flag === "Y") {
+          await BluetoothEscposPrinter.printText(`NET:${totalAmount}\n`, { align: "left" }); 
+        }
+  
+        if (generalSettings.gst_flag === "N") {
+          await BluetoothEscposPrinter.printText(`ADV:${totalAdvanceAmount} PAID:${totalAmount} NET:${totalAmount+totalAdvanceAmount}\n`, { align: "left" });
+        }
+
+        
+        await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+        if (generalSettings.gst_flag == "Y") {
+          await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+        }
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+  
+        await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+        await BluetoothEscposPrinter.printText("\r\n", {})
+        } catch (e) {
+        alert("Printer is not connected.")
+        }
+
+  
 
   } else if (device_Type_Check == "H") {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
-    
-
-    operatorwiseReports.map((item, index) => {
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
-      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+  
+    vehicleWiseReports.map((item, index) => {
+      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>` : `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
     });
-
-
+  
     if(receiptSettings?.report_flag == "Y"){
-
+  
     if(receiptSettings.header1_flag==1){
-      payloadHeader +=
-      `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+    payloadHeader +=
+    `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
     }
-
+  
     if(receiptSettings.header2_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+    payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
     }
-
+  
     if(receiptSettings.header3_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
     }
-
+  
     if(receiptSettings.header4_flag==1){
-      payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
     if (generalSettings.gst_flag == "Y") {
@@ -293,73 +329,79 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
     } else {
       GST_Header += ``;
     }
-
+  
     if(receiptSettings.footer1_flag==1){
-      payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
     if(receiptSettings.footer2_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
     }
     if(receiptSettings.footer3_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+    payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
     }
     if(receiptSettings.footer4_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    }
+  
     }
 
-  }
+    if (generalSettings.gst_flag == "Y") {
+      GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` + `[C]--------------------------------\n`
+    } else {
+      GST_Yes_No += ``;
+    }
 
- 
-
+  
     try {
-      await ThermalPrinterModule.printBluetooth({
-        payload:
-          `[C]${payloadHeader}` +
-          `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
-          `[C]--------------------------------\n` +
-          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-          `[C]--------------------------------\n` +
-          `[C]--------------------------------\n` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Name.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Name.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
-          `[C]--------------------------------` +
-          `[C]${payloadBody}\n` +
-          `[C]--------------------------------\n` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-          `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-          `[C]--------------------------------\n` +
-          `[C]${payloadFooter}\n`,
-        printerNbrCharactersPerLine: 30,
-        printerDpi: 120,
-        printerWidthMM: 58,
-        mmFeedPaper: 25,
-      });
+    await ThermalPrinterModule.printBluetooth({
+      payload:
+        `[C]${payloadHeader}` +
+        `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
+        `[C]--------------------------------\n` +
+        `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+        `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+        `[C]--------------------------------\n` +
+        `[C]--------------------------------\n` +
+        `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Veh.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Veh.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
+        `[C]--------------------------------` +
+        `[C]${payloadBody}\n` +
+        `[C]--------------------------------\n` +
+        `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
+        `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
+        `[C]--------------------------------\n` +
+        `[C]${payloadFooter}\n`,
+      printerNbrCharactersPerLine: 30,
+      printerDpi: 120,
+      printerWidthMM: 58,
+      mmFeedPaper: 25,
+    });
     } catch (err) {
-      ToastAndroid.show(
-        "ThermalPrinterModule - OperatorWiseReportScreen",
-        ToastAndroid.SHORT,
-      );
-      console.log(err.message);
+    ToastAndroid.show(
+      "ThermalPrinterModule - VehicleWiseFixedReportScreen",
+      ToastAndroid.SHORT,
+    );
+    console.log(err.message);
     }
+    } else {
 
-  } else {
-
-    if(device_Type_Check == "M"){
-      ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
-    }
-    if(device_Type_Check == "H"){
-    ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
-    }
-
+      if(device_Type_Check == "M"){
+        ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+      }
+      if(device_Type_Check == "H"){
+      ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
+      }
     // ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
-  }
+
+    }
+// Use for Handheld Device End 
+
 
   };
 
   return (
     <View style={{ flex: 1 }}>
       {/* render custom Header */}
-      <CustomHeader title="Operatorwise Report" navigation={navigation} />
+      <CustomHeader title="Vehicle Wise Report" navigation={navigation} />
       {/* render from date picker */}
       {isDisplayDateFrom && (
         <RNDateTimePicker
@@ -387,7 +429,7 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
       <View style={{ padding: PixelRatio.roundToNearestPixel(20), flex: 1 }}>
         <Text style={styles.select_date_header}>
           Select Date
-          { }
+          {}
         </Text>
         {/* date selector button */}
         <View style={styles.select_date_button_container}>
@@ -415,45 +457,38 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
             </Text>
           </Pressable>
         </View>
-
         <CustomButton.GoButton
           title="Submit"
           style={{ margin: 10 }}
           onAction={() => submitDetails()}
         />
 
-        {loading && <Text> fetchig data... </Text>}
+        {loading && <Text> fetching data... </Text>}
 
         {/* report genarate table */}
-        {operatorwiseReports && (
+        {vehicleWiseReports && (
           <View>
             <ScrollView>
               <View style={styles.container}>
-              {operatorwiseReports.length!=0 &&(
                 <View style={[styles.row, styles.header]}>
-                  {/* <Text style={[styles.headerText, styles.hcell]}>Sl. No.</Text> */}
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Name
-                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Veh.</Text>
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>In time</Text> */}
+
                   {generalSettings.gst_flag === "N" && (
                   <Text style={[styles.headerText, styles.hcell]}>Adv</Text>
                   )}
                   
-                  <Text style={[styles.headerText, styles.hcell]}>Paid </Text>
-
-                  {/* <Text style={[styles.headerText, styles.hcell]}>
-                    Paid Amt.
-                  </Text> */}
+                  
+                  <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Net.Amt</Text> */}
                 </View>
-              )}
 
                 {/* {generalSettings.gst_flag == "Y" && (
                 <>
-                {operatorwiseReports.forEach(item => {
+                {vehicleWiseReports.forEach(item => {
                 if (item?.pay_mode === "U") {
                 totalUPIAmount += item.tot_amt;
-                
                 }
 
                 if (item?.pay_mode === "C") {
@@ -464,20 +499,22 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                 </>
                 )} */}
 
-                {operatorwiseReports &&
-                  operatorwiseReports.map((item, index) => {
-                    totalAmount += item.tot_amt;
-                    other_charges += item.other_charges;
-                    // totalAdvanceAmount += item?.advance_amt;
+                {vehicleWiseReports &&
+                  vehicleWiseReports.map((item, index) => {
+                    totalAmount += item?.tot_amt;
+                    other_charges += item?.other_charges;
+                    totalAdvanceAmount += item?.advance_amt;
                     totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
-                    // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
+
                     {generalSettings.gst_flag == "Y" && (
-                      // gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
-                      gstAmount = gstCalculatorReport(operatorwiseReports)
+                      // gstAmount = gstCalculatorReport(totalAmount, gstList.sgst, gstList.cgst)
+                      gstAmount = gstCalculatorReport(vehicleWiseReports)
                     )}
 
-                    // console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
+                    // console.log(gstAmount, 'ppppppppppppppppppppppppppppp', gstList.sgst, gstList.cgst);
                     
+                    
+
                     return (
                       <View
                         style={[
@@ -485,71 +522,70 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                           index % 2 != 0 ? styles.evenBg : styles.oddbg,
                         ]}
                         key={index}>
-                        {/* <Text style={[styles.cell]}>{index}</Text> */}
-                        <Text style={[styles.cell]}>{item.opratorName}</Text>
+                        <Text style={[styles.cell]}>{item.vehicleType} </Text>
                         <Text style={[styles.cell]}>{item.tot_vehi}</Text>
                         {generalSettings.gst_flag === "N" && (
                         <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
                         )}
                         
-                        <Text style={[styles.cell]}>{item.tot_amt + item?.other_charges}</Text>
-
-                        {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
-                        {/* <Text style={[styles.cell]}>
-                          {new Date(item.date_time_in).toLocaleString()}
-                        </Text> */}
-                        {/* <Text style={[styles.cell]}>{item.paid_amt}</Text> */}
-                        {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                        <Text style={[styles.cell]}>{item?.tot_amt + item?.other_charges}
+                        {/* Math.round(item?.cgst) +
+                       Math.round(item?.sgst) +
+                        (item?.other_charges || 0) */}
+                        
+                        </Text>
+                        {/* <Text style={[styles.cell]}>{gstAmount?.CGST} {gstAmount?.SGST} {item?.other_charges}</Text> */}
                       </View>
                     );
                   })}
-                  {operatorwiseReports.length!=0 &&(
-                  <>
+                {
+<>
 
-                  {generalSettings.gst_flag === "N" && (
-                    <>
-                  <View
-                  style={{...styles.row, backgroundColor: colors["primary-color"],
-                  }}>
-                  <Text style={[styles.cell, styles.hcell]}> Advance Amount </Text>
-                  <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
-                  </View>
-                  
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Paid Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {totalAmount}
-                    </Text>
-                  </View>
-                  
-                  </>
+                {generalSettings.gst_flag === "N" && (
+                <>
+                <View
+                style={{
+                ...styles.row,
+                backgroundColor: colors["primary-color"],
+                }}>
+                <Text style={[styles.cell, styles.hcell]}>Advance Amount</Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {totalAdvanceAmount}
+                </Text>
+                </View>
+
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                Paid Amount
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {totalAmount}
+                </Text>
+                </View>
+                </>
                   )}
-
-
-                  {/* {generalSettings.gst_flag === "Y" && (
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Base Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {generalSettings.gst_flag == "Y" && (
-                        <>
-                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
-                        </>
-                      )}
-                    </Text>
-                   
-                  </View>
-                  )}    // GST OFF on Print */}
-
                   
+                {/* {generalSettings.gst_flag === "Y" && (
+                <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                <Text style={[styles.cell, styles.hcell]}>
+                Base Amount
+                </Text>
+                <Text style={[styles.cell, styles.hcell]}>
+                {generalSettings.gst_flag == "Y" && (
+                <>
+                {totalAmount}
+                </>
+                )}
+                </Text>
+
+                </View>
+                )}    // GST OFF on Print  */}
+                
 
                   
 
                   {/* {generalSettings.gst_flag == "Y" && (
-                  <>
+                    <>
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
@@ -560,7 +596,8 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
                   </>
-                  )}   // GST OFF on Print  */}
+                  )}    // GST OFF on Print  */}
+
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
@@ -595,21 +632,19 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                 </>
                 )} */}
 
-                  
-                  
+                  </>
+                }
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
                     Report Generated on {date.toLocaleString()}{" "}
                   </Text>
                 </View>
-                </>
-                )}
               </View>
             </ScrollView>
           </View>
         )}
         {/* back and print action button */}
-        {operatorwiseReports.length!=0 &&(
+        {vehicleWiseReports && (
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {

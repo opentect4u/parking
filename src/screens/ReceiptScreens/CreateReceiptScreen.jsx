@@ -178,9 +178,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     getVehicleRateFixedByVehicleId(dev_mod, id);
   }, [generalSettings]);
 
-  
-
-  
 
   // check Bluetooth configuration
   async function checkLocationEnabled() {
@@ -336,11 +333,16 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       /// Utsab M H
         if (getBlePermission && device_Type_Check == "M") {
 
-        var payloadHeader = "";
+        let payloadHeader = "";
         let payloadFooter = "";
-        let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number).toString().slice(-5);
-        // For Scanner
+        let receipt_number = (carindata?.data?.td_vehicle_in?.receipt_number)
+        .toString()
+        .slice(-5);
+          // For Scanner
         const receiptNoObj = carindata?.data?.td_vehicle_in?.receipt_number;
+        // let advanceAmount = "";
+        let gstShow_pos = "";
+        
 
         const options = {
         hour12: false,
@@ -356,54 +358,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         dateoptions,
         )} ${dateTime.toLocaleTimeString(undefined, options)}`;
         };
+
         
-        
-
-        // Header Start 
-        if (receiptSettings.header1_flag == 1) {
-        // payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
-        payloadHeader += `${receiptSettings.header1}\n`;
-        }
-
-        if (receiptSettings.header2_flag == 1) {
-        // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
-        payloadHeader += `${receiptSettings.header2}\n`;
-        }
-
-        if (receiptSettings.header3_flag == 1) {
-        // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
-        payloadHeader += `${receiptSettings.header3}\n`;
-        }
-
-        if (receiptSettings.header4_flag == 1) {
-        // payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
-        payloadHeader += `${receiptSettings.header4}\n`;
-        }
-        // Header End 
-
-        // console.log('getBlePermission', payloadHeader, 'dddddddddddddddddddddddd');
-
-
-        // Footte Start 
-        if (receiptSettings.footer1_flag == 1) {
-        // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-        payloadFooter += `${receiptSettings.footer1}\n`;
-        }
-        if (receiptSettings.footer2_flag == 1) {
-        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-        payloadFooter += `${receiptSettings.footer2}\n`;
-        }
-        if (receiptSettings.footer3_flag == 1) {
-        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
-        payloadFooter += `${receiptSettings.footer3}\n`;
-        }
-        if (receiptSettings.footer4_flag == 1) {
-        // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-        payloadFooter += `${receiptSettings.footer4}\n`;
-        }
-        // Footte End 
-
-        // }
 
         // if (generalSettings.adv_pay == "Y") {
         // // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
@@ -411,84 +367,121 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         // }
 
 
-        try {
-          ToastAndroid.showWithGravityAndOffset(
+      try {
+        ToastAndroid.showWithGravityAndOffset(
           "Receipt Created Successfully",
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
           25,
           50,
           );
-          // setPrintBtnActive(true)
-  
-      await BluetoothEscposPrinter.printText("RECEIPT\n", { align: "center" });
-      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
-      if(receiptSettings?.IN_on_off == "Y"){
-      await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
-      }
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`IN TIME : ${formatDateTime(currentTime)}`],
-        {}
-      );
-      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+        if(receiptSettings?.IN_on_off == "Y"){
+          
+        if (receiptSettings.header1_flag == 1) {
+        payloadHeader += `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+        }
 
-      // if (generalSettings.gst_flag == "Y") {
-      //   await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-      // }
-  
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`RECEIPT NO : ${receipt_number}`],
-        {}
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`VEHICLE TYPE : ${type}`],
-        {}
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`VEHICLE NO : ${vehicleNumber}`],
-        {}
-      );
+        if (receiptSettings.header2_flag == 1) {
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+        }
 
-      await BluetoothEscposPrinter.printColumn(
-        [30],
-        [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`YS Service Charges : ${(Number(gstPrice?.totalPrice) + Number(gstList?.other_charges)).toFixed(2)}`],
-        // [`YS Service Charges : ${vehicle_rate}`],
-        {}
-      );
+        if (receiptSettings.header3_flag == 1) {
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+        }
 
-      
+        if (receiptSettings.header4_flag == 1) {
+        payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+        }
+
+        if (generalSettings.gst_flag == "Y") {
+          GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+
+          GST_Print += `[L]<font size='normal'>FARE : [R] ${gstPrice?.price}</font>\n` +
+        `[L]<font size='normal'>${"CGST @"+gstList?.cgst+'%'} : [R] ${gstPrice?.CGST}</font>\n` +
+        `[L]<font size='normal'>${"SGST @"+gstList?.sgst+'%'} : [R] ${gstPrice?.SGST}</font>\n`;
+
+          
+        } else {
+          GST_Header += ``;
+          GST_Print += ``;
+        }
+
+        if (receiptSettings.footer1_flag == 1) {
+        payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+        }
+        if (receiptSettings.footer2_flag == 1) {
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+        }
+        if (receiptSettings.footer3_flag == 1) {
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+        }
+        if (receiptSettings.footer4_flag == 1) {
+        payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+        }
+
+        }
+
+        // if (generalSettings.adv_pay == "Y") {
+        // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
+        // }
+
+        if (generalSettings?.qr_code_flag == "Y") {
+          // qrcode += `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
+          qrcode += `[R]      <qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
+        }
+
+        
+        await ThermalPrinterModule.printBluetooth({
+        payload:
+        `[C]<u><font size='tall'>RECEIPT</font></u>\n` +
+        `[C]-------------------------------` +
+        `[C]${payloadHeader}` +
+        // `${GST_Header}` +
+        
+        `[L]<font size='normal'>IN TIME : [R]${formatDateTime(currentTime)}</font>\n` +
+        `[C]-------------------------------\n` +
+        `[L]<font size='normal'>RECEIPT NO : [R] ${receipt_number +'.'}${loginData?.user?.userdata?.msg[0].receipt_no}</font>\n` +
 
 
-      if (generalSettings?.qr_code_flag == "Y") {
-      await BluetoothEscposPrinter.printQRCode(
-        receiptNoObj.toString(), // QR code data
-        250, // Larger size (between 1 and 16)
-        BluetoothEscposPrinter.ERROR_CORRECTION.L // Error correction level
-      );
-    }
-      
-      await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+        `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
+        `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
+        `[L]<font size='normal'>YS SERVICE CHARGES : [R] ${(Number(gstPrice?.totalPrice) + Number(gstList?.other_charges)).toFixed(2)}</font>\n\n` +
+        
+        
+        `${qrcode}` +
+        `[C]------------------------------\n` +
+        `[C]<font size='small'>PTU: SHIFT-${currentShift}:${loginData.user.userdata.msg[0].operator_name}</font>` +
+        `${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+        });
+        } catch (err) {
+        ToastAndroid.show(
+        "ThermalPrinterModule - ReceiptScreen",
+        ToastAndroid.SHORT,
+        );
+        console.log(err.message);
+        alert("Printer is not connected.")
+        }
 
-      await BluetoothEscposPrinter.printText(`PTU: SHIFT-${currentShift}:${loginData.user.userdata.msg[0].operator_name}\n`, { align: "center" });
+        // if(generalSettings?.redirection_flag == "Y" && loginData.user.userdata.msg[0].device_type == "M"){
 
-      if(receiptSettings?.IN_on_off == "Y"){
-      await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
-      }
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      } catch (e) {
-        // alert(e.message || "ERROR")
-        // alert("Printer is not connected.")
-        console.log(e.message);
-      }
+        //   navigation.navigate("ReceiptScreen_Bletooth");
+        // }
+
+        if(generalSettings?.redirection_flag == "Y"){
+
+        navigation.navigate("ReceiptScreen");
+        }
+
+        if(generalSettings?.redirection_flag == "N"){
+        setLoading(false);
+
+        setVehicleNumber("");
+        // setVehicleAdv(adv_value.toString() || "");
+        }
 
         
 
@@ -589,10 +582,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         }
 
         }
-
-        // if (generalSettings.adv_pay == "Y") {
-        // advanceAmount += `[L]<font size='normal'>ADVANCE : [R] ${vehicleAdv}</font>\n`;
-        // }
 
         if (generalSettings?.qr_code_flag == "Y") {
           // qrcode += `[C]<qrcode size='30'>${receiptNoObj.toString()}</qrcode>\n`;
