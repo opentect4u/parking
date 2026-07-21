@@ -26,20 +26,34 @@ const width = Dimensions.get("screen").width;
 import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 import { fixedString } from "../../utils/fixedString";
-import usegetOperatorwiseReport from "../../hooks/api/usegetOperatorwiseReport";
+import CustomDropdownReport from "../../components/CustomDropdownReport";
+import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
+import usegetShiftwiseReport from "../../hooks/api/usegetShiftwiseReport";
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import gstCalculatorReport from "../../hooks/gstCalculatorReport";
 
-export default function OperatorWiseReportScreen({ navigation }) {
-  const { receiptSettings, generalSettings, gstList } = useContext(AuthContext);
-  const { operator_wise } = usegetOperatorwiseReport();
+export default function ShiftWiseReportScreen({ navigation }) {
+  const { shiftwiseReports, getShiftwiseReport,generalSettings, receiptSettings, gstList } = useContext(AuthContext);
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   // const { getUserName } = useContext(AuthContext);
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
+  
+
+
+  // State for manage the  total price
+  const [totalPrice, setTotalPrice] = useState(0);
+  // State for manage the  total quantity
+  const [totalQTY, setTotalQTY] = useState(0);
+  // State for manage the  total Advance Price
+  const [totalAdvance, setTotalAdvance] = useState(0);
+
+
+
+  const [usedeviceMode, setdeviceMode] = useState([]);
+  const [useOperatorData, setOperatorData] = useState([]);
 
   const [detailedReportData, setDetailedReportData] = useState([]);
-  const [operatorwiseReports, setOperatorwiseReports] = useState([]);
   // State for manage the  loading values
   const [loading, setLoading] = useState();
 
@@ -50,6 +64,13 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [mydateFrom, setDateFrom] = useState(new Date());
   const [displaymodeFrom, setModeFrom] = useState("date");
   const [isDisplayDateFrom, setShowFrom] = useState(false);
+  const [getBlePermission, setBlePermission] = useState();
+
+  const {shift_wise}=usegetShiftwiseReport();
+
+
+  const [useShift, setShift] = useState('');
+  const [useShiftName, setShifName] = useState('');
 
   // handle change From date
   const changeSelectedDateFrom = (event, selectedDate) => {
@@ -63,8 +84,6 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [mydateTo, setDateTo] = useState(new Date());
   const [displaymodeTo, setModeTo] = useState("date");
   const [isDisplayDateTo, setShowTo] = useState(false);
-  const [getBlePermission, setBlePermission] = useState();
-
   // handle change to date
   const changeSelectedDateTo = (event, selectedDate) => {
     setShowTo(false);
@@ -77,11 +96,15 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const [value, setValue] = useState(0);
 
   /**
-   * operator_id
+   * shift_name
    * operator_name
-   * vehicle_no
-   * paid_amt
+   * quantity
+   *
    */
+
+  // useEffect(() => {
+  //   getShiftwiseReport(mydateFrom, mydateTo);
+  // }, [mydateFrom, mydateTo]);
 
   let totalAmount = 0;
   let other_charges = 0;
@@ -90,22 +113,21 @@ export default function OperatorWiseReportScreen({ navigation }) {
   let totalCashAmount = 0;
   let gstAmount = {};
 
-  // useEffect(() => {
-  //   getOperatorwiseReport(mydateFrom, mydateTo);
-  // }, [mydateFrom, mydateTo]);
-  // console.log(operatorwiseReports, '___operatorwiseReports');
+  let displayBotBlue = false;
 
-  const submitDetails = async () => {
+  const submitDetails = async() => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
+    
+    let reportData= await shift_wise(formattedDateFrom,formattedDateTo,useShift, loginData.user.userdata.msg[0].id)
 
-console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id, 'sssssssssssssss');
+    // console.log("xxxxxxxxxxxxxxxxxx",reportData.data.msg, "xxxxxxxxxxxxxxxxxx", useShift)
+    
 
-    let operator_wise_report = await operator_wise(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].id);
-// console.log('ooooooooooooooooooooooooooooooooooo', operator_wise_report?.data?.msg, 'ooooooooooooooooooooooooooooooooooo');
+    displayBotBlue = true;
 
-    setOperatorwiseReports(operator_wise_report?.data?.msg);
 
+    setOperatorData(reportData.data?.msg)
   };
 
   async function checkLocationEnabled() {
@@ -154,26 +176,26 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
 
     } catch (err) {
     }
-  }
+    }
   }, [])
 
   const handlePrint = async () => {
-
     let GST_Yes_No = "";
     let GST_Header = "";
-
     await checkLocationEnabled();
 
+  // Use for Mobile Device Start 
   if (getBlePermission  && device_Type_Check == "M") {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
 
-    operatorwiseReports.map((item, index) => {
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `${fixedString(item.opratorName.toString(), 4)}       ${fixedString(item.tot_vehi.toString(), 4)}        ${fixedString((item.tot_amt + item.other_charges).toString(), 4)}\n` : `${fixedString(item.opratorName.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`}`
-    });
+    useOperatorData.map((item, index) => {
+      // payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}   ${fixedString(item?.advance_amt?.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+      payloadBody += `${fixedString(item.vehicleType.toString(), 4)}    ${fixedString(item.tot_vehi.toString(), 4)}    ${fixedString(item?.advance_amt?.toString(), 4)}     ${fixedString(item.tot_amt.toString(), 4)}\n`
 
-    // console.log("///////////////////////////////////////////////////", operatorwiseReports);
+    
+    });
 
     if(receiptSettings?.report_flag == "Y"){
 
@@ -230,6 +252,7 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
   //   GST_Yes_No += "";
   // }
 
+
   try {
     ToastAndroid.showWithGravityAndOffset(
     "Receipt Created Successfully",
@@ -241,10 +264,10 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
 
     await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
     // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
-    // if (generalSettings.gst_flag == "Y") {
-    //   await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
-    //   }
-    await BluetoothEscposPrinter.printText(`Operatorwise Report\n`, { align: "center" });
+    if (generalSettings.gst_flag == "Y") {
+      await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+      }
+    await BluetoothEscposPrinter.printText(`${useShiftName} Shift Report\n`, { align: "center" });
     
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
@@ -254,42 +277,17 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
 
-    
-
-    if (generalSettings.gst_flag === "Y") {
-      await BluetoothEscposPrinter.printText("Name.      Count      Paid\n", { align: "center" });
-      }
-
-    if (generalSettings.gst_flag === "N") {
-      await BluetoothEscposPrinter.printText("Name.   Count   Advance   Paid\n", { align: "center" });
-    }
-
+    await BluetoothEscposPrinter.printText("Name.   Count   Advance   Paid\n", { align: "center" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
     await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
-
-    if (generalSettings.gst_flag === "Y") {
-      // await BluetoothEscposPrinter.printText(`UPI:${totalUPIAmount}  CASH:${totalCashAmount}  NET:${totalAmount}\n`, { align: "center" }); 
-      await BluetoothEscposPrinter.printText(`NET: ${totalAmount + other_charges}\n`, { align: "left" });  
-    }
-
-    if (generalSettings.gst_flag === "N") {
-     await BluetoothEscposPrinter.printText(`NET: ${totalAmount + other_charges}\n`, { align: "left" }); 
-    }
-
-    
+    await BluetoothEscposPrinter.printText(`ADV: ${totalAdvanceAmount}  PAID: ${totalAmount}  NET: ${totalAmount + totalAdvanceAmount}\n`, { align: "left" });
     await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
-
     // await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
-
-    // if (generalSettings.gst_flag == "Y") {
-    //   await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
-    //   // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
-    // }
-
-    // await BluetoothEscposPrinter.printText(`CGST@${gstList.cgst}%:${gstAmount.CGST} SGST@${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
-    // await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "left" });
-    // await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+    if (generalSettings.gst_flag == "Y") {
+      await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+      // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+    }
 
     await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
     await BluetoothEscposPrinter.printText("\r\n", {})
@@ -298,37 +296,65 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
     alert("Printer is not connected.")
     }
 
-
+    // try {
+    //   await ThermalPrinterModule.printBluetooth({
+    //     payload:
+    //       `[C]${payloadHeader}\n` +
+    //       `[C]<u><font size='small'>${useShiftName} Shift Report</font></u>\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+    //       `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[C]<font size='normal'>Name.   Count   Advance   Paid</font>` +
+    //       `[C]--------------------------------` +
+    //       `[C]${payloadBody}\n` +
+    //       `[C]--------------------------------\n` +
+    //       `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+    //       `[C]--------------------------------\n` +
+    //       // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+    //       // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+    //       `[C]${payloadFooter}\n`,
+    //     printerNbrCharactersPerLine: 30,
+    //     printerDpi: 120,
+    //     printerWidthMM: 58,
+    //     mmFeedPaper: 25,
+    //   });
+    // } catch (err) {
+    //   ToastAndroid.show(
+    //     "ThermalPrinterModule - ShiftWiseReportScreen",
+    //     ToastAndroid.SHORT,
+    //   );
+    //   console.log(err.message);
+    // }
 
   } else if (device_Type_Check == "H") {
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
-    
 
-    operatorwiseReports.map((item, index) => {
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>` : `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [L]${fixedString(item.tot_vehi.toString(), 3)}    [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
-      // payloadBody += `\n[L]<font>${fixedString(item.opratorName.toString(), 4)} [C]${fixedString(item.tot_vehi.toString(), 3)}    ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt)?.toString(), 4)}[R]${fixedString(item.tot_amt.toString(), 4)}</font>`
+    useOperatorData.map((item, index) => {
+      // payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 6)} [C]${fixedString(item.tot_vehi.toString(), 10)} ${fixedString(item?.advance_amt?.toString(), 4)} [R]${fixedString(item.tot_amt.toString(), 6)}</font>`
+      payloadBody += `\n[L]<font>${fixedString(item.vehicleType.toString(), 4)}[C]${fixedString(item.tot_vehi.toString(), 3)}    [R]${fixedString((item.tot_amt + item.other_charges).toString(), 4)}</font>`
     });
-
 
     if(receiptSettings?.report_flag == "Y"){
 
-    if(receiptSettings.header1_flag==1){
+    if (receiptSettings.header1_flag == 1) {
       payloadHeader +=
-      `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+        `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
     }
 
-    if(receiptSettings.header2_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+    if (receiptSettings.header2_flag == 1) {
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
     }
 
-    if(receiptSettings.header3_flag==1){
+    if (receiptSettings.header3_flag == 1) {
       payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
     }
 
-    if(receiptSettings.header4_flag==1){
-      payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    if (receiptSettings.header4_flag == 1) {
+      payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
     }
 
     if (generalSettings.gst_flag == "Y") {
@@ -337,23 +363,23 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
       GST_Header += ``;
     }
 
-    if(receiptSettings.footer1_flag==1){
+    if (receiptSettings.footer1_flag == 1) {
       payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
-    if(receiptSettings.footer2_flag==1){
+    if (receiptSettings.footer2_flag == 1) {
       payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
     }
-    if(receiptSettings.footer3_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+    if (receiptSettings.footer3_flag == 1) {
+      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
     }
-    if(receiptSettings.footer4_flag==1){
+    if (receiptSettings.footer4_flag == 1) {
       payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
     }
 
   }
 
   if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
   } else {
     GST_Yes_No += ``;
   }
@@ -361,30 +387,22 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
     try {
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]${payloadHeader}` +
+          `[C]${payloadHeader}\n` +
           // `${GST_Header}` +    // GST OFF on Print 
-          `[C]<u><font size='small'>Operatorwise Report</font></u>\n` +
+          `[C]<u><font size='small'>${useShiftName} Shift Report</font></u>\n` +
           `[C]--------------------------------\n` +
           `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Name.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Name.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
-          // `[C]<font size='normal'>Name.   Count   Advance   Paid</font>\n` +
+          `[L]<font size='normal'>Name.      Count        Paid</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +
-          // `[C]<font size='normal'>ADV: ${totalAdvanceAmount} PAID: ${totalAmount} NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
-          // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>UPI: ${totalUPIAmount} [L]CASH: ${totalCashAmount} [R]NET: ${totalAmount}</font>\n` : ""}` +
-          `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-          `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
+          // `[C]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount + totalAdvanceAmount}</font>\n` +
+          `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` +
           `[C]--------------------------------\n` +
-          // `${GST_Yes_No}` +    // GST OFF on Print 
-          // `[C]<font size='normal'>CGST @${gstList.cgst}%: ${gstAmount.CGST} SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` +
-          // `[C]<font size='normal'>GST No.: ${gstList.gst_number}</font>\n` +
-          // `[C]--------------------------------\n` +
-          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+
           `[C]${payloadFooter}\n`,
         printerNbrCharactersPerLine: 30,
         printerDpi: 120,
@@ -393,7 +411,7 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
       });
     } catch (err) {
       ToastAndroid.show(
-        "ThermalPrinterModule - OperatorWiseReportScreen",
+        "ThermalPrinterModule - ShiftWiseReportScreen",
         ToastAndroid.SHORT,
       );
       console.log(err.message);
@@ -410,13 +428,54 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
 
     // ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
   }
+  // Use for Handheld Device End 
+
 
   };
+
+  const getShift = async () => {
+    // console.log("///////////////////", loginData.token)
+    let loginData = JSON.parse(loginStorage.getString("login-data"));
+    try {
+      await axios.post(ADDRESSES.SHIFT_DATA,{}, {
+        headers: {
+          Authorization: loginData.token,
+        },
+      }).then(res => {
+        // console.log("lllllllllllll", res.data.data.msg, "");
+        setdeviceMode(res.data.data.msg)
+      }).catch(err => {
+        console.log("res - getShift", err)
+      });
+
+
+    } catch (err) {
+    }
+  }
+  useEffect(() => {
+    getShift();
+  }, []);
+
+
+
+  const handleChangeSelect = (value) => {
+    // console.log(value, "///////////////////////////////////////////////////")
+    setShift(value)
+
+
+    let filteredShifts = usedeviceMode.filter(shift => shift.shift_id == value);
+      filteredShifts.forEach(shift => {
+
+
+        // console.log(shift.shift_name, "///////////////////////////////////////////////////", useOperatorData.length);
+        setShifName(shift.shift_name)
+      });
+  }
 
   return (
     <View style={{ flex: 1 }}>
       {/* render custom Header */}
-      <CustomHeader title="Operatorwise Report" navigation={navigation} />
+      <CustomHeader title="Shiftwise Report" navigation={navigation} />
       {/* render from date picker */}
       {isDisplayDateFrom && (
         <RNDateTimePicker
@@ -473,6 +532,12 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
           </Pressable>
         </View>
 
+        {usedeviceMode && (<CustomDropdownReport
+          data={usedeviceMode}
+          labelId={useShift}
+          onChange={e => handleChangeSelect(e)}
+        />)}
+
         <CustomButton.GoButton
           title="Submit"
           style={{ margin: 10 }}
@@ -482,35 +547,34 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
         {loading && <Text> fetchig data... </Text>}
 
         {/* report genarate table */}
-        {operatorwiseReports && (
+        {useOperatorData && (
           <View>
             <ScrollView>
               <View style={styles.container}>
-              {operatorwiseReports.length!=0 &&(
+              {useOperatorData.length!=0 &&(
                 <View style={[styles.row, styles.header]}>
-                  {/* <Text style={[styles.headerText, styles.hcell]}>Sl. No.</Text> */}
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Name
-                  </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>Count</Text>
-                  {generalSettings.gst_flag === "N" && (
-                  <Text style={[styles.headerText, styles.hcell]}>Adv</Text>
-                  )}
-                  
-                  <Text style={[styles.headerText, styles.hcell]}>Paid </Text>
-
+                  <Text style={[styles.headerText, styles.hcell]}>Name</Text>
                   {/* <Text style={[styles.headerText, styles.hcell]}>
-                    Paid Amt.
+                    Veh.
                   </Text> */}
+                  <Text style={[styles.headerText, styles.hcell]}>
+                    Count.
+                  </Text>
+                  
+                  {/* {generalSettings.gst_flag === "N" && ( */}
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Adv</Text> */}
+                  {/* )} */}
+                  <Text style={[styles.headerText, styles.hcell]}>Paid</Text>
+
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Amount</Text> */}
                 </View>
               )}
 
                 {/* {generalSettings.gst_flag == "Y" && (
                 <>
-                {operatorwiseReports.forEach(item => {
+                {useOperatorData.forEach(item => {
                 if (item?.pay_mode === "U") {
                 totalUPIAmount += item.tot_amt;
-                
                 }
 
                 if (item?.pay_mode === "C") {
@@ -521,69 +585,58 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                 </>
                 )} */}
 
-                {operatorwiseReports &&
-                  operatorwiseReports.map((item, index) => {
+                {useOperatorData &&
+                  useOperatorData.map((item, index) => {
                     totalAmount += item.tot_amt;
                     other_charges += item.other_charges;
-                    // totalAdvanceAmount += item?.advance_amt;
-                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
-                    // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
+                    totalAdvanceAmount += item?.advance_amt;
                     {generalSettings.gst_flag == "Y" && (
                       // gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
-                      gstAmount = gstCalculatorReport(operatorwiseReports)
+                      gstAmount = gstCalculatorReport(useOperatorData)
                     )}
-
-                    // console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
-                    
                     return (
-                      <View
-                        style={[
-                          styles.row,
-                          index % 2 != 0 ? styles.evenBg : styles.oddbg,
-                        ]}
-                        key={index}>
-                        {/* <Text style={[styles.cell]}>{index}</Text> */}
-                        <Text style={[styles.cell]}>{item.opratorName}</Text>
-                        <Text style={[styles.cell]}>{item.tot_vehi}</Text>
-                        {generalSettings.gst_flag === "N" && (
-                        <Text style={[styles.cell]}>{isNaN(item?.advance_amt) ? 0 : item?.advance_amt}</Text>
-                        )}
-                        
-                        <Text style={[styles.cell]}>{item.tot_amt + item?.other_charges}</Text>
+                    <View
+                      style={[
+                        styles.row,
+                        index % 2 != 0 ? styles.evenBg : styles.oddbg,
+                      ]}
+                      key={index}>
+                      <Text style={[styles.cell]}>{item.vehicleType} </Text>
+                      {/* <Text style={[styles.cell]}>{item.vehicleType}</Text> */}
+                      <Text style={[styles.cell]}>{item.tot_vehi}</Text>
 
-                        {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
-                        {/* <Text style={[styles.cell]}>
-                          {new Date(item.date_time_in).toLocaleString()}
-                        </Text> */}
-                        {/* <Text style={[styles.cell]}>{item.paid_amt}</Text> */}
-                        {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                      </View>
+                      
+                      {/* {generalSettings.gst_flag === "N" && ( */}
+                      {/* <Text style={[styles.cell]}>{item?.advance_amt}</Text> */}
+                      {/* )} */}
+
+                      <Text style={[styles.cell]}>{item.tot_amt + item?.other_charges}</Text>
+                      {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                    </View>
                     );
-                  })}
-                  {operatorwiseReports.length!=0 &&(
-                  <>
+                })}
+
+                {useOperatorData.length!=0 &&(
+                  <>    
 
                   {generalSettings.gst_flag === "N" && (
                     <>
-                  <View
-                  style={{...styles.row, backgroundColor: colors["primary-color"],
-                  }}>
-                  <Text style={[styles.cell, styles.hcell]}> Advance Amount </Text>
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                  Advance Amount
+                  </Text>
                   <Text style={[styles.cell, styles.hcell]}> {totalAdvanceAmount} </Text>
                   </View>
-                  
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Paid Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      {totalAmount}
-                    </Text>
-                  </View>
-                  
-                  </>
-                  )}
 
+                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  <Text style={[styles.cell, styles.hcell]}>
+                  Paid Amount
+                  </Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAmount} </Text>
+
+                  </View>
+                </>
+                  )} 
 
                   {/* {generalSettings.gst_flag === "Y" && (
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
@@ -599,15 +652,12 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                     </Text>
                    
                   </View>
-                  )}    // GST OFF on Print */}
+                  )}    // GST OFF on Print  */}
 
-                  
-
-                  
 
                   {/* {generalSettings.gst_flag == "Y" && (
-                  <>
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                    <>
+                    <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}> CGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.CGST}</Text>
                   </View>
@@ -616,16 +666,16 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                     <Text style={[styles.cell, styles.hcell]}> SGST <Text style={{ fontWeight: 'bold' }}>@{gstList.sgst}%</Text></Text>
                     <Text style={[styles.cell, styles.hcell]}> {gstAmount.SGST} </Text>
                   </View>
-                  </>
-                  )}   // GST OFF on Print  */}
+                    </>
+                  )}      // GST OFF on Print       */}
+                  
 
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Net Amount
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
-                    {totalAmount + other_charges}
+                  <Text style={[styles.cell, styles.hcell]}>
+                  Net Amount
                   </Text>
+                   <Text style={[styles.cell, styles.hcell]}></Text>
+                  <Text style={[styles.cell, styles.hcell]}> {totalAmount + other_charges} </Text>
                   </View>
 
                   {/* {generalSettings.gst_flag == "Y" && (
@@ -652,21 +702,22 @@ console.log(formattedDateFrom, formattedDateTo, loginData.user.userdata.msg[0].i
                 </>
                 )} */}
 
-                  
-                  
-                <View style={{}}>
+
+                  <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
                     Report Generated on {date.toLocaleString()}{" "}
                   </Text>
                 </View>
-                </>
-                )}
+                  </>
+                  
+        )}
+                
               </View>
             </ScrollView>
           </View>
         )}
         {/* back and print action button */}
-        {operatorwiseReports.length!=0 &&(
+        {useOperatorData.length != 0 && (
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
@@ -706,7 +757,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: PixelRatio.roundToNearestPixel(16),
     paddingBottom: PixelRatio.roundToNearestPixel(10),
-    fontWeight: "500",
+    fontWeight: "bold",
     color: colors.black,
   },
   select_date_button: {

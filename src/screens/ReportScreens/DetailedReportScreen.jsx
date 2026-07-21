@@ -180,62 +180,76 @@ export default function DetailedReportScreen({ navigation }) {
 
     // Use for Mobile Device Start 
     if (getBlePermission && device_Type_Check == "M") {
-    
+
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
-  
-      getDetailedReport.map((item, index) => {
-      let datetume= dateTimefixedStringm(item.date_time_in.toString())
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString().slice(-5)}  ${datetume} [R]${(item.paid_amt+item?.other_charges).toString()}</font>\n` : `[L]<font size='11'>${(item.receipt_no).toString().slice(-5)} [L]${item.vehicle_no.toString().slice(-5)}  ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt} [R]${item.paid_amt.toString()}</font>`}`
+    
 
-      });
-  
-      if(receiptSettings?.report_flag == "Y"){
-  
-      if(receiptSettings.header1_flag==1){
-      payloadHeader +=
-      `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
-      }
-  
-      if(receiptSettings.header2_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
-      }
-  
-      if(receiptSettings.header3_flag==1){
-      payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
-      }
-  
-      if(receiptSettings.header4_flag==1){
-      payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
-      }
+    getDetailedReport.map((item, index) => {
+    let datetume= dateTimefixedStringm(item.date_time_in.toString())
+    payloadBody += `${generalSettings.gst_flag === "Y" ? `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(-5)}    ${datetume}  ${(item.paid_amt+item?.other_charges).toString()}\n` : `${(item.receipt_no).toString().slice(-5)}   ${item.vehicle_no.toString().slice(-5)}    ${datetume}  ${isNaN(item?.advance_amt) ? 0 : item?.advance_amt}  ${item.paid_amt.toString()}\n`}`
+    
+    });
 
-      if (generalSettings.gst_flag == "Y") {
-        GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
-      } else {
-        GST_Header += ``;
-      }
-  
-      if(receiptSettings.footer1_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-      }
-      if(receiptSettings.footer2_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-      }
-      if(receiptSettings.footer3_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
-      }
-      if(receiptSettings.footer4_flag==1){
-      payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-      }
-  
-      }
 
-      if (generalSettings.gst_flag == "Y") {
-        GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
-      } else {
-        GST_Yes_No += ``;
-      }
+    // Recpt.No.   Veh.No.   In Time   Amount
+
+    if(receiptSettings?.report_flag == "Y"){
+
+    if(receiptSettings.header1_flag==1){
+    payloadHeader +=
+    // `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+    payloadHeader += `${receiptSettings.header1}\n`;
+    }
+
+    if(receiptSettings.header2_flag==1){
+    // payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+    payloadHeader += `${receiptSettings.header2}\n`;
+    }
+
+    if(receiptSettings.header3_flag==1){
+    // payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    payloadHeader += `${receiptSettings.header3}\n`;
+    }
+
+    if(receiptSettings.header4_flag==1){
+    // payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    payloadHeader += `${receiptSettings.header4}\n`;
+    }
+
+    // if (generalSettings.gst_flag == "Y") {
+    //   // GST_Header += await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+    //   GST_Header += `GST No.: ${gstList.gst_number}\n`;
+    // } else {
+    //   GST_Header += ``;
+    // }
+
+    if(receiptSettings.footer1_flag==1){
+    // payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    payloadFooter += `${receiptSettings.footer1}\n`;
+    }
+    if(receiptSettings.footer2_flag==1){
+    // payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    payloadFooter += `${receiptSettings.footer2}\n`;
+    }
+    if(receiptSettings.footer3_flag==1){
+    // payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
+    payloadFooter += `${receiptSettings.footer3}\n`;
+    }
+    if(receiptSettings.footer4_flag==1){
+    // payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    payloadFooter += `${receiptSettings.footer4}\n`;
+    }
+
+    }
+
+
+    // if (generalSettings.gst_flag == "Y") {
+    //   GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
+    // } else {
+    //   GST_Yes_No += "";
+    // }
 
 
       try {
@@ -246,37 +260,54 @@ export default function DetailedReportScreen({ navigation }) {
       25,
       50,
       );
-      await ThermalPrinterModule.printBluetooth({
-      payload:
-      `[C]${payloadHeader}` +
-      // `${GST_Header}` + // GST OFF on Print 
-      `[C]<u><font size='small'>Detailed Report</font></u>\n` +
-      `[C]--------------------------------\n` +
-      `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-      `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
-      `[C]--------------------------------\n` +
-      `[C]--------------------------------\n` +
-      `${`[C]<font size='12'>Rec.No. Veh.No. InTime Paid</font>\n`}` +
-      `[C]--------------------------------` +
-      `[C]${payloadBody}\n` +
-      `[C]--------------------------------` +
-      `${generalSettings.pay_mode_flag == "Y" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-      `${generalSettings.pay_mode_flag == "N" ? `[L]<font size='normal'>NET: ${totalAmount + other_charges}</font>\n` : ""}` +
-      `[C]--------------------------------` +
 
-      `[C]\n${payloadFooter}\n`,
-      printerNbrCharactersPerLine: 30,
-      printerDpi: 120,
-      printerWidthMM: 58,
-      mmFeedPaper: 25,
-      });
-      } catch (err) {
-      ToastAndroid.show(
-      "ThermalPrinterModule - VehicleWiseFixedReportScreen",
-      ToastAndroid.SHORT,
-      );
-      console.log(err.message);
-      alert("Printer is not connected.")
+      await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "center" });
+      // await BluetoothEscposPrinter.printText(`${GST_Header}`, { align: "center" });
+      // if (generalSettings.gst_flag == "Y") {
+      //   await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+      //   }
+      await BluetoothEscposPrinter.printText("Detailed Report\n", { align: "center" });
+      
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+      await BluetoothEscposPrinter.printText(`From :${mydateFrom.toLocaleDateString("en-GB")} To :${mydateTo.toLocaleDateString("en-GB")}\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText(`Report On :${new Date().toLocaleString("en-GB")}\n`, { align: "left" });
+
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+      if (generalSettings.gst_flag === "Y") {
+        await BluetoothEscposPrinter.printText("Rec.No. Veh.No. InTime Paid\n", { align: "center" });
+        }
+
+      if (generalSettings.gst_flag === "N") {
+      await BluetoothEscposPrinter.printText("Rec.No. Veh.No. InTime Adv Paid\n", { align: "center" });
+      }
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+      await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+      if (generalSettings.pay_mode_flag == "Y") {
+        await BluetoothEscposPrinter.printText(`NET: ${totalAmount + other_charges}\n`, { align: "left" });  
+      }
+
+      if (generalSettings.pay_mode_flag == "N") {
+        await BluetoothEscposPrinter.printText(`NET: ${totalAmount + other_charges}\n`, { align: "left" }); 
+      }
+      
+      await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+
+      // if (generalSettings.gst_flag == "Y") {
+      //   await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+      // }
+      
+
+      await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+      await BluetoothEscposPrinter.printText("\r\n", {})
+      } catch (e) {
+      // alert(e.message || "ERROR")
+      Alert("Printer is not connected.")
       }
 
 

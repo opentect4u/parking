@@ -327,12 +327,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       // setLoading(false);
       // setPrintBtnActive(true)
 
-      // console.log('checkkkkkkkkkkkkkkkkkkkk', loginData?.user?.userdata?.msg[0], 'checkkkkkkkkkkkkkkkkkkkk');
-      // return;
+      
       
 
       /// Utsab M H
-         if (getBlePermission && device_Type_Check == "M") {
+        
+/// Utsab M H
+        if (getBlePermission && device_Type_Check == "M") {
 
         var payloadHeader = "";
         let payloadFooter = "";
@@ -439,7 +440,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       await BluetoothEscposPrinter.printColumn(
         [30],
         [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`RECEIPT NO : ${receipt_number +'.'}${loginData?.user?.userdata?.msg[0].receipt_no}`],
+        [`RECEIPT NO : ${receipt_number}`],
         {}
       );
       await BluetoothEscposPrinter.printColumn(
@@ -458,7 +459,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       await BluetoothEscposPrinter.printColumn(
         [30],
         [BluetoothEscposPrinter.ALIGN.LEFT],
-        [`YS SERVICE CHARGES : ${(Number(gstPrice?.totalPrice) + Number(gstList?.other_charges)).toFixed(2)}`],
+        [`YS Service Charges : ${(Number(gstPrice?.totalPrice) + Number(gstList?.other_charges)).toFixed(2)}`],
         // [`YS Service Charges : ${vehicle_rate}`],
         {}
       );
@@ -803,7 +804,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
             
           )} */}
 
-        {/* {generalSettings.pay_mode_flag == "Y" && (
+        {generalSettings.pay_mode_flag == "Y" && (
         <View style={styles.radioButton_new}>
         {radioOptions.map(option => (
         <RadioButton
@@ -816,7 +817,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
         />
         ))}
         </View>
-         )}  */}
+         )} 
 
           {/* ......... vehicle Advance Amount .......... */}
 
