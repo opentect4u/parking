@@ -114,6 +114,62 @@ reportRouter.post("/get_details_report", AuthCheckedMW, async (req, res) => {
 //   }
 // );
 
+// reportRouter.post(
+//   "/get_details_report_new",
+//   AuthCheckedMW,
+//   async (req, res) => {
+//     try {
+//       const data = req.body;
+//       // console.log(data, "kk");
+
+//       const start = parseInt(data.start) || 0;
+//       const length = parseInt(data.length) || 50;
+//       const search = data["search[value]"] || "";
+
+//       let select = `
+//         a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no,
+//         b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt,
+//         c.cgst, c.sgst, c.paid_amt, c.other_charges, c.pay_mode, f.operator_name
+//       `;
+
+//       let table_name = `
+//         td_vehicle_in a, td_vehicle_out b, td_receipt c,
+//         md_vehicle d, md_user e, md_operator f
+//       `;
+
+//       let whr = `
+//         a.receipt_no=b.receipt_no
+//         AND a.receipt_no=c.receipt_no
+//         AND a.vehicle_id=d.vehicle_id
+//         AND a.user_id_in=e.id
+//         AND e.user_id=f.user_id
+//         AND a.car_out_flag='Y'
+//         AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}'
+//         AND a.customer_id='${data.custId}'
+//       `;
+
+//       // ✅ Handle filters
+//       if (data.pay_mode && data.pay_mode !== "A") {
+//         whr += ` AND c.pay_mode='${data.pay_mode}'`;
+//       }
+
+//       if (data.operator_id && data.operator_id !== "A") {
+//         whr += ` AND f.operator_id='${data.operator_id}'`;
+//       }
+
+//       let order = "ORDER BY a.receipt_no";
+
+//       let res_dt = await db_Select(select, table_name, whr, order);
+//       // console.log(res_dt);
+//       res.send(res_dt);
+
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).send({ error: "Server error" });
+//     }
+//   }
+// );
+
 reportRouter.post(
   "/get_details_report_new",
   AuthCheckedMW,
@@ -122,47 +178,239 @@ reportRouter.post(
       const data = req.body;
       // console.log(data, "kk");
 
+      const draw = parseInt(data.draw) || 1;
+      const start = parseInt(data.start) || 0;
+      const length = parseInt(data.length) || 50;
+
+      let baseWhere = `
+      a.receipt_no=b.receipt_no 
+      AND a.receipt_no=c.receipt_no 
+      AND a.vehicle_id=d.vehicle_id 
+      AND a.user_id_in=e.id 
+      AND e.user_id=f.user_id 
+      AND a.car_out_flag='Y'
+      AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}'
+      AND a.customer_id='${data.custId}'
+    `;
+
+      if (data.pay_mode && data.pay_mode !== "A") {
+        baseWhere += ` AND c.pay_mode='${data.pay_mode}'`;
+      }
+
+      if (data.operator_id && data.operator_id !== "A") {
+        baseWhere += ` AND f.operator_id='${data.operator_id}'`;
+      }
+
+      if (data.vehicle_no) {
+       baseWhere += ` AND a.vehicle_no LIKE '%${data.vehicle_no}%'`;
+      }
+
+
+      // Count total records (without search)
+      const totalRec = await db_Select(
+      "COUNT(*) as count",
+      "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
+      baseWhere,
+      null
+    );
+    let totalRecords = totalRec.suc > 0 ? totalRec.msg[0].count : 0;
+
+    let whereClause = baseWhere;
+
+    // Count filtered records
+    const filteredRec = await db_Select(
+      "COUNT(*) as count",
+      "td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f",
+      whereClause,
+      null
+    );
+    let filteredRecords = filteredRec.suc > 0 ? filteredRec.msg[0].count : 0;
+
+    // MAIN SELECT QUERY (WITH PAGINATION)
       let select = `
-        a.receipt_no, a.date_time_in, a.device_id, d.vehicle_name, a.vehicle_no,
-        b.date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt,
+        a.receipt_no, DATE_FORMAT(a.date_time_in,'%d/%m/%Y %H:%i:%s') date_time_in, a.device_id, d.vehicle_name, a.vehicle_no,
+        DATE_FORMAT(b.date_time_out,'%d/%m/%Y %H:%i:%s') date_time_out, b.device_id device_id_out, c.base_amt, c.advance_amt,
         c.cgst, c.sgst, c.paid_amt, c.other_charges, c.pay_mode, f.operator_name
       `;
 
       let table_name = `
-        td_vehicle_in a, td_vehicle_out b, td_receipt c,
-        md_vehicle d, md_user e, md_operator f
+       td_vehicle_in a
+      JOIN td_vehicle_out b ON a.receipt_no=b.receipt_no
+      JOIN td_receipt c ON a.receipt_no=c.receipt_no
+      JOIN md_vehicle d ON a.vehicle_id=d.vehicle_id
+      JOIN md_user e ON a.user_id_in=e.id
+      JOIN md_operator f ON e.user_id=f.user_id
       `;
 
-      let whr = `
-        a.receipt_no=b.receipt_no
-        AND a.receipt_no=c.receipt_no
-        AND a.vehicle_id=d.vehicle_id
-        AND a.user_id_in=e.id
-        AND e.user_id=f.user_id
-        AND a.car_out_flag='Y'
-        AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}'
-        AND a.customer_id='${data.custId}'
-      `;
+      const orderLimit = `ORDER BY a.receipt_no LIMIT ${start}, ${length}`;
 
-      // ✅ Handle filters
-      if (data.pay_mode && data.pay_mode !== "A") {
-        whr += ` AND c.pay_mode='${data.pay_mode}'`;
-      }
+    const res_dt = await db_Select(select, table_name, whereClause, orderLimit);
 
-      if (data.operator_id && data.operator_id !== "A") {
-        whr += ` AND f.operator_id='${data.operator_id}'`;
-      }
-
-      let order = "ORDER BY a.receipt_no";
-
-      let res_dt = await db_Select(select, table_name, whr, order);
       // console.log(res_dt);
-      res.send(res_dt);
+
+      const totalsQuery = await db_Select(
+  `
+   SUM(t.base_amt) AS base_amt,
+   SUM(t.advance_amt) AS advance_amt,
+   SUM(t.cgst) AS cgst,
+   SUM(t.sgst) AS sgst,
+   SUM(t.paid_amt) AS paid_amt,
+   SUM(t.other_charges) AS other_charges,
+   SUM(t.base_amt + t.advance_amt + t.cgst + t.sgst + t.other_charges) AS tot_amt,
+   SUM(CASE WHEN UPPER(t.pay_mode)='U' THEN (t.base_amt + t.advance_amt + t.cgst + t.sgst + t.other_charges) ELSE 0 END) AS tot_upi,
+   SUM(CASE WHEN UPPER(t.pay_mode)='C' THEN (t.base_amt + t.advance_amt + t.cgst + t.sgst + t.other_charges) ELSE 0 END) AS tot_cash
+  `,
+  `
+  (
+    SELECT 
+      c.base_amt,
+      c.advance_amt,
+      c.cgst,
+      c.sgst,
+      c.paid_amt,
+      c.other_charges,
+      c.pay_mode
+    FROM td_vehicle_in a
+    JOIN td_vehicle_out b ON a.receipt_no=b.receipt_no
+    JOIN td_receipt c ON a.receipt_no=c.receipt_no
+    JOIN md_vehicle d ON a.vehicle_id=d.vehicle_id
+    JOIN md_user e ON a.user_id_in=e.id
+    JOIN md_operator f ON e.user_id=f.user_id
+    WHERE ${whereClause}
+    ORDER BY a.receipt_no
+    LIMIT ${start}, ${length}
+  ) AS t
+  `,
+  null,
+  null
+);
+
+ const totals = totalsQuery.suc > 0 ? totalsQuery.msg[0] : {
+      base_amt: 0,
+      advance_amt: 0,
+      cgst: 0,
+      sgst: 0,
+      paid_amt: 0,
+      tot_amt: 0,
+      tot_upi: 0,
+      tot_cash: 0
+    };
+       const grandTotalsQuery = await db_Select(
+        `
+         SUM(c.base_amt) AS base_amt,
+         SUM(c.advance_amt) AS advance_amt,
+         SUM(c.cgst) AS cgst,
+         SUM(c.sgst) AS sgst,
+         SUM(c.paid_amt) AS paid_amt,
+         SUM(c.other_charges) AS other_charges,
+         SUM(c.base_amt + c.advance_amt + c.cgst + c.sgst + c.other_charges) AS tot_amt,
+         SUM(CASE WHEN UPPER(c.pay_mode)='U' THEN (c.base_amt + c.advance_amt + c.cgst + c.sgst + c.other_charges) ELSE 0 END) AS tot_upi,
+         SUM(CASE WHEN UPPER(c.pay_mode)='C' THEN (c.base_amt + c.advance_amt + c.cgst + c.sgst + c.other_charges) ELSE 0 END) AS tot_cash
+        `,
+        `
+          td_vehicle_in a
+          JOIN td_vehicle_out b ON a.receipt_no=b.receipt_no
+          JOIN td_receipt c ON a.receipt_no=c.receipt_no
+          JOIN md_vehicle d ON a.vehicle_id=d.vehicle_id
+          JOIN md_user e ON a.user_id_in=e.id
+          JOIN md_operator f ON e.user_id=f.user_id
+        `,
+        baseWhere,
+        null
+      );
+
+      const grandTotals = grandTotalsQuery.suc > 0 ? grandTotalsQuery.msg[0] : {
+        base_amt: 0, advance_amt: 0, cgst: 0, sgst: 0, paid_amt: 0,
+        tot_amt: 0, tot_upi: 0, tot_cash: 0
+      };
+
+    // FINAL JSON RESPONSE FOR DATATABLES
+    res.json({
+      draw,
+      recordsTotal: totalRecords,
+      recordsFiltered: filteredRecords,
+      data: res_dt.suc > 0 ? res_dt.msg : [],
+      totals,  // TOTALS FOR CURRENT PAGE
+      grandTotals  // TOTALS FOR FULL DATA
+    });
 
     } catch (err) {
       console.error(err);
       res.status(500).send({ error: "Server error" });
     }
+  }
+);
+
+reportRouter.post(
+  "/get_details_report_excel",
+  AuthCheckedMW,
+  async (req, res) => {
+
+    // var custId = req.session.user.user_data.customer_id;
+    var data = req.body;
+    console.log(data,'data');
+    
+
+    let table_name = `td_vehicle_in a, td_vehicle_out b, td_receipt c, md_vehicle d, md_user e, md_operator f`;
+
+    let whr = `
+      a.receipt_no = b.receipt_no 
+      AND a.receipt_no = c.receipt_no 
+      AND a.vehicle_id = d.vehicle_id 
+      AND a.user_id_in = e.id 
+      AND e.user_id = f.user_id 
+      AND a.car_out_flag = 'Y'
+      AND b.date_time_out BETWEEN '${data.frm_dt}' AND '${data.to_dt}'
+      AND a.customer_id = '${data.custId}'
+    `;
+
+    if (data.pay_mode !== "A") {
+      whr += ` AND c.pay_mode = '${data.pay_mode}'`;
+    }
+
+    // MAIN DATA
+    let select = `
+      a.receipt_no,
+      DATE_FORMAT(a.date_time_in, '%d/%m/%Y %H:%i:%s') AS date_time_in,
+      a.device_id,
+      d.vehicle_name,
+      a.vehicle_no,
+      DATE_FORMAT(b.date_time_out, '%d/%m/%Y %H:%i:%s') AS date_time_out,
+      SEC_TO_TIME(TIMESTAMPDIFF(SECOND, a.date_time_in, b.date_time_out)) AS total_time,
+      b.device_id AS device_id_out,
+      c.base_amt,
+      c.advance_amt,
+      c.cgst,
+      c.sgst,
+      c.other_charges,
+      c.paid_amt,
+      c.pay_mode,
+      f.operator_name
+    `;
+
+    let order = `ORDER BY a.receipt_no`;
+
+    let res_dt = await db_Select(select, table_name, whr, order);
+
+    // TOTAL QUERY ------------------------------------
+    let totalSelect = `
+      SUM(c.base_amt) AS total_base,
+      SUM(c.advance_amt) AS total_advance,
+      SUM(c.cgst) AS total_cgst,
+      SUM(c.sgst) AS total_sgst,
+      SUM(c.other_charges) AS other_charges,
+      SUM(c.base_amt + c.advance_amt + c.cgst + c.sgst + c.other_charges) AS total_net,
+      SUM(CASE WHEN c.pay_mode='C' THEN (c.base_amt + c.advance_amt + c.cgst + c.sgst + c.other_charges) ELSE 0 END) AS total_cash,
+      SUM(CASE WHEN c.pay_mode='U' THEN (c.base_amt + c.advance_amt + c.cgst + c.sgst + c.other_charges) ELSE 0 END) AS total_upi
+    `;
+
+    let totals = await db_Select(totalSelect, table_name, whr);
+
+    res.send({
+      suc: res_dt.suc,
+      data: res_dt.msg,
+      totals: totals.msg[0] // <-- all totals in one object
+    });
   }
 );
 

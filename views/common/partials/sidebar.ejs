@@ -287,6 +287,11 @@
             >
           </li> -->
 
+            <li class="sidebar-item">
+            <a class="sidebar-link"
+            href="/superadmin/db_backup"><i data-feather="database" class="feather-icon"></i
+                ><span class="hide-menu">DB Backup</span></a>
+          </li>
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="/superadmin_logout">
@@ -492,30 +497,54 @@
 
 
 <script>
-  // Get current path
-  const currentPath = window.location.pathname;
-  console.log(currentPath,'current');
-  
+  $(function() {
+    const currentPath = window.location.pathname;
+    let activePath = currentPath;
 
-  // Get all sidebar links
-  const links = document.querySelectorAll('.sidebar-link');
+    const pathMap = {
+      '/superadmin/edit_device_setting': '/superadmin/device_setting',
+      '/superadmin/vehicle_edit_rate': '/superadmin/vehicle_rate',
+      '/superadmin/edit_customer': '/superadmin/customer',
+      '/superadmin/edit_operator': '/superadmin/operator',
+      '/superadmin/edit_vehicle': '/superadmin/vehicle',
+      '/superadmin/edit_shift': '/superadmin/shift',
+      '/superadmin/edit_gst': '/superadmin/gst',
+      '/superadmin/edit_header_footer': '/superadmin/header_footer',
+      '/superadmin/edit_report_pass': '/superadmin/report_pass',
+      '/superadmin/edit_report_permission': '/superadmin/report_permission',
+      '/superadmin/edit_admin': '/superadmin/admin',
+      '/superadmin/edit_seller': '/superadmin/seller'
+    };
 
-  links.forEach(link => {
-    const parentLi = link.closest('.sidebar-item');
-
-    // Match link href with current path
-    if (link.getAttribute('href') === currentPath) {
-      parentLi.classList.add('selected'); // highlight this item
-
-      // If inside a submenu, open the parent
-      const collapse = link.closest('.collapse');
-      if (collapse) {
-        collapse.classList.add('show'); // open submenu
-        const parentArrow = collapse.closest('.sidebar-item.has-arrow');
-        if (parentArrow) parentArrow.classList.add('open', 'active');
+    for (const [editPath, mainPath] of Object.entries(pathMap)) {
+      if (currentPath.includes(editPath)) {
+        activePath = mainPath;
+        break;
       }
-    } else {
-      parentLi.classList.remove('selected');
+    }
+
+    // Only run custom logic if it's an edit path (meaning activePath != currentPath)
+    // sidebarmenu.js handles exact matches automatically.
+    if (activePath !== currentPath) {
+      var element = $('ul#sidebarnav a').filter(function() {
+          return this.getAttribute('href') === activePath;
+      });
+      
+      element.parentsUntil(".sidebar-nav").each(function (index) {
+          if($(this).is("li") && $(this).children("a").length !== 0) {
+              $(this).children("a").addClass("active");
+              $(this).parent("ul#sidebarnav").length === 0
+                  ? $(this).addClass("active")
+                  : $(this).addClass("selected");
+          }
+          else if(!$(this).is("ul") && $(this).children("a").length === 0) {
+              $(this).addClass("selected");
+          }
+          else if($(this).is("ul")){
+              $(this).addClass('in');
+          }
+      });
+      element.addClass("active");
     }
   });
 </script>

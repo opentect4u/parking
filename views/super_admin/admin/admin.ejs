@@ -78,10 +78,14 @@
               <!-- </div> -->
             </div>
             <% } %>
+            </div>
         </div>
       </div>
     </div>
   </div>
+   <footer class="simple-footer mt-4">
+            <b>Hertz Communications © <span id="footerYear"></b></span>
+            </footer>
 
   <div class="modal fade" id="myModal">
     <div class="modal-dialog modal-dialog-centered modal-lg-custom">
@@ -161,6 +165,10 @@
       </div>
     </div>
   </div>
+
+  <script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
 
   <script>
   $(document).ready(function () {
@@ -280,5 +288,14 @@
 #cust_name option:first-child,
 #cust_name_modal option:first-child {
   color: #6c757d; /* light gray for placeholder */
+}
+
+.simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 75vw;
 }
 </style>

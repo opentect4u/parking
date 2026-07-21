@@ -1,6 +1,6 @@
 <div class="container-fluid py-4" style="background: linear-gradient(135deg, #f5f7fa, #e3e8ff); min-height: 100vh;">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="card shadow-lg border-0 rounded-4 form-card">
 
                 <div class="card-header gradient-header text-white py-3">
@@ -13,7 +13,7 @@
                 <form action="/superadmin/save_admin" id="myForm" method="post" class="p-4">
 
                     <div class="row">
-                        <div class="form-group col-md-6  mb-4">
+                        <div class="form-group col-md-4  mb-4">
                             <label for="cust_id" class="text-dark"><b>Location Name:</b></label>
                             <select name="cust_id" class="form-control" id="cust_id" disabled>
                                 <option value="">Select Location Name</option>
@@ -24,7 +24,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group col-md-6 mb-4">
+                        <div class="form-group col-md-4 mb-4">
                             <div class="form-group">
                               <label for="user_id" class="text-dark"><b>User Login ID</b></label>
                               <input type="text" class="form-control" maxlength="10" id="user_id" name="user_id" placeholder="Enter User Login ID...."
@@ -32,7 +32,7 @@
                             </div>
                           </div>
 
-                          <div class="form-group col-md-6 mb-4">
+                          <div class="form-group col-md-4 mb-4">
                             <div class="form-group">
                               <label for="pass" class="text-dark"><b>Password</b></label>
                               <input type="password" name="pass" id="pass" class="form-control" value="">
@@ -41,14 +41,14 @@
                              </div>
                             </div>
 
-                          <div class="form-group col-md-6 mb-4">
+                          <div class="form-group col-md-4 mb-4">
                             <div class="form-group">
                               <label for="user_name" class="text-dark"><b>User Name</b></label>
                               <input type="text" name="user_name" id="user_name" class="form-control" value="<%= data[0].user_name %>">
                             </div>
                           </div>
 
-                          <div class="form-group col-md-6 mb-4">
+                          <div class="form-group col-md-4 mb-4">
                             <div class="form-group">
                               <label for="user_mobile_no" class="text-dark"><b>User Mobile No</b></label>
                               <input type="text" name="user_mobile_no" maxlength="10" id="user_mobile_no" class="form-control" value="<%= data[0].user_mobile_no %>">
@@ -75,6 +75,10 @@
                         </div>
                 </form>
             </div>
+</div>
+ <footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
         </div>
     </div>
 </div>
@@ -100,7 +104,19 @@
     });
 </script>
 
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
 <style>
+  .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 51vw;
+}
 /* Card */
 .form-card {
   border-radius: 1.5rem;

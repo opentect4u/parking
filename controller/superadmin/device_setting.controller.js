@@ -117,6 +117,7 @@ const save_device = async (req, res) => {
       app_id: Joi.optional(),
       dev_mode: Joi.optional(),
       gst_flag: Joi.optional(),
+      dev_type: Joi.optional(),
       report_flag: Joi.optional(),
       tot_col: Joi.optional(),
       redirect_flag: Joi.optional(),
@@ -141,54 +142,39 @@ const save_device = async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     // ===== old data (for logging if update) =====
-        let oldData = null;
-        if (value.id > 0) {
-          const existing = await db_Select(
-            "*",
-            "md_setting",
-            `customer_id='${value.cust_id}' AND setting_id='${value.id}'`
-          );
-          oldData = existing.msg[0] || null;
-        }
+    let oldData = null;
+    if (value.id > 0) {
+      const existing = await db_Select(
+        "*",
+        "md_setting",
+        `customer_id='${value.cust_id}' AND setting_id='${value.id}'`
+      );
+      oldData = existing.msg[0] || null;
+    }
 
     let fields =
-        value.id > 0
-          ? `report_flag='${
-              value.report_flag == "Y" ? "Y" : "N"
-            }',total_collection='${
-              value.tot_col == "Y" ? "Y" : "N"
-            }',adv_pay='${
-              value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"
-            }',adv_value='${value.adv_value}',grace_period_flag='${
-              value.grace_flag == "Y" ? "Y" : "N"
-            }',grace_value='${
-            value.grace_value && value.grace_value.includes(":")
-    ? value.grace_value                      // already HH:MM:SS
-    : value.grace_value != "" 
-        ? `00:${value.grace_value.padStart(2, "0")}:00` // treat as minutes
-        : "00:00:00"
-}',
-redirection_flag='${
-              value.redirect_flag == "Y" ? "Y" : "N"
-            }',gst_flag='Y',pay_mode_flag='${ 
-              value.pay_mode_flag == "Y" ? "Y" : "N"}',qr_code_flag='${ 
-              value.qr_code_flag == "Y" ? "Y" : "N"}',modified_by='${user_name}',updated_at='${datetime}'`
-          : "(app_id,customer_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,gst_flag,pay_mode_flag,qr_code_flag,created_by,created_at)",
-      values = `('${value.app_id}','${value.cust_id}','H','${
-        value.dev_mode
-      }','${value.report_flag == "Y" ? "Y" : "N"}','${
-        value.tot_col == "Y" ? "Y" : "N"
-      }','${value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"}','${
-        value.adv_value
-      }','${value.grace_flag == "Y" ? "Y" : "N"}','${
-        value.grace_value != "" ? `00:${value.grace_value}:00` : 0
-      }','${
-        value.redirect_flag == "Y" ? "Y" : "N"
-      }','Y','${
-        value.pay_mode_flag && value.pay_mode_flag == "Y" ? "Y" : "N"
-      }','${
-        value.qr_code_flag && value.qr_code_flag == "Y" ? "Y" : "N"
-      }','${user_name}','${datetime}')`;
+      value.id > 0
+        ? `report_flag='${value.report_flag == "Y" ? "Y" : "N"
+        }',total_collection='${value.tot_col == "Y" ? "Y" : "N"
+        }',adv_pay='${value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"
+        }',adv_value='${value.adv_value}',grace_period_flag='${value.grace_flag == "Y" ? "Y" : "N"
+        }',grace_value='${value.grace_value && value.grace_value.includes(":")
+          ? value.grace_value                      // already HH:MM:SS
+          : value.grace_value != ""
+            ? `00:${value.grace_value.padStart(2, "0")}:00` // treat as minutes
+            : "00:00:00"
+        }',
+redirection_flag='${value.redirect_flag == "Y" ? "Y" : "N"
+        }',gst_flag='Y',pay_mode_flag='${value.pay_mode_flag == "Y" ? "Y" : "N"}',qr_code_flag='${value.qr_code_flag == "Y" ? "Y" : "N"}',modified_by='${user_name}',updated_at='${datetime}'`
+        : "(app_id,customer_id,device_type,dev_mod,report_flag,total_collection,adv_pay,adv_value,grace_period_flag,grace_value,redirection_flag,gst_flag,pay_mode_flag,qr_code_flag,created_by,created_at)",
+      values = `('${value.app_id}','${value.cust_id}','${value.dev_type}','${value.dev_mode
+        }','${value.report_flag == "Y" ? "Y" : "N"}','${value.tot_col == "Y" ? "Y" : "N"
+        }','${value.adv_pay_flag && value.adv_pay_flag == "Y" ? "Y" : "N"}','${value.adv_value
+        }','${value.grace_flag == "Y" ? "Y" : "N"}','${value.grace_value != "" ? `00:${value.grace_value}:00` : 0
+        }','${value.redirect_flag == "Y" ? "Y" : "N"
+        }','Y','${value.pay_mode_flag && value.pay_mode_flag == "Y" ? "Y" : "N"
+        }','${value.qr_code_flag && value.qr_code_flag == "Y" ? "Y" : "N"
+        }','${user_name}','${datetime}')`;
     let res_dt = await db_Insert(
       "md_setting",
       fields,
@@ -235,9 +221,9 @@ redirection_flag='${
       logger.info(
         `${user_name} Updated Operator [CustID: ${value.cust_id}, ID: ${value.id}] Fields changed: ${changes.join(", ")}`
       );
-    req.flash(
-      "success", "Updated successfully");
-      } else {
+      req.flash(
+        "success", "Updated successfully");
+    } else {
       const createdFields = [
         `customer_id: '${value.cust_id}'`,
         `dev_mode: '${value.dev_mode}'`,
@@ -263,7 +249,7 @@ redirection_flag='${
     //   res.send(res_dt)
   } catch (error) {
     // console.log(error,'ERRR');
-      const isUpdate = req.body && req.body.id > 0;
+    const isUpdate = req.body && req.body.id > 0;
     req.flash(
       "error",
       isUpdate

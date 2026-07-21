@@ -88,9 +88,22 @@
     </div>
   </div>
 </div>
+</div>
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
+
 
 <!-- Custom Styles -->
 <style>
+  .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 57vw;
+}
 .rounded-card {
   border-radius: 25px; /* Full card rounding */
   overflow: hidden;    /* Ensures header & body respect border radius */
@@ -170,4 +183,8 @@
       window.location.href = "/superadmin/vehicle_rate";
     });
   });
+</script>
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
 </script>

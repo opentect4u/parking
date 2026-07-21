@@ -44,7 +44,7 @@
                     <h5 class="text-center text-secondary mb-3">
                        <span id="searchCred"></span>
                     </h5>
-                    <div class="table-responsive shadow-sm rounded-3" style="max-height: 400px; overflow-y: auto;">
+                    <div class="table-responsive shadow-sm rounded-3">
                         <table class="table table-bordered table-hover align-middle">
                             <thead class="table-fixed-header">
                                 <tr>
@@ -93,12 +93,21 @@
     <i class="fa fa-file-excel me-2"></i> Excel
   </button>
 </div>
+<button id="goTopBtn" title="Go to Top">
+                  <i class="fa fa-arrow-up"></i>
+                </button>
+                <button id="goDownBtn" title="Go to Top">
+                  <i class="fa fa-arrow-down"></i>
+                </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
 
 <style>
     .table-fixed-header th {
@@ -118,7 +127,7 @@
   background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Warm gradient */
   color: rgb(20, 14, 14);
   border: none;
-  border-radius: 50px;
+  border-radius: 3px;
   font-weight: 500;
   transition: all 0.3s;
 }
@@ -153,10 +162,46 @@
   background-color: rgba(13, 110, 253, 0.1);
 }
     .btn-success {
-  background: linear-gradient(90deg, #28a745, #218838);
+  background: linear-gradient(90deg, #28a745, #24422b);
   color: white;
-  border-radius: 50px;
+  border-radius: 3px;
   border: none;
+}
+#goTopBtn, #goDownBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+    background-color: #8a4286;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+}
+
+#goTopBtn {
+    bottom: 90px;
+}
+
+/* Bottom button appears above top button */
+#goDownBtn {
+    bottom: 30px;
+}
+
+#goTopBtn:hover, #goDownBtn:hover {
+    background-color: #8a4286;
+}
+.simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 59vw;
 }
 </style>
 
@@ -165,6 +210,41 @@
     $(document).ready(function () {
         $('#resultDiv').hide()
     })
+</script>
+
+<script>
+// Show button on scroll
+window.onscroll = function () {
+    const topBtn = document.getElementById("goTopBtn");
+    const downBtn = document.getElementById("goDownBtn");
+
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        topBtn.style.display = "block";
+    } else {
+        topBtn.style.display = "none";
+    }
+
+    // Show bottom button only if NOT already at bottom
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        downBtn.style.display = "none";
+    } else {
+        downBtn.style.display = "block";
+    }
+};
+
+// Scroll to top
+document.getElementById("goTopBtn").onclick = function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Scroll to bottom
+document.getElementById("goDownBtn").onclick = function () {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+};
+</script>
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
 </script>
 <!-- <script>
     $('#btnSubmit').on('click', function () {
@@ -257,7 +337,9 @@ $('#btnSubmit').on('click', function () {
 
     if (frm_dt != '' && to_dt != '' && custId != '') {
         $('#resultDiv').show();
-        $('#resultDiv table tbody').empty();
+        // $('#resultDiv table tbody').empty();
+        var tbody = $('#resultDiv table tbody'); // <-- FIX: define tbody
+        tbody.empty();
 
         // Always show location name and dates
         $('#searchCred').html(`<b>Operator Wise Report of ${custName} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
@@ -272,6 +354,10 @@ $('#btnSubmit').on('click', function () {
                 $(".preloader").fadeIn();
             },
             success: function (res) {
+                 if(!res || !res.msg){
+                    console.error("Invalid response:", res);
+                    return;
+                }
                 var paid_amt_tot = 0;
                 var base_amt_tot = 0;
                 var advance_amt_tot = 0;
@@ -284,15 +370,14 @@ $('#btnSubmit').on('click', function () {
                 // $('#resultDiv').show();
                 // $('#resultDiv table tbody').empty();
 
-                if (res.suc > 0) {
-                    if (res.msg.length > 0) {
+                if (res.suc > 0 && res.msg.length > 0) {
                         // $('#searchCred').html(`<b>Operator Wise Report of ${custName} from ${createDate(frm_dt)} to ${createDate(to_dt)}</b>`);
                         let i = 1;
                         for (let dt of res.msg) {
-                            let base_amt = parseFloat(dt.base_amt);
-                            let advance_amt = parseFloat(dt.advance_amt);
-                            let cgst = parseFloat(dt.cgst);
-                            let sgst = parseFloat(dt.sgst);
+                            let base_amt = parseFloat(dt.base_amt) || 0;
+                            let advance_amt = parseFloat(dt.advance_amt) || 0;
+                            let cgst = parseFloat(dt.cgst) || 0;
+                            let sgst = parseFloat(dt.sgst) || 0;
                             // let paid_amt = parseFloat(dt.paid_amt);
                             let other_charge_amt = parseFloat(dt.other_charges) || 0;
                             // let total_amt = paid_amt + advance_amt;
@@ -306,7 +391,8 @@ $('#btnSubmit').on('click', function () {
                             tot_other_charges += other_charge_amt;
                             tot_amt_tot += total_amt;
 
-                            $('#resultDiv table tbody').append(`
+                            // $('#resultDiv table tbody').append(`
+                            tbody.append(`
                                 <tr>
                                     <td class=text-dark>${i}</td>
                                     <td class=text-dark>${dt.mc_srl_no_out}</td>
@@ -323,6 +409,9 @@ $('#btnSubmit').on('click', function () {
                             `);
                             i++;
                         }
+                        }else {
+                    tbody.append('<tr><td colspan="10" class="text-center text-danger">No Data Found</td></tr>');
+                }
 
                         $('#tot_base').text(base_amt_tot.toFixed(2));
                         $('#advance_amt').text(advance_amt_tot.toFixed(2));
@@ -331,10 +420,9 @@ $('#btnSubmit').on('click', function () {
                         // $('#paid_amt').text(paid_amt_tot.toFixed(2));
                         // $('#tot_other_charges').text(tot_other_charges.toFixed(2));
                         $('#tot_amt').text(tot_amt_tot.toFixed(2));
-                    } else {
-                        $('#resultDiv table tbody').append('<tr><td colspan="10" class="text-center text-danger">No Data Found</td></tr>');
-                    }
-                }
+            },
+            error: function(xhr, status, err){
+                console.error("AJAX Error:", status, err);
             },
             complete: function () {
                 $(".preloader").fadeOut();

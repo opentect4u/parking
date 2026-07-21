@@ -169,7 +169,8 @@ const dashboard_page = async (req, res) => {
 const dailyReceipts = await db_Select(
   "DATE(a.date_time_in) as date, COUNT(*) as count, IFNULL(SUM(b.paid_amt + b.other_charges), 0) as amount",
   "td_vehicle_in a LEFT JOIN td_receipt b ON a.user_id_in=b.user_id AND a.receipt_no=b.receipt_no",
-  `a.customer_id='${locationId}' GROUP BY DATE(a.date_time_in) ORDER BY DATE(a.date_time_in) ASC`
+  `a.customer_id='${locationId}'  AND a.date_time_in >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+   AND a.date_time_in <  DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH) GROUP BY DATE(a.date_time_in) ORDER BY DATE(a.date_time_in) ASC`
 );
 
 // ✅ Monthly receipts with amount

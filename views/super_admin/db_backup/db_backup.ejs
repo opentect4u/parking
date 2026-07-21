@@ -1,0 +1,165 @@
+
+<style>
+    /* .btn-gradient {
+  background: linear-gradient(90deg, #106810, #175c26);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: all 0.3s;
+} */
+.btn-gradient {
+    background: linear-gradient(90deg, #28a745, #24422b);
+    color: white;
+    border-radius: 3px;
+    border: none;
+}
+.btn:hover {
+    color: white
+}
+/* #btnSubmit {
+  height: calc(2.25rem + 2px); 
+  font-size: 0.95rem;
+} */
+#btnSubmit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 57vw;
+}
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-overlay.d-none {
+  display: none;
+}
+
+.spinner {
+  width: 55px;
+  height: 55px;
+  border: 6px solid #ddd;
+  border-top: 6px solid #28a745;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-text {
+  margin-top: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg rounded-4 border-0 p-4" style="background: linear-gradient(to right, #c5cedf, #bb9f9f00);">
+                <h3 class="card-title mb-4 text-primary" style="margin-left: 30vw;">
+                    <%= title %>
+                </h3>
+
+                    <div class="row g-3 align-items-end">
+                      <div class="col-md-2"></div>
+                      <!-- From Date -->
+                      <div class="col-md-4">
+                      <label for="frm_dt" class="form-label fw-bold text-dark"><b>From Date</b></label>
+                      <input type="datetime-local" id="frm_dt" name="frm_dt" class="form-control form-control-xl rounded-pill shadow-sm input-custom" required>
+                      </div>
+                
+                      <!-- To Date -->
+                      <div class="col-md-4">
+                      <label for="to_dt" class="form-label fw-bold text-dark"><b>To Date</b></label>
+                      <input type="datetime-local" id="to_dt" name="to_dt" class="form-control form-control-xl rounded-pill shadow-sm input-custom" required>
+                      </div>
+                     <div class="col-md-2"></div>
+                  </div>
+                 <div class="row mt-4 justify-content-center">
+                   <div class="col-md-2 d-flex justify-content-center">
+                        <button type="button" class="btn btn-gradient shadow-sm px-4" id="btnSubmit">
+                          <i class="fas fa-download"></i> CSV Backup
+                        </button>
+                     </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
+
+ <!-- 🔹 CSV Loader Overlay (ADD HERE) -->
+    <div id="loaderOverlay" class="loader-overlay d-none">
+      <div class="spinner"></div>
+      <div class="loader-text">Preparing CSV...</div>
+    </div>
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
+<script>
+$("#btnSubmit").on("click", function () {
+  const from_date = $("#frm_dt").val();
+  const to_date = $("#to_dt").val();
+
+  if (!from_date || !to_date) {
+    alert("Please select From Date and To Date");
+    return;
+  }
+
+   // ✅ Show loader
+  $("#loaderOverlay").removeClass("d-none");
+
+  // 🔹 Create hidden form for file download
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/superadmin/download_csv_backup";
+
+  const fromInput = document.createElement("input");
+  fromInput.type = "hidden";
+  fromInput.name = "from_date";
+  fromInput.value = from_date;
+
+  const toInput = document.createElement("input");
+  toInput.type = "hidden";
+  toInput.name = "to_date";
+  toInput.value = to_date;
+
+  form.appendChild(fromInput);
+  form.appendChild(toInput);
+  document.body.appendChild(form);
+
+   // ⏱ Hide loader after browser starts download
+  setTimeout(() => {
+    $("#loaderOverlay").addClass("d-none");
+  }, 3000); // adjust if CSV is large
+
+  form.submit();
+  // document.body.removeChild(form);
+});
+</script>

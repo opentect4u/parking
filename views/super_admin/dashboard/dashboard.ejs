@@ -296,8 +296,12 @@ document.addEventListener("click", (e) => {
     </div>
   </div>
 </div>
-
-
+<!-- =======================
+Footer
+======================= -->
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
 </div>
 
 
@@ -443,7 +447,38 @@ Custom CSS
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
+.dashboard-footer {
+  background: linear-gradient(135deg, #a7bcd8, #b596d6);
+  color: #193d62;
+  padding: 14px 20px;
+  font-size: 14px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-footer b {
+  font-weight: 600;
+}
+
+.dashboard-footer span {
+  letter-spacing: 0.3px;
+}
+.simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 51vw;
+}
+
 </style>
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
 
 <script>
   // function updateGreeting() {
@@ -751,13 +786,27 @@ function initEmptyCharts() {
 initEmptyCharts();
 
 function renderCharts(data) {
+  const now = new Date();
+  const currentMonth = now.getMonth(); // 0–11
+  const currentYear = now.getFullYear();
+
+   // ✅ FILTER DAILY DATA FOR CURRENT MONTH
+  const filteredDailyReceipts = data.dailyReceipts.filter(d => {
+    const dt = new Date(d.date);
+    return (
+      dt.getMonth() === currentMonth &&
+      dt.getFullYear() === currentYear
+    );
+  });
+
   if (dailyChartInstance) dailyChartInstance.destroy();
   if (monthlyChartInstance) monthlyChartInstance.destroy();
   // dailyChartInstance.update('active'); 
 
   // ========== Daily Chart ==========
   const dailyCtx = document.getElementById("dailyReceiptsChart").getContext("2d");
-  const maxDaily = Math.max(...data.dailyReceipts.map(d => d.amount), 0);
+  // const maxDaily = Math.max(...data.dailyReceipts.map(d => d.amount), 0);
+  const maxDaily = Math.max(...filteredDailyReceipts.map(d => d.amount), 0);
 
   dailyChartInstance = new Chart(dailyCtx, {
     type: "bar",
@@ -817,11 +866,15 @@ function renderCharts(data) {
           callbacks: {
             label: (context) => {
               const idx = context.dataIndex;
+              // const amount = context.dataset.data[idx];
+              // const count = data.dailyReceipts[idx].count;
               const amount = context.dataset.data[idx];
               const count = data.dailyReceipts[idx].count;
               return [
-                `Amount: ₹${amount.toLocaleString()}`,
-                `Receipts: ${count}`
+                // `Amount: ₹${amount.toLocaleString()}`,
+                // `Receipts: ${count}`
+                `Amount: ₹${filteredDailyReceipts[idx].amount.toLocaleString()}`,
+              `Receipts: ${filteredDailyReceipts[idx].count}`
               ];
             }
           }

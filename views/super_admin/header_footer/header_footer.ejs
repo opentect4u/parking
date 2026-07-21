@@ -56,6 +56,10 @@
         </div>
       </div>
     </div>
+  
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
   </div>
 
   <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
@@ -246,6 +250,14 @@
   </div>
 
   <style>
+    .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 57vw;
+}
   /* Card styling */
   /* Full card border radius */
   .card {
@@ -334,6 +346,9 @@
 
 </style>
 
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
 
 <script>
     $(document).ready(function () {

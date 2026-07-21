@@ -104,6 +104,9 @@ rel="stylesheet">
     </div>
   </div>
 </div>
+ <footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
 
 
 
@@ -197,6 +200,9 @@ rel="stylesheet">
       </div>
     </div>
   </div>
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
 
 
 <script>
@@ -219,6 +225,14 @@ rel="stylesheet">
   </script>
 
   <style>
+    .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 51vw;
+}
 /* Gradient Button */
 .btn-gradient {
   background: linear-gradient(45deg, #dbbcda, #6d83e2);

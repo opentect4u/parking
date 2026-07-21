@@ -99,6 +99,9 @@
     </div>
   </div>
 </div>
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -180,10 +183,10 @@
             <div class="col-md-3">
               <div class="form-group">
                 <label for="dev_type" class="text-dark"><b>Device Type</b></label>
-                <select name="dev_type" class="form-control" id="dev_type" readonly>
+                <select name="dev_type" class="form-control" id="dev_type">
                   <!-- <option value="">Select Device Type</option> -->
                   <option value="H">Handheld Device</option>
-                  <!-- <option value="M">Mobile Device</option> -->
+                  <option value="M">Mobile Device</option>
                 </select>
               </div>
             </div>
@@ -259,6 +262,12 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
 
 <script>
   $(document).ready(function () {
@@ -712,5 +721,13 @@
     font-weight: 600;
     color: #333;
   }
+  .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 57vw;
+}
 
 </style>

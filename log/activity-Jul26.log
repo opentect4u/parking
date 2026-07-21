@@ -1,0 +1,14 @@
+2026-07-21 12:20:37 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2026-07-21 12:20:37 
+----------------------------------------------
+2026-07-21 12:20:48 info: Yatri Sathi Updated Operator [CustID: 1, ID: 1] Fields changed: dev_type: 'H' → 'M', adv_value: '0' → '0' 
+----------------------------------------------
+2026-07-21 12:21:14 info: Yatri Sathi Updated Operator [CustID: 1, ID: 1] Fields changed: dev_type: 'M' → 'H', adv_value: '0' → '0' 
+----------------------------------------------
+2026-07-21 12:21:53 info: Yatri Sathi Created Operator [CustID: 1] Fields: customer_id: '1', dev_mode: 'F', app_id: '5667777', gst_flag: 'Y', device_type: 'M', report_flag: 'N', total_collection: 'N', redirection_flag: 'N', grace_period_flag: 'Y', grace_value: '00', adv_pay: 'Y', adv_value: '00', pay_mode_flag: 'N', qr_code_flag: 'N' 
+----------------------------------------------
+2026-07-21 12:22:32 info: Yatri Sathi Updated Operator [CustID: 1, ID: 1] Fields changed: dev_type: 'H' → 'M', adv_value: '0' → '0' 
+----------------------------------------------
+2026-07-21 13:08:30 info: LOGIN SUCCESSFULLY - User: sss@gmail.com, Name: Yatri Sathi, Customer: null, Time: 2026-07-21 13:08:30 
+----------------------------------------------
+2026-07-21 13:18:09 info: Yatri Sathi Updated Operator [CustID: 1, ID: 1] Fields changed: dev_type: 'M' → 'undefined', adv_pay: 'Y' → 'N', adv_value: '0' → '0' 
+----------------------------------------------

@@ -88,6 +88,10 @@
       </div>
     </div>
   </div>
+  
+    <footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
 
   <div class="modal fade" id="myModal">
     <div class="modal-dialog modal-dialog-centered modal-lg-custom">
@@ -168,7 +172,19 @@
     });
   </script>
 
+  <script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
   <style>
+    .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 57vw;
+}
     .modal-lg-custom {
   max-width: 700px; /* default modal-lg is ~900px */
 }

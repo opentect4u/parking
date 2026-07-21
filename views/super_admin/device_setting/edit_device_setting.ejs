@@ -1,8 +1,5 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <!-- Bootstrap Toggle CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
 
@@ -10,8 +7,18 @@
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
 
 <style>
+  .simple-footer {
+    text-align: center;
+    font-size: 14px;
+    /* color: #6b7280;   soft gray */
+    color: black;
+    padding: 12px 0;
+    margin-left: 57vw;
+  }
+
   .btn-gradient {
-    background: linear-gradient(135deg,#e7b8d9, #7799d8); /* gradient colors */
+    background: linear-gradient(135deg, #e7b8d9, #7799d8);
+    /* gradient colors */
     color: #fff;
     border: none;
     border-radius: 30px;
@@ -19,15 +26,16 @@
     font-size: 1rem;
     font-weight: bold;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
+
   body {
     background: #f5f7fa;
   }
 
   .card-custom {
     border-radius: 20px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     border: none;
     overflow: hidden;
   }
@@ -70,27 +78,27 @@
   <div class="row justify-content-center">
     <div class="col-lg-11">
       <div class="card card-custom">
-        
+
         <!-- Card Header -->
         <div class="card-header-custom d-flex align-items-center">
-          <i class="fa fa-arrow-circle-left me-2" id="back" style="cursor:pointer;"></i>
+          <i class="fa fa-arrow-circle-left mr-2" id="back" style="cursor:pointer;"></i>
           <h2>Device Edit Details</h2>
         </div>
 
         <!-- Card Body -->
         <div class="card-body p-4">
           <form action="/superadmin/save_device_setting" id="myForm" method="post">
-            <div class="row g-4">
+            <div class="row">
 
               <div class="col-md-3">
                 <label for="cust_id" class="form-label">Location Name</label>
                 <select name="cust_id" class="form-control" id="cust_id" disabled>
                   <option value="">Select Location Name</option>
-                  <% customer.forEach(dt =>{ %>
-                    <option value="<%= dt.customer_id %>" <%= dt.customer_id == data[0].customer_id ? 'selected' : '' %>>
+                  <% customer.forEach(dt=>{ %>
+                    <option value="<%= dt.customer_id %>" <%=dt.customer_id==data[0].customer_id ? 'selected' : '' %>>
                       <%= dt.customer_name %>
                     </option>
-                  <% }) %>
+                    <% }) %>
                 </select>
               </div>
 
@@ -98,91 +106,91 @@
                 <label for="dev_mode" class="form-label">Mode</label>
                 <select name="dev_mode" class="form-control" id="dev_mode" disabled>
                   <!-- <option value="">Select Mode</option> -->
-                  <option value="F" <% if (data[0].dev_mod === 'F') { %>selected<% } %>>Fixed</option>
+                  <option value="F" <% if (data[0].dev_mod==='F' ) { %>selected<% } %>>Fixed</option>
                   <!-- <option value="D" <% if (data[0].dev_mod === 'D') { %>selected<% } %>>Fixed</option> -->
                 </select>
               </div>
 
               <div class="col-md-3">
                 <label for="app_id" class="form-label">Device ID</label>
-                <input type="text" class="form-control" id="app_id" name="app_id"
-                  placeholder="Enter Device ID...." value="<%= data[0].app_id %>" readonly>
-              </div>
-
-              <div class="col-md-3 cust-toggle1">
-                <label for="gst_flag" class="form-label">GST Flag</label><br>
-                <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle"
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="gst_flag" disabled <%=(data[0].gst_flag=='Y' )?'checked':''%>>
+                <input type="text" class="form-control" id="app_id" name="app_id" placeholder="Enter Device ID...."
+                  value="<%= data[0].app_id %>" readonly>
               </div>
 
               <div class="col-md-3">
                 <label for="dev_type" class="form-label">Device Type</label>
-                <select name="dev_type" class="form-control" id="dev_type" disabled>
-                  <!-- <option value="">Select Device Type</option> -->
-                  <option value="H" <% if (data[0].device_type === 'H') { %>selected<% } %>>Handheld Device</option>
-                  <!-- <option value="M" <% if (data[0].device_type === 'M') { %>selected<% } %>>Mobile Device</option> -->
-                </select>
+                <input type="text" class="form-control" id="dev_type" name="dev_type" 
+                  value="<%= data[0].device_type === 'H' ? 'Handheld Device' : (data[0].device_type === 'M' ? 'Mobile Device' : '') %>" readonly disabled>
+              </div>
+
+              <div class="col-md-3 cust-toggle1">
+                <label for="gst_flag" class="form-label">GST Flag</label><br>
+                <input type="checkbox" value="Y" id="gst_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="gst_flag" disabled
+                  <%=(data[0].gst_flag=='Y' )?'checked':''%>>
               </div>
 
               <!-- More Toggle Fields -->
               <div class="col-md-3 cust-toggle1">
                 <label for="report_flag" class="form-label">Report Flag</label><br>
-                <input type="checkbox" value="Y" id="report_flag" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="report_flag" <%=(data[0].report_flag=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="report_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="report_flag"
+                  <%=(data[0].report_flag=='Y' )?'checked':''%>>
               </div>
 
               <div class="col-md-3 cust-toggle1">
                 <label for="tot_col" class="form-label">Total Collection</label><br>
-                <input type="checkbox" value="Y" id="tot_col" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="tot_col" <%=(data[0].total_collection=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="tot_col" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="tot_col"
+                  <%=(data[0].total_collection=='Y' )?'checked':''%>>
               </div>
 
               <div class="col-md-3 cust-toggle1">
                 <label for="redirect_flag" class="form-label">Redirection</label><br>
-                <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Home" data-off="Back"
-                  name="redirect_flag" <%=(data[0].redirection_flag=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="redirect_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Home" data-off="Back" name="redirect_flag"
+                  <%=(data[0].redirection_flag=='Y' )?'checked':''%>>
               </div>
 
               <div class="col-md-3 cust-toggle1">
                 <label for="grace_flag" class="form-label">Grace Period Flag</label><br>
-                <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="grace_flag" <%=(data[0].grace_period_flag=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="grace_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="grace_flag"
+                  <%=(data[0].grace_period_flag=='Y' )?'checked':''%>>
               </div>
 
-              <div class="col-md-3" id="hide_grace">
-                <label for="grace_value" class="form-label">Grace Value <span class="text-danger">(Minutes)</span></label>
-                <input type="text" name="grace_value" id="grace_value" class="form-control" value="<%= data[0].grace_value %>">
+              <div class="col-md-3 cust-toggle1" id="hide_grace">
+                <label for="grace_value" class="form-label">Grace Value <span
+                    class="text-danger">(Minutes)</span></label>
+                <input type="text" name="grace_value" id="grace_value" class="form-control"
+                  value="<%= data[0].grace_value %>">
               </div>
 
               <div class="col-md-3 cust-toggle1">
                 <label for="adv_pay_flag" class="form-label">Advance Flag</label><br>
-                <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="adv_pay_flag" <%=(data[0].adv_pay=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="adv_pay_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="adv_pay_flag"
+                  <%=(data[0].adv_pay=='Y' )?'checked':''%>>
               </div>
 
-              <div class="col-md-3" id="hide_adv">
+              <div class="col-md-3 cust-toggle1" id="hide_adv">
                 <label for="adv_value" class="form-label">Advance Value</label>
-                <input type="text" name="adv_value" id="adv_value" class="form-control" value="<%= data[0].adv_value %>">
+                <input type="text" name="adv_value" id="adv_value" class="form-control"
+                  value="<%= data[0].adv_value %>">
               </div>
 
               <div class="col-md-3 cust-toggle1">
                 <label for="pay_mode_flag" class="form-label">Pay Mode Flag</label><br>
-                <input type="checkbox" value="Y" id="pay_mode_flag" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="pay_mode_flag" <%=(data[0].pay_mode_flag=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="pay_mode_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="pay_mode_flag"
+                  <%=(data[0].pay_mode_flag=='Y' )?'checked':''%>>
               </div>
 
               <div class="col-md-3 cust-toggle1">
                 <label for="qr_code_flag" class="form-label">QR Code Flag</label><br>
-                <input type="checkbox" value="Y" id="qr_code_flag" data-toggle="toggle" 
-                  data-onstyle="success" data-offstyle="danger" data-on="Active" data-off="Deactive"
-                  name="qr_code_flag" <%=(data[0].qr_code_flag=='Y' )?'checked':''%>>
+                <input type="checkbox" value="Y" id="qr_code_flag" data-toggle="toggle" data-onstyle="success"
+                  data-offstyle="danger" data-on="Active" data-off="Deactive" name="qr_code_flag"
+                  <%=(data[0].qr_code_flag=='Y' )?'checked':''%>>
               </div>
 
             </div>
@@ -202,19 +210,29 @@
     </div>
   </div>
 </div>
+
+<footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
+
 <script>
   $(document).ready(function () {
-     // On page load - check if grace_flag is checked
+    // On page load - check if grace_flag is checked
     toggleGraceValue();
     toggleAdvanceValue();
-    
+
 
     // When grace_flag toggle changes
     $('#grace_flag').change(function () {
       toggleGraceValue();
     });
 
-       // When advance_flag toggle changes
+    // When advance_flag toggle changes
     $('#adv_pay_flag').change(function () {
       toggleAdvanceValue();
     });

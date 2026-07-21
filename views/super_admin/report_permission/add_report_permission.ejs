@@ -194,6 +194,9 @@
     </div>
   </div>
 </div>
+ <footer class="simple-footer mt-4">
+  <b>Hertz Communications © <span id="footerYear"></b></span>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -289,6 +292,13 @@
       </div>
     </div>
   </div>
+
+  
+
+<script>
+  document.getElementById("footerYear").textContent = new Date().getFullYear();
+</script>
+
 
 <script>
     $(document).ready(function () {
@@ -435,6 +445,14 @@ function change_custs(cust_name, selectedAdmin='') {
 
 
   <style>
+    .simple-footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #6b7280;   soft gray */
+  color: black;
+  padding: 12px 0;
+  margin-left: 57vw;
+}
 /* Gradient Button */
 .btn-gradient {
   background: linear-gradient(45deg, #dbbcda, #6d83e2);
