@@ -172,7 +172,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
 
   // console.log(loginData.user.userdata.msg[0].device_type, "GeneralSettingsScreen___", getGeneralSettings );
 
-  console.log(gst_flag, 'generalSettings___UTSAB', gstList, 'gstList___UTSAB');
+  // console.log(gst_flag, 'generalSettings___UTSAB', gstList, 'gstList___UTSAB');
 
   return (
     <View style={{ flex: 1 }}>
@@ -190,6 +190,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )} */}
+
+            {/* <Text>{JSON.stringify(loginData?.user?.userdata?.msg[0]?.upi_id , null, 2)}</Text> */}
 
             {/* device Mode */}
             {dev_mod && (
@@ -249,6 +251,19 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+            {/* QR CODE */}
+            {loginData?.user?.userdata?.msg[0]?.upi_id.length > 0 && (
+              <SettingComponent
+                icon={icons.calendar_custom(colors["primary-color"], 25)}
+                text={`UPI (${loginData?.user?.userdata?.msg[0]?.upi_id})`}>
+                <CustomSwitch
+                  isEnabled={loginData?.user?.userdata?.msg[0]?.upi_id.length > 0 ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+            )}
+            
 
 
             {/* QR CODE */}
@@ -581,9 +596,9 @@ export { SettingComponent };
 
 const styles = StyleSheet.create({
   text: {
-    fontWeight: "600",
+    fontWeight: "700",
     color: colors.black,
-    fontSize: PixelRatio.roundToNearestPixel(16),
+    fontSize: PixelRatio.roundToNearestPixel(14),
     marginLeft: PixelRatio.roundToNearestPixel(10),
   },
   container: {

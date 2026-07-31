@@ -790,7 +790,7 @@ useEffect(() => {
     setLoading(false);
     setDisabled(false);
 
-    console.log('________New________', totalRatearr, 'hh', price);
+    console.log('________New________', totalRatearr,'________New________', carData, 'hh', price);
     
     // return 0;
     navigation.navigate("CreateOutpassScreen", {
@@ -968,6 +968,7 @@ useEffect(() => {
                 margin: PixelRatio.roundToNearestPixel(2),
               }}>
               {" "}
+              
               {props?.vehicle_no || props?.vehicle_no}
               {"   -  "}
               {formatTime.toLocaleString()} {"   -  "}

@@ -49,12 +49,22 @@ const CreateOutpassScreen = ({ route, navigation }) => {
   // For Scanner
   const receiptNoObj = data.find(item => item.label === "RECEIPT NO");
 
-  const upiId = "9007507220@ybl";
-  const payName = "Utsab Roy";
-  const amount = data.find(item => item.label === "PARKING FEES")?.value;
+  // const upiId = "9007507220@ybl";
+  // const payName = "Utsab Roy";
+  // const amount = data.find(item => item.label === "PARKING FEES")?.value;
+  // // const upiString = `upi://pay?pa=${upiId}&pn=${payName}&am=${amount}&cu=INR`;
+  // const upiString = `upi://pay?pa=${upiId}&am=${amount}&cu=INR`;
 
-  // const upiString = `upi://pay?pa=${upiId}&pn=${payName}&am=${amount}&cu=INR`;
-  const upiString = `upi://pay?pa=${upiId}&am=${amount}&cu=INR`;
+        // roy.utsab01-2@okaxis
+  const upiId = loginData?.user?.userdata?.msg[0]?.upi_id;
+  // const upiId = 'roy.utsab01-2@okaxis'
+  const payName = "Utsab Roy";
+  const amount = route?.params?.totalRate?.base_amt;
+
+  const upiString =  `upi://pay?pa=${upiId}&am=${amount}&cu=INR&tn=${encodeURIComponent(loginData?.user?.userdata?.msg[0]?.customer_name + "(Parking Fees)")}`
+
+
+
 
 
 
@@ -73,6 +83,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     //set device/appid id
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
+
+    // console.log('datadatadatadata', upiId,'datadatadatadata', loginData?.user?.userdata?.msg[0]?.customer_name);
 
   }, []);
 
@@ -282,6 +294,14 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           //   {},
           // )
 
+          if (upiId.length > 0) {
+          await BluetoothEscposPrinter.printQRCode(
+          upiString.toString(), // QR code data
+          370, // Larger size (between 1 and 16)
+          BluetoothEscposPrinter.ERROR_CORRECTION.L // Error correction level
+          );
+          }
+
 
           await BluetoothEscposPrinter.printText("-------------------------------\n", {});
           await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
@@ -307,6 +327,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           let payloadHeader = "";
           let payloadBody = "";
           let payloadFooter = "";
+          let qrcode = "";
+
           await checkLocationEnabled();
           data.map((props, index) => (
             payloadBody += `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`
@@ -380,6 +402,10 @@ const CreateOutpassScreen = ({ route, navigation }) => {
             // pay_Mode += `[L]<font size='normal'>Payment Mode : UPI</font>\n`
           }
 
+          if (upiId.length > 0) {
+          qrcode += `[C]<qrcode size='30'>${upiString.toString()}</qrcode>\n`;
+          }
+
 
 
 
@@ -398,6 +424,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
               // `[L]<font size='normal'>DURATION : [R]</font>\n` +
               // `[C]<u><font size='small'>${receiptNoObj.value}</font></u>\n` +
               // `[C]<qrcode size='30'>${receiptNoObj.value.toString()}</qrcode>\n` +
+              `${qrcode}`
+
               `[C]-------------------------------\n` +
               `[C]${payloadFooter}\n`,
             printerNbrCharactersPerLine: 30,
@@ -509,6 +537,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
               ))}
             </View>
           )}
+          {/* <Text>{JSON.stringify(upiId.length, null, 2)} // </Text> */}
 {/* 9007507220@ybl */}
           {/* {getPayMode && getPayMode == "U" &&(
           <View style={{ paddingHorizontal: 20, paddingBottom: 12, alignSelf: "center" }}>
@@ -552,6 +581,17 @@ const CreateOutpassScreen = ({ route, navigation }) => {
               disabled={isAvailableYet ? true : false}
             />
           </View>
+
+           {/* <View style={{ paddingHorizontal: 20, paddingBottom: 12, alignSelf: "center" }}>
+          <QRCode
+          value={upiString}
+          // value={`upi://pay?pa=${upiId}&am=${amount}&cu=INR`}
+          size={200}
+          color="black"
+          backgroundColor="white"
+          />
+          </View> */}
+
         </View>
       </ScrollView>
     </>

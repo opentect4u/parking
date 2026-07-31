@@ -712,23 +712,14 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   };
 
     const handleChangeText = (text) => {
-    // const filtered = text.replace(
-    //   /[^\p{L}\p{N}\s.,!?@#$_-]/gu, 
-    //   "" // remove disallowed characters like emoji
-    // );
-
     const filtered = text.replace(/[^a-zA-Z0-9]/g, "");
-    // const filtered = text.replace(/[^a-zA-Z0-9-_]/g, "");
-    
-
-    // console.log(filtered, 'filteredfilteredfiltered');
 
     if (text !== filtered) {
       Alert.alert("Invalid Input", "Please Use Alphanumeric Value ");
     }
-    
     setVehicleNumber(filtered);
-  };
+    };
+
 
   return (
     <View>
