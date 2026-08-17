@@ -568,13 +568,14 @@ if (getBlePermission && device_Type_Check == "M") {
     // currentDate.getTime(),
     new Date(item.date_time_in).getTime(), new Date(item.date_time_out).getTime()
   );
-  console.log(item, 'itemitemitemitemitemitemitem');
+  console.log(item, 'itemitemitemitemitemitemitem', item.base_amt);
   
-  //   const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag, item.advance_amt);
-  const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
-  // const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
+  // const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
+  const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
 
   const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
+  console.log(gstPrice, 'gstPricegstPricegstPricegstPricegstPrice', item?.paid_amt, generalSettings.gst_flag);
+  // return;
 
 
   
@@ -757,8 +758,11 @@ setLoading(false);
   
     if(generalSettings.gst_flag == "Y"){
 
-      const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
+      // const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
+      const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
       const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
+
+      
 
       if (gstList?.gst_mode == "CS") {
       data = [{label: "RECEIPT NO", value: (item?.receipt_no).toString().slice(-5)}, 

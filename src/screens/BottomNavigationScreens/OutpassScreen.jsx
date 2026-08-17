@@ -209,6 +209,8 @@ useEffect(() => {
   
   const handleUploadOutPassData_scan = async (receiptNo, index, carData) => {
 
+ 
+
     
     var crindate = Date();
 
@@ -282,7 +284,7 @@ useEffect(() => {
     );
 
     const gstSettings = await handleGetGst();
-
+    
    
     
 
@@ -297,10 +299,9 @@ useEffect(() => {
     });
 
 
-      if(generalSettings.gst_flag === "Y"){
-      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
+      if(generalSettings?.gst_flag === "Y"){
+      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag);
 
-      
 
       totalRate = gstPrice.totalPrice || price;
       
@@ -331,7 +332,7 @@ useEffect(() => {
       
     }
 
-    if(generalSettings.gst_flag === "N"){
+    if(generalSettings?.gst_flag === "N"){
 
       totalRate = price;
       vDatainfo.parking_fees = price;
@@ -493,6 +494,10 @@ useEffect(() => {
 
 
   const handleUploadOutPassData = async (receiptNo, index, carData) => {
+
+    // const gstSettings_ = await handleGetGst();
+    // console.log(gstSettings_[0], 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+    // return;
     // Alert.alert()
 
     // const date_time_in_cus = new Date(carData.date_time_in).toLocaleString("en-GB");
@@ -616,16 +621,20 @@ useEffect(() => {
     //   gstSettings.length > 0 &&
     //   gstSettings[0]?.gst_flag === "Y"
     // ) {
-      if(generalSettings.gst_flag === "Y"){
+      if(generalSettings?.gst_flag === "Y"){
 
         // console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
         
-      // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag, getAdvAmount_para);
-      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings.gst_flag);
+      // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag, getAdvAmount_para);
+      const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag);
       totalRate = gstPrice.totalPrice || price;
       
 
       const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
+
+      // const gstSettings_ = await handleGetGst();
+    console.log(gstPrice, 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', gstSettings[0], price, generalSettings?.gst_flag);
+    // return;
 
       vDatainfo.base_amount = baseAmount;
       vDatainfo.cgst = CGST;
@@ -633,11 +642,11 @@ useEffect(() => {
       vDatainfo.sgst = IGST;
       vDatainfo.parking_fees = totalPrice;
 
-      console.log(gstSettings[0], price, generalSettings.gst_flag, 'pricepriceprice____', gstList);
+      console.log(gstSettings[0], price, generalSettings?.gst_flag, 'pricepriceprice____', gstList);
 
       // vData.push(
         
-      //   ...(generalSettings.gst_flag == "Y" 
+      //   ...(generalSettings?.gst_flag == "Y" 
       //     ? [
       //         { label: "CGST @"+gstList.cgst+'%', value: CGST },
       //         { label: "SGST @"+gstList.sgst+'%', value: SGST },
@@ -665,7 +674,7 @@ useEffect(() => {
       );
       }
 
-      // if (generalSettings.gst_flag == "N") {
+      // if (generalSettings?.gst_flag == "N") {
       //   vData.push(
   
       //   { label: "PARKING FEES", value: totalPrice }
@@ -678,7 +687,7 @@ useEffect(() => {
       
     }
 
-    if(generalSettings.gst_flag === "N"){
+    if(generalSettings?.gst_flag === "N"){
 
       totalRate = price;
       vDatainfo.parking_fees = price;
@@ -699,7 +708,7 @@ useEffect(() => {
     //   (Array.isArray(gstSettings) && gstSettings.length === 0)
     // ) {
 
-    // if(generalSettings.gst_flag === "N"){
+    // if(generalSettings?.gst_flag === "N"){
 
     //   totalRate = price;
     //   vDatainfo.parking_fees = price;

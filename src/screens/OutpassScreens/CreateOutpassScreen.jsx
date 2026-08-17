@@ -194,6 +194,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       if (getBlePermission && device_Type_Check == "M") {
 
         // console.log(data, 'datadatadatadata');
+        // return;
         
         let payloadHeader = "";
         let payloadBody = "";
@@ -293,6 +294,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
           //   ["Receipt No: " + receiptNo],
           //   {},
           // )
+
+           await BluetoothEscposPrinter.printText(`Scan QR Code to Pay with UPI: \n`, { align: "center" });
 
           if (upiId.length > 0) {
           await BluetoothEscposPrinter.printQRCode(
