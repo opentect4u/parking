@@ -331,6 +331,7 @@ export default function DublicatePrintScreen({ navigation }) {
           [`VEHICLE NO : ${vehicleNumber}`],
           {}
           );
+
           if (advanceAmount) {
           await BluetoothEscposPrinter.printColumn(
           [30],
@@ -340,28 +341,37 @@ export default function DublicatePrintScreen({ navigation }) {
           );
           }
 
-          if (generalSettings.gst_flag == "Y") {
-            await BluetoothEscposPrinter.printColumn(
-              [30],
-              [BluetoothEscposPrinter.ALIGN.LEFT],
-              [`GST No. : ${gstList.gst_number}`],
-              {}
-            );
-          } else {
-            await BluetoothEscposPrinter.printColumn(
-              [30],
-              [BluetoothEscposPrinter.ALIGN.LEFT],
-              [`GST Not Applicable.`],
-              {}
-            );
-          }
+          // if (generalSettings.gst_flag == "Y") {
+          //   await BluetoothEscposPrinter.printColumn(
+          //     [30],
+          //     [BluetoothEscposPrinter.ALIGN.LEFT],
+          //     [`GST No. : ${gstList.gst_number}`],
+          //     {}
+          //   );
+          // } else {
+          //   await BluetoothEscposPrinter.printColumn(
+          //     [30],
+          //     [BluetoothEscposPrinter.ALIGN.LEFT],
+          //     [`GST Not Applicable.`],
+          //     {}
+          //   );
+          // }
+
+          // await BluetoothEscposPrinter.printColumn(
+          // [30],
+          // [BluetoothEscposPrinter.ALIGN.LEFT],
+          // [`IN TIME : ${new Date(item.date_time_in).toLocaleString("en-GB") }`],
+          // {}
+          // );
 
           await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
-          [`IN TIME : ${new Date(item.date_time_in).toLocaleString("en-GB") }`],
+          [`IN TIME : ${formatDateTime(new Date(item.date_time_in))}`],
           {}
           );
+
+          
           await BluetoothEscposPrinter.printText("-------------------------------\n", {});
           await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
           await BluetoothEscposPrinter.printText("\r\n", {})

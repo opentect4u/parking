@@ -592,7 +592,14 @@ useEffect(() => {
       currentDate.toISOString().slice(0, -5) + "Z",
       currentDate.getTime(),
     );
-// console.log(price, 'priceprice 2222');
+    
+// console.log(price, 'priceprice 2222', generalSettings?.day_wise_rate,
+//       timestamp,
+//       carData.vehicle_id,
+//       crindate,
+//       carData.vehicle_no,
+//       currentDate.toISOString().slice(0, -5) + "Z",
+//       currentDate.getTime(), 'hhhhhhhhhhhhhhhhhhhhhhhh');
 
   }
 
@@ -632,9 +639,6 @@ useEffect(() => {
 
       const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
 
-      // const gstSettings_ = await handleGetGst();
-    console.log(gstPrice, 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', gstSettings[0], price, generalSettings?.gst_flag);
-    // return;
 
       vDatainfo.base_amount = baseAmount;
       vDatainfo.cgst = CGST;
@@ -642,7 +646,7 @@ useEffect(() => {
       vDatainfo.sgst = IGST;
       vDatainfo.parking_fees = totalPrice;
 
-      console.log(gstSettings[0], price, generalSettings?.gst_flag, 'pricepriceprice____', gstList);
+      // console.log(gstSettings[0], price, generalSettings?.gst_flag, 'pricepriceprice____', gstList);
 
       // vData.push(
         

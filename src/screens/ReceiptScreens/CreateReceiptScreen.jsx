@@ -75,7 +75,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   //   { label: 'UPI: ', value: 'U' },
   // ];
 
-  console.log(generalSettings, 'gstListgstListgstListgstList');
+  // console.log(generalSettings, 'gstListgstListgstListgstList');
   
 
 
