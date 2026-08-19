@@ -554,13 +554,13 @@ export default function ShiftWiseReportScreen({ navigation }) {
           style={{
             position: "absolute",
             top: "50%",
-            left: "35%",
+            left: "35%", zIndex:999,
             backgroundColor: colors.white,
             padding: PixelRatio.roundToNearestPixel(20),
             borderRadius: 10,
           }}>
-          <ActivityIndicator size="large" />
-          <Text>Loading...</Text>
+          <ActivityIndicator size="small" />
+          <Text style={{fontSize:12}}>Loading...</Text>
         </View>
       )}
 
