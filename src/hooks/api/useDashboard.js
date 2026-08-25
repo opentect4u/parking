@@ -12,7 +12,7 @@ function useDashboard() {
                     ADDRESSES.DASHBOARD_DATA + '?customerUserName=' + getUserName,
                     {
                         headers: {
-                            Authorization: loginData.token,
+                            Authorization: loginData.token, 
                         },
                     },
                 )
