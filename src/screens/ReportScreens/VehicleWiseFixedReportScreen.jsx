@@ -289,7 +289,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
         // await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
         if (generalSettings.gst_flag == "Y") {
-          await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+          await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
           // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
         }
         // await BluetoothEscposPrinter.printText(`CGST @${gstList.cgst}%:${gstAmount.CGST} SGST @${gstList.sgst}%:${gstAmount.SGST}\n`, { align: "left" });
@@ -360,7 +360,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     }
 
     if (generalSettings.gst_flag == "Y") {
-      GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` + `[C]--------------------------------\n`
+      GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` + `[C]--------------------------------\n`
     } else {
       GST_Yes_No += ``;
     }
@@ -536,9 +536,9 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
 
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
-                    totalAmount += item.tot_amt;
-                    totalAdvanceAmount += item?.advance_amt;
-                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
+                    totalAmount += Number(item.tot_amt);
+                    // totalAdvanceAmount += Number(item?.advance_amt);
+                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : Number(item?.advance_amt);
 
                     {generalSettings.gst_flag == "Y" && (
                       gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
@@ -604,7 +604,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                       {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
-                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        {(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)}
                         </>
                       )}
                     </Text>

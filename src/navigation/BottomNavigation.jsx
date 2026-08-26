@@ -24,8 +24,10 @@ function BottomNavigation() {
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
   // const { socketOndata } = useSocket();
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
-  const device_Type_Check = loginData.user.userdata.msg[0].device_type;
+  // const loginData = JSON.parse(loginStorage?.getString("login-data"));
+
+  // const device_Type_Check = loginData?.user?.userdata?.msg[0]?.device_type;
+  
 
   // console.log(device_Type_Check, 'oooooooooooooooooooooooooooooooo');
   useEffect(() => {

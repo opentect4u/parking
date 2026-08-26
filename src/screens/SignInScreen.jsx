@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 
 import InputCustom from "../components/InputCustom";
@@ -12,16 +12,61 @@ import { AuthContext } from "../context/AuthProvider";
 import strings from "../resources/strings/strings";
 import { version } from '../../package.json';
 
+// ✅ Correct Firebase import
+import messaging from '@react-native-firebase/messaging'
+
 const SignInScreen = ({ navigation }) => {
   const [username, setUsername] = useState(() => "");
   const [password, setPassword] = useState(() => "");
   const [deviceId, setDeviceId] = useState(() => "");
+  const [fcmToken, setFcmToken] = useState(() => "");
   const { login } = useContext(AuthContext);
 
   useEffect(() => {
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
+    // getFcmToken();
+    requestUserPermission();
+    // console.log('requestUserPermission', 'xxxxxxxxxxxxxxxxx');
   }, []);
+
+// ✅ FIXED PERMISSION CODE
+  const requestUserPermission = async () => {
+
+    // console.log('enabled', 'xxxxxxxxxxxxxxxxx');
+    
+    const authStatus = await messaging().requestPermission();
+
+    // console.log('authStatus', 'xxxxxxxxxxxxxxxxx', authStatus);
+
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+
+    if (enabled) {
+      console.log("Notification permission status:", authStatus);
+      getFcmToken();
+    } else {
+      Alert.alert("Push Notification permission denied");
+    }
+  };
+
+  // ✅ FIXED FCM TOKEN FUNCTION
+  const getFcmToken = async () => {
+    try {
+      const token = await messaging().getToken();
+
+      if (token) {
+        console.log("FCM Token:", token);
+        setFcmToken(token);
+      } else {
+        console.log("Failed to get FCM token");
+      }
+    } catch (error) {
+      console.error("Error fetching FCM token:", error);
+    }
+  };
 
   return (
     <MainView>
@@ -75,7 +120,7 @@ const SignInScreen = ({ navigation }) => {
             style={styles.sign_in_button}
             onPress={() => {
               console.log("Login...");
-              login(username, password, deviceId);
+              login(username, password, deviceId, fcmToken);
             }}>
             {icons.arrowRight}
           </TouchableOpacity>

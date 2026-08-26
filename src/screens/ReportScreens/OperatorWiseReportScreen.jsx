@@ -284,7 +284,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
     // await BluetoothEscposPrinter.printText(`${GST_Yes_No}`, { align: "left" });
 
     if (generalSettings.gst_flag == "Y") {
-      await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+      await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
       // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
     }
 
@@ -354,7 +354,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
   }
 
   if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
+    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`
   } else {
     GST_Yes_No += ``;
   }
@@ -524,15 +524,15 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
-                    totalAmount += item.tot_amt;
+                    totalAmount += Number(item.tot_amt);
                     // totalAdvanceAmount += item?.advance_amt;
-                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
+                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : Number(item?.advance_amt);
                     // const validAdvanceAmount = isNaN(totalAdvanceAmount) ? 0 : totalAdvanceAmount;
                     {generalSettings.gst_flag == "Y" && (
                       gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
                     )}
 
-                    console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
+                    // console.log(totalAmount, '/////////////////////////////////////////', totalAdvanceAmount);
                     
                     return (
                       <View
@@ -593,7 +593,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
                       {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
-                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        {(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)}
                         </>
                       )}
                     </Text>

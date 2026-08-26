@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "766970355994",
+    "project_id": "parking-sso",
+    "storage_bucket": "parking-sso.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766970355994:android:2da679e44b9b6c00350ca3",
+        "android_client_info": {
+          "package_name": "com.parkingonline"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRDCx1Z4KsSdI7Pmfxek95x4TYyx-1dms"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

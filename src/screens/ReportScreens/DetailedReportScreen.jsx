@@ -322,7 +322,7 @@ export default function DetailedReportScreen({ navigation }) {
 
 
       if (generalSettings.gst_flag == "Y") {
-        await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
+        await BluetoothEscposPrinter.printText(`BASE AMOUNT : ${(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`, { align: "left" });
         // GST_Yes_No +=  `BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)} \nCGST @${gstList.cgst}%:${gstAmount.CGST} \nSGST @${gstList.sgst}%:${gstAmount.SGST}\n -------------------------------\n`;
       }
       
@@ -400,7 +400,7 @@ export default function DetailedReportScreen({ navigation }) {
       }
 
       if (generalSettings.gst_flag == "Y") {
-        GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
+        GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
       } else {
         GST_Yes_No += ``;
       }
@@ -580,9 +580,9 @@ export default function DetailedReportScreen({ navigation }) {
                 )}
                 {getDetailedReport &&
                   getDetailedReport.map((item, index) => {
-                    totalAmount += item.paid_amt;
+                    totalAmount += Number(item.paid_amt);
                     // totalAdvanceAmount += item.advance_amt;
-                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
+                    totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : Number(item?.advance_amt);
                     // gstAmount = reportGst(totalAmount, gstList.sgst, gstList.cgst);
                     {generalSettings.gst_flag == "Y" && (
                       gstAmount = gstCalculatorReport(totalAmount + totalAdvanceAmount, gstList.sgst, gstList.cgst)
@@ -640,13 +640,13 @@ export default function DetailedReportScreen({ navigation }) {
                   {generalSettings.gst_flag === "Y" && (
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
-                      Base Amount
+                      Base Amount 
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                       {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
-                        {totalAmount - (gstAmount.CGST + gstAmount.SGST)}
+                        {(totalAmount - (gstAmount.CGST + gstAmount.SGST)).toFixed(2)}
                         </>
                       )}
                     </Text>

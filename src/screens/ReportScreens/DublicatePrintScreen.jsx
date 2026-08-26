@@ -610,9 +610,10 @@ if (getBlePermission && device_Type_Check == "M") {
   console.log(item, 'itemitemitemitemitemitemitem');
   
   //   const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag, item.advance_amt);
-  const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
-  // const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
+  // const gstPrice = await useGstPriceCalculator(gstList, item.base_amt, generalSettings.gst_flag);
+  const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
 
+  
   const { price: baseAmount, CGST, SGST, totalPrice } = gstPrice;
 
 

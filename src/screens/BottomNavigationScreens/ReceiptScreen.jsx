@@ -53,11 +53,28 @@ import { BluetoothManager } from "react-native-bluetooth-escpos-printer"
 
 
 export default function ReceiptScreen_Bletooth({ navigation }) {
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+  // const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+  // console.log(loginData, 'nowwwwwwwwwwwwwww_');
+  
+  
+  const stored  = loginStorage.getString("login-data")
+  const loginData = stored ? JSON.parse(stored) : null;
+
+
   const [currentTime, setCurrentTime] = useState(new Date());
   // const { getUserName } = useContext(AuthContext);
 
-  const userDetails = loginData.user.userdata.msg[0];
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentTime(new Date());
+  }, 1000);
+
+  return () => clearInterval(timer); // cleanup
+}, []);
+
+  const userDetails = loginData?.user?.userdata?.msg[0];
 
   // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", userDetails)
 
@@ -86,7 +103,7 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
 
   
   const todayCollectionArray = [
-    { title: "Operator Name", data: userDetails.operator_name },
+    { title: "Operator Name", data: userDetails?.operator_name },
     { title: "Total Vehicles In", data: totalVehicleIn || 0 },
     { title: "Total Vehicles Out", data: totalVehicleOut || 0 },
     { title: "Total Advance Amount", data: getAdvAmount || 0 },
@@ -116,6 +133,9 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
 
   // get vehicles list function
   const getVehicles = async () => {
+
+    console.log(loginData.token, 'uuuuuuuuuuuuuuuuuuuuuuu');
+    
     await axios
       .post(
         ADDRESSES.VEHICLES_LIST,
@@ -184,6 +204,8 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
           paddingTop: -20,
         }}>
         {currentTime.toLocaleDateString()} - {currentTime.toLocaleTimeString()}
+        {/* {new Date().toLocaleDateString()} - {new Date().toLocaleTimeString()} */}
+        
       </Text>
       {/* today collection table */}
       <View style={styles.today_collection}>

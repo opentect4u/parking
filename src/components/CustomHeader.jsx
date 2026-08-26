@@ -8,8 +8,12 @@ import { loginStorage } from "../storage/appStorage";
 
 const CustomHeader = ({ title, navigation }) => {
   // const [userDetails, setUserDetails] = useState();
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
-  const userDetails = loginData.user.userdata.msg[0];
+  // const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+  const stored  = loginStorage.getString("login-data")
+  const loginData = stored ? JSON.parse(stored) : null;
+
+  const userDetails = loginData?.user?.userdata?.msg[0];
 
   return (
     <View style={styles.container}>

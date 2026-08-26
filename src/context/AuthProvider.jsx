@@ -9,13 +9,19 @@ import useAppUpdate from "../hooks/api/useAppUpdate";
 import DeviceInfo from "react-native-device-info";
 import { BackHandler } from "react-native";
 import userLogOut from "../hooks/api/userLogOut";
+import messaging from '@react-native-firebase/messaging'
+
+import { createNavigationContainerRef, useNavigationState } from '@react-navigation/native';
 
 export const AuthContext = createContext();
+// export const navigationRef = createNavigationContainerRef();
 
 export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(() => false);
   const [isUpdate, setUpdate] = useState(() => false);
   const [loading, setLoading] = useState(() => false);
+
+  
 
   const [READ_PHONE_STATE, setREAD_PHONE_STATE] = useState(() => false);
   const [generalSettings, setGeneralSettings] = useState({
@@ -49,14 +55,18 @@ export const AuthProvider = ({ children }) => {
   const [shiftwiseReports, setShiftwiseReports] = useState(() => []);
   const [vehicleWiseReports, setVehicleWiseReports] = useState(() => []);
   const [operatorwiseReports, setOperatorwiseReports] = useState(() => []);
+  // const { fetchUserStatus } = useCheckStatus()
   const {appUpdate}=useAppUpdate();
-
   const { logOut_hook } = userLogOut();
+  // const navigation = useNavigation();
 
   // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
 
   useEffect(() => {
+
+    // navigation("ReceiptScreen");
+    // isLogin ? <BottomNavigation/> : <Sign_In_Screen/>
     
     isPermitted();
     checkedAppUpdate();
@@ -65,13 +75,17 @@ export const AuthProvider = ({ children }) => {
     // checkedAppUpdate();
   }, []);
 
-  const login = async (username, password, deviceId) => {
+  const login = async (username, password, deviceId, fcmToken) => {
     
     const credentials = {
       password: password,
       user_id: username,
       device_id: deviceId,
+      fcm_token: fcmToken
     };
+
+    // console.log(credentials, 'xxxxxxxxxxxxxxxxx');
+
 
     try {
       setLoading(true);
@@ -82,8 +96,13 @@ export const AuthProvider = ({ children }) => {
           },
         })
         .then(res => {
+          // console.log(credentials, 'xxxxxxxxxxxxxxxxx', res.data);
+          setLoading(false);
           if (res.data.status) {
-
+              
+              
+            // console.log('sss first>>', res.data, '<<sss end');
+            
               loginStorage.set("login-data-local", JSON.stringify(credentials));
               loginStorage.set("login-data", JSON.stringify(res.data.data));
               setIsLogin(!isLogin);
@@ -97,7 +116,7 @@ export const AuthProvider = ({ children }) => {
 
             if(typeof(res.data.message) === 'object'){
               // alert(res.data.message.msg + 'Total Limit '+ res.data.message.tot_limit + 'Current User '+ res.data.message.tot_act_user);
-              alert(res.data.message.msg);
+              Alert(res.data.message.msg);
             }
 
             // ToastAndroid.showWithGravityAndOffset(
@@ -117,6 +136,40 @@ export const AuthProvider = ({ children }) => {
       console.log("Error login Try-Catch", error);
     }
   };
+
+
+    useEffect(() => {
+      
+      const unsubscribe = messaging().onMessage(async remoteMessage =>{
+        // setIsLogin(isLogin);
+        console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
+        setLoading(false);
+
+      Alert.alert('New Notification', JSON.stringify(remoteMessage.data?.body || ""));
+      if(remoteMessage?.data?.title == 'force_logout'){
+      // if(isLogin == true){
+      logout_FireBase();
+      // }
+      }
+
+      })
+
+      // messaging().setBackgroundMessageHandler(async remoteMessage => {
+      //   console.log('>>>>>>', remoteMessage, 'remoteMessageremoteMessage', isLogin);
+      //   setLoading(false);
+
+      // if(remoteMessage?.data?.title == 'force_logout'){
+      
+      // logout_FireBase()
+      // }
+      // });
+
+      return unsubscribe;
+
+
+
+    }, []);
+
 
   const isLoggedIn = () => {
     if (loginStorage.getAllKeys().length === 0) {
@@ -237,7 +290,9 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        setReceiptSettings(res.data.data.msg[0]);
+        // console.log('>>>>', res?.data?.data?.msg[0], 'RES - getReceiptSettings', loginData.token);
+        
+        setReceiptSettings(res?.data?.data?.msg[0]);
       })
       .catch(err => {
         console.log("CATCH - getReceiptSettings", err);
@@ -416,7 +471,11 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {  
 
     setLoading(true);
+
     let logOut_data = await logOut_hook();
+
+    
+    
     if(logOut_data.status){
       
       clearStates([setGeneralSettings, setReceiptSettings], {});
@@ -431,31 +490,55 @@ export const AuthProvider = ({ children }) => {
       [],
       );
 
+      // console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);
+
       setIsLogin(!isLogin);
       console.log("LOGGING OUT...");
       loginStorage.clearAll();
       appStorage.clearAll();
       setLoading(false);
+      // navigationRoutes("receipt_settings")
     } else {
       setLoading(true);
     }
     
-    // clearStates([setGeneralSettings, setReceiptSettings], {});
-    // clearStates(
-    // [
-    // setGstList,
-    // setDetailedReports,
-    // setShiftwiseReports,
-    // setVehicleWiseReports,
-    // setOperatorwiseReports,
-    // ],
-    // [],
-    // );
+    
+  };
 
-    // setIsLogin(!isLogin);
-    // console.log("LOGGING OUT...");
-    // loginStorage.clearAll();
-    // appStorage.clearAll();
+  const logout_FireBase = async () => {  
+
+    setLoading(true);
+
+    let logOut_data = await logOut_hook();
+
+    
+    
+    if(logOut_data.status){
+      
+      clearStates([setGeneralSettings, setReceiptSettings], {});
+      clearStates(
+      [
+      setGstList,
+      setDetailedReports,
+      setShiftwiseReports,
+      setVehicleWiseReports,
+      setOperatorwiseReports,
+      ],
+      [],
+      );
+
+      // console.log(logOut_data.status, 'logOut_datalogOut_datalogOut_data', !isLogin);
+
+      setIsLogin(isLogin);
+      // console.log("LOGGING OUT...");
+      loginStorage.clearAll();
+      appStorage.clearAll();
+      setLoading(false);
+      // navigationRoutes("receipt_settings")
+    } else {
+      setLoading(true);
+    }
+    
     
 
     
