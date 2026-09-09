@@ -347,11 +347,11 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
   }
 
-  if (generalSettings.gst_flag == "Y") {
-    GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
-  } else {
-    GST_Yes_No += ``;
-  }
+  // if (generalSettings.gst_flag == "Y") {
+  //   GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}\nSGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n`;
+  // } else {
+  //   GST_Yes_No += ``;
+  // }
 
     try {
       await ThermalPrinterModule.printBluetooth({
@@ -609,21 +609,21 @@ export default function ShiftWiseReportScreen({ navigation }) {
 
                   {/* {generalSettings.gst_flag === "Y" && (
                     <> */}
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Base Amount
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                      {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
-                        {/* {totalAmount - (gstAmount.CGST + gstAmount.SGST)} */}
                         {totalAmount}
                         </>
                       )}
                     </Text>
                    
-                  </View>
+                  </View> */}
+
+
                   <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                   <Text style={[styles.cell, styles.hcell]}>
                   Advance Amount

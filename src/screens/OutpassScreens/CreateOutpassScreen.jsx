@@ -325,130 +325,173 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
         navigation.goBack();
       } else if (device_Type_Check == "H") {
-        // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhh', device_Type_Check);
-        try {
-          let payloadHeader = "";
-          let payloadBody = "";
-          let payloadFooter = "";
-          let qrcode = "";
 
-          await checkLocationEnabled();
-          data.map((props, index) => (
-            payloadBody += `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`
+  try {
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+    let GST_Header = "";
+    let pay_Mode = "";
+    let qrcode = "";
 
-            //  `[L]<font size='normal'>VEHICLE TYPE. : [R] ${type}</font>\n` +
-            //  `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-            //  `[L]<font size='normal'>IN TIME : [R]${dateTimefixedString(currentTime)}</font>\n`+
-          ));
+    await checkLocationEnabled();
 
-
-          // console.log(payloadBody,'ooooooooooooooooooooooooooooooooooooooooooo')
-
-
-          // payloadBody += `[L]<font size='normal'>RECEIPT NO : [R] ${(totalRate?.vDatainfo?.receipt_no).toString().slice(-5)}</font>\n` +
-          //   `[L]<font size='normal'>VEHICLE TYPE. : [R] ${totalRate?.vDatainfo?.vehicle_type}</font>\n` +
-          //   `[L]<font size='normal'>VEHICLE NO : [R] ${totalRate?.vDatainfo?.vehicle_no}</font>\n` +
-          //   `[L]<font size='normal'>PARKING FEES : [R]${totalRate?.vDatainfo?.parking_fees}</font>\n` +
-          //   `[L]<font size='normal'>IN TIME : [R]${totalRate?.vDatainfo?.in_time}</font>\n` +
-          //   `[L]<font size='normal'>OUT TIME : [R]${totalRate?.vDatainfo?.out_time}</font>\n` +
-          //   `[L]<font size='normal'>DURATION : [R]${totalRate?.vDatainfo?.duration}</font>\n`;
+    // ==============================
+    // BODY
+    // ==============================
+    data.map((props, index) => {
+      payloadBody +=
+        `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`;
+    });
 
 
+    // ==============================
+    // HEADER & FOOTER
+    // ==============================
+    if (receiptSettings?.OUT_on_off == "Y") {
+
+      // Header 1
+      if (receiptSettings.header1_flag == 1) {
+        payloadHeader +=
+          `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+      }
+
+      // Header 2
+      if (receiptSettings.header2_flag == 1) {
+        payloadHeader +=
+          `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+      }
+
+      // Header 3
+      if (receiptSettings.header3_flag == 1) {
+        payloadHeader +=
+          `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+      }
+
+      // Header 4
+      if (receiptSettings.header4_flag == 1) {
+        payloadHeader +=
+          `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+      }
 
 
-          // `[L]<font size='normal'>VEHICLE NO : [R] ${vehicleNumber}</font>\n` +
-          if (receiptSettings?.OUT_on_off == "Y") {
-            if (receiptSettings.header1_flag == 1) {
-              payloadHeader +=
-                `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
-            }
-
-            if (receiptSettings.header2_flag == 1) {
-              payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
-            }
-
-            if (receiptSettings.header3_flag == 1) {
-              payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
-            }
-
-            if (receiptSettings.header4_flag == 1) {
-              payloadHeader += `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
-            }
-
-            if (generalSettings.gst_flag == "Y") {
-              GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
-            } else {
-              GST_Header += ``;
-            }
+      // ==============================
+      // GST
+      // ==============================
+      if (generalSettings.gst_flag == "Y") {
+        GST_Header =
+          `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+      }
 
 
-            if (receiptSettings.footer1_flag == 1) {
-              payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-            }
-            if (receiptSettings.footer2_flag == 1) {
-              payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-            }
-            if (receiptSettings.footer3_flag == 1) {
-              payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
-            }
-            if (receiptSettings.footer4_flag == 1) {
-              payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-            }
+      // ==============================
+      // FOOTER
+      // ==============================
+      if (receiptSettings.footer1_flag == 1) {
+        payloadFooter +=
+          `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+      }
+
+      if (receiptSettings.footer2_flag == 1) {
+        payloadFooter +=
+          `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+      }
+
+      if (receiptSettings.footer3_flag == 1) {
+        payloadFooter +=
+          `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+      }
+
+      if (receiptSettings.footer4_flag == 1) {
+        payloadFooter +=
+          `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+      }
+    }
 
 
+    // ==============================
+    // PAYMENT MODE
+    // ==============================
+    if (generalSettings.pay_mode_flag == "Y") {
 
-          }
-
-          if (generalSettings.pay_mode_flag == "Y") {
-            // pay_Mode += `[L]<font size='normal'>Payment Mode : [R] `${generalSettings.pay_mode_flag == "Y" ? "UPI" : "Cash"}`</font>\n`
-            pay_Mode += `${getPayMode == "U" ? `[L]<font size='normal'>Payment Mode : [R]UPI</font>\n` : "[L]<font size='normal'>Payment Mode : [R]Cash</font>\n"}`
-            // pay_Mode += `[L]<font size='normal'>Payment Mode : UPI</font>\n`
-          }
-
-          if (upiId.length > 0) {
-          qrcode += `[C]<qrcode size='30'>${upiString.toString()}</qrcode>\n`;
-          }
-
-
-
-
-          // console.log("============zzzzzzzzzzzzzzz==================",payloadFooter);
-          await ThermalPrinterModule.printBluetooth({
-            payload:
-              `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
-              `[C]${payloadHeader}` +
-              `${GST_Header}` +
-              // `[C]<img>${headerImg}</img>\n` +
-              // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
-              // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-              `[C]-------------------------------\n` +
-              `${payloadBody}` +
-              `${pay_Mode}` +
-              // `[L]<font size='normal'>DURATION : [R]</font>\n` +
-              // `[C]<u><font size='small'>${receiptNoObj.value}</font></u>\n` +
-              // `[C]<qrcode size='30'>${receiptNoObj.value.toString()}</qrcode>\n` +
-              `${qrcode}`
-
-              `[C]-------------------------------\n` +
-              `[C]${payloadFooter}\n`,
-            printerNbrCharactersPerLine: 30,
-            printerDpi: 120,
-            printerWidthMM: 58,
-            mmFeedPaper: 25,
-          });
-
-          setLoading(false);
-
-        } catch (err) {
-          ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
-          console.log(err.message);
-          setLoading(false);
-        }
-
-        setisAvailableYet(false);
-
-        navigation.goBack();
+      if (getPayMode == "U") {
+        pay_Mode =
+          `[L]<font size='normal'>Payment Mode : [R]UPI</font>\n`;
       } else {
+        pay_Mode =
+          `[L]<font size='normal'>Payment Mode : [R]Cash</font>\n`;
+      }
+    }
+
+
+    // ==============================
+    // UPI QR CODE
+    // ==============================
+    if (upiId.length > 0) {
+      qrcode =
+        `[C]<qrcode size='30'>${upiString.toString()}</qrcode>\n`;
+    }
+
+
+    // ==============================
+    // PRINT
+    // ==============================
+    await ThermalPrinterModule.printBluetooth({
+      payload:
+        // OUTPASS
+        `[C]<u><font size='tall'>OUTPASS</font></u>\n` +
+
+        // HEADER
+        `[C]${payloadHeader}` +
+
+        // GST
+        `${GST_Header}` +
+
+        // SEPARATOR
+        `[C]-------------------------------\n` +
+
+        // BODY
+        `${payloadBody}` +
+
+        // PAYMENT MODE
+        `${pay_Mode}` +
+
+        // QR CODE
+        `${qrcode}` +
+
+        // SEPARATOR
+        `[C]-------------------------------\n` +
+
+        // FOOTER
+        `[C]${payloadFooter}\n` +
+
+        // EXTRA FEED
+        `\n`,
+
+      printerNbrCharactersPerLine: 30,
+      printerDpi: 120,
+      printerWidthMM: 58,
+      mmFeedPaper: 25,
+    });
+
+    setLoading(false);
+
+  } catch (err) {
+
+    ToastAndroid.show(
+      "ThermalPrinterModule - ReceiptScreen",
+      ToastAndroid.SHORT
+    );
+
+    console.log("Handheld Printer Error:", err?.message || err);
+
+    setLoading(false);
+  }
+
+  setisAvailableYet(false);
+
+  navigation.goBack();
+} else {
 
         if (device_Type_Check == "M") {
           navigation.goBack();

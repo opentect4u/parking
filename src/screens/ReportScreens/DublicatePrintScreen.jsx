@@ -584,7 +584,7 @@ if (getBlePermission && device_Type_Check == "M") {
   const gstPrice = await useGstPriceCalculator(gstList, item.paid_amt, generalSettings.gst_flag);
 
   const { price: baseAmount, CGST, SGST, totalPrice, IGST } = gstPrice;
-  console.log(gstPrice, 'gstPricegstPricegstPricegstPricegstPrice', item?.paid_amt, generalSettings.gst_flag);
+  // console.log(gstPrice, 'gstPricegstPricegstPricegstPricegstPrice', item?.paid_amt, generalSettings.gst_flag);
   // return;
 
 

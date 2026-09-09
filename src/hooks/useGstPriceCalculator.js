@@ -10,11 +10,17 @@ function useGstPriceCalculator(gstSettings, parkingFees, gst_flag) {
     let SGST = 0;
     let IGST = 0;
     let totalPrice = 0;
-    if (!gstSettings) {
+
+    // if (!gstSettings) {
+    if (gst_flag == "N") {
         return price
     }
 
-    if (gstSettings.gst_flag == "N") {
+    // if (gstSettings.gst_flag == "N") {
+    //     return price
+    // }
+
+    if (gst_flag == "N") {
         return price
     }
 

@@ -298,6 +298,7 @@ useEffect(() => {
       value: carData.receipt_no.toString().slice(-5) || "",
     });
 
+     
 
       if(generalSettings?.gst_flag === "Y"){
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag);
@@ -628,11 +629,10 @@ useEffect(() => {
     //   gstSettings.length > 0 &&
     //   gstSettings[0]?.gst_flag === "Y"
     // ) {
-      if(generalSettings?.gst_flag === "Y"){
 
-        // console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0]);
-        
-      // const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag, getAdvAmount_para);
+    //  console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0], generalSettings?.gst_flag);
+
+      if(generalSettings?.gst_flag === "Y"){
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag);
       totalRate = gstPrice.totalPrice || price;
       

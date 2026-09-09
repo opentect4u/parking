@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback, useContext } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  AppState,
   DeviceEventEmitter,
   NativeEventEmitter,
   PermissionsAndroid,
@@ -10,280 +11,206 @@ import {
   ToastAndroid,
   View,
   Button,
-  Alert,
   StyleSheet,
-} from "react-native"
-import { BluetoothManager } from "react-native-bluetooth-escpos-printer"
-import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
-import ItemList from "./ItemList"
-import SamplePrint from "./SamplePrint"
-import { AuthContext } from "../../context/AuthProvider";
+} from "react-native";
+import { BluetoothManager } from "react-native-bluetooth-escpos-printer";
+import {
+  PERMISSIONS,
+  requestMultiple,
+  RESULTS,
+} from "react-native-permissions";
+import { appStorage } from "../../storage/appStorage";
+import ItemList from "./ItemList";
+import SamplePrint from "./SamplePrint";
 
+const SELECTED_PRINTER_KEY = "selected-printer";
+
+const parseDevices = devices => {
+  if (Array.isArray(devices)) return devices;
+  try {
+    const parsed = JSON.parse(devices);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+};
 
 const PrintMain = () => {
-  const [pairedDevices, setPairedDevices] = useState([])
-  const [foundDs, setFoundDs] = useState([])
-  const [bleOpend, setBleOpend] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [name, setName] = useState("")
-  const [boundAddress, setBoundAddress] = useState("")
+  const [pairedDevices, setPairedDevices] = useState([]);
+  const [bleOpend, setBleOpend] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState("");
+  const [boundAddress, setBoundAddress] = useState("");
+  const connectingAddress = useRef("");
 
-  const { logout } = useContext(AuthContext);
+  const connect = useCallback(async (device, saveAsSelected = true) => {
+    if (!device?.address || connectingAddress.current === device.address)
+      return;
+    try {
+      connectingAddress.current = device.address;
+      setLoading(true);
+      await BluetoothManager.connect(device.address);
+      setBoundAddress(device.address);
+      setName(device.name || "UNKNOWN");
+      if (saveAsSelected)
+        appStorage.set(SELECTED_PRINTER_KEY, JSON.stringify(device));
+    } catch (error) {
+      // Keep the saved printer: it may simply be powered off or out of range.
+      console.log("Unable to connect to printer:", error);
+    } finally {
+      connectingAddress.current = "";
+      setLoading(false);
+    }
+  }, []);
 
-  // const onClearData = () => {
-  //   clearAppData();
-  // };
+  const setPaired = useCallback(devices => {
+    setPairedDevices(
+      devices.filter(
+        (device, index, list) =>
+          device?.address &&
+          list.findIndex(item => item.address === device.address) === index,
+      ),
+    );
+  }, []);
+
+  const scanDevices = useCallback(async () => {
+    try {
+      setLoading(true);
+      const result = await BluetoothManager.scanDevices();
+      const devices = typeof result === "string" ? JSON.parse(result) : result;
+      setPaired(parseDevices(devices?.paired));
+    } catch (error) {
+      console.log("Unable to scan Bluetooth printers:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [setPaired]);
+
+  const ensureAndroidBluetoothPermissions = useCallback(async () => {
+    if (Platform.OS !== "android") return true;
+    const permissions = {
+      title: "Please Allow Your Printer",
+      message: "Bluetooth access is required to connect to your printer.",
+      buttonNeutral: "Later",
+      buttonNegative: "Cancel",
+      buttonPositive: "Allow",
+    };
+    const connectGranted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      permissions,
+    );
+    const scanGranted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      permissions,
+    );
+    return (
+      connectGranted === PermissionsAndroid.RESULTS.GRANTED &&
+      scanGranted === PermissionsAndroid.RESULTS.GRANTED
+    );
+  }, []);
+
+  const initialiseBluetooth = useCallback(async () => {
+    try {
+      setLoading(true);
+      const enabled = await BluetoothManager.isBluetoothEnabled();
+      setBleOpend(Boolean(enabled));
+      if (!enabled || !(await ensureAndroidBluetoothPermissions())) return;
+
+      // Restore the exact printer the user selected before the app was closed.
+      const savedPrinter = appStorage.getString(SELECTED_PRINTER_KEY);
+      if (savedPrinter) {
+        try {
+          await connect(JSON.parse(savedPrinter), false);
+        } catch (_) {
+          appStorage.delete(SELECTED_PRINTER_KEY);
+        }
+      }
+      await scanDevices();
+    } catch (error) {
+      console.log("Unable to initialise Bluetooth:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [connect, ensureAndroidBluetoothPermissions, scanDevices]);
 
   useEffect(() => {
-    BluetoothManager.isBluetoothEnabled().then(
-      enabled => {
-        setBleOpend(Boolean(enabled))
-        setLoading(false)
-      },
-      err => {
-        // err
-        console.log(err)
-      },
-    )
-
-    
-    // clearAsyncStorage();
-
-    if (Platform.OS === "ios") {
-      let bluetoothManagerEmitter = new NativeEventEmitter(BluetoothManager)
-      bluetoothManagerEmitter.addListener(
-        BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED,
-        rsp => {
-          deviceAlreadPaired(rsp)
-        },
-      )
-      bluetoothManagerEmitter.addListener(
-        BluetoothManager.EVENT_DEVICE_FOUND,
-        rsp => {
-          deviceFoundEvent(rsp)
-        },
-      )
-      bluetoothManagerEmitter.addListener(
-        BluetoothManager.EVENT_CONNECTION_LOST,
-        () => {
-          setName("")
-          setBoundAddress("")
-        },
-      )
-    } else if (Platform.OS === "android") {
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED,
-        rsp => {
-          deviceAlreadPaired(rsp)
-        },
-      )
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_DEVICE_FOUND,
-        rsp => {
-          deviceFoundEvent(rsp)
-        },
-      )
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_CONNECTION_LOST,
-        () => {
-          setName("")
-          setBoundAddress("")
-        },
-      )
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_BLUETOOTH_NOT_SUPPORT,
-        () => {
-          ToastAndroid.show("Device Not Support Bluetooth !", ToastAndroid.LONG)
-        },
-      )
-    }
-
-    console.log(pairedDevices.length)
-    if (pairedDevices.length < 1) {
-      scan()
-      console.log("scanning...")
-    } else {
-      const firstDevice = pairedDevices[0]
-      connect(firstDevice)
-      // connect(firstDevice);
-    }
-  }, [pairedDevices])
-  // deviceFoundEvent,pairedDevices,scan,boundAddress
-  // boundAddress, deviceAlreadPaired, deviceFoundEvent, pairedDevices, scan
-
-  const deviceAlreadPaired = useCallback(
-    rsp => {
-      var ds = null
-      if (typeof rsp.devices === "object") {
-        ds = rsp.devices
-      } else {
-        try {
-          ds = JSON.parse(rsp.devices)
-        } catch (e) {}
-      }
-      if (ds && ds.length) {
-        let pared = pairedDevices
-        if (pared.length < 1) {
-          pared = pared.concat(ds || [])
-        }
-        setPairedDevices(pared)
-      }
-    },
-    [pairedDevices],
-  )
-  
-
-  const deviceFoundEvent = useCallback(
-    rsp => {
-      var r = null
-      try {
-        if (typeof rsp.device === "object") {
-          r = rsp.device
-        } else {
-          r = JSON.parse(rsp.device)
-        }
-      } catch (e) {
-        // ignore error
-      }
-
-      if (r) {
-        let found = foundDs || []
-        if (found.findIndex) {
-          let duplicated = found.findIndex(function (x) {
-            return x.address == r.address
-          })
-          if (duplicated == -1) {
-            found.push(r)
-            setFoundDs(found)
-          }
-        }
-      }
-    },
-    [foundDs],
-  )
-
-
-
-  const connect = async row => {
-    try {
-      setLoading(true)
-      await BluetoothManager.connect(row.address)
-      setLoading(false)
-      setBoundAddress(row.address)
-      setName(row.name || "UNKNOWN")
-      // console.log("Connected to device:", row)
-      // console.log('DONEEEEEEEEEEEEEEEEEEEEEE');
-    } catch (e) {
-      // console.log('NOTTTTTTTTTTTTT DONEEEEEEEEEEEEEEEEEEEEEE', row.name);
-      setLoading(false)
-      // alert(e)
-    }
-  }
-
-    const unPair = (address) => {
-      setLoading(true);
-      BluetoothManager.unpaire(address).then(
-        (s) => {
-          setLoading(false);
-          setBoundAddress("");
-          setName("");
-        },
-        (e) => {
-          setLoading(false);
-          // alert(e);
-        }
-      );
+    const handlePairedDevices = response =>
+      setPaired(parseDevices(response.devices));
+    const handleConnectionLost = () => {
+      setName("");
+      setBoundAddress("");
     };
-
-  const scanDevices = useCallback(() => {
-    setLoading(true)
-    BluetoothManager.scanDevices().then(
-      s => {
-        // const pairedDevices = s.paired;
-        var found = s.found
-        try {
-          found = JSON.parse(found) //@FIX_it: the parse action too weired..
-        } catch (e) {
-          //ignore
-        }
-        var fds = foundDs
-        if (found && found.length) {
-          fds = found
-        }
-        setFoundDs(fds)
-        setLoading(false)
-      },
-      er => {
-        setLoading(false)
-        // ignore
-      },
-    )
-  }, [foundDs])
-
-  const scan = useCallback(() => {
-    try {
-      async function blueTooth() {
-        const permissions = { 
-          title: "Please Allow Your 'Printer'",
-          message:
-            "HSD bluetooth memerlukan akses ke bluetooth untuk proses koneksi ke bluetooth printer",
-          buttonNeutral: "Lain Waktu",
-          buttonNegative: "Tidak",
-          buttonPositive: "Boleh",
-        }
-
-        const bluetoothConnectGranted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-          permissions,
-        )
-        // console.log(bluetoothConnectGranted, '..............................................', permissions, 'llllllllll', PermissionsAndroid.RESULTS.GRANTED);
-
-        if (bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED) {
-          const bluetoothScanGranted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-            permissions,
-          )
-          console.log(bluetoothScanGranted, '===', PermissionsAndroid.RESULTS.GRANTED);
-          if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
-            scanDevices()
-          }
-        } 
-        else {
-          // scan()
-          // onClearData();
-          // logout();
-          console.log('Dont Allow');
-        }
-      }
-      blueTooth()
-    } catch (err) {
-      // console.warn(err)
+    const emitter =
+      Platform.OS === "ios"
+        ? new NativeEventEmitter(BluetoothManager)
+        : DeviceEventEmitter;
+    const subscriptions = [
+      emitter.addListener(
+        BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED,
+        handlePairedDevices,
+      ),
+      emitter.addListener(
+        BluetoothManager.EVENT_CONNECTION_LOST,
+        handleConnectionLost,
+      ),
+    ];
+    if (Platform.OS === "android") {
+      subscriptions.push(
+        DeviceEventEmitter.addListener(
+          BluetoothManager.EVENT_BLUETOOTH_NOT_SUPPORT,
+          () =>
+            ToastAndroid.show(
+              "Device does not support Bluetooth.",
+              ToastAndroid.LONG,
+            ),
+        ),
+      );
     }
-  }, [scanDevices])
 
-  const scanBluetoothDevice = async () => {
-    setLoading(true)
+    initialiseBluetooth();
+    const appStateSubscription = AppState.addEventListener(
+      "change",
+      nextAppState => {
+        if (nextAppState === "active") initialiseBluetooth();
+      },
+    );
+    return () => {
+      subscriptions.forEach(subscription => subscription.remove());
+      appStateSubscription.remove();
+    };
+  }, [initialiseBluetooth, setPaired]);
+
+  const unPair = useCallback(async address => {
     try {
-      const request = await requestMultiple([
-        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
-        PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
-        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      ])
-
-      // console.log(RESULTS.GRANTED, '<<<<<<<<<<<<<<<<<<<<<');
-      
-      if (
-        request["android.permission.ACCESS_FINE_LOCATION"] === RESULTS.GRANTED
-      ) {
-        scanDevices()
-        setLoading(false)
-      } else {
-        setLoading(false)
-      }
-    } catch (err) {
-      setLoading(false)
+      setLoading(true);
+      await BluetoothManager.unpaire(address);
+      appStorage.delete(SELECTED_PRINTER_KEY);
+      setBoundAddress("");
+      setName("");
+    } catch (error) {
+      console.log("Unable to unpair printer:", error);
+    } finally {
+      setLoading(false);
     }
-  }
+  }, []);
+
+  const scanBluetoothDevice = useCallback(async () => {
+    try {
+      setLoading(true);
+      if (Platform.OS === "android") {
+        const request = await requestMultiple([
+          PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+          PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        ]);
+        if (request[PERMISSIONS.ANDROID.BLUETOOTH_CONNECT] !== RESULTS.GRANTED)
+          return;
+      }
+      await scanDevices();
+    } finally {
+      setLoading(false);
+    }
+  }, [scanDevices]);
 
   return (
     <ScrollView style={styles.container}>
@@ -295,67 +222,52 @@ const PrintMain = () => {
       {!bleOpend && (
         <Text style={styles.bluetoothInfo}>Please activate your bluetooth</Text>
       )}
-      {/* <Text style={styles.sectionTitle}>
-        Printer connected to the application:
-      </Text> */}
       {boundAddress.length > 0 && (
         <ItemList
           label={name}
           value={boundAddress}
-          onPress={() => {
-            // console.log("disconnect false")
-            unPair(boundAddress)
-          }}
+          onPress={() => unPair(boundAddress)}
           actionText="Unpair"
           color="#E9493F"
         />
       )}
-      {/* {boundAddress.length < 1 && (
-        <Text style={styles.printerInfo}>
-          There is no printer connected yet
-        </Text>
-      )} */}
       <Text style={styles.sectionTitle_org}>
         Without "Allow" You Can't Navigate.
       </Text>
       <Text style={styles.sectionTitle}>
         Bluetooth connected to this phone:
       </Text>
-     
       {loading ? <ActivityIndicator animating={true} /> : null}
       <View style={styles.containerList}>
-        {pairedDevices.map((item, index) => {
-          return (
-            <ItemList
-              key={index}
-              onPress={() => connect(item)}
-              label={item.name}
-              value={item.address}
-              connected={item.address === boundAddress}
-              actionText="Connect"
-              color="#00BCD4"
-            />
-          )
-        })}
+        {pairedDevices.map(item => (
+          <ItemList
+            key={item.address}
+            onPress={() => connect(item)}
+            label={item.name}
+            value={item.address}
+            connected={item.address === boundAddress}
+            actionText="Connect"
+            color="#00BCD4"
+          />
+        ))}
       </View>
       <SamplePrint />
-      <Button onPress={() => scanBluetoothDevice()} title="Scan / Connect" />
+      <Button onPress={scanBluetoothDevice} title="Scan / Connect" />
       <View style={{ height: 100 }} />
     </ScrollView>
-  )
-}
+  );
+};
 
-export default PrintMain
+export default PrintMain;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-    paddingHorizontal: 20,
-  },
+  container: { flex: 1, paddingTop: 40, paddingHorizontal: 20 },
   containerList: { flex: 1, flexDirection: "column" },
   bluetoothStatusContainer: {
-    justifyContent: "flex-end", width:'100%', textAlign:'center', borderRadius:10,
+    justifyContent: "flex-end",
+    width: "100%",
+    textAlign: "center",
+    borderRadius: 10,
     alignSelf: "center",
   },
   bluetoothStatus: color => ({
@@ -373,12 +285,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: { fontWeight: "bold", fontSize: 18, marginBottom: 12 },
-  sectionTitle_org: { fontWeight: "bold", fontSize: 16, marginBottom: 12, textAlign: "center", backgroundColor: "#E9493F", color:'#fff', padding:5, borderRadius:6 },
-  printerInfo: {
-    textAlign: "center",
+  sectionTitle_org: {
+    fontWeight: "bold",
     fontSize: 16,
-    color: "#E9493F",
-    marginBottom: 20,
+    marginBottom: 12,
+    textAlign: "center",
+    backgroundColor: "#E9493F",
+    color: "#fff",
+    padding: 5,
+    borderRadius: 6,
   },
-  sectionSub: { fontSize: 15, marginBottom: 5 },
-})
+});

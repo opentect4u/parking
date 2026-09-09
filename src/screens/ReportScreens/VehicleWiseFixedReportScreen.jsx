@@ -303,114 +303,214 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   
 
   } else if (device_Type_Check == "H") {
-    let payloadHeader = "";
-    let payloadBody = "";
-    let payloadFooter = "";
-  
-    vehicleWiseReports.map((item, index) => {
-      // console.log(item, 'oooooooooooooooooooooooooooooo');
-      
-      // payloadBody += `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  ${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`
-    
-      payloadBody += `${generalSettings.gst_flag === "Y" ? `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>` : `\n[L]<font size='11'>${fixedString(item.vehicleType.toString(), 5)} [L]${fixedString(item.tot_vehi.toString(), 4)}  [L]${fixedString((isNaN(item?.advance_amt) ? 0 : item?.advance_amt).toString(),4)}  [R]${fixedString(item.tot_amt.toString(), 4)}</font>`}`
-    
-    });
-  
-    if(receiptSettings?.report_flag == "Y"){
-  
-    if(receiptSettings.header1_flag==1){
-    payloadHeader +=
-    `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` ;
+  let payloadHeader = "";
+  let payloadBody = "";
+  let payloadFooter = "";
+  let GST_Header = "";
+  let GST_Yes_No = "";
+
+  // =========================================================
+  // VEHICLE WISE REPORT BODY
+  // =========================================================
+
+  vehicleWiseReports.map((item, index) => {
+    const vehicleType = item?.vehicleType?.toString() || "";
+    const vehicleCount = item?.tot_vehi?.toString() || "0";
+    const advanceAmount = isNaN(item?.advance_amt)
+      ? "0"
+      : item?.advance_amt?.toString() || "0";
+    const paidAmount = item?.tot_amt?.toString() || "0";
+
+    if (generalSettings.gst_flag === "Y") {
+      // GST = YES
+      // Vehicle | Count | Paid
+      payloadBody +=
+        `\n[L]<font size='11'>` +
+        `${fixedString(vehicleType, 5)} ` +
+        `[L]${fixedString(vehicleCount, 4)} ` +
+        `[R]${fixedString(paidAmount, 4)}` +
+        `</font>`;
+    } else {
+      // GST = NO
+      // Vehicle | Count | Advance | Paid
+      payloadBody +=
+        `\n[L]<font size='11'>` +
+        `${fixedString(vehicleType, 5)} ` +
+        `[L]${fixedString(vehicleCount, 4)} ` +
+        `[L]${fixedString(advanceAmount, 4)} ` +
+        `[R]${fixedString(paidAmount, 4)}` +
+        `</font>`;
     }
-  
-    if(receiptSettings.header2_flag==1){
-    payloadHeader += `[C]<font size='small'>${receiptSettings.header2}</font>\n` ;
+  });
+
+  // =========================================================
+  // HEADER
+  // =========================================================
+
+  if (receiptSettings?.report_flag == "Y") {
+    if (receiptSettings.header1_flag == 1) {
+      payloadHeader +=
+        `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
     }
-  
-    if(receiptSettings.header3_flag==1){
-    payloadHeader += `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+
+    if (receiptSettings.header2_flag == 1) {
+      payloadHeader +=
+        `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
     }
-  
-    if(receiptSettings.header4_flag==1){
-    payloadHeader +=  `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+
+    if (receiptSettings.header3_flag == 1) {
+      payloadHeader +=
+        `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
     }
+
+    if (receiptSettings.header4_flag == 1) {
+      payloadHeader +=
+        `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    }
+
+    // =========================================================
+    // GST NUMBER
+    // =========================================================
 
     if (generalSettings.gst_flag == "Y") {
-      GST_Header += `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
-    } else {
-      GST_Header += ``;
-    }
-  
-    if(receiptSettings.footer1_flag==1){
-    payloadFooter += `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
-    }
-    if(receiptSettings.footer2_flag==1){
-    payloadFooter += `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
-    }
-    if(receiptSettings.footer3_flag==1){
-    payloadFooter += `[C]<font size='small'>${receiptSettings.footer3}</font>\n` ;
-    }
-    if(receiptSettings.footer4_flag==1){
-    payloadFooter += `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
-    }
-  
+      GST_Header +=
+        `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
     }
 
-    if (generalSettings.gst_flag == "Y") {
-      GST_Yes_No += `[L]<font size='normal'>BASE AMOUNT : ${totalAmount - (gstAmount.CGST + gstAmount.SGST)}\nCGST @${gstList.cgst}%: ${gstAmount.CGST}</font>\n` +  `[L]<font size='normal'>SGST @${gstList.sgst}%: ${gstAmount.SGST}</font>\n` + `[C]--------------------------------\n`
-    } else {
-      GST_Yes_No += ``;
+    // =========================================================
+    // FOOTER
+    // =========================================================
+
+    if (receiptSettings.footer1_flag == 1) {
+      payloadFooter +=
+        `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
     }
 
-  
-    try {
+    if (receiptSettings.footer2_flag == 1) {
+      payloadFooter +=
+        `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    }
+
+    if (receiptSettings.footer3_flag == 1) {
+      payloadFooter +=
+        `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+    }
+
+    if (receiptSettings.footer4_flag == 1) {
+      payloadFooter +=
+        `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    }
+  }
+
+  // =========================================================
+  // GST DETAILS
+  // =========================================================
+
+  // if (generalSettings.gst_flag == "Y") {
+  //   const baseAmount =
+  //     totalAmount - (gstAmount.CGST + gstAmount.SGST);
+
+  //   GST_Yes_No +=
+  //     `[L]<font size='normal'>` +
+  //     `BASE AMOUNT : ${baseAmount}` +
+  //     `\nCGST @${gstList.cgst}%: ${gstAmount.CGST}` +
+  //     `</font>\n`;
+
+  //   GST_Yes_No +=
+  //     `[L]<font size='normal'>` +
+  //     `SGST @${gstList.sgst}%: ${gstAmount.SGST}` +
+  //     `</font>\n`;
+
+  //   GST_Yes_No +=
+  //     `[C]--------------------------------\n`;
+  // }
+
+  // =========================================================
+  // PRINT
+  // =========================================================
+
+  try {
     await ThermalPrinterModule.printBluetooth({
       payload:
+        // Header
         `[C]${payloadHeader}` +
+
+        // GST Number
         `${GST_Header}` +
+
+        // Report Title
         `[C]<u><font size='small'>Vehiclewise Report</font></u>\n` +
+
+        // Separator
         `[C]--------------------------------\n` +
-        `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
-        `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+
+        // Date Range
+        `[L]<font size='normal'>From: ${mydateFrom.toLocaleDateString(
+          "en-GB"
+        )}</font>` +
+        `[R]<font size='normal'>To: ${mydateTo.toLocaleDateString(
+          "en-GB"
+        )}</font>\n` +
+
+        // Report On
+        `[C]<font size='normal'>Report On: ${new Date().toLocaleString(
+          "en-GB"
+        )}</font>\n` +
+
+        // Separator
         `[C]--------------------------------\n` +
         `[C]--------------------------------\n` +
-        // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>Veh.   [L]Count   [R]Paid</font>\n` : "[L]<font size='normal'>Veh.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
-        `${"[L]<font size='normal'>Veh.   [L]Count   [L]Advance   [R]Paid</font>\n"}` +
-        // `[C]<font size='normal'>Veh.   Count   Advance   Paid</font>\n` +
-        `[C]--------------------------------` +
-        `[C]${payloadBody}\n` +
+
+        // Column Header
+        `${
+          generalSettings.gst_flag === "Y"
+            ? `[L]<font size='normal'>Veh. [L]Count [R]Paid</font>\n`
+            : `[L]<font size='normal'>Veh. [L]Count [L]Advance [R]Paid</font>\n`
+        }` +
+
+        // Separator
         `[C]--------------------------------\n` +
-        // `${generalSettings.gst_flag === "Y" ? `[L]<font size='normal'>NET: ${totalAmount}</font>\n` : ""}` +
-        // `${generalSettings.gst_flag === "N" ? `[L]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n` : ""}` +
-        `${`[L]<font size='normal'>ADV: ${totalAdvanceAmount}   PAID: ${totalAmount}   NET: ${totalAmount+totalAdvanceAmount}</font>\n`}` +
+
+        // Vehicle Data
+        `${payloadBody}\n` +
+
+        // Separator
         `[C]--------------------------------\n` +
+
+        // Total
+        `[L]<font size='normal'>` +
+        `ADV: ${totalAdvanceAmount}   ` +
+        `PAID: ${totalAmount}   ` +
+        `NET: ${totalAmount + totalAdvanceAmount}` +
+        `</font>\n` +
+
+        // Separator
+        `[C]--------------------------------\n` +
+
+        // GST Calculation
         `${GST_Yes_No}` +
 
+        // Footer
         `[C]${payloadFooter}\n`,
+
       printerNbrCharactersPerLine: 30,
       printerDpi: 120,
       printerWidthMM: 58,
       mmFeedPaper: 25,
     });
-    // vehicleWiseReports.map(async (item, index) => {
-    //   await ThermalPrinterModule.printBluetooth({
-    //     payload:
-    //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.advance_amt}  ${item.paid_amt}\n`,
-  
-    //   printerNbrCharactersPerLine: 30,
-    //   printerDpi: 120,
-    //   printerWidthMM: 58,
-    //   mmFeedPaper: 25,
-    //   })
-    // })
-    } catch (err) {
+
+  } catch (err) {
     ToastAndroid.show(
       "ThermalPrinterModule - VehicleWiseFixedReportScreen",
-      ToastAndroid.SHORT,
+      ToastAndroid.SHORT
     );
-    console.log(err.message);
-    }
-    } else {
+
+    console.log(
+      "ThermalPrinterModule Error:",
+      err?.message || err
+    );
+  }
+} else {
 
       if(device_Type_Check == "M"){
         ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
@@ -529,6 +629,8 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
  
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
+                    // console.log(item, 'gggggggggggggggggggggggg');
+                    
                     totalAmount += item?.tot_amt;
                     totalAdvanceAmount = item?.advance_amt;
                     // totalAdvanceAmount += isNaN(item?.advance_amt) ? 0 : item?.advance_amt;
@@ -591,23 +693,19 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                   )} */}
                   
                   {/* {generalSettings.gst_flag === "Y" && ( */}
-                  <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
+                  {/* <View style={{...styles.row, backgroundColor: colors["primary-color"],}}>
                     <Text style={[styles.cell, styles.hcell]}>
                       Base Amount   
-                      {/* {JSON.stringify(gstAmount, null, 2)} // */}
-                      {/* {JSON.stringify(vehicleWiseReports, null, 2)} */}
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
-                      {/* {totalAmount} // */}
                       {generalSettings.gst_flag == "Y" && (
                         <>
-                        {/* {totalAmount - (gstAmount.CGST + gstAmount.SGST)} */}
                         {totalAmount}
                         </>
                       )}
                     </Text>
                    
-                  </View>
+                  </View> */}
                   <View
                 style={{
                 ...styles.row,
