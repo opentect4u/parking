@@ -115,7 +115,7 @@ function BottomNavigation() {
         }}
         component={PrintNavigation}
       />
-       {/* )}  */}
+      {/* )} */}
 
 
     </Tab.Navigator>

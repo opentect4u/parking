@@ -200,6 +200,8 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     if (generalSettings.gst_flag == "Y") {
     gstAmount = gstCalculatorReport(vehicleAdv, gstList.sgst, gstList.cgst)
     }
+
+    
     
     // if (loading == true) {
     //   return;
@@ -270,6 +272,10 @@ const CreateReceiptScreen = ({ navigation, route }) => {
     // if (generalSettings.gst_flag == "N") {
     //   let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, generalSettings.gst_flag, 0, 0);
     //   }
+
+
+    
+    
 
     
 

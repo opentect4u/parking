@@ -157,6 +157,9 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
     // return 0
 
+    
+    
+
 
     // with gst without gst car outpass send to server
 
@@ -183,7 +186,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
 
-
+    // console.log('ffffffffffffffffffffffffff', insert_car_outpass?.data?.update_car_in_flag_status?.suc );
 
     //if upload server successfully then print receipt
     if (insert_car_outpass?.data?.update_car_in_flag_status?.suc == 1) {
@@ -326,6 +329,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         navigation.goBack();
       } else if (device_Type_Check == "H") {
 
+        
+
   try {
     let payloadHeader = "";
     let payloadBody = "";
@@ -373,6 +378,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
         payloadHeader +=
           `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
       }
+
+      
 
 
       // ==============================
@@ -424,18 +431,27 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     }
 
 
+    
+console.log(upiId, 'aaaaaaaaaaaaa', upiId != null);
     // ==============================
     // UPI QR CODE
     // ==============================
-    if (upiId.length > 0) {
-      qrcode =
-        `[C]<qrcode size='30'>${upiString.toString()}</qrcode>\n`;
+    if(upiId != null){
+        if (upiId.length > 0) {
+        qrcode =
+          `[C]<qrcode size='30'>${upiString.toString()}</qrcode>\n`;
+        }
     }
+    
 
 
     // ==============================
     // PRINT
     // ==============================
+    
+        
+console.log('ttttttttttttttttttt', device_Type_Check);
+
     await ThermalPrinterModule.printBluetooth({
       payload:
         // OUTPASS
@@ -461,6 +477,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
         // SEPARATOR
         `[C]-------------------------------\n` +
+        
 
         // FOOTER
         `[C]${payloadFooter}\n` +
@@ -473,6 +490,9 @@ const CreateOutpassScreen = ({ route, navigation }) => {
       printerWidthMM: 58,
       mmFeedPaper: 25,
     });
+
+    console.log('ddddddddddddddddd', device_Type_Check);
+        // return
 
     setLoading(false);
 
