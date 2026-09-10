@@ -62,6 +62,7 @@ const SignInScreen = ({ navigation }) => {
         setFcmToken(token);
       } else {
         console.log("Failed to get FCM token");
+        alert("Failed to get FCM token");
       }
     } catch (error) {
       console.error("Error fetching FCM token:", error);

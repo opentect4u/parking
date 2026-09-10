@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
       fcm_token: fcmToken
     };
 
-    console.log(credentials, 'xxxxxxxxxxxxxxxxx');
+    // console.log(credentials, 'xxxxxxxxxxxxxxxxx');
 
 
     try {
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
             // console.log(res.data.message, 'mmmmmmmmmmmmmmmmm', typeof (res.data.message));
 
             if (typeof (res.data.message) === 'string') {
-              alert("Invalid Credentials");
+              alert(res.data.message);
             }
 
             if (typeof (res.data.message) === 'object') {
