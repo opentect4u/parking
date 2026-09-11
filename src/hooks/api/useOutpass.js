@@ -4,6 +4,9 @@ import { loginStorage } from "../../storage/appStorage";
 import HourlyPriceCalculate from "../useHourlyPriceCalculate";
 
 function useOutpass() {
+
+    
+    
     const calculateTotalPrice = async (daywise, timestamp,vehicle_id,date_time_in,vehicle_no, grace_period, end_time,inTimestamp) => {
         // get Vehicle Rates By Id From Local Storage
         // const result = await getVehicleRatesByVehicleId(vehicleId);
@@ -59,6 +62,22 @@ function useOutpass() {
     
 
     const useCarOutpass=async(device_id, date_time_out, receipt_no, base_amt, cgst, sgst, igst, paid_amt, gst_flag, vehicle_id, vehicle_no, date_time_in, getPayMode)=>{
+
+        // console.log({
+        //             'device_id':device_id,
+        //             'date_time_out':date_time_out,
+        //             'receipt_no':receipt_no,
+        //             'base_amt':base_amt,
+        //             'cgst':cgst,
+        //             'sgst':sgst,
+        //             'igst':igst,
+        //             'paid_amt':paid_amt,
+        //             'gst_flag':gst_flag,
+        //             'vehicle_id':vehicle_id,
+        //             'vehicle_no':vehicle_no,
+        //             'date_time_in':date_time_in,
+        //             'paymode':getPayMode
+        //         }, 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
 
         const loginData = JSON.parse(loginStorage.getString("login-data"));
         return new Promise((resolve, reject) => {

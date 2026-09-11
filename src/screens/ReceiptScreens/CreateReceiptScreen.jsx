@@ -68,19 +68,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const device_Type_Check = loginData.user.userdata.msg[0].device_type;
 
 
-  // const [radioState, setRadioState] = useState(false);
-  // const [getPayMode, setPayMode] = useState('C');
-  // const radioOptions = [
-  //   { label: 'Cash: ', value: 'C' },
-  //   { label: 'UPI: ', value: 'U' },
-  // ];
-
-  // console.log(generalSettings, 'gstListgstListgstListgstList');
-  
-
-
-  
-
 
   const getVehicleRateFixedByVehicleId = async (devMode, id) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -111,8 +98,6 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log(receiptSettings, 'receiptSettingsxxxxxreceiptSettingsreceiptSettings');
-    
     setdevice_type(loginData.user.userdata.msg[0].device_type == "M")
     console.log("EFFECT - CreateReceiptScren");
     // console.log(generalSettings.adv_value, 'generalSettings__XXROYYYYYY');
@@ -123,11 +108,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    console.log(
-      "getVehicleRateFixedByVehicleId called - CreateReceiptScreen",
-      dev_mod,
-      id,
-    );
+    // console.log(
+    //   "getVehicleRateFixedByVehicleId called - CreateReceiptScreen",
+    //   dev_mod,
+    //   id,
+    // );
     getVehicleRateFixedByVehicleId(dev_mod, id);
   }, [generalSettings]);
 
@@ -233,21 +218,11 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   }
 
 
-
-    // let vehicleRate = parseInt(fixedVehicleRateObject.vehicle_rate);
     let vehicleId = parseInt(id);
 
     let gstData = await handleGetGst();
 
     await checkLocationEnabled();
-    // console.log(gstList, 'kkkkkkkkkkkffffkkkkkkkkkkkkkkkkkkk', generalSettings.gst_flag);
-    //vehicle data to update server
-
-    // const currentTime___ = currentTime;
-  // console.log(currentTime, '///////////////////////////////////////////////////baseAmt__UTSAB');
-  
-    // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, 0, 0, "N", 0, 0);
-    // date 261124 // let carindata = await carIn(vehicleId, vehicleNumber, vehicleAdv, currentTime, 0, generalSettings.gst_flag, gstList.cgst, gstList.sgst);
     
     let carindata = "";
 

@@ -12,6 +12,7 @@ import { loginStorage } from "../storage/appStorage";
 // import { SocketProvider } from '../context/Socket';
 // import { useSocket } from '../context/Socket';
 import DublicatePrintScreen from "../screens/ReportScreens/DublicatePrintScreen";
+import ManualNavigation from "./ManualNavigation";
 
 
 
@@ -19,19 +20,19 @@ import DublicatePrintScreen from "../screens/ReportScreens/DublicatePrintScreen"
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  const { receiptScreen, ReceiptScreen_Bletooth, outpassScreen, reportScreen, settingsScreen, printScreen } = navigationRoutes;
+  const { receiptScreen, ReceiptScreen_Bletooth, outpassScreen, manualScreens, reportScreen, settingsScreen, printScreen } = navigationRoutes;
 
   const { generalSettings } = useContext(AuthContext);
   const { dev_mod, report_flag } = generalSettings;
   // const { socketOndata } = useSocket();
-  // const loginData = JSON.parse(loginStorage?.getString("login-data"));
+  const loginData = JSON.parse(loginStorage?.getString("login-data"));
 
-  // const device_Type_Check = loginData?.user?.userdata?.msg[0]?.device_type;
+  const device_Type_Check = loginData?.user?.userdata?.msg[0]?.device_type;
   
 
   // console.log(device_Type_Check, 'oooooooooooooooooooooooooooooooo');
   useEffect(() => {
-    // console.log('>>>>>>>>>>>>>>???????', 'socketOndata noti')
+    console.log('ddddddddddddddddddd', device_Type_Check)
 
   }, []);
 
@@ -55,7 +56,7 @@ function BottomNavigation() {
         <Tab.Screen
           name={"Receipt_Navigation"}
           options={{
-            title: "Receipt",
+            title: "Entry",
             tabBarIcon: ({ color, size }) => icons.receipt(color, 30),
           }}
           component={ReceiptNavigation}
@@ -67,10 +68,23 @@ function BottomNavigation() {
         <Tab.Screen
           name={outpassScreen}
           options={{
-            title: "Outpass",
+            title: "Exit",
             tabBarIcon: ({ color, size }) => icons.outpass(color, 30),
           }}
           component={OutpassNavigation}
+        />
+      )}
+
+
+      {/* Out pass bill */}
+      {dev_mod != "R" && dev_mod != "F" && (
+        <Tab.Screen
+          name={manualScreens}
+          options={{
+            title: "Manual",
+            tabBarIcon: ({ color, size }) => icons.outpass(color, 30),
+          }}
+          component={ManualNavigation}
         />
       )}
 
@@ -106,7 +120,7 @@ function BottomNavigation() {
       />
 
       {/*Setting Screen */}
-      {/* {device_Type_Check == "M" && ( */}
+      {device_Type_Check == "M" && (
       <Tab.Screen
         name={printScreen}
         options={{
@@ -115,7 +129,7 @@ function BottomNavigation() {
         }}
         component={PrintNavigation}
       />
-      {/* )} */}
+      )}
 
 
     </Tab.Navigator>

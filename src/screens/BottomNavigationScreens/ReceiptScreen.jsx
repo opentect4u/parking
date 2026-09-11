@@ -29,24 +29,7 @@ import { AuthContext } from "../../context/AuthProvider";
 
 import headerImg from "../../resources/logo/sss-logo.png";
 import useDashboard from "../../hooks/api/useDashboard";
-
-
-// import {
-//   ActivityIndicator,
-//   DeviceEventEmitter,
-//   NativeEventEmitter,
-//   PermissionsAndroid,
-//   Platform,
-//   ScrollView,
-//   Text,
-//   ToastAndroid,
-//   View,
-//   Button,
-//   Alert,
-//   StyleSheet,
-// } from "react-native"
 import { BluetoothManager } from "react-native-bluetooth-escpos-printer"
-// import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
 
 
 
@@ -175,14 +158,9 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
     navigation.navigate("create_receipt", {
       type: props.vehicle_name,
       id: props.vehicle_id,
-      // adv: props.adv,
       userId: userDetails?.user_id,
       operatorName: userDetails?.operator_name,
-      // receiptNo: receiptNo,
-      // currentDayTotalReceipt: totalVehicleIn,
       deviceId: userDetails?.device_id,
-      // advanceData: advancePrice,
-      // fixedPriceData: fixedPriceData,
     });
   };
 
@@ -235,45 +213,8 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
           onPress={() => dashboardData()}>
           {icons.sync}
         </TouchableOpacity>
-        {/* <TouchableOpacity
-          style={otherStyle.print_action_button}
-          onPress={() => console.log("======handleSamplePrintReceipt======")}>
-          {icons.arrowUp}
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity
-          style={otherStyle.print_action_button}
-          onPress={() => handlePrint()}>
-          {icons.print}
-        </TouchableOpacity> */}
       </View>
-      {/* vehicle container */}
-      {/* <View
-        style={{
-          ...otherStyle.vehicle_container,
-          bottom: 20,
-          alignSelf: "center",
-        }}>
-        {!generalSetting?.dev_mod && <ActivityIndicator size="large" />}
-      </View> */}
-
-      {/* {generalSetting?.dev_mod != "B" && (
-        <ScrollView horizontal={true} style={otherStyle.vehicle_container}>
-          {vechicles &&
-            vechicles.map((props, index) => (
-              <Pressable
-                key={index}
-                style={otherStyle.vehicle}
-                onPress={() => {
-                  console.log("handleNavigation(props)")
-                }}>
-                {icons.dynamicvechicleIcon(props.vehicle_icon)}
-                <Text style={otherStyle.vehicle_name}>
-                  {props.vehicle_name}
-                </Text>
-              </Pressable>
-            ))}
-        </ScrollView>
-      )} */}
+     
 
 
       {/* vehicle list  */}

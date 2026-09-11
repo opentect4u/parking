@@ -217,11 +217,11 @@ const deleteIcon = (size, color) => (
   />
 );
 
-const dynamicvechicleIcon = name => (
+const dynamicvechicleIcon = (name, color) => (
   <MaterialCommunityIcons
     name={name}
     size={50}
-    color={colors["primary-color"]}
+    color={color || colors["primary-color"]}
   />
 );
 

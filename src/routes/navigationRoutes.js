@@ -5,6 +5,7 @@ export default navigationRoutes = {
   reportScreen: "ReportScreen",
   settingsScreen: "SettingNavigation",
   printScreen: "PrintNavigation",
+  manualScreens: "ManualScreens",
 
   login: "login",
   signup: "signup",

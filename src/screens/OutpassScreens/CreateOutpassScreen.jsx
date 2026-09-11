@@ -84,7 +84,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
 
-    // console.log('datadatadatadata', upiId,'datadatadatadata', loginData?.user?.userdata?.msg[0]?.customer_name);
+    // console.log('datadatadatadata', route.params, 'ggggggggggggggggggggggggggggggggg');
 
   }, []);
 

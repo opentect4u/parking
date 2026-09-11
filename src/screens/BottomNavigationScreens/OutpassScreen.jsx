@@ -208,9 +208,6 @@ useEffect(() => {
   };
   
   const handleUploadOutPassData_scan = async (receiptNo, index, carData) => {
-
- 
-
     
     var crindate = Date();
 
@@ -454,6 +451,7 @@ useEffect(() => {
             },
           )
           .then(res => {
+            // console.log(carNumber, 0, res.data.data.msg[0], 'cccccccccccccccccc');
             console.log("=======hhhhhhhhhhh===", res.data.data.msg);
             setSerchData(res.data.data.msg);
           })
@@ -497,7 +495,7 @@ useEffect(() => {
   const handleUploadOutPassData = async (receiptNo, index, carData) => {
 
     // const gstSettings_ = await handleGetGst();
-    // console.log(gstSettings_[0], 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+    // console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', carData, 'jjjjjjjjjjjj');
     // return;
     // Alert.alert()
 
@@ -567,15 +565,6 @@ useEffect(() => {
 
     
     if(free_Parking){
-    // var price = await calculateTotalPrice(
-    //   timestamp,
-    //   carData.vehicle_id,
-    //   // carData.date_time_in,
-    //   crindate,
-    //   carData.vehicle_no,
-    //   currentDate.toISOString().slice(0, -5) + "Z",
-    //   currentDate.getTime(),
-    // );
     var price = 0;
   }
   
@@ -585,23 +574,12 @@ useEffect(() => {
       generalSettings?.day_wise_rate,
       timestamp,
       carData.vehicle_id,
-      // carData.date_time_in,
       crindate,
-      // date_time_inAfter_Cal,
-      // generalSettings.grace_value !== null && generalSettings.grace_value.length ? date_time_inAfter_Cal : carData?.date_time_in,
       carData.vehicle_no,
       currentDate.toISOString().slice(0, -5) + "Z",
       currentDate.getTime(),
     );
     
-// console.log(price, 'priceprice 2222', generalSettings?.day_wise_rate,
-//       timestamp,
-//       carData.vehicle_id,
-//       crindate,
-//       carData.vehicle_no,
-//       currentDate.toISOString().slice(0, -5) + "Z",
-//       currentDate.getTime(), 'hhhhhhhhhhhhhhhhhhhhhhhh');
-
   }
 
     const totalDuration = useCalculateDuration(
@@ -621,16 +599,6 @@ useEffect(() => {
       label: "RECEIPT NO",
       value: carData.receipt_no.toString().slice(-5) || "",
     });
-
-
-    // if (
-    //   gstSettings &&
-    //   Array.isArray(gstSettings) &&
-    //   gstSettings.length > 0 &&
-    //   gstSettings[0]?.gst_flag === "Y"
-    // ) {
-
-    //  console.log(price, 'kkkkkkkkkkkkkkfyfggjhghjghjghjghjkkkkk', gstSettings[0], generalSettings?.gst_flag);
 
       if(generalSettings?.gst_flag === "Y"){
       const gstPrice = await useGstPriceCalculator(gstSettings[0], price, generalSettings?.gst_flag);
