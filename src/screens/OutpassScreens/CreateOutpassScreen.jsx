@@ -300,6 +300,8 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
            await BluetoothEscposPrinter.printText(`Scan QR Code to Pay with UPI: \n`, { align: "center" });
 
+           console.log(upiId, 'aaaaaaaaaaaaa', upiId, 'ggg', upiId.length);
+
           if (upiId.length > 0) {
           await BluetoothEscposPrinter.printQRCode(
           upiString.toString(), // QR code data
@@ -432,7 +434,7 @@ const CreateOutpassScreen = ({ route, navigation }) => {
 
 
     
-console.log(upiId, 'aaaaaaaaaaaaa', upiId != null);
+
     // ==============================
     // UPI QR CODE
     // ==============================
