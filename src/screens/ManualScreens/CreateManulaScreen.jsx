@@ -7,6 +7,7 @@ import {
   PixelRatio,
   Pressable,
   Alert,
+  Modal,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
@@ -51,6 +52,10 @@ const [disabled, setDisabled] = useState(false);
 const [carOutPrice, setCarOutPrice] = useState();
 const [loading_scan, setLoading_scan] = useState(false);
 const [getAdvAmount_para, setAdvAmount_para] = useState();
+
+const [showReceiptPopup, setShowReceiptPopup] = useState(false);
+const [receiptPopupData, setReceiptPopupData] = useState([]);
+const [receiptPopupInfo, setReceiptPopupInfo] = useState(null);
 
 const { calculateTotalPrice } = useOutpass();
 const { check_Advance } = useCheckAdvance();
@@ -143,12 +148,22 @@ useEffect(() => {
   };
 
   const handleCreateReceipt = () => {
-    console.log('Print manual receipt', {
-      vehicle: selectedVehiclelDetail,
-      vehicleNumber,
-    });
+    console.log(selectedVehiclelDetail, 'Print manual receipt', vehicleNumber);
+
+    const now = new Date();
+
+    const date_time_in = now.toISOString().replace(/\.\d{3}Z$/, ".000Z");
+
+    var carData = {
+    "date_time_in": mydateFrom,
+    "receipt_no": 1787037699672, // Sayantika NO
+    "vehicle_id": selectedVehiclelDetail?.vehicle_id,
+    "vehicle_name": selectedVehiclelDetail?.vehicle_name, // Sayantika NO
+    "vehicle_no": vehicleNumber
+    }
+
     setVehicleNumber('');
-    handleUploadOutPassData_scan()
+    handleUploadOutPassData_scan(carData)
   };
 
   const handleDateChange = (event, selectedDate) => {
@@ -175,28 +190,28 @@ useEffect(() => {
     
   };
 
-var carData;
 
-   const handleUploadOutPassData_scan = async () => {
+   const handleUploadOutPassData_scan = async (carData) => {
+// const now = new Date();
 
-    carData = {
-  "car_out_flag": "N", // Sayantika NO
-  "created_at": "2026-08-18T07:21:39.000Z", // Sayantika NO
-  "customer_id": 14, // Sayantika NO
-  "date_time_in": "2026-08-13T07:21:39.000Z",
-  "device_id": "bb85df4bc18b23e1", // Sayantika NO
-  "oprn_mode": "D", // Sayantika NO
-  "receipt_no": 1787037699672, // Sayantika NO
-  "receipt_type": "S", // Sayantika NO
-  "updated_at": null, // Sayantika NO
-  "user_id_in": 307, // Sayantika NO
-  "vehicle_id": 54,
-  "vehicle_in_id": 4113690, // Sayantika NO
-  "vehicle_name": "GOODS VAN", // Sayantika NO
-  "vehicle_no": "Todaygood"
-}
+// const date_time_in = now.toISOString().replace(/\.\d{3}Z$/, ".000Z");
 
-
+//     carData = {
+//   // "car_out_flag": "N", // Sayantika NO
+//   // "created_at": "2026-08-18T07:21:39.000Z", // Sayantika NO
+//   // "customer_id": 14, // Sayantika NO
+//   "date_time_in": date_time_in,
+//   // "device_id": "bb85df4bc18b23e1", // Sayantika NO
+//   // "oprn_mode": "D", // Sayantika NO
+//   "receipt_no": 1787037699672, // Sayantika NO
+//   // "receipt_type": "S", // Sayantika NO
+//   // "updated_at": null, // Sayantika NO
+//   // "user_id_in": 307, // Sayantika NO
+//   "vehicle_id": selectedVehiclelDetail?.vehicle_id,
+//   // "vehicle_in_id": 4113690, // Sayantika NO
+//   "vehicle_name": selectedVehiclelDetail?.vehicle_name, // Sayantika NO
+//   "vehicle_no": vehicleNumber
+// }
     
     var crindate = Date();
     
@@ -396,14 +411,33 @@ var carData;
     
     console.log(vData, 'vDatavDatavDatavData', carData);
 
-    navigationRoutes.navigate("CreateOutpassScreen", {
-      data: vData,
-      others: carData,
-      gstSettings: gstSettings[0],
-      totalRate: totalRatearr,
+
+    setReceiptPopupData(vData);
+    setReceiptPopupInfo({
+    carData,
+    gstSettings: gstSettings[0],
+    totalRate: totalRatearr,
     });
 
+    setShowReceiptPopup(true);
+
+    // Her start to show a Popup with this data
+
+    // navigationRoutes.navigate("CreateOutpassScreen", {
+    //   data: vData,
+    //   others: carData,
+    //   gstSettings: gstSettings[0],
+    //   totalRate: totalRatearr,
+    // });
+
   };
+
+  const handlePrintReceipt = async () => {
+  console.log('Printing receipt:', receiptPopupData);
+  console.log('Receipt info:', receiptPopupInfo);
+
+  // Your existing Bluetooth / Thermal printer code here
+};
 
 
   return (
@@ -424,7 +458,7 @@ var carData;
       <View style={otherStyle.padding_container}>
 
         {/* Screen Content */}
-        {/* <Text style={styles.receipt_or_vehicleNo}>
+        {/* <Text style={otherStyle.receipt_or_vehicleNo}>
           Receipt / Vehicle No.
         </Text> */}
 
@@ -529,7 +563,76 @@ var carData;
               <Text>{JSON.stringify(mydateFrom, null, 2)}</Text>
 
       </View>
+
+      <Modal
+  visible={showReceiptPopup}
+  transparent={true}
+  animationType="fade"
+  onRequestClose={() => setShowReceiptPopup(false)}
+>
+  <View style={otherStyle.modalOverlay}>
+
+    <View style={otherStyle.receiptModal}>
+
+      <View style={otherStyle.modalHeader}>
+        <Text style={otherStyle.modalTitle}>
+          RECEIPT
+        </Text>
+
+        <Pressable
+          onPress={() => setShowReceiptPopup(false)}
+          style={otherStyle.closeButton}
+        >
+          <Text style={otherStyle.closeButtonText}>×</Text>
+        </Pressable>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={otherStyle.receiptContent}
+      >
+
+        {receiptPopupData.map((item, index) => (
+          <View
+            key={`${item.label}-${index}`}
+            style={otherStyle.receiptRow}
+          >
+            <Text style={otherStyle.receiptLabel}>
+              {item.label}
+            </Text>
+
+            <Text style={otherStyle.receiptValue}>
+              {item.value}
+            </Text>
+          </View>
+        ))}
+
+      </ScrollView>
+
+      <View style={otherStyle.modalFooter}>
+
+        <Pressable
+  style={otherStyle.closeReceiptButton}
+  onPress={async () => {
+    await handlePrintReceipt();
+    setShowReceiptPopup(false);
+  }}
+>
+  <Text style={otherStyle.closeReceiptButtonText}>
+    PRINT RECEIPT
+  </Text>
+</Pressable>
+
+      </View>
+
+    </View>
+
+  </View>
+</Modal>
+
     </SafeAreaView>
+
+
   );
 };
 
@@ -613,5 +716,99 @@ vehicle_type: {
     fontSize: PixelRatio.roundToNearestPixel(15),
     marginBottom: normalize(10),
   },
+
+  modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.55)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingHorizontal: normalize(20),
+},
+
+receiptModal: {
+  width: '100%',
+  maxHeight: '85%',
+  backgroundColor: colors.white,
+  borderRadius: normalize(15),
+  overflow: 'hidden',
+  elevation: 10,
+},
+
+modalHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  backgroundColor: colors['primary-color'],
+  paddingHorizontal: normalize(15),
+  paddingVertical: normalize(12),
+},
+
+modalTitle: {
+  color: colors.white,
+  fontSize: responsiveFontSize(2.2),
+  fontWeight: '700',
+},
+
+closeButton: {
+  width: normalize(32),
+  height: normalize(32),
+  borderRadius: normalize(16),
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+closeButtonText: {
+  color: colors.white,
+  fontSize: normalize(28),
+  lineHeight: normalize(30),
+  fontWeight: '400',
+},
+
+receiptContent: {
+  padding: normalize(15),
+},
+
+receiptRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingVertical: normalize(9),
+  borderBottomWidth: 1,
+  borderBottomColor: '#eeeeee',
+},
+
+receiptLabel: {
+  flex: 1,
+  color: colors.black,
+  fontSize: normalize(14),
+  fontWeight: '600',
+},
+
+receiptValue: {
+  flex: 1,
+  color: colors.black,
+  fontSize: normalize(14),
+  fontWeight: '500',
+  textAlign: 'right',
+},
+
+modalFooter: {
+  padding: normalize(15),
+  borderTopWidth: 1,
+  borderTopColor: '#eeeeee',
+},
+
+closeReceiptButton: {
+  backgroundColor: colors['primary-color'],
+  borderRadius: normalize(8),
+  paddingVertical: normalize(12),
+  alignItems: 'center',
+},
+
+closeReceiptButtonText: {
+  color: colors.white,
+  fontSize: normalize(15),
+  fontWeight: '700',
+},
   
 });
