@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
 
             // console.log('sss first>>', res.data, '<<sss end');
-
+            //  console.log('generalSettingsgeneralSettingsgeneralSettings', res.data.data, 'generalSettingsgeneralSettingsgeneralSettings');
             loginStorage.set("login-data-local", JSON.stringify(credentials));
             loginStorage.set("login-data", JSON.stringify(res.data.data));
             logout_Storage.clearAll();
@@ -194,6 +194,8 @@ export const AuthProvider = ({ children }) => {
       .then(res => {
         // setGeneralSettings(res.data.data.msg[0]);
         setGeneralSettings(res.data.data.msg[0]);
+
+        //  console.log('generalSettingsgeneralSettingsgeneralSettings', res.data.data.msg[0], 'generalSettingsgeneralSettingsgeneralSettings');
 
 
         if (res.data.data.msg[0].gst_flag == "Y") {

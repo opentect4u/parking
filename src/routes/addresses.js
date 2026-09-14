@@ -11,6 +11,7 @@ export const ADDRESSES = {
   SHIFT_DATA:`${BASE_URL_V10}/master/my_shift`,
   CAR_IN: `${BASE_URL_V10}/car/car_in`,
   CAR_OUT: `${BASE_URL_V10}/car/out_pass`,
+  CAR_OUT_MANUAL: `${BASE_URL_V10}/car/manual_car_in_out`,
   CAR_SERCH: `${BASE_URL_V10}/car/search_car`,
   CAR_SERCH_SCAN: `${BASE_URL_V10}/car/search_car_scan`,
   DETAILED_REPORT: `${BASE_URL_V10}/report/detail_report`,

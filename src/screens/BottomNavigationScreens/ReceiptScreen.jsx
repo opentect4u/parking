@@ -30,6 +30,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import headerImg from "../../resources/logo/sss-logo.png";
 import useDashboard from "../../hooks/api/useDashboard";
 import { BluetoothManager } from "react-native-bluetooth-escpos-printer"
+import { connectSelectedPrinter } from "../../utils/printerConnection";
 
 
 
@@ -40,6 +41,12 @@ export default function ReceiptScreen_Bletooth({ navigation }) {
   // const loginData = JSON.parse(loginStorage.getString("login-data"));
 
   // console.log(loginData, 'nowwwwwwwwwwwwwww_');
+
+  useEffect(() => {
+    connectSelectedPrinter().catch(error =>
+      console.log("Unable to connect saved printer on receipt screen:", error),
+    );
+  }, [])
   
   
   const stored  = loginStorage.getString("login-data")

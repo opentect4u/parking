@@ -159,7 +159,8 @@ const GeneralSettingsScreen = ({ navigation }) => {
     gst_flag,
     pay_mode_flag,
     qr_code_flag,
-    day_wise_rate
+    day_wise_rate,
+    manual_car_in
   } = generalSettings;
 
   const {
@@ -251,6 +252,16 @@ const GeneralSettingsScreen = ({ navigation }) => {
                 />
               </SettingComponent>
             )}
+
+              <SettingComponent
+                icon={icons.receipt_custom(colors["primary-color"], 25)}
+                text={"Manual In & Out"}>
+                <CustomSwitch
+                  isEnabled={manual_car_in == "Y" ? true : false}
+                  handleChange={() => {}}
+                />
+              </SettingComponent>
+
 
             {/* QR CODE */}
             {loginData?.user?.userdata?.msg[0]?.upi_id.length > 0 && (

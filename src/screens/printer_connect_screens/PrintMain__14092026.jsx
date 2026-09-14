@@ -4,6 +4,7 @@ import {
   AppState,
   DeviceEventEmitter,
   NativeEventEmitter,
+  PermissionsAndroid,
   Platform,
   ScrollView,
   Text,
@@ -19,12 +20,10 @@ import {
   RESULTS,
 } from "react-native-permissions";
 import { appStorage } from "../../storage/appStorage";
-import {
-  connectSelectedPrinter,
-  SELECTED_PRINTER_KEY,
-} from "../../utils/printerConnection";
 import ItemList from "./ItemList";
 import SamplePrint from "./SamplePrint";
+
+const SELECTED_PRINTER_KEY = "selected-printer";
 
 const parseDevices = devices => {
   if (Array.isArray(devices)) return devices;
@@ -87,18 +86,44 @@ const PrintMain = () => {
     }
   }, [setPaired]);
 
+  const ensureAndroidBluetoothPermissions = useCallback(async () => {
+    if (Platform.OS !== "android") return true;
+    const permissions = {
+      title: "Please Allow Your Printer",
+      message: "Bluetooth access is required to connect to your printer.",
+      buttonNeutral: "Later",
+      buttonNegative: "Cancel",
+      buttonPositive: "Allow",
+    };
+    const connectGranted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      permissions,
+    );
+    const scanGranted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      permissions,
+    );
+    return (
+      connectGranted === PermissionsAndroid.RESULTS.GRANTED &&
+      scanGranted === PermissionsAndroid.RESULTS.GRANTED
+    );
+  }, []);
+
   const initialiseBluetooth = useCallback(async () => {
     try {
       setLoading(true);
       const enabled = await BluetoothManager.isBluetoothEnabled();
       setBleOpend(Boolean(enabled));
-      if (!enabled) return;
+      if (!enabled || !(await ensureAndroidBluetoothPermissions())) return;
 
       // Restore the exact printer the user selected before the app was closed.
-      const savedPrinter = await connectSelectedPrinter();
+      const savedPrinter = appStorage.getString(SELECTED_PRINTER_KEY);
       if (savedPrinter) {
-        setBoundAddress(savedPrinter.address);
-        setName(savedPrinter.name || "UNKNOWN");
+        try {
+          await connect(JSON.parse(savedPrinter), false);
+        } catch (_) {
+          appStorage.delete(SELECTED_PRINTER_KEY);
+        }
       }
       await scanDevices();
     } catch (error) {
@@ -106,7 +131,7 @@ const PrintMain = () => {
     } finally {
       setLoading(false);
     }
-  }, [scanDevices]);
+  }, [connect, ensureAndroidBluetoothPermissions, scanDevices]);
 
   useEffect(() => {
     const handlePairedDevices = response =>

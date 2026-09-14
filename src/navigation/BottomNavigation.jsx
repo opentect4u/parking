@@ -23,18 +23,13 @@ function BottomNavigation() {
   const { receiptScreen, ReceiptScreen_Bletooth, outpassScreen, manualScreens, reportScreen, settingsScreen, printScreen } = navigationRoutes;
 
   const { generalSettings } = useContext(AuthContext);
-  const { dev_mod, report_flag } = generalSettings;
+  const { dev_mod, report_flag, manual_car_in } = generalSettings;
   // const { socketOndata } = useSocket();
   const loginData = JSON.parse(loginStorage?.getString("login-data"));
 
   const device_Type_Check = loginData?.user?.userdata?.msg[0]?.device_type;
-  
 
-  // console.log(device_Type_Check, 'oooooooooooooooooooooooooooooooo');
-  useEffect(() => {
-    console.log('ddddddddddddddddddd', device_Type_Check)
 
-  }, []);
 
 
   // <SocketProvider> </SocketProvider>
@@ -77,7 +72,7 @@ function BottomNavigation() {
 
 
       {/* Out pass bill */}
-      {dev_mod != "R" && dev_mod != "F" && (
+      {manual_car_in == "Y" && (
         <Tab.Screen
           name={manualScreens}
           options={{

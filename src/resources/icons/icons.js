@@ -180,6 +180,10 @@ const calendar_custom = (color, size) => (
   <Ionicons name="calendar-outline" color={color} size={size} />
 );
 
+const receipt_custom = (color, size) => (
+  <Ionicons name="receipt-outline" color={color} size={size} />
+);
+
 
 const payment_mod = (color, size) => (
   <MaterialIcons name="payments" color={color} size={size} />
@@ -361,6 +365,7 @@ export default icons = {
   gst,
   qrcode,
   calendar_custom,
+  receipt_custom,
   payment_mod,
   paperRoll,
   cellphone,

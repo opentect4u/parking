@@ -8,6 +8,9 @@ import {
   Pressable,
   Alert,
   Modal,
+  ToastAndroid,
+  PermissionsAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
@@ -24,11 +27,20 @@ import CustomButton from '../../components/CustomButton';
 import { useIsFocused } from '@react-navigation/native';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import useGstSettings from '../../hooks/api/useGstSettings';
-import useOutpass from '../../hooks/api/useOutpass';
+// import useOutpass from '../../hooks/api/useOutpass';
 import useCheckAdvance from '../../hooks/api/useCheckAdvance';
 import { AuthContext } from '../../context/AuthProvider';
 import useCalculateDuration from '../../hooks/useCalculateDuration';
 import useGstPriceCalculator from '../../hooks/useGstPriceCalculator';
+import useOutpassManual from '../../hooks/api/useOutpassManual';
+import DeviceInfo from 'react-native-device-info';
+
+import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+
+
+import BleManager from "react-native-ble-manager";
+import ThermalPrinterModule from "react-native-thermal-printer";
+import RadioButton from '../../components/RadioButton';
 
 
 
@@ -56,13 +68,35 @@ const [getAdvAmount_para, setAdvAmount_para] = useState();
 const [showReceiptPopup, setShowReceiptPopup] = useState(false);
 const [receiptPopupData, setReceiptPopupData] = useState([]);
 const [receiptPopupInfo, setReceiptPopupInfo] = useState(null);
+const [deviceId, setDeviceId] = useState(() => "");
+const [radioState, setRadioState] = useState(false);
+const [getPayMode, setPayMode] = useState('C');
+ const [getBlePermission, setBlePermission] = useState();
 
-const { calculateTotalPrice } = useOutpass();
+const [carOutDataAll, setCarOutDataAll] = useState([]);
+
+const { calculateTotalPrice, useCarOutpassManual } = useOutpassManual();
+// const { useCarOutpass } = useOutpass();
 const { check_Advance } = useCheckAdvance();
+
+const receipt_number = new Date().getTime()
 
 const { generalSettings, receiptSettings, gstList } = useContext(AuthContext);
 
 const isFocused = useIsFocused();
+
+const device_Type_Check = loginData.user.userdata.msg[0].device_type;
+
+const upiId = loginData?.user?.userdata?.msg[0]?.upi_id;
+
+const [loading, setLoading] = useState(() => false);
+
+ const radioOptions = [
+    { label: 'Cash: ', value: 'C' },
+    { label: 'UPI: ', value: 'U' },
+  ];
+
+var upiString;
 
 // const totalDuration = useCalculateDuration(
 //   timestamp,
@@ -78,11 +112,26 @@ const isFocused = useIsFocused();
 
   const dateoptions = { day: "2-digit", month: "2-digit", year: "2-digit" };
 
+// const formatDateTime = dateTime => {
+//   return `${dateTime.toLocaleDateString(
+//     "en-GB",
+//     dateoptions,
+//   )} ${dateTime.toLocaleTimeString(undefined, options)}`;
+// };
+
 const formatDateTime = dateTime => {
-  return `${dateTime.toLocaleDateString(
-    "en-GB",
-    dateoptions,
-  )} ${dateTime.toLocaleTimeString(undefined, options)}`;
+  const date = new Date(dateTime);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  // return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
 useEffect(() => {
@@ -93,10 +142,16 @@ useEffect(() => {
     setShowDate(false)
     setDatePickerMode('date')
 
-    console.log(selectedVehiclelDetail, 'selectedVehiclelDetail');
-    
+   setLoading(false)
+
   }
 }, [isFocused]);
+
+  useEffect(() => {
+  const deviceId = DeviceInfo.getUniqueIdSync();
+  setDeviceId(deviceId);
+ 
+  }, []);
 
     // get vehicles list function
   const getVehicles = async () => {
@@ -121,22 +176,64 @@ useEffect(() => {
 
   // get vehicle list
   useMemo(() => {
-    console.log("Effect - getVehicles Called - ReceiptScreen");
     getVehicles();
   }, []);
 
     const handleNavigation = async props => {
     setSelectedVehiclelDetail(props)
-    // navigation.navigate("create_receipt", {
-    //   type: props.vehicle_name,
-    //   id: props.vehicle_id,
-    //   userId: userDetails?.user_id,
-    //   operatorName: userDetails?.operator_name,
-    //   deviceId: userDetails?.device_id,
-    // });
+    };
 
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx', props);
-  };
+
+    // checked device bluetooth status
+
+  async function checkLocationEnabled() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Bluetooth Permission",
+          message:
+            "This app needs access to your location to check Bluetooth status.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        BleManager.enableBluetooth()
+          .then(() => {
+            console.log("The bluetooth is already enabled or the user confirm");
+          })
+          .catch(error => {
+            // Failure code
+            console.log("The user refuse to enable bluetooth");
+          });
+        // const isEnabled = await BluetoothStatus.isEnabled();
+        // console.log('Bluetooth Enabled:', isEnabled);
+      } else {
+        console.log("Bluetooth permission denied");
+      }
+    } catch (error) {
+      console.log("Error checking Bluetooth status:", error);
+    }
+  }
+
+  useEffect(() => {
+    if (device_Type_Check == "M") {
+      try {
+        async function blueTooth() {
+          const bluetoothConnectGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+          )
+          setBlePermission(bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+        }
+
+        blueTooth()
+
+      } catch (err) {
+      }
+    }
+  }, [isFocused])
 
 
   const handleChangeText = (text) => {
@@ -148,15 +245,13 @@ useEffect(() => {
   };
 
   const handleCreateReceipt = () => {
-    console.log(selectedVehiclelDetail, 'Print manual receipt', vehicleNumber);
-
     const now = new Date();
 
     const date_time_in = now.toISOString().replace(/\.\d{3}Z$/, ".000Z");
 
     var carData = {
     "date_time_in": mydateFrom,
-    "receipt_no": 1787037699672, // Sayantika NO
+    "receipt_no": receipt_number, // Sayantika NO
     "vehicle_id": selectedVehiclelDetail?.vehicle_id,
     "vehicle_name": selectedVehiclelDetail?.vehicle_name, // Sayantika NO
     "vehicle_no": vehicleNumber
@@ -185,33 +280,13 @@ useEffect(() => {
         setShowDate(true);
       }, 0);
     }
-
-
-    
   };
 
 
    const handleUploadOutPassData_scan = async (carData) => {
-// const now = new Date();
 
-// const date_time_in = now.toISOString().replace(/\.\d{3}Z$/, ".000Z");
-
-//     carData = {
-//   // "car_out_flag": "N", // Sayantika NO
-//   // "created_at": "2026-08-18T07:21:39.000Z", // Sayantika NO
-//   // "customer_id": 14, // Sayantika NO
-//   "date_time_in": date_time_in,
-//   // "device_id": "bb85df4bc18b23e1", // Sayantika NO
-//   // "oprn_mode": "D", // Sayantika NO
-//   "receipt_no": 1787037699672, // Sayantika NO
-//   // "receipt_type": "S", // Sayantika NO
-//   // "updated_at": null, // Sayantika NO
-//   // "user_id_in": 307, // Sayantika NO
-//   "vehicle_id": selectedVehiclelDetail?.vehicle_id,
-//   // "vehicle_in_id": 4113690, // Sayantika NO
-//   "vehicle_name": selectedVehiclelDetail?.vehicle_name, // Sayantika NO
-//   "vehicle_no": vehicleNumber
-// }
+    setCarOutDataAll([])
+    setLoading(true)
     
     var crindate = Date();
     
@@ -408,9 +483,6 @@ useEffect(() => {
 
     setLoading_scan(false)
     // return 0;
-    
-    console.log(vData, 'vDatavDatavDatavData', carData);
-
 
     setReceiptPopupData(vData);
     setReceiptPopupInfo({
@@ -419,9 +491,18 @@ useEffect(() => {
     totalRate: totalRatearr,
     });
 
+    setLoading(false)
     setShowReceiptPopup(true);
 
     // Her start to show a Popup with this data
+
+    setCarOutDataAll({
+      data: vData,
+      others: carData,
+      gstSettings: gstSettings[0],
+      totalRate: totalRatearr,
+    })
+    
 
     // navigationRoutes.navigate("CreateOutpassScreen", {
     //   data: vData,
@@ -433,15 +514,402 @@ useEffect(() => {
   };
 
   const handlePrintReceipt = async () => {
-  console.log('Printing receipt:', receiptPopupData);
-  console.log('Receipt info:', receiptPopupInfo);
+
+  upiString =  `upi://pay?pa=${upiId}&am=${receiptPopupInfo?.totalRate.base_amt}&cu=INR&tn=${encodeURIComponent(loginData?.user?.userdata?.msg[0]?.customer_name + "(Parking Fees)")}`
+  // return;
+  let paid_amt = receiptPopupInfo?.totalRate.paid_amt ? receiptPopupInfo?.totalRate.paid_amt : receiptPopupInfo?.totalRate.base_amt;
+
+  // return;
+
+
+    if (generalSettings.gst_flag == "Y") {
+      
+      if (gstList?.gst_mode == "CS") {
+      var insert_car_outpass = await useCarOutpassManual(
+        deviceId, 
+        receiptPopupInfo?.carData.vehicle_id,
+        receiptPopupInfo?.carData.vehicle_no, 
+        receiptPopupInfo?.totalRate.base_amt,
+        carOutDataAll?.gstSettings?.cgst,
+        carOutDataAll?.gstSettings?.sgst,
+        0, 
+        paid_amt, 
+        generalSettings.gst_flag,
+        getPayMode,
+        receiptPopupInfo?.totalRate?.vDatainfo?.in_time,
+        receiptPopupInfo?.totalRate?.vDatainfo?.out_time,
+        receiptPopupInfo?.totalRate?.vDatainfo?.receipt_no
+        );
+      }
+
+      if (gstList?.gst_mode == "I") {
+      var insert_car_outpass = await useCarOutpassManual(
+        deviceId, 
+        receiptPopupInfo?.carData.vehicle_id,
+        receiptPopupInfo?.carData.vehicle_no, 
+        receiptPopupInfo?.totalRate.base_amt,
+        0,
+        0,
+        carOutDataAll?.gstSettings?.igst, 
+        paid_amt, 
+        generalSettings.gst_flag,
+        getPayMode,
+        receiptPopupInfo?.totalRate?.vDatainfo?.in_time,
+        receiptPopupInfo?.totalRate?.vDatainfo?.out_time,
+        receiptPopupInfo?.totalRate?.vDatainfo?.receipt_no
+        );
+      }
+
+    }
+
+    if (generalSettings.gst_flag == "N") {
+      var insert_car_outpass = await useCarOutpassManual(
+        deviceId, 
+        receiptPopupInfo?.carData.vehicle_id,
+        receiptPopupInfo?.carData.vehicle_no, 
+        receiptPopupInfo?.totalRate.base_amt,
+        0,
+        0,
+        0, 
+        paid_amt, 
+        generalSettings.gst_flag,
+        getPayMode,
+        receiptPopupInfo?.totalRate?.vDatainfo?.in_time,
+        receiptPopupInfo?.totalRate?.vDatainfo?.out_time,
+        receiptPopupInfo?.totalRate?.vDatainfo?.receipt_no
+      );
+    }
+
+    if(insert_car_outpass?.status){
+
+    setShowReceiptPopup(false)
+
+    // Use for Mobile Device Start 
+    if (getBlePermission && device_Type_Check == "M") {
+
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+    await checkLocationEnabled();
+    carOutDataAll?.data.map((props, index) => (
+    payloadBody += `${props?.label} : ${props?.value}\n`
+    ));
+
+
+
+
+    if (receiptSettings?.OUT_on_off == "Y") {
+    if (receiptSettings.header1_flag == 1) {
+    payloadHeader += `${receiptSettings.header1}\n`;
+    }
+
+    if (receiptSettings.header2_flag == 1) {
+    payloadHeader += `${receiptSettings.header2}\n`;
+    }
+
+    if (receiptSettings.header3_flag == 1) {
+    payloadHeader += `${receiptSettings.header3}\n`;
+    }
+
+    if (receiptSettings.header4_flag == 1) {
+    payloadHeader += `${receiptSettings.header4}\n`;
+    }
+
+    if (receiptSettings.footer1_flag == 1) {
+    payloadFooter += `${receiptSettings.footer1}\n`;
+    }
+    if (receiptSettings.footer2_flag == 1) {
+    payloadFooter += `${receiptSettings.footer2}\n`;
+    }
+    if (receiptSettings.footer3_flag == 1) {
+    payloadFooter += `${receiptSettings.footer3}\n`;
+    }
+    if (receiptSettings.footer4_flag == 1) {
+    payloadFooter += `${receiptSettings.footer4}\n`;
+    }
+
+    }
+
+    try {
+    ToastAndroid.showWithGravityAndOffset(
+    "Receipt Created Successfully",
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+    );
+
+    await BluetoothEscposPrinter.printText("MANUAL IN & OUT\n", { align: "center" });
+    await BluetoothEscposPrinter.printText(`${payloadHeader}`, { align: "left" });
+
+    if (generalSettings.gst_flag == "Y") {
+    await BluetoothEscposPrinter.printText(`GST No.: ${gstList.gst_number}\n`, { align: "center" });
+    }
+
+    await BluetoothEscposPrinter.printText("-------------------------------\n", { align: "center" });
+
+    await BluetoothEscposPrinter.printText(`${payloadBody}`, { align: "left" });
+
+    if (generalSettings.pay_mode_flag == "Y") {
+    await BluetoothEscposPrinter.printText(`${getPayMode == "U" ? `Payment Mode : UPI\n` : "Payment Mode : Cash\n"}`, { align: "left" });
+    }
+
+    await BluetoothEscposPrinter.printText(`Scan QR Code to Pay with UPI: \n`, { align: "center" });
+
+    if (upiId.length > 0) {
+    await BluetoothEscposPrinter.printQRCode(
+    upiString.toString(), // QR code data
+    370, // Larger size (between 1 and 16)
+    BluetoothEscposPrinter.ERROR_CORRECTION.L // Error correction level
+    );
+    }
+
+
+    await BluetoothEscposPrinter.printText("-------------------------------\n", {});
+    await BluetoothEscposPrinter.printText(`${payloadFooter}\n`, { align: "center" });
+    await BluetoothEscposPrinter.printText("\r\n", {})
+
+    setLoading(false);
+
+    } catch (e) {
+    alert("Printer is not connected.")
+    console.log(e.message);
+    setLoading(false);
+    }
+
+
+
+    setisAvailableYet(false);
+
+    navigation.goBack();
+    } else if (device_Type_Check == "H") {
+
+
+
+    try {
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+    let GST_Header = "";
+    let pay_Mode = "";
+    let qrcode = "";
+
+    await checkLocationEnabled();
+
+    // ==============================
+    // BODY
+    // ==============================
+    carOutDataAll?.data.map((props, index) => {
+    payloadBody +=
+    `[L]<font size='normal'>${props?.label} : [R] ${props?.value}</font>\n`;
+    });
+
+
+    // ==============================
+    // HEADER & FOOTER
+    // ==============================
+    if (receiptSettings?.OUT_on_off == "Y") {
+
+    // Header 1
+    if (receiptSettings.header1_flag == 1) {
+    payloadHeader +=
+    `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n`;
+    }
+
+    // Header 2
+    if (receiptSettings.header2_flag == 1) {
+    payloadHeader +=
+    `[C]<font size='small'>${receiptSettings.header2}</font>\n`;
+    }
+
+    // Header 3
+    if (receiptSettings.header3_flag == 1) {
+    payloadHeader +=
+    `[C]<font size='small'>${receiptSettings.header3}</font>\n`;
+    }
+
+    // Header 4
+    if (receiptSettings.header4_flag == 1) {
+    payloadHeader +=
+    `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+    }
+
+
+
+
+    // ==============================
+    // GST
+    // ==============================
+    if (generalSettings.gst_flag == "Y") {
+    GST_Header =
+    `[C]<font size='small'>GST No.: ${gstList.gst_number}</font>\n`;
+    }
+
+
+    // ==============================
+    // FOOTER
+    // ==============================
+    if (receiptSettings.footer1_flag == 1) {
+    payloadFooter +=
+    `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n`;
+    }
+
+    if (receiptSettings.footer2_flag == 1) {
+    payloadFooter +=
+    `[C]<font size='small'>${receiptSettings.footer2}</font>\n`;
+    }
+
+    if (receiptSettings.footer3_flag == 1) {
+    payloadFooter +=
+    `[C]<font size='small'>${receiptSettings.footer3}</font>\n`;
+    }
+
+    if (receiptSettings.footer4_flag == 1) {
+    payloadFooter +=
+    `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+    }
+    }
+
+
+    // ==============================
+    // PAYMENT MODE
+    // ==============================
+    if (generalSettings.pay_mode_flag == "Y") {
+
+    if (getPayMode == "U") {
+    pay_Mode =
+    `[L]<font size='normal'>Payment Mode : [R]UPI</font>\n`;
+    } else {
+    pay_Mode =
+    `[L]<font size='normal'>Payment Mode : [R]Cash</font>\n`;
+    }
+    }
+
+
+
+
+    // ==============================
+    // UPI QR CODE
+    // ==============================
+    if(upiId != null){
+    if (upiId.length > 0) {
+    qrcode =
+    `[C]<qrcode size='30'>${upiString.toString()}</qrcode>\n`;
+    }
+    }
+
+
+
+    // ==============================
+    // PRINT
+    // ==============================
+
+    await ThermalPrinterModule.printBluetooth({
+    payload:
+    // OUTPASS
+    `[C]<u><font size='tall'>MANUAL IN & OUT</font></u>\n` +
+
+    // HEADER
+    `[C]${payloadHeader}` +
+
+    // GST
+    `${GST_Header}` +
+
+    // SEPARATOR
+    `[C]-------------------------------\n` +
+
+    // BODY
+    `${payloadBody}` +
+
+    // PAYMENT MODE
+    `${pay_Mode}` +
+
+    // QR CODE
+    `${qrcode}` +
+
+    // SEPARATOR
+    `[C]-------------------------------\n` +
+
+
+    // FOOTER
+    `[C]${payloadFooter}\n` +
+
+    // EXTRA FEED
+    `\n`,
+
+    printerNbrCharactersPerLine: 30,
+    printerDpi: 120,
+    printerWidthMM: 58,
+    mmFeedPaper: 25,
+    });
+    // return
+
+    setLoading(false);
+
+    } catch (err) {
+
+    ToastAndroid.show(
+    "ThermalPrinterModule - ReceiptScreen",
+    ToastAndroid.SHORT
+    );
+
+    console.log("Handheld Printer Error:", err?.message || err);
+
+    setLoading(false);
+    }
+
+    setisAvailableYet(false);
+
+    navigation.goBack();
+    } else {
+
+    if (device_Type_Check == "M") {
+    navigation.goBack();
+    ToastAndroid.show("Sorry, Receipt Creation Failed, Allow Nearby Devices", ToastAndroid.SHORT);
+    }
+    if (device_Type_Check == "H") {
+    navigation.goBack();
+    ToastAndroid.show("Sorry, Receipt Creation Failed", ToastAndroid.SHORT);
+    }
+
+
+    }
+
+    }
+    
+    
 
   // Your existing Bluetooth / Thermal printer code here
 };
 
+  const handleRadioSelect = (value) => {
+    setRadioState(!radioState);
+
+    setPayMode(value);
+    // var carindata = [];
+    // console.log(value, 'upiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', getPayMode);
+
+  };
+
 
   return (
     <SafeAreaView style={otherStyle.safeArea}>
+
+      {loading && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '35%', zIndex:999,
+                  backgroundColor: colors.white,
+                  padding: PixelRatio.roundToNearestPixel(20),
+                  borderRadius: 10,
+                }}>
+                <ActivityIndicator size="large" />
+                <Text>Loading...</Text>
+              </View>
+            )}
+
       <CustomHeader title={"Manual Entry/Exit"} />
 
       {showDate && (
@@ -602,10 +1070,25 @@ useEffect(() => {
             </Text>
 
             <Text style={otherStyle.receiptValue}>
-              {item.value}
+              {item.value} 
             </Text>
           </View>
         ))}
+
+        {generalSettings.pay_mode_flag == "Y" && (
+        <View style={otherStyle.radioButton_new}>
+        {radioOptions.map(option => (
+        <RadioButton
+        key={option.value}
+        label={option.label}
+        // labelStyle={otherStyle.radioButtonText} // Apply text style
+        selected={option.value === getPayMode}
+        onPress={() => handleRadioSelect(option.value)}
+        customFont={14}
+        />
+        ))}
+        </View>
+        )}
 
       </ScrollView>
 
@@ -810,5 +1293,15 @@ closeReceiptButtonText: {
   fontSize: normalize(15),
   fontWeight: '700',
 },
+
+radioButton_new: {
+    flexDirection: 'row', lineHeight: 24, justifyContent: 'space-between',
+    marginTop: 15,
+    paddingLeft: 15, paddingRight: 15, display: 'inline',
+  },
+  radioButtonText: {
+    fontSize: 14, // Increases the text size
+    color: 'red', // Sets the text color to black
+  },
   
 });
