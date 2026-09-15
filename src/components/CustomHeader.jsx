@@ -27,12 +27,12 @@ const CustomHeader = ({ title, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header_container_one}>
-        <Pressable
+        {/* <Pressable
           onPress={openSidebar}
           hitSlop={10}
           style={styles.menu_button}>
           <MaterialIcons name="menu" size={28} color={colors.black} />
-        </Pressable>
+        </Pressable> */}
         {/* Back Icon */}
         {/* navigation && caz if it`s blank back button will not render */}
         {navigation && (

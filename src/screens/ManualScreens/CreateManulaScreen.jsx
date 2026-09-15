@@ -522,6 +522,7 @@ useEffect(() => {
   // return;
 
 
+
     if (generalSettings.gst_flag == "Y") {
       
       if (gstList?.gst_mode == "CS") {
@@ -529,7 +530,8 @@ useEffect(() => {
         deviceId, 
         receiptPopupInfo?.carData.vehicle_id,
         receiptPopupInfo?.carData.vehicle_no, 
-        receiptPopupInfo?.totalRate.base_amt,
+        // receiptPopupInfo?.totalRate.base_amt,
+        Number(receiptPopupInfo?.totalRate?.vDatainfo?.base_amount)?.toFixed(2),
         carOutDataAll?.gstSettings?.cgst,
         carOutDataAll?.gstSettings?.sgst,
         0, 
@@ -547,7 +549,8 @@ useEffect(() => {
         deviceId, 
         receiptPopupInfo?.carData.vehicle_id,
         receiptPopupInfo?.carData.vehicle_no, 
-        receiptPopupInfo?.totalRate.base_amt,
+        // receiptPopupInfo?.totalRate.base_amt,
+        Number(receiptPopupInfo?.totalRate?.vDatainfo?.base_amount)?.toFixed(2),
         0,
         0,
         carOutDataAll?.gstSettings?.igst, 
@@ -1028,8 +1031,8 @@ useEffect(() => {
 
           
           </View>
-              <Text>{JSON.stringify(mydateFrom, null, 2)}</Text>
 
+              {/* <Text>{JSON.stringify(mydateFrom, null, 2)}</Text> */}
       </View>
 
       <Modal
